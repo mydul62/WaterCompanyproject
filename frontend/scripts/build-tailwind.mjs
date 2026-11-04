@@ -895,6 +895,312 @@ async function build() {
   transform: none;
 }
 
+/* Explore More Modern Grid Styles matching user HTML snippet */
+@property --ang {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.explore-section, .ex {
+  position: relative;
+  padding: 110px 0;
+  overflow: hidden;
+  background: var(--bento-bg, #f3f9fd);
+}
+
+.explore-section::before, .explore-section::after,
+.ex::before, .ex::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.explore-section::before, .ex::before {
+  width: 500px;
+  height: 500px;
+  background: rgba(28, 139, 255, 0.16);
+  top: -150px;
+  left: -120px;
+}
+
+.explore-section::after, .ex::after {
+  width: 480px;
+  height: 480px;
+  background: rgba(0, 194, 216, 0.15);
+  bottom: -150px;
+  right: -130px;
+}
+
+.explore-wrap {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1480px;
+  margin: auto;
+  padding: 0 24px;
+}
+
+@media (min-width: 640px) {
+  .explore-wrap {
+    padding: 0 40px;
+  }
+}
+
+.explore-head, .head {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 64px;
+}
+
+.explore-pill, .pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #1c8bff;
+  background: rgba(28, 139, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 99px;
+}
+
+.explore-pill i, .pill i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1c8bff, #00c2d8);
+  box-shadow: 0 0 0 4px rgba(28, 139, 255, 0.2);
+  animation: explore-pu 2s infinite;
+  display: inline-block;
+}
+
+@keyframes explore-pu {
+  50% {
+    box-shadow: 0 0 0 8px rgba(28, 139, 255, 0);
+  }
+}
+
+.explore-head h2 {
+  font-size: clamp(38px, 6vw, 72px);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+  margin: 20px 0 16px;
+  color: #0a1f33;
+}
+
+.explore-head h2 span {
+  background: linear-gradient(135deg, #1c8bff, #00c2d8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.explore-head p {
+  font-size: 18px;
+  color: #53697c;
+  line-height: 1.6;
+}
+
+.explore-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+}
+
+@media (max-width: 1100px) {
+  .explore-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .explore-section {
+    padding: 76px 0;
+  }
+  .explore-wrap {
+    padding: 0 20px;
+  }
+  .explore-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.explore-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 32px 30px 30px;
+  border-radius: 26px;
+  background: #ffffff;
+  border: 1px solid #dce9f2;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow: 0 10px 30px rgba(10, 60, 120, 0.06);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  min-height: 210px;
+}
+
+/* animated border line */
+.explore-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  z-index: 2;
+  pointer-events: none;
+  background: conic-gradient(from var(--ang, 0deg), transparent 0 62%, #1c8bff 82%, #00e0f0 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: explore-spin 5s linear infinite;
+  animation-delay: calc(var(--i, 0) * -0.45s);
+  opacity: 0.6;
+  transition: opacity 0.3s;
+}
+
+@keyframes explore-spin {
+  to {
+    --ang: 360deg;
+  }
+}
+
+/* cursor spotlight */
+.explore-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 0%), rgba(28, 139, 255, 0.16), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.explore-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 28px 56px rgba(10, 60, 120, 0.18);
+}
+
+.explore-card:hover::before {
+  opacity: 1;
+  animation-duration: 2s;
+}
+
+.explore-card:hover::after {
+  opacity: 1;
+}
+
+.explore-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.explore-ic {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #1c8bff, #00c2d8);
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  box-shadow: 0 10px 22px rgba(28, 139, 255, 0.32);
+  transition: transform 0.35s ease;
+}
+
+.explore-card:hover .explore-ic {
+  transform: rotate(-8deg) scale(1.08);
+}
+
+.explore-no {
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: #53697c;
+  opacity: 0.55;
+}
+
+.explore-card h3 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-top: 6px;
+  color: #0a1f33;
+  transition: color 0.3s;
+}
+
+.explore-card:hover h3 {
+  color: #1c8bff;
+}
+
+.explore-card p {
+  color: #53697c;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.explore-go {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1c8bff;
+  padding-top: 10px;
+}
+
+.explore-go b {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(28, 139, 255, 0.12);
+  transition: all 0.35s ease;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.explore-card:hover .explore-go b {
+  background: linear-gradient(135deg, #1c8bff, #00c2d8);
+  color: #ffffff;
+  transform: translateX(6px) rotate(-45deg);
+}
+
+/* Staggered Scroll Reveal for Explore cards */
+.explore-card.rv {
+  opacity: 0;
+  transform: translateY(34px) scale(0.97);
+  transition: opacity 0.7s calc(var(--i, 0) * 0.07s), transform 0.7s calc(var(--i, 0) * 0.07s);
+}
+
+.explore-card.rv.in {
+  opacity: 1;
+  transform: none;
+}
+
+.explore-card.rv.in:hover {
+  transform: translateY(-8px);
+  transition-delay: 0s;
+}
+
+@media (max-width: 700px) {
+  .explore-card {
+    min-height: 0;
+  }
+}
+
 ::-webkit-scrollbar {
   width: 8px;
 }
