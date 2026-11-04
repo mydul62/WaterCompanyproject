@@ -1,12 +1,37 @@
-import dotenv from "dotenv";
-import app from "./app.js";
+import { app } from "./app";
+import { ENV } from "./config/env";
+import { prisma } from "./config/prisma";
 
-dotenv.config();
+async function bootstrap() {
+  try {
+    const server = app.listen(ENV.PORT, () => {
+      console.log(`================================================================`);
+      console.log(`  Xclusive Can Limited & Q Pail REST API Running               `);
+      console.log(`  Port: http://localhost:${ENV.PORT}                            `);
+      console.log(`  Health Check: http://localhost:${ENV.PORT}/health              `);
+      console.log(`  API Base: http://localhost:${ENV.PORT}/api/v1                 `);
+      console.log(`  Environment: ${ENV.NODE_ENV}                                  `);
+      console.log(`================================================================`);
+    });
 
-const PORT = process.env.PORT || 5000;
+    const exitHandler = () => {
+      if (server) {
+        server.close(async () => {
+          console.log("Server closed.");
+          await prisma.$disconnect();
+          process.exit(0);
+        });
+      } else {
+        process.exit(0);
+      }
+    };
 
-app.listen(PORT, () => {
-  console.log(`🚀 Xclusive Can Industrial REST API running on http://localhost:${PORT}`);
-  console.log(`📡 Environment: ${process.env.NODE_ENV || "development"}`);
-});
+    process.on("SIGTERM", exitHandler);
+    process.on("SIGINT", exitHandler);
+  } catch (error) {
+    console.error("Failed to start backend server:", error);
+    process.exit(1);
+  }
+}
 
+bootstrap();

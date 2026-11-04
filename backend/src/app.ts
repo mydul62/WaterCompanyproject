@@ -1,42 +1,71 @@
-import express, { Application, Request, Response, NextFunction } from "express";
+import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import routes from "./routes.js";
+import path from "path";
+import { appRouter } from "./routes";
+import { errorHandler } from "./middlewares/error.middleware";
+import { ENV } from "./config/env";
 
-const app: Application = express();
+export const app: Application = express();
 
+// Security and parsing middlewares
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const allowedOrigins = [
+        ENV.FRONTEND_URL,
+        "http://localhost:3000",
+        "http://localhost:3001",
+      ];
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app") ||
+        origin.endsWith(".onrender.com")
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, true); // Allow client requests
+    },
     credentials: true,
   })
 );
 
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
+app.use(express.json({ limit: "15mb" }));
+app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 
-// Health Check Endpoint
-app.get("/api/health", (_req: Request, res: Response) => {
+// Static uploads directory fallback
+app.use("/uploads", express.static(path.join(process.cwd(), "public", "uploads")));
+
+// Root Info Endpoint
+app.get("/", (_req: Request, res: Response) => {
   res.status(200).json({
-    status: "ok",
-    service: "Xclusive Can Platform API",
-    facility: "Gazipur Industrial Complex",
+    success: true,
+    service: "Xclusive Can Limited & Q Pail Platform REST API",
+    status: "online",
+    version: "1.0.0",
+    headquarters: "Gazipur, Dhaka, Bangladesh",
+    certifications: ["LEED Platinum", "ISO 9001:2015", "FSSC 22000", "GMP"],
     timestamp: new Date().toISOString(),
   });
 });
 
-// Main API routes
-app.use("/api/v1", routes);
-
-// Centralized Error Handler
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-  console.error("Unhandled Error:", err.message);
-  res.status(500).json({
-    success: false,
-    message: err.message || "Internal Server Error",
+// Health check endpoint
+app.get("/health", (_req: Request, res: Response) => {
+  res.status(200).json({
+    status: "ok",
+    service: "waterweb-backend",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
   });
 });
 
-export default app;
+// API Routes mounted on both /api/v1 and /api for backward compatibility
+app.use("/api/v1", appRouter);
+app.use("/api", appRouter);
 
+// Global Centralized Error Handling Middleware
+app.use(errorHandler);
+
+export default app;
