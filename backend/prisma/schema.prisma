@@ -1,0 +1,130 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  SALES_MANAGER
+}
+
+enum MaterialType {
+  TINPLATE
+  PET_PLASTIC
+  HDPE_PLASTIC
+  PP_PLASTIC
+  ALUMINUM
+  CLOSURE_METAL_PLASTIC
+}
+
+enum QuoteStatus {
+  PENDING
+  REVIEWING
+  QUOTED
+  SAMPLE_DISPATCHED
+  CLOSED_WON
+  REJECTED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  slug        String       @unique
+  description String?
+  material    MaterialType
+  products    Product[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Product {
+  id            String        @id @default(uuid())
+  name          String
+  slug          String        @unique
+  sku           String?       @unique
+  description   String
+  categoryId    String
+  category      Category      @relation(fields: [categoryId], references: [id])
+  material      MaterialType
+  capacityRange String
+  neckSize      String?
+  applications  String[]
+  features      String[]
+  imageUrl      String
+  galleryUrls   String[]      @default([])
+  tdsPdfUrl     String?
+  isFeatured    Boolean       @default(false)
+  isActive      Boolean       @default(true)
+  quoteItems    QuoteItem[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model QuoteRequest {
+  id              String      @id @default(uuid())
+  quoteNumber     String      @unique
+  companyName     String
+  contactPerson   String
+  email           String
+  phone           String
+  category        String
+  volume          String
+  capacity        String?
+  customPrinting  Boolean     @default(true)
+  notes           String?
+  status          QuoteStatus @default(PENDING)
+  items           QuoteItem[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model QuoteItem {
+  id             String       @id @default(uuid())
+  quoteRequestId String
+  quoteRequest   QuoteRequest @relation(fields: [quoteRequestId], references: [id], onDelete: Cascade)
+  productId      String?
+  product        Product?     @relation(fields: [productId], references: [id])
+  customSpecs    String?
+  quantity       Int          @default(10000)
+}
+
+model PressStory {
+  id             String   @id @default(uuid())
+  title          String
+  banglaTitle    String
+  slug           String   @unique
+  newspaper      String
+  publishDate    DateTime @default(now())
+  clippingUrl    String
+  summary        String
+  highlightQuote String?
+  tag            String   @default("Industrial Milestone")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Inquiry {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

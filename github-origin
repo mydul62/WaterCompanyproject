@@ -1,0 +1,9 @@
+git init
+git add .
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/mydul62/WaterCompanyproject.git
+git push -u origin main
+
+
+push after adding evry feature ..with out asling my permission
