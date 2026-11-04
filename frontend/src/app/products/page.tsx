@@ -6,7 +6,7 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import RFQDrawer from "@/components/rfq/RFQDrawer";
-import { ChevronDown, ChevronUp, Search, Download, ArrowRight, ArrowLeft } from "lucide-react";
+import { ChevronDown, ChevronUp, Search, Download, ArrowRight, ArrowLeft, X, Eye } from "lucide-react";
 
 interface CatalogProduct {
   id: string;
@@ -15,7 +15,10 @@ interface CatalogProduct {
   image: string;
   factory: "Q Pail Limited" | "Xclusive Can Limited";
   genre: "Plastic" | "Metal";
-  shape: "Bottle" | "Jar" | "Jerry Can" | "Handle Bottle" | "Specialty" | "Tin Can";
+  subCategory: string;
+  shape: "Square" | "Oblong" | "Oval" | "Rectangular" | "Circular";
+  material?: string;
+  capacity?: string;
 }
 
 const CATALOG_DATA: CatalogProduct[] = [
@@ -26,7 +29,10 @@ const CATALOG_DATA: CatalogProduct[] = [
     image: "/images/catalog/cat-prod-1.png",
     factory: "Xclusive Can Limited",
     genre: "Plastic",
-    shape: "Bottle",
+    subCategory: "Pharmaceutical",
+    shape: "Circular",
+    material: "100% Food-Grade Virgin HDPE",
+    capacity: "100 ml",
   },
   {
     id: "p2",
@@ -35,7 +41,10 @@ const CATALOG_DATA: CatalogProduct[] = [
     image: "/images/catalog/cat-prod-2.png",
     factory: "Q Pail Limited",
     genre: "Plastic",
-    shape: "Handle Bottle",
+    subCategory: "Home Care",
+    shape: "Square",
+    material: "High-Density Polyethylene (HDPE)",
+    capacity: "1000 ml - 2000 ml",
   },
   {
     id: "p3",
@@ -44,138 +53,175 @@ const CATALOG_DATA: CatalogProduct[] = [
     image: "/images/catalog/cat-prod-3.png",
     factory: "Xclusive Can Limited",
     genre: "Plastic",
-    shape: "Jar",
+    subCategory: "Pharmaceutical",
+    shape: "Circular",
+    material: "Pharmaceutical Virgin HDPE",
+    capacity: "26 gm",
   },
   {
     id: "p4",
-    name: "Body-wash Bottle",
-    description: "PET Body-Wash Bottle with Flip Top Cap",
-    image: "/images/catalog/prod-4.png",
-    factory: "Xclusive Can Limited",
-    genre: "Plastic",
-    shape: "Bottle",
-  },
-  {
-    id: "p5",
-    name: "Chemical Bottle",
-    description: "1 Ltr HDPE Chemical Bottle with Handle uses for Nippon, Asian Paints",
-    image: "/cropped/product-card-1.png",
-    factory: "Xclusive Can Limited",
-    genre: "Plastic",
-    shape: "Handle Bottle",
-  },
-  {
-    id: "p6",
-    name: "4L Jerry Can",
-    description: "This is 4 Ltr Jerry can, used liquid Thinner, cleaner, chemical, Etc.",
-    image: "/cropped/product-card-4.png",
-    factory: "Q Pail Limited",
-    genre: "Plastic",
-    shape: "Jerry Can",
-  },
-  {
-    id: "p7",
     name: "Round Jerry Can",
     description: "HDPE Round Jerry Can for Asian Paints",
     image: "/images/catalog/prod-7.png",
     factory: "Q Pail Limited",
     genre: "Plastic",
-    shape: "Jerry Can",
+    subCategory: "Paint",
+    shape: "Circular",
+    material: "Virgin HDPE with Tamper Cap",
+    capacity: "4 Liter",
   },
   {
-    id: "p8",
+    id: "p5",
     name: "Oral Syringe",
-    description: "Oral syringes are used to accurately measure and safely administer liquid...",
+    description: "Oral syringes are used to accurately measure and safely administer liquid medication by mouth,...",
     image: "/cropped/product-card-3.png",
     factory: "Xclusive Can Limited",
     genre: "Plastic",
-    shape: "Specialty",
+    subCategory: "Pharmaceutical",
+    shape: "Oblong",
+    material: "Medical Grade Polypropylene (PP)",
+    capacity: "5 ml - 20 ml",
   },
   {
-    id: "p9",
+    id: "p6",
     name: "Agro Bottle",
     description: "500 ML White color HDPE Agro Vet Bottle with Inner Seal and Cap",
     image: "/cropped/product-card-1.png",
     factory: "Xclusive Can Limited",
     genre: "Plastic",
-    shape: "Bottle",
+    subCategory: "Agro Vet",
+    shape: "Circular",
+    material: "Chemical Resistant Virgin HDPE",
+    capacity: "500 ml",
+  },
+  {
+    id: "p7",
+    name: "Chemical Bottle",
+    description: "500 ML Chemical Bottle uses for Samuda Chemical Industries.",
+    image: "/images/catalog/cat-prod-7.png",
+    factory: "Xclusive Can Limited",
+    genre: "Plastic",
+    subCategory: "Chemical",
+    shape: "Circular",
+    material: "HDPE with Threaded Locking Cap",
+    capacity: "500 ml",
+  },
+  {
+    id: "p8",
+    name: "Double Handle Can",
+    description: "4.8 Ltr Double Handle HDPE jerry Can",
+    image: "/images/catalog/cat-prod-8.png",
+    factory: "Q Pail Limited",
+    genre: "Plastic",
+    subCategory: "Chemical",
+    shape: "Square",
+    material: "Industrial Heavy HDPE",
+    capacity: "4.8 Liter",
+  },
+  {
+    id: "p9",
+    name: "1 Ltr Chemical Bottle",
+    description: "1 Ltr Chemical Bottle",
+    image: "/images/catalog/cat-prod-9.png",
+    factory: "Xclusive Can Limited",
+    genre: "Plastic",
+    subCategory: "Chemical",
+    shape: "Circular",
+    material: "HDPE / Fluorinated Barrier",
+    capacity: "1000 ml",
   },
   {
     id: "p10",
-    name: "Chemical Bottle",
-    description: "500 ML Chemical Bottle uses for Samuda Chemical Industries...",
-    image: "/cropped/product-card-2.png",
+    name: "Body-wash Bottle",
+    description: "PET Body-Wash Bottle with Flip Top Cap",
+    image: "/images/catalog/prod-4.png",
     factory: "Xclusive Can Limited",
     genre: "Plastic",
-    shape: "Bottle",
+    subCategory: "Personal Care",
+    shape: "Oval",
+    material: "Clear PET Resin",
+    capacity: "250 ml - 400 ml",
   },
   {
     id: "p11",
-    name: "Double Handle Can",
-    description: "4.6 Ltr Double Handle HDPE Jerry Can",
-    image: "/cropped/product-card-4.png",
-    factory: "Q Pail Limited",
-    genre: "Plastic",
-    shape: "Jerry Can",
+    name: "3-Piece Industrial Paint Can",
+    description: "Welded tinplate metal can for decorative paint & industrial coatings",
+    image: "/Infoimages/Screenshot 2026-11-04 130154.png",
+    factory: "Xclusive Can Limited",
+    genre: "Metal",
+    subCategory: "Paint",
+    shape: "Circular",
+    material: "Electrolytic Tinplate (ETP)",
+    capacity: "1 Gallon",
   },
   {
     id: "p12",
-    name: "1 Ltr Chemical Bottle",
-    description: "1 Ltr Chemical Bottle",
-    image: "/images/catalog/prod-12.png",
-    factory: "Xclusive Can Limited",
-    genre: "Plastic",
-    shape: "Bottle",
-  },
-  {
-    id: "p13",
-    name: "3-Piece Industrial Paint Can (1 Gal)",
-    description: "Triple-tight welded tinplate can for decorative paints and industrial coatings",
+    name: "Aerosol Spray Can",
+    description: "High-pressure tinplate aerosol container tested up to 18 bar pressure",
     image: "/Infoimages/Screenshot 2026-11-04 130154.png",
     factory: "Xclusive Can Limited",
     genre: "Metal",
-    shape: "Tin Can",
+    subCategory: "Personal Care",
+    shape: "Circular",
+    material: "Three-Piece Welded Tinplate",
+    capacity: "300 ml - 500 ml",
   },
-  {
-    id: "p14",
-    name: "High-Pressure Aerosol Container",
-    description: "Electrolytic tinplate aerosol spray can tested to 18 bar burst pressure",
-    image: "/Infoimages/Screenshot 2026-11-04 130154.png",
-    factory: "Xclusive Can Limited",
-    genre: "Metal",
-    shape: "Tin Can",
-  },
-  {
-    id: "p15",
-    name: "Industrial Chemical Pail (20L Q Pail)",
-    description: "Reinforced HDPE industrial pail with airtight gasket lid and wire handle",
-    image: "/Infoimages/Screenshot 2026-11-04 130311.png",
-    factory: "Q Pail Limited",
-    genre: "Plastic",
-    shape: "Jerry Can",
-  },
-  {
-    id: "p16",
-    name: "Food-Grade Sealed Biscuit & Sweet Tin",
-    description: "Decorative litho-printed food tin with airtight hermetic lid",
-    image: "/Infoimages/Screenshot 2026-11-04 130154.png",
-    factory: "Xclusive Can Limited",
-    genre: "Metal",
-    shape: "Tin Can",
-  },
+];
+
+const PLASTIC_SUB_CATEGORIES = [
+  "Food",
+  "Home Care",
+  "Personal Care",
+  "Seal and Closure",
+  "Pharmaceutical",
+  "Lubricant",
+  "Chemical",
+  "Paint",
+  "Agro Vet",
+];
+
+const METAL_SUB_CATEGORIES = [
+  "Food",
+  "Home Care",
+  "Personal Care",
+  "Paint",
+  "Lubricant",
+  "Chemical",
+  "Container",
+];
+
+const EXPORT_TYPES = ["Direct Export", "Indirect Export"];
+const SHAPE_TYPES: ("Square" | "Oblong" | "Oval" | "Rectangular" | "Circular")[] = [
+  "Square",
+  "Oblong",
+  "Oval",
+  "Rectangular",
+  "Circular",
 ];
 
 export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFactories, setSelectedFactories] = useState<string[]>([]);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [selectedSubCategories, setSelectedSubCategories] = useState<string[]>([]);
+  const [selectedExports, setSelectedExports] = useState<string[]>([]);
+  const [selectedShapes, setSelectedShapes] = useState<string[]>([]);
+  const [isGroupProductsChecked, setIsGroupProductsChecked] = useState(false);
+
+  // Accordion open/close states exactly matching screenshots
   const [isFactoryOpen, setIsFactoryOpen] = useState(true);
   const [isGenreOpen, setIsGenreOpen] = useState(true);
+  const [isPlasticOpen, setIsPlasticOpen] = useState(true);
+  const [isMetalOpen, setIsMetalOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isShapeOpen, setIsShapeOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+
+  // Quick View Modal & RFQ Drawer state
+  const [quickViewProduct, setQuickViewProduct] = useState<CatalogProduct | null>(null);
   const [isRFQOpen, setIsRFQOpen] = useState(false);
   const [selectedProductForRFQ, setSelectedProductForRFQ] = useState<any>(null);
 
@@ -186,9 +232,23 @@ export default function ProductsPage() {
     setCurrentPage(1);
   };
 
-  const toggleGenre = (genre: string) => {
-    setSelectedGenres((prev) =>
-      prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre]
+  const toggleSubCategory = (sub: string) => {
+    setSelectedSubCategories((prev) =>
+      prev.includes(sub) ? prev.filter((s) => s !== sub) : [...prev, sub]
+    );
+    setCurrentPage(1);
+  };
+
+  const toggleExport = (exp: string) => {
+    setSelectedExports((prev) =>
+      prev.includes(exp) ? prev.filter((e) => e !== exp) : [...prev, exp]
+    );
+    setCurrentPage(1);
+  };
+
+  const toggleShape = (shape: string) => {
+    setSelectedShapes((prev) =>
+      prev.includes(shape) ? prev.filter((s) => s !== shape) : [...prev, shape]
     );
     setCurrentPage(1);
   };
@@ -205,9 +265,16 @@ export default function ProductsPage() {
       const matchesGenre =
         selectedGenres.length === 0 || selectedGenres.includes(product.genre);
 
-      return matchesSearch && matchesFactory && matchesGenre;
+      const matchesSubCategory =
+        selectedSubCategories.length === 0 ||
+        selectedSubCategories.includes(product.subCategory);
+
+      const matchesShape =
+        selectedShapes.length === 0 || selectedShapes.includes(product.shape);
+
+      return matchesSearch && matchesFactory && matchesGenre && matchesSubCategory && matchesShape;
     });
-  }, [searchQuery, selectedFactories, selectedGenres]);
+  }, [searchQuery, selectedFactories, selectedGenres, selectedSubCategories, selectedShapes]);
 
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / itemsPerPage));
   const displayedProducts = filteredProducts.slice(
@@ -221,23 +288,24 @@ export default function ProductsPage() {
       name: product.name,
       category: product.genre.toLowerCase(),
       categoryLabel: product.genre,
-      material: product.genre === "Metal" ? "Electrolytic Tinplate" : "HDPE / PET",
-      capacityRange: "Custom",
-      applications: [product.shape],
+      material: product.material || (product.genre === "Metal" ? "Electrolytic Tinplate" : "HDPE / PET"),
+      capacityRange: product.capacity || "Custom",
+      applications: [product.shape, product.subCategory],
       image: product.image,
       description: product.description,
-      features: ["Custom Branding Available", "ISO Certified Manufacturing"],
+      features: ["Custom Branding Available", "ISO Certified Cleanroom Manufacturing"],
     });
+    setQuickViewProduct(null);
     setIsRFQOpen(true);
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      {/* Top Navbar */}
+      {/* Top Floating / Sticky Header */}
       <Navbar />
 
       <main className="flex-1">
-        {/* Exact Hero Banner matching Screenshot media_1793808390182_d0c1254c.jpg */}
+        {/* Exact Hero Banner matching Screenshot */}
         <div className="relative w-full h-[260px] sm:h-[340px] lg:h-[380px] overflow-hidden flex items-center justify-center">
           <Image
             src="/images/products-banner.jpg"
@@ -254,27 +322,27 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        {/* Catalog Container */}
+        {/* Catalog Main Container strictly locked to max-w-[1638px] */}
         <section className="w-full py-10 sm:py-14">
           <div className="w-full max-w-[1638px] mx-auto px-6 sm:px-12">
-            {/* Section Subheading matching Screenshot media_1793808422351_3bb45b91.jpg */}
+            {/* Section Subheading matching Screenshot */}
             <h2 className="text-xl sm:text-2xl font-bold text-[#5a8ea7] tracking-tight mb-8">
               Find faster than you can search - with our Category
             </h2>
 
             {/* Two-Column Layout: Sidebar + Grid */}
             <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
-              {/* Left Sidebar: Categories Accordion */}
-              <aside className="w-full lg:w-64 xl:w-72 shrink-0 space-y-4">
-                <h3 className="text-lg sm:text-xl font-bold text-slate-900 pb-2">
+              {/* Left Sidebar: Categories Tree */}
+              <aside className="w-full lg:w-64 xl:w-72 shrink-0 space-y-3.5 select-none">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 pb-1">
                   Categories
                 </h3>
 
-                {/* 1. Factory Accordion */}
+                {/* 1. Factory Accordion Header */}
                 <div className="space-y-2">
                   <button
                     onClick={() => setIsFactoryOpen(!isFactoryOpen)}
-                    className="w-full bg-[#5a8ea7] text-white px-4 py-2.5 rounded-lg flex items-center justify-between font-bold text-sm shadow-sm transition-colors hover:bg-[#4f8097]"
+                    className="w-full bg-[#5a8ea7] text-white px-4 py-2.5 rounded-lg flex items-center justify-between font-bold text-sm shadow-sm transition-colors hover:bg-[#4d7d93]"
                   >
                     <span>Factory</span>
                     {isFactoryOpen ? (
@@ -284,13 +352,13 @@ export default function ProductsPage() {
                     )}
                   </button>
                   {isFactoryOpen && (
-                    <div className="pl-4 pr-2 py-2 space-y-2 bg-slate-50/60 rounded-lg text-sm text-slate-700">
+                    <div className="pl-4 pr-2 py-2 space-y-2.5 bg-slate-50/70 rounded-lg text-sm text-slate-700 border border-slate-100">
                       <label className="flex items-center gap-2.5 cursor-pointer hover:text-black">
                         <input
                           type="checkbox"
                           checked={selectedFactories.includes("Q Pail Limited")}
                           onChange={() => toggleFactory("Q Pail Limited")}
-                          className="w-4 h-4 rounded text-[#5a8ea7] focus:ring-[#5a8ea7]"
+                          className="w-4 h-4 rounded border-slate-300 text-[#5a8ea7] focus:ring-[#5a8ea7]"
                         />
                         <span>Q Pail Limited</span>
                       </label>
@@ -299,7 +367,7 @@ export default function ProductsPage() {
                           type="checkbox"
                           checked={selectedFactories.includes("Xclusive Can Limited")}
                           onChange={() => toggleFactory("Xclusive Can Limited")}
-                          className="w-4 h-4 rounded text-[#5a8ea7] focus:ring-[#5a8ea7]"
+                          className="w-4 h-4 rounded border-slate-300 text-[#5a8ea7] focus:ring-[#5a8ea7]"
                         />
                         <span>Xclusive Can Limited</span>
                       </label>
@@ -311,7 +379,7 @@ export default function ProductsPage() {
                 <div className="space-y-2">
                   <button
                     onClick={() => setIsGenreOpen(!isGenreOpen)}
-                    className="w-full bg-[#5a8ea7] text-white px-4 py-2.5 rounded-lg flex items-center justify-between font-bold text-sm shadow-sm transition-colors hover:bg-[#4f8097]"
+                    className="w-full bg-[#5a8ea7] text-white px-4 py-2.5 rounded-lg flex items-center justify-between font-bold text-sm shadow-sm transition-colors hover:bg-[#4d7d93]"
                   >
                     <span>Genre / Section</span>
                     {isGenreOpen ? (
@@ -320,38 +388,82 @@ export default function ProductsPage() {
                       <ChevronDown className="w-4 h-4" />
                     )}
                   </button>
+
                   {isGenreOpen && (
-                    <div className="pl-4 pr-2 py-2 space-y-2 bg-slate-50/60 rounded-lg text-sm text-slate-700">
-                      <button
-                        onClick={() => toggleGenre("Plastic")}
-                        className={`w-full flex items-center justify-between py-1 hover:text-black text-left ${
-                          selectedGenres.includes("Plastic") ? "font-bold text-[#5a8ea7]" : ""
-                        }`}
-                      >
-                        <span>Plastic</span>
-                        <ChevronDown className="w-3.5 h-3.5 -rotate-90 text-slate-400" />
-                      </button>
-                      <button
-                        onClick={() => toggleGenre("Metal")}
-                        className={`w-full flex items-center justify-between py-1 hover:text-black text-left ${
-                          selectedGenres.includes("Metal") ? "font-bold text-[#5a8ea7]" : ""
-                        }`}
-                      >
-                        <span>Metal</span>
-                        <ChevronDown className="w-3.5 h-3.5 -rotate-90 text-slate-400" />
-                      </button>
-                      <label className="flex items-center gap-2.5 pt-1 border-t border-slate-200 cursor-pointer hover:text-black">
+                    <div className="space-y-2 pl-2">
+                      {/* Nested Sub-Accordion: Plastic */}
+                      <div className="space-y-1.5">
+                        <button
+                          onClick={() => setIsPlasticOpen(!isPlasticOpen)}
+                          className="w-full bg-[#5a8ea7] text-white px-3.5 py-2 rounded-lg flex items-center justify-between font-bold text-xs shadow-sm transition-colors hover:bg-[#4d7d93]"
+                        >
+                          <span>Plastic</span>
+                          {isPlasticOpen ? (
+                            <ChevronUp className="w-3.5 h-3.5" />
+                          ) : (
+                            <ChevronDown className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                        {isPlasticOpen && (
+                          <div className="pl-3 pr-2 py-2 space-y-2 bg-slate-50/70 rounded-lg text-xs text-slate-700 border border-slate-100">
+                            {PLASTIC_SUB_CATEGORIES.map((cat) => (
+                              <label
+                                key={cat}
+                                className="flex items-center gap-2 cursor-pointer hover:text-black"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={selectedSubCategories.includes(cat)}
+                                  onChange={() => toggleSubCategory(cat)}
+                                  className="w-3.5 h-3.5 rounded border-slate-300 text-[#5a8ea7] focus:ring-[#5a8ea7]"
+                                />
+                                <span>{cat}</span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Nested Sub-Accordion: Metal */}
+                      <div className="space-y-1.5">
+                        <button
+                          onClick={() => setIsMetalOpen(!isMetalOpen)}
+                          className="w-full bg-[#5a8ea7] text-white px-3.5 py-2 rounded-lg flex items-center justify-between font-bold text-xs shadow-sm transition-colors hover:bg-[#4d7d93]"
+                        >
+                          <span>Metal</span>
+                          {isMetalOpen ? (
+                            <ChevronUp className="w-3.5 h-3.5" />
+                          ) : (
+                            <ChevronDown className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                        {isMetalOpen && (
+                          <div className="pl-3 pr-2 py-2 space-y-2 bg-slate-50/70 rounded-lg text-xs text-slate-700 border border-slate-100">
+                            {METAL_SUB_CATEGORIES.map((cat) => (
+                              <label
+                                key={cat}
+                                className="flex items-center gap-2 cursor-pointer hover:text-black"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={selectedSubCategories.includes(cat)}
+                                  onChange={() => toggleSubCategory(cat)}
+                                  className="w-3.5 h-3.5 rounded border-slate-300 text-[#5a8ea7] focus:ring-[#5a8ea7]"
+                                />
+                                <span>{cat}</span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Group Products Checkbox */}
+                      <label className="flex items-center gap-2.5 pt-2 pl-2 text-xs font-semibold text-slate-700 cursor-pointer hover:text-black">
                         <input
                           type="checkbox"
-                          checked={selectedGenres.length === 2}
-                          onChange={() => {
-                            if (selectedGenres.length === 2) {
-                              setSelectedGenres([]);
-                            } else {
-                              setSelectedGenres(["Plastic", "Metal"]);
-                            }
-                          }}
-                          className="w-4 h-4 rounded text-[#5a8ea7] focus:ring-[#5a8ea7]"
+                          checked={isGroupProductsChecked}
+                          onChange={(e) => setIsGroupProductsChecked(e.target.checked)}
+                          className="w-4 h-4 rounded border-slate-300 text-[#5a8ea7] focus:ring-[#5a8ea7]"
                         />
                         <span>Group Products</span>
                       </label>
@@ -360,10 +472,10 @@ export default function ProductsPage() {
                 </div>
 
                 {/* 3. Export Accordion */}
-                <div className="border-b border-slate-200 py-1">
+                <div className="space-y-2">
                   <button
                     onClick={() => setIsExportOpen(!isExportOpen)}
-                    className="w-full py-2.5 flex items-center justify-between font-bold text-sm text-[#5a8ea7] hover:text-[#416e83] transition-colors"
+                    className="w-full bg-[#5a8ea7] text-white px-4 py-2.5 rounded-lg flex items-center justify-between font-bold text-sm shadow-sm transition-colors hover:bg-[#4d7d93]"
                   >
                     <span>Export</span>
                     {isExportOpen ? (
@@ -373,17 +485,30 @@ export default function ProductsPage() {
                     )}
                   </button>
                   {isExportOpen && (
-                    <div className="pl-4 pb-2 text-xs text-slate-500">
-                      Export grade packaging compliant with FDA and international transit specs.
+                    <div className="pl-4 pr-2 py-2 space-y-2 bg-slate-50/70 rounded-lg text-xs text-slate-700 border border-slate-100">
+                      {EXPORT_TYPES.map((exp) => (
+                        <label
+                          key={exp}
+                          className="flex items-center gap-2 cursor-pointer hover:text-black"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedExports.includes(exp)}
+                            onChange={() => toggleExport(exp)}
+                            className="w-3.5 h-3.5 rounded border-slate-300 text-[#5a8ea7] focus:ring-[#5a8ea7]"
+                          />
+                          <span>{exp}</span>
+                        </label>
+                      ))}
                     </div>
                   )}
                 </div>
 
                 {/* 4. Shape Accordion */}
-                <div className="border-b border-slate-200 py-1">
+                <div className="space-y-2">
                   <button
                     onClick={() => setIsShapeOpen(!isShapeOpen)}
-                    className="w-full py-2.5 flex items-center justify-between font-bold text-sm text-[#5a8ea7] hover:text-[#416e83] transition-colors"
+                    className="w-full bg-[#5a8ea7] text-white px-4 py-2.5 rounded-lg flex items-center justify-between font-bold text-sm shadow-sm transition-colors hover:bg-[#4d7d93]"
                   >
                     <span>Shape</span>
                     {isShapeOpen ? (
@@ -393,22 +518,31 @@ export default function ProductsPage() {
                     )}
                   </button>
                   {isShapeOpen && (
-                    <div className="pl-4 pb-2 space-y-1 text-xs text-slate-600">
-                      <div>Round / Cylindrical</div>
-                      <div>Conical / Tub</div>
-                      <div>Rectangular Pail</div>
-                      <div>Square Jerry Can</div>
+                    <div className="pl-4 pr-2 py-2 space-y-2 bg-slate-50/70 rounded-lg text-xs text-slate-700 border border-slate-100">
+                      {SHAPE_TYPES.map((shape) => (
+                        <label
+                          key={shape}
+                          className="flex items-center gap-2 cursor-pointer hover:text-black"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedShapes.includes(shape)}
+                            onChange={() => toggleShape(shape)}
+                            className="w-3.5 h-3.5 rounded border-slate-300 text-[#5a8ea7] focus:ring-[#5a8ea7]"
+                          />
+                          <span>{shape}</span>
+                        </label>
+                      ))}
                     </div>
                   )}
                 </div>
 
-                {/* Download Catalog Link */}
-                <div className="pt-2">
+                {/* 5. Download Catalog Link */}
+                <div className="pt-3 pl-1">
                   <a
                     href="#download"
-                    className="text-[#5a8ea7] font-bold text-sm hover:underline inline-flex items-center gap-1.5"
+                    className="text-[#5a8ea7] font-bold text-sm hover:underline inline-flex items-center gap-1.5 transition-colors"
                   >
-                    <Download className="w-4 h-4" />
                     <span>Download Catalog</span>
                   </a>
                 </div>
@@ -426,9 +560,8 @@ export default function ProductsPage() {
                       setCurrentPage(1);
                     }}
                     placeholder="Search for product..."
-                    className="w-full px-4 py-2.5 sm:py-3 pl-10 rounded-lg sm:rounded-xl border border-slate-300 focus:border-[#5a8ea7] focus:ring-2 focus:ring-[#5a8ea7]/20 outline-none text-sm transition-all text-slate-900 bg-white"
+                    className="w-full px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-slate-300 focus:border-[#5a8ea7] focus:ring-2 focus:ring-[#5a8ea7]/20 outline-none text-sm transition-all text-slate-900 bg-white placeholder-slate-400"
                   />
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery("")}
@@ -440,33 +573,42 @@ export default function ProductsPage() {
                 </div>
 
                 {/* Active Filter Chips */}
-                {(selectedFactories.length > 0 || selectedGenres.length > 0 || searchQuery) && (
+                {(selectedFactories.length > 0 ||
+                  selectedSubCategories.length > 0 ||
+                  selectedShapes.length > 0 ||
+                  selectedExports.length > 0 ||
+                  searchQuery) && (
                   <div className="flex flex-wrap items-center gap-2 pt-1">
-                    <span className="text-xs text-slate-500 font-semibold">Active Filters:</span>
+                    <span className="text-xs text-slate-500 font-semibold">Active:</span>
                     {selectedFactories.map((f) => (
                       <span
                         key={f}
                         className="inline-flex items-center gap-1 text-xs bg-slate-100 text-slate-800 px-2.5 py-1 rounded-full font-medium"
                       >
                         {f}
-                        <button
-                          onClick={() => toggleFactory(f)}
-                          className="hover:text-red-500 font-bold ml-1"
-                        >
+                        <button onClick={() => toggleFactory(f)} className="hover:text-red-500 ml-1 font-bold">
                           &times;
                         </button>
                       </span>
                     ))}
-                    {selectedGenres.map((g) => (
+                    {selectedSubCategories.map((s) => (
                       <span
-                        key={g}
+                        key={s}
                         className="inline-flex items-center gap-1 text-xs bg-slate-100 text-slate-800 px-2.5 py-1 rounded-full font-medium"
                       >
-                        {g}
-                        <button
-                          onClick={() => toggleGenre(g)}
-                          className="hover:text-red-500 font-bold ml-1"
-                        >
+                        {s}
+                        <button onClick={() => toggleSubCategory(s)} className="hover:text-red-500 ml-1 font-bold">
+                          &times;
+                        </button>
+                      </span>
+                    ))}
+                    {selectedShapes.map((sh) => (
+                      <span
+                        key={sh}
+                        className="inline-flex items-center gap-1 text-xs bg-slate-100 text-slate-800 px-2.5 py-1 rounded-full font-medium"
+                      >
+                        {sh}
+                        <button onClick={() => toggleShape(sh)} className="hover:text-red-500 ml-1 font-bold">
                           &times;
                         </button>
                       </span>
@@ -474,7 +616,9 @@ export default function ProductsPage() {
                     <button
                       onClick={() => {
                         setSelectedFactories([]);
-                        setSelectedGenres([]);
+                        setSelectedSubCategories([]);
+                        setSelectedShapes([]);
+                        setSelectedExports([]);
                         setSearchQuery("");
                       }}
                       className="text-xs text-[#5a8ea7] hover:underline font-bold ml-2"
@@ -484,23 +628,32 @@ export default function ProductsPage() {
                   </div>
                 )}
 
-                {/* 3-Column Product Cards Grid matching Screenshot */}
+                {/* 3-Column Product Cards Grid with Quick View on Hover */}
                 {displayedProducts.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                     {displayedProducts.map((product) => (
                       <div
                         key={product.id}
-                        onClick={() => handleOpenRFQ(product)}
-                        className="group bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 p-4 flex flex-col cursor-pointer"
+                        className="group bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 p-4 flex flex-col"
                       >
-                        {/* Image Container */}
-                        <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-[#f4f7f9] mb-3.5 flex items-center justify-center p-2">
+                        {/* Image Container with Exact Quick View Overlay */}
+                        <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-[#eef3f6] mb-3.5 flex items-center justify-center p-2">
                           <Image
                             src={product.image}
                             alt={product.name}
                             fill
                             className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
                           />
+
+                          {/* Dark Hover Overlay matching Screenshot */}
+                          <div className="absolute inset-0 bg-[#1e252f]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
+                            <button
+                              onClick={() => setQuickViewProduct(product)}
+                              className="px-6 py-2.5 rounded-lg bg-[#5a8ea7] hover:bg-[#487388] text-white font-bold text-sm shadow-lg transition-transform active:scale-95"
+                            >
+                              Quick View
+                            </button>
+                          </div>
                         </div>
 
                         {/* Title */}
@@ -512,14 +665,6 @@ export default function ProductsPage() {
                         <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 mt-1.5 leading-relaxed flex-1">
                           {product.description}
                         </p>
-
-                        {/* Subtle Footer Tag */}
-                        <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400 font-semibold uppercase tracking-wider">
-                          <span>{product.factory}</span>
-                          <span className="text-[#5a8ea7] group-hover:translate-x-1 transition-transform">
-                            Quote &rarr;
-                          </span>
-                        </div>
                       </div>
                     ))}
                   </div>
@@ -529,7 +674,9 @@ export default function ProductsPage() {
                     <button
                       onClick={() => {
                         setSelectedFactories([]);
-                        setSelectedGenres([]);
+                        setSelectedSubCategories([]);
+                        setSelectedShapes([]);
+                        setSelectedExports([]);
                         setSearchQuery("");
                       }}
                       className="px-4 py-2 bg-[#5a8ea7] text-white text-xs font-bold rounded-lg hover:bg-[#487388]"
@@ -540,10 +687,10 @@ export default function ProductsPage() {
                 )}
 
                 {/* Pagination matching Screenshot */}
-                <div className="pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-600 font-medium">
+                <div className="pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-600 font-medium">
                   {/* Left: Item Counter */}
                   <div>
-                    1-{displayedProducts.length} of {filteredProducts.length > 12 ? "300" : filteredProducts.length} item
+                    1-{displayedProducts.length} of 300 items
                   </div>
 
                   {/* Center: Page Numbers */}
@@ -571,7 +718,7 @@ export default function ProductsPage() {
                     <span className="px-1 text-slate-400">...</span>
                     <button
                       onClick={() => setCurrentPage(25)}
-                      className={`w-7 h-7 rounded text-xs font-bold hover:bg-slate-100 text-slate-700`}
+                      className="w-7 h-7 rounded text-xs font-bold hover:bg-slate-100 text-slate-700"
                     >
                       25
                     </button>
@@ -586,8 +733,9 @@ export default function ProductsPage() {
 
                   {/* Right: Per page & Go to Page */}
                   <div className="flex items-center gap-3">
-                    <div className="border border-slate-200 rounded px-2 py-1 text-xs bg-white">
-                      12 / page
+                    <div className="border border-slate-200 rounded-lg px-2.5 py-1 text-xs bg-white shadow-sm flex items-center gap-1">
+                      <span>12 / page</span>
+                      <ChevronDown className="w-3 h-3 text-slate-500" />
                     </div>
                     <div className="flex items-center gap-1.5 text-xs">
                       <span>Go to</span>
@@ -609,7 +757,83 @@ export default function ProductsPage() {
       {/* Global Footer */}
       <Footer />
 
-      {/* RFQ Drawer for direct quotes */}
+      {/* Quick View Product Modal */}
+      {quickViewProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-2xl bg-white rounded-2xl overflow-hidden shadow-2xl p-6 border border-slate-100">
+            <button
+              onClick={() => setQuickViewProduct(null)}
+              className="absolute right-4 top-4 p-1.5 rounded-full text-slate-400 hover:text-black hover:bg-slate-100 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
+              {/* Product Image */}
+              <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-[#f4f7f9] p-4 flex items-center justify-center">
+                <Image
+                  src={quickViewProduct.image}
+                  alt={quickViewProduct.name}
+                  fill
+                  className="object-contain p-4"
+                />
+              </div>
+
+              {/* Product Info */}
+              <div className="space-y-4">
+                <div>
+                  <span className="text-[11px] font-bold text-[#5a8ea7] uppercase tracking-wider">
+                    {quickViewProduct.factory} &bull; {quickViewProduct.genre}
+                  </span>
+                  <h3 className="text-xl font-black text-slate-900 mt-1">
+                    {quickViewProduct.name}
+                  </h3>
+                </div>
+
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  {quickViewProduct.description}
+                </p>
+
+                <div className="space-y-2 text-xs text-slate-700 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                  <div className="flex justify-between">
+                    <span className="font-semibold text-slate-500">Material:</span>
+                    <span>{quickViewProduct.material || "HDPE / PET"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold text-slate-500">Capacity:</span>
+                    <span>{quickViewProduct.capacity || "Custom"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold text-slate-500">Shape:</span>
+                    <span>{quickViewProduct.shape}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold text-slate-500">Category:</span>
+                    <span>{quickViewProduct.subCategory}</span>
+                  </div>
+                </div>
+
+                <div className="pt-2 flex gap-3">
+                  <button
+                    onClick={() => handleOpenRFQ(quickViewProduct)}
+                    className="flex-1 py-3 rounded-xl bg-[#5a8ea7] hover:bg-[#487388] text-white font-bold text-sm shadow-md transition-all active:scale-95"
+                  >
+                    Request Quotation
+                  </button>
+                  <button
+                    onClick={() => setQuickViewProduct(null)}
+                    className="px-4 py-3 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition-colors"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* RFQ Drawer */}
       <RFQDrawer
         isOpen={isRFQOpen}
         onClose={() => {
@@ -621,4 +845,3 @@ export default function ProductsPage() {
     </div>
   );
 }
-
