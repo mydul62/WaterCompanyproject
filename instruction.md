@@ -307,3 +307,4 @@ The admin dashboard is a core requirement of this platform. It allows client man
 - **Zero Console Errors:** Clean hydration, no layout shifts, responsive image sizing.
 - **Security:** Sanitized inputs, CORS whitelist, parameter validation with Zod.
 - **Maintainability:** Clear code comments, modular file layout, and documented environment variables.
+

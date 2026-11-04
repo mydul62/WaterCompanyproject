@@ -451,3 +451,4 @@ export const TRUSTED_CLIENT_BRANDS = [
   { name: "Red Cow", category: "Dairy & Food" },
   { name: "Autoprime", category: "Automotive Coatings" },
 ];
+

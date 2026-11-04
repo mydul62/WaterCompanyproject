@@ -158,3 +158,4 @@ model CareerApplication {
   createdAt      DateTime @default(now())
 }
 ```
+

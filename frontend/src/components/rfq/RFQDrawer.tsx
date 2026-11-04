@@ -256,3 +256,4 @@ export default function RFQDrawer({ isOpen, onClose, initialProduct }: RFQDrawer
     </div>
   );
 }
+

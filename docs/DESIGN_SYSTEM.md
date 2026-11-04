@@ -54,3 +54,4 @@ A bold, modern, precision-engineered industrial digital design system for **Xclu
 - **Frosted Glass Cards:** `backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800`
 - **Hover Micro-interaction:** `-translate-y-1 transition-all duration-300 shadow-lg shadow-slate-900/5`
 - **Technical Spec Badges:** Pill-shaped badges with subtle background tint and high-contrast text (`bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300`).
+
