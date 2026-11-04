@@ -2,183 +2,176 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
-  const [activeMenu, setActiveMenu] = useState<string | null>("ABOUT US");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeHover, setActiveHover] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
+      setIsScrolled(window.scrollY > 60);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navItems = [
-    { name: "ABOUT US", id: "about" },
-    { name: "SUSTAINABILITY", id: "sustainability" },
-    { name: "FIND OUR PRODUCT", id: "product", href: "#products" },
-    { name: "KNOWLEDGE HUB", id: "knowledge" },
-    { name: "ACHIEVEMENTS", id: "achievements" },
-    { name: "MEDIA AND CONTACTS", id: "media", href: "#media" },
+    {
+      label: "About Us",
+      href: "#about",
+      sub: [
+        { label: "Our Business", href: "#about" },
+        { label: "Our Story", href: "#about" },
+        { label: "Brand", href: "#overview" },
+        { label: "Career", href: "#explore" },
+      ],
+    },
+    {
+      label: "Sustainability",
+      href: "#overview",
+      sub: [
+        { label: "Sustainability", href: "#overview" },
+        { label: "R & D", href: "#supply-chain" },
+        { label: "Plant", href: "#about" },
+      ],
+    },
+    {
+      label: "Find Our Product",
+      href: "#products",
+    },
+    {
+      label: "Knowledge Hub",
+      href: "#explore",
+      sub: [
+        { label: "FAQs", href: "#footer" },
+        { label: "Case Studies", href: "#explore" },
+        { label: "Blog", href: "#media" },
+      ],
+    },
+    {
+      label: "Achievements",
+      href: "#footer",
+      sub: [
+        { label: "Awards & Certificates", href: "#footer" },
+        { label: "Brands We Work With", href: "#explore" },
+      ],
+    },
+    {
+      label: "Media and Contacts",
+      href: "#media",
+    },
   ];
-
-  const subMenus: Record<string, { label: string; href: string }[]> = {
-    "ABOUT US": [
-      { label: "Our Business", href: "#about" },
-      { label: "Our Story", href: "#about" },
-      { label: "Q Pail", href: "#products" },
-      { label: "Xclusive", href: "#overview" },
-      { label: "Career", href: "#explore" },
-    ],
-    SUSTAINABILITY: [
-      { label: "Sustainability", href: "#overview" },
-      { label: "R & D", href: "#supply-chain" },
-      { label: "Tool Room", href: "#explore" },
-    ],
-    "KNOWLEDGE HUB": [
-      { label: "FAQs", href: "#footer" },
-      { label: "Case Studies", href: "#explore" },
-      { label: "Blog", href: "#media" },
-    ],
-    ACHIEVEMENTS: [
-      { label: "Awards & Certificates", href: "#footer" },
-      { label: "Brands We Work With", href: "#explore" },
-    ],
-  };
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200 py-3"
-          : "pt-4 pb-2"
+        isScrolled ? "p-0" : "p-[10px] sm:px-[40px] sm:py-[18px]"
       }`}
     >
-      <div className="w-full max-w-[1480px] mx-auto px-4 sm:px-8">
-        {/* Main Floating / Fixed Bar */}
-        <div
-          className={`relative transition-all duration-300 ${
-            isScrolled
-              ? "flex items-center justify-between"
-              : "rounded-2xl bg-[#989288]/85 backdrop-blur-md border border-white/20 shadow-lg px-6 py-3 flex items-center justify-between"
-          }`}
+      <div
+        className={`relative flex items-center justify-between transition-all duration-300 ${
+          isScrolled
+            ? "h-[70px] px-6 sm:px-10 rounded-none bg-white text-[#1a1a1a] shadow-[0_4px_18px_rgba(0,0,0,0.12)] border-b border-slate-200"
+            : "h-[78px] px-6 sm:px-8 rounded-full bg-white/25 backdrop-blur-[14px] border border-white/35 text-white shadow-lg"
+        }`}
+      >
+        {/* Logo: Droplet Icon + AquaPure matching snippet */}
+        <Link
+          href="#top"
+          className="flex items-center gap-2.5 font-bold text-2xl tracking-tight transition-colors"
         >
-          {/* Logo with Exact Cropped High-Res Graphic */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="relative h-10 sm:h-12 w-28 sm:w-36">
-              <Image
-                src="/cropped/xclusive-logo.png"
-                alt="Xclusive Can Limited Logo"
-                fill
-                className="object-contain object-left"
-                priority
-              />
-            </div>
-          </Link>
+          <span className="dr" />
+          <span
+            className={
+              isScrolled
+                ? "text-[#0b2a8a] font-extrabold"
+                : "text-white font-extrabold drop-shadow-sm"
+            }
+          >
+            AquaPure
+          </span>
+        </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-xs font-bold tracking-wider">
-            {navItems.map((item) => (
-              <button
-                key={item.name}
-                onClick={() => {
-                  if (subMenus[item.name]) {
-                    setActiveMenu(activeMenu === item.name ? null : item.name);
-                  } else if (item.href) {
-                    window.location.hash = item.href;
-                    setActiveMenu(null);
-                  }
-                }}
-                onMouseEnter={() => {
-                  if (subMenus[item.name]) {
-                    setActiveMenu(item.name);
-                  }
-                }}
-                className={`transition-colors py-1 ${
-                  isScrolled
-                    ? activeMenu === item.name
-                      ? "text-sky-600 font-extrabold"
-                      : "text-slate-700 hover:text-black"
-                    : activeMenu === item.name
-                    ? "text-[#93c5fd]"
-                    : "text-white hover:text-sky-200"
+        {/* Desktop Nav Links */}
+        <ul className="hidden lg:flex items-center gap-8 xl:gap-11 list-none text-[13px] uppercase font-semibold tracking-wider">
+          {navItems.map((item, idx) => (
+            <li
+              key={idx}
+              className="relative py-7 group"
+              onMouseEnter={() => item.sub && setActiveHover(item.label)}
+              onMouseLeave={() => setActiveHover(null)}
+            >
+              <Link
+                href={item.href}
+                className={`transition-colors hover:text-[#4aa3d8] ${
+                  isScrolled ? "text-slate-800" : "text-white"
                 }`}
               >
-                {item.name}
-              </button>
-            ))}
-          </nav>
-
-          {/* Mobile Hamburger Toggle */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`lg:hidden p-2 rounded-lg transition-colors ${
-              isScrolled ? "text-slate-800 hover:bg-slate-100" : "text-white hover:bg-black/20"
-            }`}
-            aria-label="Toggle navigation menu"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-
-        {/* Submenu Bar (Attached Directly Under Header - Matches Screenshots 2, 3, 4, 5) */}
-        {!isScrolled && activeMenu && subMenus[activeMenu] && (
-          <div className="mt-1.5 rounded-2xl bg-[#34373d]/95 backdrop-blur-md text-white py-2.5 px-6 shadow-xl flex items-center justify-around text-xs font-semibold tracking-wide border border-white/10 animate-in fade-in slide-in-from-top-1 duration-200">
-            {subMenus[activeMenu].map((sub, idx) => (
-              <Link
-                key={idx}
-                href={sub.href}
-                className="hover:text-[#93c5fd] transition-colors py-1 px-3 rounded-lg hover:bg-white/5"
-              >
-                {sub.label}
+                {item.label}
               </Link>
-            ))}
-          </div>
-        )}
 
-        {/* Mobile Dropdown Menu */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden mt-2 p-4 rounded-2xl bg-white shadow-2xl border border-slate-200 text-slate-800 space-y-3">
-            {navItems.map((item) => (
-              <div key={item.name} className="border-b border-slate-100 pb-2">
-                <button
-                  onClick={() => {
-                    if (subMenus[item.name]) {
-                      setActiveMenu(activeMenu === item.name ? null : item.name);
-                    } else if (item.href) {
-                      window.location.hash = item.href;
-                      setMobileMenuOpen(false);
-                    }
-                  }}
-                  className="w-full text-left font-bold text-xs uppercase tracking-wider text-slate-900 py-1 flex items-center justify-between"
-                >
-                  <span>{item.name}</span>
-                  {subMenus[item.name] && <span className="text-slate-400 text-xs">▼</span>}
-                </button>
-                {activeMenu === item.name && subMenus[item.name] && (
-                  <div className="pl-3 mt-1.5 space-y-1.5 border-l-2 border-sky-400">
-                    {subMenus[item.name].map((sub, sIdx) => (
-                      <Link
-                        key={sIdx}
-                        href={sub.href}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="block text-xs font-medium text-slate-600 hover:text-sky-600 py-1"
-                      >
-                        {sub.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+              {/* Submenu Bar (matches exact style in snippet) */}
+              {item.sub && activeHover === item.label && (
+                <div className="absolute left-1/2 -translate-x-1/2 top-full min-w-[500px] bg-[rgba(40,46,52,0.92)] backdrop-blur-md text-white rounded-b-2xl py-4 px-8 flex justify-center gap-8 text-[14px] font-medium shadow-2xl border border-white/10 animate-in fade-in slide-in-from-top-1 duration-200">
+                  {item.sub.map((s, sIdx) => (
+                    <Link
+                      key={sIdx}
+                      href={s.href}
+                      className="hover:text-[#7fd8f0] transition-colors whitespace-nowrap"
+                    >
+                      {s.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        {/* Mobile Hamburger Toggle */}
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className={`lg:hidden p-2 text-2xl transition-colors ${
+            isScrolled ? "text-slate-900" : "text-white"
+          }`}
+          aria-label="Toggle menu"
+        >
+          {mobileOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
+        </button>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {mobileOpen && (
+        <div className="lg:hidden mt-2 p-5 rounded-2xl bg-[rgba(30,36,42,0.96)] backdrop-blur-xl text-white shadow-2xl border border-white/15 space-y-3">
+          {navItems.map((item, idx) => (
+            <div key={idx} className="border-b border-white/10 pb-2">
+              <Link
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
+                className="block text-sm font-bold uppercase tracking-wider hover:text-[#7fd8f0] py-1"
+              >
+                {item.label}
+              </Link>
+              {item.sub && (
+                <div className="pl-4 mt-1 space-y-1 border-l border-white/20">
+                  {item.sub.map((s, sIdx) => (
+                    <Link
+                      key={sIdx}
+                      href={s.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="block text-xs text-slate-300 hover:text-[#7fd8f0] py-0.5"
+                    >
+                      {s.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </header>
   );
 }
