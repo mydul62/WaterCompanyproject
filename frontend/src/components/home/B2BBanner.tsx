@@ -9,28 +9,44 @@ interface B2BBannerProps {
 
 export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
   return (
-    <section id="overview" className="py-16 sm:py-24 bg-white">
-      <div className="max-w-[1480px] mx-auto px-6 sm:px-12 space-y-16 sm:space-y-20">
-        {/* Exact Floating CTA Banner Card matching Screenshot 2026-11-04 130341.png */}
-        <div className="flex justify-center">
-          <div className="relative w-full max-w-[1420px] aspect-[1417/223] shadow-md rounded-2xl overflow-hidden">
+    <section id="overview" className="w-full bg-white py-16 sm:py-24">
+      <div className="w-full max-w-[1480px] mx-auto px-6 sm:px-12 space-y-16 sm:space-y-20">
+        {/* Exact Floating Sky-Blue CTA Banner Card matching Screenshot 2026-11-04 130341.png */}
+        <div className="w-full rounded-2xl sm:rounded-3xl bg-gradient-to-r from-white via-[#eaf5fc] to-[#bfe6f9] border border-sky-100 p-6 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.06)] flex flex-col md:flex-row items-center justify-between gap-6">
+          {/* Left: Exact Xclusive Logo */}
+          <div className="relative h-12 sm:h-14 w-32 sm:w-40 shrink-0">
             <Image
-              src="/cropped/cta-banner-exact.png"
-              alt="Packaging Solutions Always Made Right - Contact Us"
+              src="/cropped/xclusive-logo.png"
+              alt="Xclusive Can Limited"
               fill
-              className="object-contain"
+              className="object-contain object-left"
               priority
             />
-            {/* Clickable Transparent Trigger over the 'Contact Us' button area */}
+          </div>
+
+          {/* Center: Title & Description */}
+          <div className="flex-1 text-center md:text-left space-y-1 sm:space-y-2">
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-black tracking-tight">
+              Packaging Solutions Always Made Right&reg;
+            </h3>
+            <p className="text-xs sm:text-sm lg:text-base text-slate-800 leading-relaxed max-w-3xl">
+              With a diverse stock bottle portfolio and an innovative design team working to produce creative packaging
+              solutions, we can help you find the perfect solution.
+            </p>
+          </div>
+
+          {/* Right: Contact Us Button */}
+          <div className="shrink-0">
             <button
               onClick={onOpenRFQ}
-              className="absolute right-[3%] sm:right-[4%] top-[35%] bottom-[35%] w-[18%] sm:w-[14%] rounded-lg cursor-pointer hover:bg-black/5 active:bg-black/10 transition-colors"
-              aria-label="Contact Us"
-            />
+              className="px-8 py-3 rounded-xl border-2 border-black bg-white text-black font-bold text-sm sm:text-base hover:bg-black hover:text-white transition-all shadow-sm active:scale-95"
+            >
+              Contact Us
+            </button>
           </div>
         </div>
 
-        {/* Leading Packaging Company in Bangladesh (Screenshot 2026-11-04 130341.png) */}
+        {/* Leading Packaging Company in Bangladesh (Screenshot 2026-11-04 130341.png & 130347.png) */}
         <div className="space-y-14">
           {/* Main Statement */}
           <div className="text-center max-w-4xl mx-auto space-y-4">

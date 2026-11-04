@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { X } from "lucide-react";
+import { X, ZoomIn } from "lucide-react";
 
 export default function PressStoriesSection() {
   const [selectedStory, setSelectedStory] = useState<{ title: string; image: string } | null>(null);
@@ -20,7 +20,7 @@ export default function PressStoriesSection() {
     },
     {
       id: "story-3",
-      title: "চাঁটগাঁইয়া উদ্যোক্তার কাঁদতে কাঁদতে চট্টগ্রাম ছাড়ার গল্প",
+      title: "চাাঁটগাঁইয়া উদ্যোক্তার কাঁদতে কাঁদতে চট্টগ্রাম ছাড়ার গল্প",
       image: "/cropped/news-card-3.png",
     },
     {
@@ -31,8 +31,8 @@ export default function PressStoriesSection() {
   ];
 
   return (
-    <section id="media" className="py-16 sm:py-24 bg-white">
-      <div className="max-w-[1480px] mx-auto px-6 sm:px-12">
+    <section id="media" className="w-full bg-white py-16 sm:py-24">
+      <div className="w-full max-w-[1480px] mx-auto px-6 sm:px-12">
         {/* Section Header matching Screenshot 2026-11-04 130333.png */}
         <div className="text-center space-y-2 mb-10 sm:mb-14">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-black tracking-tight">
@@ -41,7 +41,7 @@ export default function PressStoriesSection() {
           <div>
             <a
               href="#media"
-              className="text-slate-600 hover:text-black font-medium text-sm sm:text-base inline-block hover:underline"
+              className="text-slate-500 hover:text-black font-medium text-sm sm:text-base inline-block hover:underline"
             >
               View All News
             </a>
@@ -54,14 +54,19 @@ export default function PressStoriesSection() {
             <div
               key={story.id}
               onClick={() => setSelectedStory({ title: story.title, image: story.image })}
-              className="group cursor-pointer rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative h-52 sm:h-64"
+              className="group cursor-pointer rounded-2xl overflow-hidden bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative h-56 sm:h-64 border border-slate-100"
             >
               <Image
                 src={story.image}
                 alt={story.title}
                 fill
-                className="object-contain"
+                className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
               />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                <span className="p-2.5 rounded-full bg-white/90 text-black shadow-md">
+                  <ZoomIn className="w-5 h-5" />
+                </span>
+              </div>
             </div>
           ))}
         </div>
@@ -69,18 +74,19 @@ export default function PressStoriesSection() {
 
       {/* Reader Zoom Modal */}
       {selectedStory && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-4xl bg-white rounded-2xl overflow-hidden shadow-2xl p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-4xl bg-white rounded-2xl overflow-hidden shadow-2xl p-4 sm:p-6">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-              <h3 className="text-base font-bold text-black">{selectedStory.title}</h3>
+              <h3 className="text-base sm:text-lg font-bold text-black">{selectedStory.title}</h3>
               <button
                 onClick={() => setSelectedStory(null)}
-                className="p-1 rounded text-slate-500 hover:text-black"
+                className="p-1 rounded text-slate-500 hover:text-black hover:bg-slate-100 transition-colors"
+                aria-label="Close reader modal"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="relative aspect-4/3 w-full mt-3">
+            <div className="relative aspect-4/3 w-full mt-4">
               <Image
                 src={selectedStory.image}
                 alt={selectedStory.title}

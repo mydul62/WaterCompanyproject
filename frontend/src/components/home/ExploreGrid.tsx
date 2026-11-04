@@ -73,8 +73,8 @@ const CARDS_DATA = [
 
 export default function ExploreGrid() {
   return (
-    <section id="explore" className="py-16 sm:py-24 bg-white">
-      <div className="max-w-[1480px] mx-auto px-6 sm:px-12">
+    <section id="explore" className="w-full bg-white py-16 sm:py-24 border-b border-slate-100">
+      <div className="w-full max-w-[1480px] mx-auto px-6 sm:px-12">
         {/* Section Header matching Screenshot 2026-11-04 130357.png */}
         <div className="text-center space-y-3 mb-12 sm:mb-16 max-w-4xl mx-auto">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-black tracking-tight">
@@ -92,9 +92,9 @@ export default function ExploreGrid() {
             <Link
               key={idx}
               href={card.href}
-              className="p-6 sm:p-7 rounded-2xl bg-white border border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md transition-shadow space-y-2 block"
+              className="p-6 sm:p-7 rounded-2xl bg-white border border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-md hover:border-slate-300 transition-all space-y-2 block group"
             >
-              <h3 className="text-lg sm:text-xl font-bold text-black tracking-tight">
+              <h3 className="text-lg sm:text-xl font-bold text-black tracking-tight group-hover:text-sky-700 transition-colors">
                 {card.title}
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
