@@ -18,6 +18,7 @@ async function build() {
 
   // Explicitly ensure critical classes are included
   const essentialCandidates = [
+    'max-w-[1638px]',
     'max-w-[1480px]',
     'w-[54%]',
     'w-[55%]',
@@ -246,7 +247,7 @@ async function build() {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 1480px;
+  max-width: 1638px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 24px;
@@ -939,7 +940,7 @@ async function build() {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 1480px;
+  max-width: 1638px;
   margin: auto;
   padding: 0 24px;
 }

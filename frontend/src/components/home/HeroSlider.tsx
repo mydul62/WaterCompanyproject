@@ -136,7 +136,7 @@ export default function HeroSlider() {
               )}
 
               {/* Slide Content Overlay */}
-              <div className="relative z-20 w-full h-full max-w-[1480px] mx-auto px-6 sm:px-12 flex items-center">
+              <div className="relative z-20 w-full h-full max-w-[1638px] mx-auto px-6 sm:px-12 flex items-center">
                 <div
                   className={`max-w-[640px] drop-shadow-[0_3px_12px_rgba(0,0,0,0.25)] transition-all duration-700 ${
                     isActive

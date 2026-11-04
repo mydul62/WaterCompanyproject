@@ -256,7 +256,7 @@ export default function ProductsPage() {
 
         {/* Catalog Container */}
         <section className="w-full py-10 sm:py-14">
-          <div className="w-full max-w-[1480px] mx-auto px-6 sm:px-12">
+          <div className="w-full max-w-[1638px] mx-auto px-6 sm:px-12">
             {/* Section Subheading matching Screenshot media_1793808422351_3bb45b91.jpg */}
             <h2 className="text-xl sm:text-2xl font-bold text-[#5a8ea7] tracking-tight mb-8">
               Find faster than you can search - with our Category

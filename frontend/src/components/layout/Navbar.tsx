@@ -73,7 +73,7 @@ export default function Navbar() {
       }`}
     >
       <div
-        className={`relative flex items-center justify-between transition-all duration-300 ${
+        className={`relative flex items-center justify-between transition-all duration-300 max-w-[1638px] mx-auto ${
           isScrolled
             ? "h-[70px] px-6 sm:px-10 rounded-none bg-white text-[#1a1a1a] shadow-[0_4px_18px_rgba(0,0,0,0.12)] border-b border-slate-200"
             : "h-[78px] px-6 sm:px-8 rounded-full bg-white/25 backdrop-blur-[14px] border border-white/35 text-white shadow-lg"

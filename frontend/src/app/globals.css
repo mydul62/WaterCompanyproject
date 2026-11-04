@@ -667,6 +667,9 @@
   .max-w-\[1480px\] {
     max-width: 1480px;
   }
+  .max-w-\[1638px\] {
+    max-width: 1638px;
+  }
   .max-w-full {
     max-width: 100%;
   }
@@ -2710,7 +2713,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 1480px;
+  max-width: 1638px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 24px;
@@ -3403,7 +3406,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 1480px;
+  max-width: 1638px;
   margin: auto;
   padding: 0 24px;
 }

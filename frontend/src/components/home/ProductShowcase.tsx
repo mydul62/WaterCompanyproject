@@ -17,7 +17,7 @@ export default function ProductShowcase() {
 
   return (
     <section id="products" className="w-full bg-white py-16 sm:py-24">
-      <div className="w-full max-w-[1480px] mx-auto px-6 sm:px-12">
+      <div className="w-full max-w-[1638px] mx-auto px-6 sm:px-12">
         {/* Section Header matching Screenshot 2026-11-04 130325.png */}
         <div className="text-center space-y-2 mb-10 sm:mb-14">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-black tracking-tight">

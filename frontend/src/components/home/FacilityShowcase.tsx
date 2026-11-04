@@ -20,8 +20,8 @@ export default function FacilityShowcase() {
         />
       </div>
 
-      {/* Main Content Container strictly constrained to max-w-[1480px] */}
-      <div className="relative z-10 w-full max-w-[1480px] mx-auto px-6 sm:px-12">
+      {/* Main Content Container strictly constrained to max-w-[1638px] */}
+      <div className="relative z-10 w-full max-w-[1638px] mx-auto px-6 sm:px-12">
         <div className="max-w-[540px] space-y-6 sm:space-y-7">
           {/* Heading with Solid Black Underline exactly matching text width */}
           <div>

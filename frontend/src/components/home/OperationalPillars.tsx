@@ -17,8 +17,8 @@ export default function OperationalPillars() {
         />
       </div>
 
-      {/* Main Content Container strictly constrained to max-w-[1480px] */}
-      <div className="relative z-10 w-full max-w-[1480px] mx-auto px-6 sm:px-12 flex justify-end">
+      {/* Main Content Container strictly constrained to max-w-[1638px] */}
+      <div className="relative z-10 w-full max-w-[1638px] mx-auto px-6 sm:px-12 flex justify-end">
         <div className="w-full lg:w-[54%] xl:w-[50%] space-y-8 pl-0 lg:pl-10">
           <div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-black tracking-tight leading-tight">
