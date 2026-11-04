@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { X, ZoomIn } from "lucide-react";
 
 export default function ProductShowcase() {
@@ -61,6 +62,17 @@ export default function ProductShowcase() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Link to Dedicated Products Catalog Page */}
+        <div className="mt-12 text-center">
+          <Link
+            href="/products"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#5a8ea7] text-white font-bold text-sm sm:text-base hover:bg-[#487388] transition-all shadow-md hover:shadow-lg active:scale-95"
+          >
+            <span>View Full Products Catalog (300+ Items)</span>
+            <span className="text-lg">&rarr;</span>
+          </Link>
         </div>
       </div>
 
