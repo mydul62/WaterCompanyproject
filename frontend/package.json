@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/build-tailwind.mjs",
     "dev": "next dev",
-    "build": "next build --webpack",
+    "build:css": "node scripts/build-tailwind.mjs",
+    "prebuild": "node scripts/build-tailwind.mjs",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
