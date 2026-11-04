@@ -12,7 +12,7 @@ export default function Footer() {
   return (
     <footer id="footer" className="w-full bg-white border-t border-slate-200 relative">
       {/* 4-Column Main Content matching Screenshot 2026-11-04 130404.png */}
-      <div className="max-w-[1400px] mx-auto px-6 sm:px-12 py-16 sm:py-20">
+      <div className="max-w-[1480px] mx-auto px-6 sm:px-12 py-16 sm:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 text-sm">
           {/* Column 1: Logo & Company Contact (lg:col-span-4) */}
           <div className="lg:col-span-4 space-y-4">
@@ -191,7 +191,7 @@ export default function Footer() {
 
       {/* Bottom Charcoal Bar matching Screenshot 2026-11-04 130404.png */}
       <div className="w-full bg-[#1c1c1c] text-white py-4 px-6 sm:px-12 text-xs">
-        <div className="max-w-[1400px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-[1480px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-slate-300">
             Copyright &copy; 1992 - 2026 Xclusive Can Limited.
           </p>

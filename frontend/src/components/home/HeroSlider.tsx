@@ -67,7 +67,7 @@ export default function HeroSlider() {
       </div>
 
       {/* Hero Content Overlay matching Screenshot 2026-11-04 130237.png */}
-      <div className="relative z-10 w-full h-full max-w-[1400px] mx-auto px-6 sm:px-12 flex flex-col justify-between pt-36 sm:pt-44 pb-8 pointer-events-none">
+      <div className="relative z-10 w-full h-full max-w-[1480px] mx-auto px-6 sm:px-12 flex flex-col justify-between pt-36 sm:pt-44 pb-8 pointer-events-none">
         {/* Left Side: Exact Typography ("Beyond packaging / we Drive Innovation") */}
         <div className="flex-1 flex items-center">
           <div className="space-y-1 sm:space-y-2 pointer-events-auto max-w-2xl pl-2 sm:pl-8">

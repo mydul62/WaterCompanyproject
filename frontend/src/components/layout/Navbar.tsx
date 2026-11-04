@@ -42,7 +42,7 @@ export default function Navbar() {
   };
 
   return (
-    <div className="absolute top-4 left-0 right-0 z-50 px-4 sm:px-8 max-w-[1400px] mx-auto pointer-events-auto">
+    <div className="absolute top-4 left-0 right-0 z-50 px-4 sm:px-8 max-w-[1480px] mx-auto pointer-events-auto">
       {/* Main Floating Rounded Header Bar (Matches Screenshots 1-5 exactly) */}
       <div className="relative rounded-2xl bg-[#aba59c]/80 backdrop-blur-md border border-white/20 shadow-lg px-6 py-4 flex items-center justify-between">
         {/* Logo matching the original Xclusive Can Limited branding */}

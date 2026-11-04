@@ -10,7 +10,7 @@ interface B2BBannerProps {
 export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
   return (
     <section id="overview" className="py-16 sm:py-24 bg-white border-t border-slate-100">
-      <div className="max-w-[1400px] mx-auto px-6 sm:px-12 space-y-16 sm:space-y-20">
+      <div className="max-w-[1480px] mx-auto px-6 sm:px-12 space-y-16 sm:space-y-20">
         {/* Floating Call to Action Card matching Screenshot 2026-11-04 130341.png */}
         <div className="rounded-2xl bg-gradient-to-r from-white via-[#e8f5fb] to-[#c7e8f6] p-6 sm:p-10 border border-slate-200/80 shadow-md">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8">

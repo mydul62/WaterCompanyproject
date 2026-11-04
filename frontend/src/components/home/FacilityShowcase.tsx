@@ -6,7 +6,7 @@ import Image from "next/image";
 export default function FacilityShowcase() {
   return (
     <section id="about" className="relative w-full bg-white overflow-hidden py-12 lg:py-16">
-      <div className="max-w-[1400px] mx-auto px-6 sm:px-12">
+      <div className="max-w-[1480px] mx-auto px-6 sm:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[420px]">
           {/* Left Column: Text Content matching Screenshot 2026-11-04 130311.png */}
           <div className="lg:col-span-5 space-y-6 z-10">
