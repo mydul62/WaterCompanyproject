@@ -2,7 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import Image from "next/image";
+import { ChevronUp } from "lucide-react";
 
 export default function Footer() {
   const scrollToTop = () => {
@@ -153,37 +154,16 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 4: Certificates (lg:col-span-3) */}
+          {/* Column 4: Certificates (lg:col-span-3) - Exact Cropped Seals from Screenshot */}
           <div className="lg:col-span-3 space-y-4">
             <h4 className="text-base font-black text-black tracking-tight">Certificates</h4>
-            <div className="grid grid-cols-2 gap-4">
-              {/* LEED Platinum Seal */}
-              <div className="flex flex-col items-center justify-center p-2 rounded-full border-2 border-slate-400 w-20 h-20 text-center mx-auto">
-                <span className="text-[8px] uppercase tracking-wider text-slate-600 font-bold">LEED</span>
-                <span className="text-[9px] font-black text-slate-900 leading-none">PLATINUM</span>
-              </div>
-
-              {/* Intertek ISO 9001:2015 Seal */}
-              <div className="flex flex-col items-center justify-center p-2 text-center mx-auto">
-                <div className="w-10 h-10 rounded-full border border-slate-600 flex items-center justify-center text-[8px] font-bold">
-                  intertek
-                </div>
-                <span className="text-[9px] font-bold text-slate-800 mt-1">ISO 9001:2015</span>
-              </div>
-
-              {/* Intertek FSSC 22000 Seal */}
-              <div className="flex flex-col items-center justify-center p-2 text-center mx-auto">
-                <div className="w-10 h-10 rounded-full border border-slate-600 flex items-center justify-center text-[8px] font-bold">
-                  intertek
-                </div>
-                <span className="text-[9px] font-bold text-slate-800 mt-1">FSSC 22000</span>
-              </div>
-
-              {/* GMP Certified Seal */}
-              <div className="flex flex-col items-center justify-center p-2 rounded-full border-2 border-slate-400 w-20 h-20 text-center mx-auto">
-                <span className="text-[9px] font-black text-slate-900 leading-none">GMP</span>
-                <span className="text-[7px] uppercase tracking-wider text-slate-600 font-bold mt-0.5">CERTIFIED</span>
-              </div>
+            <div className="relative w-full max-w-[320px] aspect-[380/360]">
+              <Image
+                src="/cropped/certificates-exact.png"
+                alt="LEED Platinum, ISO 9001, FSSC 22000, GMP Certified"
+                fill
+                className="object-contain"
+              />
             </div>
           </div>
         </div>
