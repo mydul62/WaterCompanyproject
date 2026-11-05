@@ -6,167 +6,10 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import RFQDrawer from "@/components/rfq/RFQDrawer";
+import { CATALOG_PRODUCTS, CatalogProduct } from "@/data/catalogData";
 import { ChevronDown, ChevronUp, Search, Download, ArrowRight, ArrowLeft, X, Eye } from "lucide-react";
 
-interface CatalogProduct {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  factory: "Q Pail Limited" | "Xclusive Can Limited";
-  genre: "Plastic" | "Metal";
-  subCategory: string;
-  shape: "Square" | "Oblong" | "Oval" | "Rectangular" | "Circular";
-  material?: string;
-  capacity?: string;
-}
-
-const CATALOG_DATA: CatalogProduct[] = [
-  {
-    id: "p1",
-    name: "Pharmaceutical Bottle",
-    description: "100 ml HDPE Pharmaceuticals Bottle made with food grade virgin material",
-    image: "/images/catalog/cat-prod-1.png",
-    factory: "Xclusive Can Limited",
-    genre: "Plastic",
-    subCategory: "Pharmaceutical",
-    shape: "Circular",
-    material: "100% Food-Grade Virgin HDPE",
-    capacity: "100 ml",
-  },
-  {
-    id: "p2",
-    name: "Liquid Washing Container",
-    description: "HDPE Washing Powder Container For Home care usage",
-    image: "/images/catalog/cat-prod-2.png",
-    factory: "Q Pail Limited",
-    genre: "Plastic",
-    subCategory: "Home Care",
-    shape: "Square",
-    material: "High-Density Polyethylene (HDPE)",
-    capacity: "1000 ml - 2000 ml",
-  },
-  {
-    id: "p3",
-    name: "Vitamin Container",
-    description: "26 gm Container (Menacal-D) with Cap for Pharmaceutical uses. It is used for Radiant Pharma....",
-    image: "/images/catalog/cat-prod-3.png",
-    factory: "Xclusive Can Limited",
-    genre: "Plastic",
-    subCategory: "Pharmaceutical",
-    shape: "Circular",
-    material: "Pharmaceutical Virgin HDPE",
-    capacity: "26 gm",
-  },
-  {
-    id: "p4",
-    name: "Round Jerry Can",
-    description: "HDPE Round Jerry Can for Asian Paints",
-    image: "/images/catalog/prod-7.png",
-    factory: "Q Pail Limited",
-    genre: "Plastic",
-    subCategory: "Paint",
-    shape: "Circular",
-    material: "Virgin HDPE with Tamper Cap",
-    capacity: "4 Liter",
-  },
-  {
-    id: "p5",
-    name: "Oral Syringe",
-    description: "Oral syringes are used to accurately measure and safely administer liquid medication by mouth,...",
-    image: "/cropped/product-card-3.png",
-    factory: "Xclusive Can Limited",
-    genre: "Plastic",
-    subCategory: "Pharmaceutical",
-    shape: "Oblong",
-    material: "Medical Grade Polypropylene (PP)",
-    capacity: "5 ml - 20 ml",
-  },
-  {
-    id: "p6",
-    name: "Agro Bottle",
-    description: "500 ML White color HDPE Agro Vet Bottle with Inner Seal and Cap",
-    image: "/cropped/product-card-1.png",
-    factory: "Xclusive Can Limited",
-    genre: "Plastic",
-    subCategory: "Agro Vet",
-    shape: "Circular",
-    material: "Chemical Resistant Virgin HDPE",
-    capacity: "500 ml",
-  },
-  {
-    id: "p7",
-    name: "Chemical Bottle",
-    description: "500 ML Chemical Bottle uses for Samuda Chemical Industries.",
-    image: "/images/catalog/cat-prod-7.png",
-    factory: "Xclusive Can Limited",
-    genre: "Plastic",
-    subCategory: "Chemical",
-    shape: "Circular",
-    material: "HDPE with Threaded Locking Cap",
-    capacity: "500 ml",
-  },
-  {
-    id: "p8",
-    name: "Double Handle Can",
-    description: "4.8 Ltr Double Handle HDPE jerry Can",
-    image: "/images/catalog/cat-prod-8.png",
-    factory: "Q Pail Limited",
-    genre: "Plastic",
-    subCategory: "Chemical",
-    shape: "Square",
-    material: "Industrial Heavy HDPE",
-    capacity: "4.8 Liter",
-  },
-  {
-    id: "p9",
-    name: "1 Ltr Chemical Bottle",
-    description: "1 Ltr Chemical Bottle",
-    image: "/images/catalog/cat-prod-9.png",
-    factory: "Xclusive Can Limited",
-    genre: "Plastic",
-    subCategory: "Chemical",
-    shape: "Circular",
-    material: "HDPE / Fluorinated Barrier",
-    capacity: "1000 ml",
-  },
-  {
-    id: "p10",
-    name: "Body-wash Bottle",
-    description: "PET Body-Wash Bottle with Flip Top Cap",
-    image: "/images/catalog/prod-4.png",
-    factory: "Xclusive Can Limited",
-    genre: "Plastic",
-    subCategory: "Personal Care",
-    shape: "Oval",
-    material: "Clear PET Resin",
-    capacity: "250 ml - 400 ml",
-  },
-  {
-    id: "p11",
-    name: "3-Piece Industrial Paint Can",
-    description: "Welded tinplate metal can for decorative paint & industrial coatings",
-    image: "/Infoimages/Screenshot 2026-11-04 130154.png",
-    factory: "Xclusive Can Limited",
-    genre: "Metal",
-    subCategory: "Paint",
-    shape: "Circular",
-    material: "Electrolytic Tinplate (ETP)",
-    capacity: "1 Gallon",
-  },
-  {
-    id: "p12",
-    name: "Aerosol Spray Can",
-    description: "High-pressure tinplate aerosol container tested up to 18 bar pressure",
-    image: "/Infoimages/Screenshot 2026-11-04 130154.png",
-    factory: "Xclusive Can Limited",
-    genre: "Metal",
-    subCategory: "Personal Care",
-    shape: "Circular",
-    material: "Three-Piece Welded Tinplate",
-    capacity: "300 ml - 500 ml",
-  },
-];
+const CATALOG_DATA = CATALOG_PRODUCTS;
 
 const PLASTIC_SUB_CATEGORIES = [
   "Food",
@@ -222,8 +65,14 @@ export default function ProductsPage() {
 
   // Quick View Modal & RFQ Drawer state
   const [quickViewProduct, setQuickViewProduct] = useState<CatalogProduct | null>(null);
+  const [modalActiveImage, setModalActiveImage] = useState<string>("");
   const [isRFQOpen, setIsRFQOpen] = useState(false);
   const [selectedProductForRFQ, setSelectedProductForRFQ] = useState<any>(null);
+
+  const handleOpenQuickView = (product: CatalogProduct) => {
+    setQuickViewProduct(product);
+    setModalActiveImage(product.image);
+  };
 
   const toggleFactory = (factory: string) => {
     setSelectedFactories((prev) =>
@@ -638,18 +487,23 @@ export default function ProductsPage() {
                       >
                         {/* Image Container with Exact Quick View Overlay */}
                         <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-[#eef3f6] mb-3.5 flex items-center justify-center p-2">
-                          <Image
-                            src={product.image}
-                            alt={product.name}
-                            fill
-                            className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
-                          />
+                          <Link href={`/products/${product.id}`} className="relative w-full h-full block">
+                            <Image
+                              src={product.image}
+                              alt={product.name}
+                              fill
+                              className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </Link>
 
                           {/* Dark Hover Overlay matching Screenshot */}
-                          <div className="absolute inset-0 bg-[#1e252f]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
+                          <div className="absolute inset-0 bg-[#1e252f]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 pointer-events-none group-hover:pointer-events-auto">
                             <button
-                              onClick={() => setQuickViewProduct(product)}
-                              className="px-6 py-2.5 rounded-lg bg-[#5a8ea7] hover:bg-[#487388] text-white font-bold text-sm shadow-lg transition-transform active:scale-95"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenQuickView(product);
+                              }}
+                              className="px-6 py-2.5 rounded-lg bg-[#5a8ea7] hover:bg-[#487388] text-white font-bold text-sm shadow-lg transition-transform active:scale-95 cursor-pointer"
                             >
                               Quick View
                             </button>
@@ -657,9 +511,11 @@ export default function ProductsPage() {
                         </div>
 
                         {/* Title */}
-                        <h3 className="text-base font-bold text-slate-900 group-hover:text-[#1c8bff] transition-colors line-clamp-1">
-                          {product.name}
-                        </h3>
+                        <Link href={`/products/${product.id}`}>
+                          <h3 className="text-base font-bold text-slate-900 group-hover:text-[#5a8ea7] transition-colors line-clamp-1 cursor-pointer">
+                            {product.name}
+                          </h3>
+                        </Link>
 
                         {/* Description */}
                         <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 mt-1.5 leading-relaxed flex-1">
@@ -757,75 +613,110 @@ export default function ProductsPage() {
       {/* Global Footer */}
       <Footer />
 
-      {/* Quick View Product Modal */}
+      {/* Quick View Product Modal matching media_1793843275916_6d8379c6.jpg */}
       {quickViewProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-2xl bg-white rounded-2xl overflow-hidden shadow-2xl p-6 border border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl p-6 sm:p-10 border border-slate-100 animate-in zoom-in-95 duration-200">
+            {/* Top-Right Close Button */}
             <button
               onClick={() => setQuickViewProduct(null)}
-              className="absolute right-4 top-4 p-1.5 rounded-full text-slate-400 hover:text-black hover:bg-slate-100 transition-colors"
+              className="absolute right-5 top-5 p-2 rounded-full text-slate-400 hover:text-black hover:bg-slate-100 transition-colors cursor-pointer"
+              aria-label="Close modal"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
-              {/* Product Image */}
-              <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-[#f4f7f9] p-4 flex items-center justify-center">
-                <Image
-                  src={quickViewProduct.image}
-                  alt={quickViewProduct.name}
-                  fill
-                  className="object-contain p-4"
-                />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              {/* Left Column: Big Image + 3 Thumbnails */}
+              <div className="space-y-4">
+                {/* Big Preview Image Container */}
+                <div className="relative aspect-[4/3] w-full rounded-2xl bg-white border border-slate-200/90 shadow-sm overflow-hidden p-6 flex items-center justify-center">
+                  <Image
+                    src={modalActiveImage || quickViewProduct.image}
+                    alt={quickViewProduct.name}
+                    fill
+                    className="object-contain p-4 transition-all duration-300"
+                  />
+                </div>
+
+                {/* 3 Thumbnails Row */}
+                <div className="flex items-center gap-3">
+                  {(quickViewProduct.gallery && quickViewProduct.gallery.length >= 3
+                    ? quickViewProduct.gallery.slice(0, 3)
+                    : [quickViewProduct.image, "/images/catalog/cat-prod-2.png", "/images/catalog/cat-prod-1.png"]
+                  ).map((thumb, idx) => {
+                    const isSelected = (modalActiveImage || quickViewProduct.image) === thumb;
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => setModalActiveImage(thumb)}
+                        className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white border-2 p-1.5 overflow-hidden cursor-pointer transition-all ${
+                          isSelected
+                            ? "border-[#5a8ea7] shadow-md ring-2 ring-[#5a8ea7]/20 scale-105"
+                            : "border-slate-200 hover:border-slate-300 opacity-75 hover:opacity-100"
+                        }`}
+                        aria-label={`Thumbnail ${idx + 1}`}
+                      >
+                        <Image
+                          src={thumb}
+                          alt={`${quickViewProduct.name} thumbnail ${idx + 1}`}
+                          fill
+                          className="object-contain p-1.5"
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
-              {/* Product Info */}
-              <div className="space-y-4">
+              {/* Right Column: Title, Description, Buttons */}
+              <div className="space-y-6 select-none">
                 <div>
-                  <span className="text-[11px] font-bold text-[#5a8ea7] uppercase tracking-wider">
-                    {quickViewProduct.factory} &bull; {quickViewProduct.genre}
-                  </span>
-                  <h3 className="text-xl font-black text-slate-900 mt-1">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-[#5a8ea7] tracking-tight">
                     {quickViewProduct.name}
                   </h3>
                 </div>
 
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  {quickViewProduct.description}
-                </p>
-
-                <div className="space-y-2 text-xs text-slate-700 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-                  <div className="flex justify-between">
-                    <span className="font-semibold text-slate-500">Material:</span>
-                    <span>{quickViewProduct.material || "HDPE / PET"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-semibold text-slate-500">Capacity:</span>
-                    <span>{quickViewProduct.capacity || "Custom"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-semibold text-slate-500">Shape:</span>
-                    <span>{quickViewProduct.shape}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-semibold text-slate-500">Category:</span>
-                    <span>{quickViewProduct.subCategory}</span>
-                  </div>
+                <div>
+                  <h4 className="text-base font-bold text-[#5a8ea7] mb-2 tracking-tight">
+                    Description
+                  </h4>
+                  <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+                    {quickViewProduct.description}
+                  </p>
                 </div>
 
-                <div className="pt-2 flex gap-3">
+                {/* Action Buttons Row matching Screenshot 6d8379c6 */}
+                <div className="pt-4 flex flex-wrap items-center gap-3">
+                  {/* Request For Sample Button */}
                   <button
-                    onClick={() => handleOpenRFQ(quickViewProduct)}
-                    className="flex-1 py-3 rounded-xl bg-[#5a8ea7] hover:bg-[#487388] text-white font-bold text-sm shadow-md transition-all active:scale-95"
+                    onClick={() => {
+                      handleOpenRFQ(quickViewProduct);
+                      setQuickViewProduct(null);
+                    }}
+                    className="px-5 py-2.5 rounded-lg bg-[#5f686d] hover:bg-[#4b5358] text-white font-semibold text-xs sm:text-sm transition-all shadow-sm active:scale-95 cursor-pointer"
                   >
-                    Request Quotation
+                    Request For Sample
                   </button>
+
+                  {/* Request A Quote Button */}
                   <button
-                    onClick={() => setQuickViewProduct(null)}
-                    className="px-4 py-3 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition-colors"
+                    onClick={() => {
+                      handleOpenRFQ(quickViewProduct);
+                      setQuickViewProduct(null);
+                    }}
+                    className="px-5 py-2.5 rounded-lg bg-[#6ba3be] hover:bg-[#5890ab] text-white font-semibold text-xs sm:text-sm transition-all shadow-sm active:scale-95 cursor-pointer"
                   >
-                    Close
+                    Request A Quote
                   </button>
+
+                  {/* View Details Button */}
+                  <Link
+                    href={`/products/${quickViewProduct.id}`}
+                    className="px-5 py-2.5 rounded-lg bg-[#1a1a1a] hover:bg-black text-white font-semibold text-xs sm:text-sm transition-all shadow-sm active:scale-95 cursor-pointer inline-flex items-center justify-center"
+                  >
+                    View Details
+                  </Link>
                 </div>
               </div>
             </div>
