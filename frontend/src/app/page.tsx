@@ -1,8 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import HeroSlider from "@/components/home/HeroSlider";
+import SafeWaterStorySection from "@/components/home/SafeWaterStorySection";
+import WaterFilteringServices from "@/components/home/WaterFilteringServices";
+import BestFilteringSystemSection from "@/components/home/BestFilteringSystemSection";
+import QualityBottlePacksSection from "@/components/home/QualityBottlePacksSection";
+import ClientTestimonialsSection from "@/components/home/ClientTestimonialsSection";
 import FacilityShowcase from "@/components/home/FacilityShowcase";
 import OperationalPillars from "@/components/home/OperationalPillars";
 import ProductShowcase from "@/components/home/ProductShowcase";
@@ -17,7 +22,7 @@ export default function HomePage() {
   const [isRFQOpen, setIsRFQOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleOpenRFQEvent = () => {
       setIsRFQOpen(true);
     };
@@ -37,33 +42,48 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      {/* Floating Header Bar (Screenshots 1-5) */}
+      {/* Acuasafe Modern Sticky Header Bar (Screenshot c1caf1c3) */}
       <Navbar />
 
       <main className="flex-1">
-        {/* Section 1: Hero Slider with Play Button & Slide Indicators (Screenshots 1-5) */}
+        {/* Section 1: Acuasafe Hero Slider with Bottom Floating Card (Screenshots c1caf1c3 & a98e2658) */}
         <HeroSlider />
 
-        {/* Section 2: About Us & Green Factory Campus (Screenshot 6) */}
+        {/* Section 2: Safe and Healthy Water Story (Screenshot e82811f7) */}
+        <SafeWaterStorySection />
+
+        {/* Section 3: Water Filtering System Services & Delivery Specialist (Screenshot 076cf6d4) */}
+        <WaterFilteringServices />
+
+        {/* Section 4: Best Water Filtering System in Royal Blue Wave (Screenshot f111777f) */}
+        <BestFilteringSystemSection />
+
+        {/* Section 5: Best Quality Bottle Packs with Pricing (Screenshot 39c7284a) */}
+        <QualityBottlePacksSection />
+
+        {/* Section 6: What Our Client are Saying Testimonials (Screenshot 27e76023) */}
+        <ClientTestimonialsSection />
+
+        {/* Section 7: Industrial Factory & LEED Platinum Plant Showcase */}
         <FacilityShowcase />
 
-        {/* Section 3: Managing Supply Chain & Business Challenges with 9 Triangles (Screenshot 7) */}
+        {/* Section 8: Managing Supply Chain & Manufacturing Triangles */}
         <OperationalPillars />
 
-        {/* Section 4: Discover Our Product (Plastic & Tin Container) with 5 Icons & 4 Cards (Screenshot 8) */}
+        {/* Section 9: Discover Our Product Catalog (Plastic & Tin Container) */}
         <ProductShowcase />
 
-        {/* Section 5: Latest Stories with 4 Newspaper Clippings (Screenshot 9) */}
+        {/* Section 10: Latest Stories & Media Clippings */}
         <PressStoriesSection />
 
-        {/* Section 6: Packaging Solutions Always Made Right & Company Overview (Screenshots 10-11) */}
+        {/* Section 11: Packaging Solutions Always Made Right & B2B Overview */}
         <B2BBanner onOpenRFQ={() => handleOpenRFQ()} />
 
-        {/* Section 7: Explore More 13 Cards Grid (Screenshot 12) */}
+        {/* Section 12: Explore More 13 Cards Grid */}
         <ExploreGrid />
       </main>
 
-      {/* Global Footer (Screenshot 13) */}
+      {/* Global Footer */}
       <Footer />
 
       {/* Interactive Contact / RFQ Drawer */}
