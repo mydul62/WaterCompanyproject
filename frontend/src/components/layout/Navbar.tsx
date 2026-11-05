@@ -38,9 +38,9 @@ export default function Navbar() {
   const navItems = [
     {
       label: "About Us",
-      href: "/#about",
+      href: "/our-business",
       sub: [
-        { label: "Our Business", href: "/#about" },
+        { label: "Our Business", href: "/our-business" },
         { label: "Our Story", href: "/#about" },
         { label: "Brand", href: "/#overview" },
         { label: "Career", href: "/#explore" },
@@ -137,7 +137,8 @@ export default function Navbar() {
           {navItems.map((item, idx) => {
             const isActive =
               (item.href === "/products" &&
-                (pathname === "/products" || pathname === "/find-our-product")) ||
+                (pathname === "/products" || pathname === "/find-our-product" || pathname?.startsWith("/products/"))) ||
+              (item.label === "About Us" && pathname === "/our-business") ||
               (item.href === "/" && pathname === "/");
 
             return (

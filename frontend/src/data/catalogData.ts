@@ -269,3 +269,4 @@ export function getProductById(idOrSlug: string): CatalogProduct | undefined {
     ) || CATALOG_PRODUCTS[0]
   );
 }
+
