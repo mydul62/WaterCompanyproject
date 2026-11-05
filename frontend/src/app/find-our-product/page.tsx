@@ -1,6 +1,5 @@
-import ProductsPage from "../products/page";
+import { redirect } from "next/navigation";
 
 export default function FindOurProductPage() {
-  return <ProductsPage />;
+  redirect("/products");
 }
-

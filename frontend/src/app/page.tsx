@@ -17,6 +17,14 @@ export default function HomePage() {
   const [isRFQOpen, setIsRFQOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
 
+  React.useEffect(() => {
+    const handleOpenRFQEvent = () => {
+      setIsRFQOpen(true);
+    };
+    window.addEventListener("open-rfq", handleOpenRFQEvent);
+    return () => window.removeEventListener("open-rfq", handleOpenRFQEvent);
+  }, []);
+
   const handleOpenRFQ = (product?: ProductItem) => {
     setSelectedProduct(product || null);
     setIsRFQOpen(true);

@@ -60,10 +60,16 @@ const EXPLORE_ITEMS: ExploreItem[] = [
     href: "#about",
   },
   {
-    icon: "💧",
-    title: "About AquaPure",
-    description: "Understand our values, mission and what makes us different.",
-    href: "#overview",
+    icon: "🏭",
+    title: "About Xclusive",
+    description: "Understand our values, mission, and what makes us different.",
+    href: "/our-business",
+  },
+  {
+    icon: "🪣",
+    title: "About Q Pail",
+    description: "Learn about our Q Pail brand and specialized packaging solutions.",
+    href: "/q-pail",
   },
   {
     icon: "🎬",
