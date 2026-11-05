@@ -11,3 +11,4 @@ router.patch("/:id", SliderController.update);
 router.delete("/:id", SliderController.delete);
 
 export const sliderRoutes = router;
+

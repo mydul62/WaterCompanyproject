@@ -101,3 +101,4 @@ export class SliderService {
     return sliderStore.splice(index, 1)[0];
   }
 }
+

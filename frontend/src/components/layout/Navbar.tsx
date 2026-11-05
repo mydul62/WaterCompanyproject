@@ -7,17 +7,32 @@ import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isPastHero, setIsPastHero] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeHover, setActiveHover] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 60);
+      // Find the active hero or top banner section on the current page
+      const heroEl =
+        document.getElementById("hero") ||
+        document.getElementById("top") ||
+        document.getElementById("page-banner");
+
+      if (heroEl) {
+        const rect = heroEl.getBoundingClientRect();
+        // Transition when the bottom of the hero section reaches or passes the header height
+        setIsPastHero(rect.bottom <= 96);
+      } else {
+        // Fallback for pages without an explicit hero section
+        setIsPastHero(window.scrollY > 300);
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [pathname]);
 
   const navItems = [
     {
@@ -68,36 +83,36 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "p-0" : "p-[10px] sm:px-[40px] sm:py-[18px]"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out ${
+        isPastHero
+          ? "w-full p-0 bg-white/95 backdrop-blur-md shadow-[0_4px_24px_rgba(0,0,0,0.08)] border-b border-slate-200/80"
+          : "p-3 sm:px-8 sm:py-5 lg:px-12 lg:py-6"
       }`}
     >
       <div
-        className={`relative flex items-center justify-between transition-all duration-300 max-w-[1638px] mx-auto ${
-          isScrolled
-            ? "h-[70px] px-6 sm:px-10 rounded-none bg-white text-[#1a1a1a] shadow-[0_4px_18px_rgba(0,0,0,0.12)] border-b border-slate-200"
-            : "h-[78px] px-6 sm:px-8 rounded-full bg-white/25 backdrop-blur-[14px] border border-white/35 text-white shadow-lg"
+        className={`relative flex items-center justify-between transition-all duration-500 ease-in-out ${
+          isPastHero
+            ? "w-full max-w-[1638px] mx-auto h-[88px] sm:h-[94px] px-6 sm:px-12 rounded-none border-none bg-transparent text-[#1a1a1a]"
+            : "w-full max-w-[1638px] mx-auto h-[96px] sm:h-[104px] px-7 sm:px-10 rounded-full bg-white/20 sm:bg-white/25 backdrop-blur-[16px] border border-white/35 text-white shadow-[0_8px_32px_rgba(0,0,0,0.12)]"
         }`}
       >
-        {/* Logo: Droplet Icon + AquaPure matching snippet */}
+        {/* Brand Logo: Droplet Icon + AquaPure */}
         <Link
           href="#top"
-          className="flex items-center gap-2.5 font-bold text-2xl tracking-tight transition-colors"
+          className="flex items-center gap-3 font-bold text-2xl sm:text-3xl tracking-tight transition-colors group select-none"
         >
-          <span className="dr" />
+          <span className="dr group-hover:scale-110 transition-transform duration-300" />
           <span
-            className={
-              isScrolled
-                ? "text-[#0b2a8a] font-extrabold"
-                : "text-white font-extrabold drop-shadow-sm"
-            }
+            className={`font-black tracking-tight transition-colors duration-300 ${
+              isPastHero ? "text-[#0b2a8a]" : "text-white drop-shadow-md"
+            }`}
           >
             AquaPure
           </span>
         </Link>
 
         {/* Desktop Nav Links */}
-        <ul className="hidden lg:flex items-center gap-8 xl:gap-11 list-none text-[13px] uppercase font-semibold tracking-wider">
+        <ul className="hidden lg:flex items-center gap-7 xl:gap-11 list-none text-[13.5px] xl:text-[14.5px] uppercase font-bold tracking-wider">
           {navItems.map((item, idx) => {
             const isActive =
               (item.href === "/products" &&
@@ -107,26 +122,26 @@ export default function Navbar() {
             return (
               <li
                 key={idx}
-                className="relative py-7 group"
+                className="relative py-8 xl:py-9 group cursor-pointer"
                 onMouseEnter={() => item.sub && setActiveHover(item.label)}
                 onMouseLeave={() => setActiveHover(null)}
               >
                 <Link
                   href={item.href}
-                  className={`transition-colors hover:text-[#4aa3d8] ${
+                  className={`transition-colors duration-200 hover:text-[#38bdf8] ${
                     isActive
-                      ? "text-[#38bdf8] font-bold"
-                      : isScrolled
-                      ? "text-slate-800"
-                      : "text-white"
+                      ? "text-[#38bdf8] font-extrabold"
+                      : isPastHero
+                      ? "text-slate-800 hover:text-[#0b2a8a]"
+                      : "text-white/95 drop-shadow-sm hover:text-white"
                   }`}
                 >
                   {item.label}
                 </Link>
 
-                {/* Submenu Bar (matches exact style in snippet) */}
+                {/* Submenu Dropdown Bar */}
                 {item.sub && activeHover === item.label && (
-                  <div className="absolute left-1/2 -translate-x-1/2 top-full min-w-[500px] bg-[rgba(40,46,52,0.92)] backdrop-blur-md text-white rounded-b-2xl py-4 px-8 flex justify-center gap-8 text-[14px] font-medium shadow-2xl border border-white/10 animate-in fade-in slide-in-from-top-1 duration-200">
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full min-w-[520px] bg-[rgba(32,38,46,0.95)] backdrop-blur-md text-white rounded-b-2xl py-4 px-8 flex justify-center gap-8 text-[14px] font-semibold shadow-2xl border border-white/10 animate-in fade-in slide-in-from-top-1 duration-200">
                     {item.sub.map((s, sIdx) => (
                       <Link
                         key={sIdx}
@@ -146,20 +161,20 @@ export default function Navbar() {
         {/* Mobile Hamburger Toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className={`lg:hidden p-2 text-2xl transition-colors ${
-            isScrolled ? "text-slate-900" : "text-white"
+          className={`lg:hidden p-2 rounded-lg text-2xl transition-colors ${
+            isPastHero ? "text-slate-900 hover:bg-slate-100" : "text-white hover:bg-white/10"
           }`}
           aria-label="Toggle menu"
         >
-          {mobileOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
+          {mobileOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
         </button>
       </div>
 
       {/* Mobile Menu Dropdown */}
       {mobileOpen && (
-        <div className="lg:hidden mt-2 p-5 rounded-2xl bg-[rgba(30,36,42,0.96)] backdrop-blur-xl text-white shadow-2xl border border-white/15 space-y-3">
+        <div className="lg:hidden mx-4 sm:mx-8 mt-3 p-6 rounded-2xl bg-[rgba(26,32,40,0.98)] backdrop-blur-xl text-white shadow-2xl border border-white/15 space-y-3.5 animate-in fade-in duration-200">
           {navItems.map((item, idx) => (
-            <div key={idx} className="border-b border-white/10 pb-2">
+            <div key={idx} className="border-b border-white/10 pb-2.5">
               <Link
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
@@ -168,7 +183,7 @@ export default function Navbar() {
                 {item.label}
               </Link>
               {item.sub && (
-                <div className="pl-4 mt-1 space-y-1 border-l border-white/20">
+                <div className="pl-4 mt-1.5 space-y-1.5 border-l border-white/20">
                   {item.sub.map((s, sIdx) => (
                     <Link
                       key={sIdx}

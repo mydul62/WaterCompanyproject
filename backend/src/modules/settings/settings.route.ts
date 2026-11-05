@@ -8,3 +8,4 @@ router.put("/", SettingsController.updateSettings);
 router.patch("/", SettingsController.updateSettings);
 
 export const settingsRoutes = router;
+

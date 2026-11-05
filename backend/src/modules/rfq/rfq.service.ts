@@ -157,3 +157,4 @@ export class RFQService {
     return rfqStore.splice(index, 1)[0];
   }
 }
+

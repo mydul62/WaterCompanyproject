@@ -83,3 +83,4 @@ export class MediaService {
     return mediaStore.splice(index, 1)[0];
   }
 }
+

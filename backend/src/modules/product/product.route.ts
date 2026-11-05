@@ -13,3 +13,4 @@ router.patch("/:id/status", ProductController.toggleStatus);
 router.delete("/:id", ProductController.delete);
 
 export const productRoutes = router;
+

@@ -306,7 +306,7 @@ export default function ProductsPage() {
 
       <main className="flex-1">
         {/* Exact Hero Banner matching Screenshot */}
-        <div className="relative w-full h-[260px] sm:h-[340px] lg:h-[380px] overflow-hidden flex items-center justify-center">
+        <div id="hero" className="relative w-full h-[260px] sm:h-[340px] lg:h-[380px] overflow-hidden flex items-center justify-center">
           <Image
             src="/images/products-banner.jpg"
             alt="Products We Manufacture - Xclusive Can Limited"

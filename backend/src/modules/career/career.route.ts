@@ -11,3 +11,4 @@ router.put("/:id/status", CareerController.updateStatus);
 router.delete("/:id", CareerController.delete);
 
 export const careerRoutes = router;
+

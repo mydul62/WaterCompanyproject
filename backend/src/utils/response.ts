@@ -21,3 +21,4 @@ export function sendResponse<T>(res: Response, data: ResponseData<T>) {
     meta: data.meta,
   });
 }
+

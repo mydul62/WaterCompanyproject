@@ -80,7 +80,7 @@ export default function HeroSlider() {
 
   return (
     <section
-      id="top"
+      id="hero"
       className="relative w-full h-[100svh] min-h-[640px] overflow-hidden text-white select-none"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}

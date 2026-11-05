@@ -11,3 +11,4 @@ router.patch("/:id", MediaController.update);
 router.delete("/:id", MediaController.delete);
 
 export const mediaRoutes = router;
+

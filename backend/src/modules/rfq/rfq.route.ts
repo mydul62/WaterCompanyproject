@@ -11,3 +11,4 @@ router.put("/:id/status", RFQController.updateStatus);
 router.delete("/:id", RFQController.delete);
 
 export const rfqRoutes = router;
+
