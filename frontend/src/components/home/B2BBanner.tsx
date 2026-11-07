@@ -117,7 +117,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
         </div>
 
         {/* Section Header: About AquaPure */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-14 sm:mb-18">
+        <div data-reveal="up" className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-14 sm:mb-18">
           <div className="max-w-2xl space-y-3.5">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200/90 text-cyan-800 text-xs font-bold uppercase tracking-wider shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-cyan-500 animate-pulse" />
@@ -158,8 +158,8 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
 
         {/* Modern Glass Bento Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 mb-12 sm:mb-16">
-          {/* Card 1: Our Products Portfolio (col-span-7) */}
-          <article className="lg:col-span-7 rounded-3xl bg-white/85 backdrop-blur-xl border border-white/90 p-7 sm:p-9 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,194,232,0.12)] transition-all duration-300 flex flex-col justify-between">
+          {/* Card 1: Our Products Portfolio (col-span-7) with Liquid Water Fill */}
+          <article data-reveal="scale" className="water-fill-card lg:col-span-7 rounded-3xl bg-white/85 backdrop-blur-xl border border-white/90 p-7 sm:p-9 shadow-[0_12px_40px_rgba(0,0,0,0.04)] transition-all duration-300 flex flex-col justify-between">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="w-12 h-12 rounded-2xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-600 shadow-sm">
@@ -180,7 +180,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
                 </p>
               </div>
 
-              {/* Modern Glass Size Badges */}
+              {/* Modern Glass Size Badges with Liquid Water Rise */}
               <div className="pt-2">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">
                   Available Formats &amp; Capacities
@@ -189,7 +189,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
                   {bottleSizes.map((item, idx) => (
                     <div
                       key={idx}
-                      className="p-3 rounded-2xl bg-slate-50 hover:bg-cyan-50/70 border border-slate-100 hover:border-cyan-200 transition-all text-center group"
+                      className="water-fill-card p-3 rounded-2xl bg-slate-50 border border-slate-100 text-center group cursor-pointer"
                     >
                       <b className="block text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-cyan-700">
                         {item.size}
@@ -217,7 +217,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
           </article>
 
           {/* Card 2: 10+ Years Stat Card (col-span-5) */}
-          <article className="lg:col-span-5 rounded-3xl bg-gradient-to-br from-[#0b2236] via-[#10334f] to-[#174668] text-white p-7 sm:p-9 shadow-[0_15px_45px_rgba(11,34,54,0.3)] flex flex-col justify-between relative overflow-hidden group">
+          <article data-reveal="scale" className="delay-150 lg:col-span-5 rounded-3xl bg-gradient-to-br from-[#0b2236] via-[#10334f] to-[#174668] text-white p-7 sm:p-9 shadow-[0_15px_45px_rgba(11,34,54,0.3)] flex flex-col justify-between relative overflow-hidden group">
             {/* Ambient Water Rings Animation */}
             <div className="absolute -top-10 -right-10 w-64 h-64 rounded-full border border-cyan-400/20 group-hover:scale-125 transition-transform duration-700 pointer-events-none" />
             <div className="absolute -top-4 -right-4 w-48 h-48 rounded-full border border-cyan-400/30 pointer-events-none" />
@@ -251,7 +251,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
           </article>
 
           {/* Card 3: Why Choose Us (col-span-5) */}
-          <article className="lg:col-span-5 rounded-3xl bg-white/85 backdrop-blur-xl border border-white/90 p-7 sm:p-9 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,194,232,0.12)] transition-all duration-300">
+          <article data-reveal="scale" className="delay-100 lg:col-span-5 rounded-3xl bg-white/85 backdrop-blur-xl border border-white/90 p-7 sm:p-9 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,194,232,0.12)] transition-all duration-300">
             <div className="flex items-center justify-between mb-5">
               <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-sm">
                 <ShieldCheck className="w-6 h-6 stroke-[2.2]" />
@@ -272,7 +272,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
               {whyChooseUs.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex items-start gap-3.5 p-3 rounded-2xl bg-slate-50/70 hover:bg-slate-100/80 border border-slate-100 transition-all"
+                  className="water-fill-card flex items-start gap-3.5 p-3.5 rounded-2xl bg-slate-50/70 border border-slate-100 transition-all cursor-pointer"
                 >
                   <span className="w-8 h-8 rounded-xl bg-white border border-slate-200 text-cyan-700 font-extrabold text-xs flex items-center justify-center shrink-0 shadow-xs">
                     {item.num}
@@ -290,8 +290,8 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
             </div>
           </article>
 
-          {/* Card 4: State-of-the-art Visual Showcase & Stats (col-span-7) */}
-          <article className="lg:col-span-7 rounded-3xl bg-white/85 backdrop-blur-xl border border-white/90 p-7 sm:p-9 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,194,232,0.12)] transition-all duration-300 flex flex-col justify-between">
+          {/* Card 4: State-of-the-art Visual Showcase & Stats (col-span-7) with Liquid Water Fill */}
+          <article data-reveal="scale" className="delay-200 water-fill-card lg:col-span-7 rounded-3xl bg-white/85 backdrop-blur-xl border border-white/90 p-7 sm:p-9 shadow-[0_12px_40px_rgba(0,0,0,0.04)] transition-all duration-300 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-5">
                 <div className="w-12 h-12 rounded-2xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-600 shadow-sm">

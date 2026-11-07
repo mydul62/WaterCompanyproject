@@ -84,8 +84,8 @@ export default function Navbar() {
         },
         {
           label: "Our Story",
-          href: "/#about",
-          desc: "Pioneering engineered containers since 2010",
+          href: "/our-story",
+          desc: "Pioneering engineered containers since 1992",
           icon: BookOpen,
           iconColor: "text-amber-600",
           iconBg: "bg-amber-50 border-amber-100",
@@ -100,7 +100,7 @@ export default function Navbar() {
         },
         {
           label: "Career",
-          href: "/#explore",
+          href: "/careers",
           desc: "Join our automated cleanroom engineering team",
           icon: Briefcase,
           iconColor: "text-purple-600",
@@ -195,11 +195,11 @@ export default function Navbar() {
     },
     {
       label: "Achievements",
-      href: "/#footer",
+      href: "/certificates",
       sub: [
         {
           label: "Awards & Certificates",
-          href: "/#footer",
+          href: "/certificates",
           desc: "ISO 9001, HACCP, GMP & DGDA compliance",
           icon: Award,
           iconColor: "text-amber-600",
@@ -207,7 +207,7 @@ export default function Navbar() {
         },
         {
           label: "Brands We Work With",
-          href: "/#explore",
+          href: "/brands-we-work-with",
           desc: "Radiant Pharma, Asian Paints, Samuda & more",
           icon: Users,
           iconColor: "text-blue-600",
@@ -255,90 +255,103 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out ${
-        isPastHero
-          ? "w-full p-0 shadow-[0_10px_35px_rgba(0,0,0,0.06)]"
-          : "p-1.5 sm:px-3 sm:py-3.5"
-      }`}
-      style={
-        isPastHero
-          ? {
-              backgroundColor: "rgba(255, 255, 255, 0.88)",
-              backdropFilter: "blur(24px)",
-              WebkitBackdropFilter: "blur(24px)",
-              borderBottom: "1px solid rgba(0, 0, 0, 0.08)",
-            }
-          : undefined
-      }
+      className="fixed w-full z-50 transition-all duration-300 ease-in-out"
+      style={isPastHero ? { top: "0px" } : { top: "48px" }}
     >
+      {/* ══════════════════════════════════════════════════════════════
+          DESKTOP HEADER CONTAINER (Exact Client Source)
+          Width 91.6667% (w-11/12) Centered with 0.75rem rounded corners
+         ══════════════════════════════════════════════════════════════ */}
       <div
-        className={`relative flex items-center justify-between transition-all duration-500 ease-in-out ${
-          isPastHero
-            ? "w-full max-w-[1920px] mx-auto h-[80px] sm:h-[86px] px-6 sm:px-10 rounded-none border-none bg-transparent text-[#1a1a1a]"
-            : "w-[98%] max-w-[1920px] mx-auto h-[74px] sm:h-[80px] px-6 sm:px-8 rounded-2xl border border-white/45 text-white shadow-[0_12px_40px_rgba(0,0,0,0.12)]"
-        }`}
+        className="hidden lg:block absolute left-1/2 top-0 transition-all duration-300 ease-in-out"
         style={
-          !isPastHero
-            ? {
-                backgroundColor: "rgba(255, 255, 255, 0.28)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                boxShadow:
-                  "0 15px 40px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.6)",
-              }
-            : undefined
+          isPastHero
+            ? { width: "100%", transform: "translateX(-50%)" }
+            : { width: "91.6667%", transform: "translateX(-50%)" }
         }
       >
-        {/* Brand Logo: Authentic Xclusive Can Limited */}
-        <Link
-          href="/"
-          className="flex items-center gap-3 transition-transform hover:scale-[1.02] select-none"
+        <div
+          className={`transition-all duration-300 ease-in-out ${
+            isPastHero
+              ? "bg-white/95 backdrop-blur-xl border-b border-black/8 shadow-sm rounded-none"
+              : "bg-white/50 backdrop-blur-md border border-white/60 shadow-[0_12px_35px_rgba(0,0,0,0.08)]"
+          }`}
+          style={
+            !isPastHero
+              ? {
+                  borderRadius: "0.75rem",
+                  backgroundColor: "rgba(255, 255, 255, 0.48)",
+                  backdropFilter: "blur(14px)",
+                  WebkitBackdropFilter: "blur(14px)",
+                  border: "1px solid rgba(255, 255, 255, 0.55)",
+                  boxShadow:
+                    "0 12px 35px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8)",
+                }
+              : undefined
+          }
         >
-          <div className="relative h-11 sm:h-13 w-40 sm:w-48 shrink-0 drop-shadow-sm">
-            <Image
-              src="/cropped/xclusive-logo.png"
-              alt="Xclusive Can Limited"
-              fill
-              className="object-contain object-left"
-              priority
-            />
-          </div>
-        </Link>
-
-        {/* Desktop Nav Links */}
-        <ul className="hidden lg:flex items-center gap-2 xl:gap-4 2xl:gap-6 list-none text-[12px] xl:text-[13px] 2xl:text-[14px] uppercase font-extrabold tracking-wider shrink-0">
-          {navItems.map((item, idx) => {
-            const isActive =
-              (item.href === "/products" &&
-                (pathname === "/products" || pathname === "/find-our-product")) ||
-              (item.href === "/" && pathname === "/");
-
-            return (
-              <li
-                key={idx}
-                className="relative py-6 group cursor-pointer shrink-0"
-                onMouseEnter={() => item.sub && setActiveHover(item.label)}
-                onMouseLeave={() => setActiveHover(null)}
-              >
+          <div
+            className={`transition-all duration-300 ${
+              isPastHero
+                ? "w-full max-w-[1920px] mx-auto px-6 xl:px-8 py-4"
+                : "px-5 sm:px-6 xl:px-8 py-4.5 xl:py-5"
+            }`}
+          >
+            <div className="flex items-center justify-between gap-4 xl:gap-6">
+              {/* Header Logo matching exact aspect-[1.74/1] */}
+              <div style={{ opacity: 1, filter: "blur(0px)", transform: "none" }}>
                 <Link
-                  href={item.href}
-                  className={`flex items-center gap-1.5 transition-all duration-200 px-2.5 py-1.5 rounded-xl whitespace-nowrap shrink-0 ${
-                    isActive
-                      ? "text-[#0284c7] font-extrabold bg-cyan-500/10 shadow-[0_0_15px_rgba(0,194,232,0.15)]"
-                      : isPastHero
-                      ? "text-slate-900 hover:text-[#0284c7] hover:bg-black/5"
-                      : "text-white drop-shadow-sm hover:text-white hover:bg-white/20 hover:backdrop-blur-md"
-                  }`}
+                  aria-label="header logo"
+                  className="block relative overflow-hidden w-[6.3125rem] xl:w-[7.2rem] aspect-[1.74/1] transition-transform hover:scale-[1.02] select-none shrink-0"
+                  href="/"
                 >
-                  <span className="whitespace-nowrap">{item.label}</span>
-                  {item.sub && (
-                    <ChevronDown
-                      className={`w-3.5 h-3.5 opacity-60 transition-transform duration-250 shrink-0 ${
-                        activeHover === item.label ? "rotate-180 opacity-100" : ""
-                      }`}
-                    />
-                  )}
+                  <Image
+                    alt="Website header logo"
+                    src="/cropped/xclusive-logo.png"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
                 </Link>
+              </div>
+
+              {/* Header Content Navigation List for Larger Devices */}
+              <nav aria-label="header content navigation list for larger devices">
+                <ul className="flex justify-center items-center gap-2.5 lg:gap-3 xl:gap-5 2xl:gap-8 list-none select-none">
+                  {navItems.map((item, idx) => {
+                    const isActive =
+                      (item.href === "/products" &&
+                        (pathname === "/products" || pathname === "/find-our-product")) ||
+                      (item.label === "About Us" &&
+                        (pathname === "/our-story" || pathname === "/our-business" || pathname === "/careers" || pathname === "/career")) ||
+                      (item.label === "Achievements" &&
+                        (pathname === "/certificates" || pathname === "/achievements" || pathname === "/brands-we-work-with" || pathname === "/brands")) ||
+                      (item.href === "/" && pathname === "/");
+
+                    return (
+                      <li
+                        key={idx}
+                        aria-label={`${item.label} link`}
+                        className="relative group cursor-pointer"
+                        onMouseEnter={() => item.sub && setActiveHover(item.label)}
+                        onMouseLeave={() => setActiveHover(null)}
+                      >
+                        <div>
+                          <Link
+                            href={item.href}
+                            className={`flex items-center justify-center transition-all duration-200 uppercase font-extrabold text-[14px] tracking-wide whitespace-nowrap select-none px-1.5 xl:px-2.5 py-1 rounded-lg ${
+                              isActive
+                                ? "text-[#0284c7] font-black bg-cyan-500/10 shadow-[0_0_15px_rgba(0,194,232,0.15)]"
+                                : isPastHero
+                                ? "text-slate-900 hover:text-[#0284c7] hover:bg-black/5"
+                                : "text-slate-900 hover:text-[#0284c7] hover:bg-white/60 drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)]"
+                            }`}
+                          >
+                            <span className="block text-nowrap text-start uppercase">
+                              {item.label}
+                            </span>
+                          </Link>
+                        </div>
 
                 {/* ══════════════════════════════════════════════════════════════
                     OPTION 3: Stripe / Tesla Style Informative Glass Mega Panel
@@ -426,34 +439,36 @@ export default function Navbar() {
             );
           })}
         </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+</div>
 
-        {/* Quick Quote CTA on Desktop with Liquid Water Fill Hover Effect */}
-        <div className="hidden lg:flex items-center gap-3 shrink-0">
-          <Link
-            href="/request-quote"
-            className={`water-fill-btn px-4 xl:px-6 py-2.5 xl:py-3 rounded-xl font-extrabold text-[12px] xl:text-[13px] uppercase tracking-wider shadow-md whitespace-nowrap shrink-0 active:scale-95 ${
-              isPastHero
-                ? "bg-[#1f5f8b] text-white shadow-cyan-900/10"
-                : "bg-white/95 text-slate-900 shadow-black/10 backdrop-blur-md"
-            }`}
-          >
-            <span>Request A Quote</span>
-          </Link>
-        </div>
+{/* ══════════════════════════════════════════════════════════════
+    MOBILE HEADER (Exact Client Source)
+   ══════════════════════════════════════════════════════════════ */}
+<div className="lg:hidden p-3 sm:p-4 flex items-center justify-between bg-white/20 backdrop-blur-md border-b border-white/20">
+  <Link aria-label="header logo" className="block relative overflow-hidden w-[6.3125rem] aspect-[1.74/1]" href="/">
+    <Image
+      alt="Website header logo"
+      src="/cropped/xclusive-logo.png"
+      fill
+      className="object-contain"
+      priority
+    />
+  </Link>
 
-        {/* Mobile Hamburger Toggle */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className={`lg:hidden p-2 rounded-xl text-2xl transition-colors cursor-pointer ${
-            isPastHero
-              ? "text-slate-900 hover:bg-black/5"
-              : "text-white hover:bg-white/15"
-          }`}
-          aria-label="Toggle menu"
-        >
-          {mobileOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
-        </button>
-      </div>
+  <button
+    onClick={() => setMobileOpen(!mobileOpen)}
+    aria-label="mobile menu sidebar toggle button"
+    className="relative block overflow-hidden size-10 bg-slate-900/60 rounded-full backdrop-blur-md group active:scale-[0.9] transition-all duration-300"
+  >
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-6 flex items-center justify-center text-white">
+      {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+    </div>
+  </button>
+</div>
 
       {/* Mobile Menu Glass Dropdown */}
       {mobileOpen && (

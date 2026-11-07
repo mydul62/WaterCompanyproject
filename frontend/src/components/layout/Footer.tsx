@@ -26,7 +26,7 @@ export default function Footer() {
       <div className="w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8 py-16 sm:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
           {/* Column 1: Brand Info & Contacts */}
-          <div className="space-y-5">
+          <div data-reveal="up" className="space-y-5">
             {/* Logo */}
             <div className="relative h-12 w-36">
               <Image
@@ -102,7 +102,7 @@ export default function Footer() {
           </div>
 
           {/* Column 2: Quick Links matching Screenshot */}
-          <div className="space-y-4">
+          <div data-reveal="up" className="delay-100 space-y-4">
             <h3 className="font-bold text-lg text-black">
               Quick Links
             </h3>
@@ -136,8 +136,14 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#footer" className="hover:text-black flex items-center justify-between group">
+                <Link href="/certificates" className="hover:text-black flex items-center justify-between group">
                   <span>Achievements</span>
+                  <span className="text-slate-400 group-hover:text-black">∨</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/brands-we-work-with" className="hover:text-black flex items-center justify-between group">
+                  <span>Our Clients</span>
                   <span className="text-slate-400 group-hover:text-black">∨</span>
                 </Link>
               </li>
@@ -147,11 +153,17 @@ export default function Footer() {
                   <span className="text-slate-400 group-hover:text-black">∨</span>
                 </Link>
               </li>
+              <li>
+                <Link href="/careers" className="hover:text-[#0284c7] font-medium flex items-center justify-between group">
+                  <span>Careers</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-50 text-[#0284c7] font-bold">Hiring</span>
+                </Link>
+              </li>
             </ul>
           </div>
 
           {/* Column 3: Our Products matching Screenshot */}
-          <div className="space-y-4">
+          <div data-reveal="up" className="delay-150 space-y-4">
             <h3 className="font-bold text-lg text-black">
               Our Products
             </h3>
@@ -188,7 +200,7 @@ export default function Footer() {
           </div>
 
           {/* Column 4: Official Certificates Seal Image matching Screenshot */}
-          <div className="space-y-4">
+          <div data-reveal="up" className="delay-200 space-y-4">
             <h3 className="font-bold text-lg text-black">
               Certificates
             </h3>

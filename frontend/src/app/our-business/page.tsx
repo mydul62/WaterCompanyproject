@@ -6,235 +6,740 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import RFQDrawer from "@/components/rfq/RFQDrawer";
-import { CheckCircle2, ChevronRight } from "lucide-react";
+import {
+  ShieldCheck,
+  Award,
+  Zap,
+  Factory,
+  Leaf,
+  Globe,
+  Clock,
+  ArrowRight,
+  Sparkles,
+  Building2,
+  Users,
+  Layers,
+  Recycle,
+  Microscope,
+  CheckCircle2,
+  ChevronRight,
+  TrendingUp,
+  FileCheck2,
+} from "lucide-react";
 
 export default function OurBusinessPage() {
   const [isRFQOpen, setIsRFQOpen] = useState(false);
-  const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({});
+  const [expandedValue, setExpandedValue] = useState(false);
 
-  const toggleSection = (key: string) => {
-    setExpandedSections((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
+  // 4 Core Value Pillars
+  const valueOfferings = [
+    {
+      num: "01",
+      title: "Unwavering Trust & Partnership",
+      desc: "Nurturing lasting relationships with multinational FMCG and pharmaceutical conglomerates through open communication, mutual integrity, and consistency.",
+      icon: ShieldCheck,
+    },
+    {
+      num: "02",
+      title: "Precision Engineering & Tooling",
+      desc: "In-house 3D CAD modeling, custom mold fabrication, and robotic blow/injection molding engineered to achieve microscopic dimensional accuracy.",
+      icon: Factory,
+    },
+    {
+      num: "03",
+      title: "100% Eco-Friendly Materials",
+      desc: "Zero-compromise safety using 100% recyclable virgin polymers and eco-friendly tinplate to safeguard food, pharmaceuticals, and our planet.",
+      icon: Leaf,
+    },
+    {
+      num: "04",
+      title: "Synchronized Regional Supply Chain",
+      desc: "From raw resin intake to dockside delivery, our synchronized logistics guarantee on-time delivery across Bangladesh, Asia, and global markets.",
+      icon: Clock,
+    },
+  ];
 
-  const whyChooseUsPoints = [
-    "Over 32 years of experience in custom plastic and metal packaging manufacturing with unmatched market expertise.",
-    "State-of-the-art green manufacturing facilities in Gazipur and Tongi, Dhaka, equipped with advanced automation and technology.",
-    "Full adherence to global standards: ISO 22000, GMP, and HACCP certifications for packaging safety and excellence.",
-    "End-to-end packaging solutions: from 3D modeling and mold tooling to high-speed blow molding and printing.",
-    "Dependable client partnerships: responsive customer service and dedicated supply chain reliability across Asia, Middle East, and Africa.",
-    "Sustainable packaging solutions: 100% recyclable virgin materials with eco-friendly manufacturing practices.",
+  // 6 Why Choose Us Bento Cards
+  const whyChooseUsCards = [
+    {
+      icon: Award,
+      title: "32+ Years Industry Leadership",
+      desc: "Over three decades of specialized mastery in custom plastic and metal packaging manufacturing with unmatched market expertise.",
+    },
+    {
+      icon: Building2,
+      title: "LEED Platinum Green Facilities",
+      desc: "State-of-the-art eco-manufacturing complexes in Gazipur and Tongi, Dhaka, equipped with advanced automation and zero-carbon utilities.",
+    },
+    {
+      icon: FileCheck2,
+      title: "Global Safety Certifications",
+      desc: "Full adherence to international standards: ISO 22000, GMP, and HACCP certifications for flawless packaging hygiene and compliance.",
+    },
+    {
+      icon: Layers,
+      title: "End-to-End Turnkey Packaging",
+      desc: "Complete lifecycle capability: from 3D conceptual modeling and mold tooling to high-speed blow molding, screen printing, and hermetic sealing.",
+    },
+    {
+      icon: Globe,
+      title: "Dependable Regional Supply Chain",
+      desc: "Agile, responsive supply agreements ensuring uninterrupted production schedules for clients across Asia, the Middle East, and Africa.",
+    },
+    {
+      icon: Recycle,
+      title: "100% Recyclable Solutions",
+      desc: "Circular economy initiatives utilizing food-safe virgin recyclable polymers and sustainable tinplate, minimizing environmental footprint.",
+    },
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      {/* Top Glassmorphic Navbar */}
+      {/* Top Glassmorphic Floating Header */}
       <Navbar />
 
-      <main className="flex-1">
-        {/* Hero Banner matching Screenshot 6408e270 */}
+      <main className="flex-1 relative">
+        {/* ══════════════════════════════════════════════════════════════
+            HERO SECTION: Full-Height Sticky Hero with Corporate Office
+           ══════════════════════════════════════════════════════════════ */}
         <div
           id="hero"
-          className="relative w-full h-[260px] sm:h-[340px] lg:h-[400px] overflow-hidden flex items-center justify-center select-none"
+          className="sticky top-0 z-0 w-full h-screen min-h-[720px] overflow-hidden select-none flex items-center"
         >
+          {/* Authentic Corporate Office Team & Workstation Background */}
           <Image
-            src="/images/business-banner.jpg"
-            alt="Our Business - Xclusive Can Limited"
+            src="/images/business-hero-office.jpg"
+            alt="Xclusive Can Limited Corporate Office and Team Workstation"
             fill
             className="object-cover object-center"
             priority
           />
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-[0.5px]" />
-          <div className="relative z-10 text-center px-4 pt-16 sm:pt-20">
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-wider drop-shadow-md">
-              Our Business
-            </h1>
+
+          {/* Cinematic Deep Frosted Vignette */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/45 to-slate-950/40 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-slate-950/30 pointer-events-none" />
+          <div className="absolute top-1/4 left-10 w-[500px] h-[500px] bg-cyan-400/10 rounded-full blur-[140px] pointer-events-none" />
+          <div className="absolute bottom-1/4 right-10 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[140px] pointer-events-none" />
+
+          {/* Hero Content Overlay */}
+          <div className="relative z-10 w-[91.6667%] max-w-[1920px] mx-auto px-4 sm:px-8 flex flex-col justify-between h-full pt-28 sm:pt-36 pb-10">
+            {/* Main Headline & Narrative */}
+            <div className="max-w-3xl space-y-6 my-auto">
+              {/* Breadcrumb Navigation */}
+              <div className="inline-flex items-center gap-2 text-xs font-semibold text-cyan-200/90 uppercase tracking-widest">
+                <Link href="/" className="hover:text-white transition-colors">Home</Link>
+                <span>/</span>
+                <span className="text-white">About Us</span>
+                <span>/</span>
+                <span className="text-cyan-400">Our Business</span>
+              </div>
+
+              {/* Glassy Tag Badge */}
+              <div>
+                <div className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-full border border-white/30 bg-white/15 backdrop-blur-md text-white text-xs sm:text-sm font-bold uppercase tracking-wider shadow-lg shadow-black/15">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Industrial Packaging Pioneers &bull; Since 1992</span>
+                </div>
+              </div>
+
+              {/* Headline */}
+              <div className="space-y-2">
+                <h1 className="text-4xl sm:text-6xl lg:text-[68px] font-black text-white tracking-tight leading-[1.06] drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
+                  Our{" "}
+                  <span className="bg-gradient-to-r from-white via-cyan-200 to-sky-300 bg-clip-text text-transparent">
+                    Business
+                  </span>
+                </h1>
+              </div>
+
+              {/* Subtitle */}
+              <p className="text-base sm:text-lg lg:text-xl text-white/90 font-normal leading-relaxed drop-shadow-md max-w-2xl">
+                The Xclusive Can Ltd. Majukhan campus is an eco-friendly, green building compliant industrial center
+                featuring centralized, automated cleanrooms and sustainable packaging solutions.
+              </p>
+
+              {/* Interactive CTA Buttons with Liquid Water Surge */}
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <button
+                  onClick={() => setIsRFQOpen(true)}
+                  className="water-fill-btn inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-white text-slate-900 font-extrabold text-sm tracking-wide shadow-xl hover:shadow-2xl transition-all cursor-pointer active:scale-95"
+                >
+                  <span>Request Corporate Consultation</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+                <a
+                  href="#overview"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/40 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-bold text-sm transition-all active:scale-95 cursor-pointer"
+                >
+                  <span>Explore Capabilities</span>
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+
+            {/* Floating Hero Bottom KPI Metric Bar */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 pt-6 border-t border-white/15">
+              <div className="p-3.5 sm:p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+                <div className="text-2xl sm:text-3xl font-black text-white tracking-tight">32+ Years</div>
+                <div className="text-xs text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Manufacturing Mastery</div>
+              </div>
+              <div className="p-3.5 sm:p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+                <div className="text-2xl sm:text-3xl font-black text-white tracking-tight">50M+ Units</div>
+                <div className="text-xs text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Monthly Production</div>
+              </div>
+              <div className="p-3.5 sm:p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+                <div className="text-2xl sm:text-3xl font-black text-white tracking-tight">Class 100k</div>
+                <div className="text-xs text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Automated Cleanrooms</div>
+              </div>
+              <div className="p-3.5 sm:p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
+                <div className="text-2xl sm:text-3xl font-black text-white tracking-tight">LEED Platinum</div>
+                <div className="text-xs text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Zero-Carbon Campus</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Section 1: Who We Are matching Screenshot */}
-        <section className="w-full py-16 sm:py-24 border-b border-slate-100">
-          <div className="w-full max-w-[1643px] mx-auto px-6 sm:px-12 text-center">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-black tracking-tight mb-6">
-              Who We Are
-            </h2>
-            <p className="max-w-4xl mx-auto text-sm sm:text-base lg:text-lg text-slate-600 leading-relaxed font-normal mb-8">
-              The Xclusive Can Ltd. Majukhan factory is eco-friendly and green building compliant, architecturally recent,
-              and aesthetic, hygienic, neat and clean, having conductive working environment with all utility services
-              centralized, automated and sophisticated.
-            </p>
+        {/* ══════════════════════════════════════════════════════════════
+            CURTAIN BODY: Smooth 3D Rise on Scroll
+           ══════════════════════════════════════════════════════════════ */}
+        <div
+          id="curtain-reveal"
+          className="relative z-10 bg-white rounded-t-[32px] sm:rounded-t-[48px] shadow-[0_-25px_60px_rgba(0,0,0,0.22)] border-t border-white/60 overflow-hidden"
+        >
+          {/* Subtle Ambient Radial Glow Orbs */}
+          <div className="absolute top-40 -left-20 w-[500px] h-[500px] bg-cyan-400/6 rounded-full blur-[140px] pointer-events-none" />
+          <div className="absolute top-[800px] -right-20 w-[500px] h-[500px] bg-emerald-400/6 rounded-full blur-[140px] pointer-events-none" />
 
-            <div className="mb-14">
-              <button
-                onClick={() => setIsRFQOpen(true)}
-                className="inline-block px-7 py-2.5 rounded-lg border-2 border-black bg-white text-black font-bold text-sm hover:bg-black hover:text-white transition-all shadow-sm active:scale-95 cursor-pointer"
-              >
-                Points of Excellence
-              </button>
-            </div>
+          {/* ══════════════════════════════════════════════════════════════
+              SECTION 1: Who We Are & Eco-Industrial Campus
+             ══════════════════════════════════════════════════════════════ */}
+          <section id="overview" className="relative w-full py-20 sm:py-28 border-b border-slate-100">
+            <div className="w-[91.6667%] max-w-[1920px] mx-auto px-4 sm:px-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+                {/* Left Column: Narrative & 3 Feature Highlights (7 Cols) */}
+                <div data-reveal="up" className="lg:col-span-7 space-y-7">
+                  {/* Eyebrow Badge */}
+                  <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-cyan-50/90 border border-cyan-200/70 text-cyan-800 text-xs font-bold uppercase tracking-wider shadow-xs">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>World-Class Eco-Industrial Campus</span>
+                  </div>
 
-            {/* Two Plant & Green Campus Photos matching Screenshot 6408e270 */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-10 max-w-4xl mx-auto">
-              {/* Photo 1: Bamboo Grove / Sunlit Path */}
-              <div className="relative w-full sm:w-[320px] aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border border-slate-200/80 bg-slate-100 group">
-                <Image
-                  src="/images/business-plant-1.jpg"
-                  alt="Xclusive Can Limited Majukhan Eco-Friendly Campus"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
+                  {/* Heading */}
+                  <div className="space-y-2">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.12]">
+                      Who We{" "}
+                      <span className="bg-gradient-to-r from-slate-900 via-[#1f5f8b] to-[#18b2a0] bg-clip-text text-transparent">
+                        Are
+                      </span>
+                    </h2>
+                    <div className="w-20 h-1 rounded-full bg-gradient-to-r from-[#1f5f8b] to-[#18b2a0]" />
+                  </div>
 
-              {/* Photo 2: Green Vertical Vines Facade */}
-              <div className="relative w-full sm:w-[320px] aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border border-slate-200/80 bg-slate-100 group mt-0 sm:mt-10">
-                <Image
-                  src="/images/business-plant-2.jpg"
-                  alt="LEED Platinum Certified Vertical Green Building Facade"
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
+                  {/* Description */}
+                  <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
+                    The Xclusive Can Ltd. Majukhan factory is eco-friendly and green building compliant, architecturally modern,
+                    hygienic, neat and clean, offering a conducive working environment with centralized, automated utility services.
+                  </p>
 
-        {/* Section 2: The value we offer matching Screenshot */}
-        <section className="w-full py-16 sm:py-20 border-b border-slate-100">
-          <div className="w-full max-w-[1643px] mx-auto px-6 sm:px-12">
-            <div className="max-w-4xl">
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-black text-black tracking-tight inline-block border-b-4 border-black pb-1 mb-6">
-                  The value we offer
-                </h2>
-              </div>
+                  {/* 3 Core Highlight Feature Cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+                    <div className="p-4 rounded-2xl bg-[#f8fbfe] border border-slate-200/70 hover:border-cyan-400/50 hover:shadow-md transition-all group">
+                      <div className="w-10 h-10 rounded-xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-600 mb-3 group-hover:scale-110 transition-transform">
+                        <ShieldCheck className="w-5 h-5 stroke-[2.2]" />
+                      </div>
+                      <h4 className="text-sm font-bold text-slate-900">Class 100k Cleanroom</h4>
+                      <p className="text-xs text-slate-500 mt-1 leading-relaxed">Pristine dust-free packaging for pharmaceuticals and food.</p>
+                    </div>
 
-              <div className="space-y-5 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-                <p>
-                  Our core values form our shape our company culture — guiding every decision, action, and interaction.
-                  They unite our team around what Xclusive Can Ltd. stands for globally, inspiring a shared sense of
-                  purpose and pride. True to our heritage, these values also serve as an inspiration for the future,
-                  ensuring our continued relevance in an increasingly dynamic and competitive world.
-                </p>
-                <p>
-                  At Xclusive Can Ltd., we believe that value goes beyond the product itself — it lies in the trust we
-                  build, the relationships we nurture, and the reliability we deliver. Our commitment to excellence,
-                  innovation, and sustainability drives us to create packaging solutions that not only meet but consistently
-                  exceed expectations.
-                </p>
-                <p>
-                  We offer our clients comprehensive support, from initial concepts to final delivery, ensuring
-                  efficiency, quality, and circumspection at every stage. Whether it&apos;s developing advanced packaging
-                  for fast-moving consumer goods or crafting specialized solutions for industrial needs, our focus
-                  remains on delivering tangible results and long-term value for our partners worldwide.
-                </p>
-              </div>
+                    <div className="p-4 rounded-2xl bg-[#f8fbfe] border border-slate-200/70 hover:border-emerald-400/50 hover:shadow-md transition-all group">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 mb-3 group-hover:scale-110 transition-transform">
+                        <Award className="w-5 h-5 stroke-[2.2]" />
+                      </div>
+                      <h4 className="text-sm font-bold text-slate-900">LEED Platinum Plant</h4>
+                      <p className="text-xs text-slate-500 mt-1 leading-relaxed">Zero-carbon emissions, solar energy, and rainwater harvesting.</p>
+                    </div>
 
-              <div className="pt-6">
-                <button
-                  onClick={() => toggleSection("value")}
-                  className="inline-block px-7 py-2 rounded-lg border-2 border-black bg-white text-black font-bold text-sm hover:bg-black hover:text-white transition-all shadow-sm active:scale-95 cursor-pointer"
-                >
-                  {expandedSections["value"] ? "View Less..." : "View More..."}
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
+                    <div className="p-4 rounded-2xl bg-[#f8fbfe] border border-slate-200/70 hover:border-cyan-400/50 hover:shadow-md transition-all group">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-3 group-hover:scale-110 transition-transform">
+                        <Zap className="w-5 h-5 stroke-[2.2]" />
+                      </div>
+                      <h4 className="text-sm font-bold text-slate-900">Automated Utilities</h4>
+                      <p className="text-xs text-slate-500 mt-1 leading-relaxed">Centralized European blow molding & injection machinery.</p>
+                    </div>
+                  </div>
 
-        {/* Section 3: Our purpose drives our culture matching Screenshot */}
-        <section className="w-full py-16 sm:py-20 border-b border-slate-100">
-          <div className="w-full max-w-[1643px] mx-auto px-6 sm:px-12">
-            <div className="max-w-4xl">
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-black text-black tracking-tight inline-block border-b-4 border-black pb-1 mb-6">
-                  Our purpose drives our culture
-                </h2>
-              </div>
-
-              <div className="space-y-5 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-                <p>
-                  Our culture at Xclusive Can Ltd. is built around a shared purpose: to shape the future of sustainable
-                  and intelligent packaging through innovation and collaboration. This purpose fuels every decision we
-                  make and every challenge we embrace. We believe that true innovation thrives in a culture of curiosity,
-                  teamwork, and continuous learning. Every member of our organization — from R&amp;D engineers to
-                  production specialists — contributes ideas that move us forward. Our open, progressive environment
-                  inspires creativity, accountability, and excellence in every project we undertake.
-                </p>
-              </div>
-
-              <div className="pt-6">
-                <button
-                  onClick={() => toggleSection("purpose")}
-                  className="inline-block px-7 py-2 rounded-lg border-2 border-black bg-white text-black font-bold text-sm hover:bg-black hover:text-white transition-all shadow-sm active:scale-95 cursor-pointer"
-                >
-                  {expandedSections["purpose"] ? "View Less..." : "View More..."}
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Section 4: Our Strength matching Screenshot */}
-        <section className="w-full py-16 sm:py-20 border-b border-slate-100">
-          <div className="w-full max-w-[1643px] mx-auto px-6 sm:px-12">
-            <div className="max-w-4xl">
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-black text-black tracking-tight inline-block border-b-4 border-black pb-1 mb-6">
-                  Our Strength
-                </h2>
-              </div>
-
-              <div className="space-y-5 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-                <p>
-                  With over 32 years of hands-on experience in the manufacturing of plastic and metal packaging products,
-                  we have built a legacy of excellence, innovation, and trust. Our strength lies in our deep industry
-                  expertise, cutting-edge technology, and unwavering commitment to quality.
-                </p>
-                <p>
-                  We specialize in delivering innovative packaging solutions tailored to meet diverse industry needs — from
-                  concept design to full-scale production. Our end-to-end capability allows us to provide precision
-                  engineered results that align perfectly with our clients&apos; functional and branding requirements.
-                </p>
-                <p>
-                  Supported by state-of-the-art machinery, a skilled technical workforce, and a dedicated R&amp;D team, we
-                  consistently achieve the highest standards of performance, durability, and aesthetics. But beyond
-                  technology, our greatest strength is our people — passionate professionals who transform ideas into
-                  superior, reliable, and sustainable packaging solutions.
-                </p>
-                <p>
-                  Together, we deliver not just products, but trust, consistency, and long-term value that help our clients
-                  succeed in competitive global markets.
-                </p>
-              </div>
-
-              <div className="pt-6">
-                <button
-                  onClick={() => toggleSection("strength")}
-                  className="inline-block px-7 py-2 rounded-lg border-2 border-black bg-white text-black font-bold text-sm hover:bg-black hover:text-white transition-all shadow-sm active:scale-95 cursor-pointer"
-                >
-                  {expandedSections["strength"] ? "View Less..." : "View More..."}
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Section 5: Why Choose Us matching Screenshot 6408e270 */}
-        <section className="w-full py-20 sm:py-24">
-          <div className="w-full max-w-[1643px] mx-auto px-6 sm:px-12 text-center">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-black tracking-tight mb-10">
-              Why Choose Us
-            </h2>
-
-            <div className="max-w-3xl mx-auto text-left space-y-4">
-              {whyChooseUsPoints.map((point, idx) => (
-                <div key={idx} className="flex items-start gap-3.5 text-sm sm:text-base text-slate-600 leading-relaxed">
-                  <span className="w-2 h-2 rounded-full bg-black shrink-0 mt-2" />
-                  <span>{point}</span>
+                  {/* Button */}
+                  <div className="pt-2">
+                    <button
+                      onClick={() => setIsRFQOpen(true)}
+                      className="water-fill-btn inline-flex items-center gap-2.5 px-8 py-3 rounded-xl border-2 border-slate-900 bg-white text-slate-900 font-bold text-sm hover:shadow-lg transition-all active:scale-95 cursor-pointer"
+                    >
+                      <span>Points of Excellence</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-              ))}
+
+                {/* Right Column: Dual Campus Photos (5 Cols) */}
+                <div data-reveal="scale" className="delay-150 lg:col-span-5 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-center justify-center gap-6">
+                  {/* Photo 1: Bamboo Grove / Sunlit Path */}
+                  <div className="water-fill-card relative w-full sm:w-[280px] lg:w-full xl:w-[280px] aspect-[3/4] rounded-3xl overflow-hidden shadow-[0_15px_35px_rgba(0,0,0,0.08)] border border-slate-200/80 bg-slate-100 group cursor-pointer">
+                    <Image
+                      src="/images/business-plant-1.jpg"
+                      alt="Xclusive Can Limited Majukhan Eco-Friendly Campus"
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute bottom-4 left-4 right-4 text-white">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-950/60 backdrop-blur-sm px-2.5 py-0.5 rounded-full">Eco Campus</span>
+                      <h4 className="text-sm font-bold mt-1 text-white">Majukhan Green Grounds</h4>
+                    </div>
+                  </div>
+
+                  {/* Photo 2: Green Vertical Living Vines Facade */}
+                  <div className="water-fill-card relative w-full sm:w-[280px] lg:w-full xl:w-[280px] aspect-[3/4] rounded-3xl overflow-hidden shadow-[0_15px_35px_rgba(0,0,0,0.08)] border border-slate-200/80 bg-slate-100 group mt-0 sm:mt-8 lg:mt-0 xl:mt-8 cursor-pointer">
+                    <Image
+                      src="/images/business-plant-2.jpg"
+                      alt="LEED Platinum Certified Vertical Green Building Facade"
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute bottom-4 left-4 right-4 text-white">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-300 bg-cyan-950/60 backdrop-blur-sm px-2.5 py-0.5 rounded-full">LEED Platinum</span>
+                      <h4 className="text-sm font-bold mt-1 text-white">Vertical Living Garden</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+
+          {/* ══════════════════════════════════════════════════════════════
+              SECTION 2: The Value We Offer (Interactive 4-Card Bento Grid)
+             ══════════════════════════════════════════════════════════════ */}
+          <section className="relative w-full py-20 sm:py-28 bg-[#fbfdff] border-b border-slate-100">
+            <div className="w-[91.6667%] max-w-[1920px] mx-auto px-4 sm:px-8">
+              {/* Header */}
+              <div data-reveal="up" className="max-w-3xl mb-14 space-y-3">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-800 text-xs font-bold uppercase tracking-wider">
+                  <Sparkles className="w-3.5 h-3.5 text-cyan-600" />
+                  <span>Delivering Tangible Impact</span>
+                </div>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.12]">
+                  The Value{" "}
+                  <span className="bg-gradient-to-r from-slate-900 via-[#1f5f8b] to-[#18b2a0] bg-clip-text text-transparent">
+                    We Offer
+                  </span>
+                </h2>
+                <div className="w-20 h-1 rounded-full bg-gradient-to-r from-[#1f5f8b] to-[#18b2a0]" />
+                <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-normal pt-2">
+                  At Xclusive Can Ltd., value goes beyond the physical container. It lies in the trust we build,
+                  the relationships we nurture, and the operational reliability we deliver every day.
+                </p>
+              </div>
+
+              {/* 4 Interactive Bento Value Cards with Liquid Water Hover */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {valueOfferings.map((item, idx) => {
+                  const Icon = item.icon;
+                  return (
+                    <article
+                      key={idx}
+                      data-reveal="up"
+                      style={{ animationDelay: `${idx * 100}ms` }}
+                      className="water-fill-card group relative rounded-3xl bg-white p-7 sm:p-8 border border-slate-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgba(0,194,232,0.12)] hover:border-cyan-400/50 transition-all duration-300 flex flex-col justify-between"
+                    >
+                      <div>
+                        {/* Top Row: Number & Icon */}
+                        <div className="flex items-center justify-between mb-6">
+                          <span className="text-xs font-black text-cyan-600/80 uppercase tracking-widest">
+                            {item.num}
+                          </span>
+                          <div className="w-12 h-12 rounded-2xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-600 group-hover:scale-110 transition-transform duration-300">
+                            <Icon className="w-6 h-6 stroke-[2.2]" />
+                          </div>
+                        </div>
+
+                        {/* Title & Desc */}
+                        <h3 className="text-lg font-bold text-slate-900 group-hover:text-[#1f5f8b] transition-colors mb-3 leading-snug">
+                          {item.title}
+                        </h3>
+                        <p className="text-sm text-slate-600 leading-relaxed font-normal">
+                          {item.desc}
+                        </p>
+                      </div>
+
+                      {/* Bottom Accent */}
+                      <div className="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-400 group-hover:text-[#1f5f8b] transition-colors">
+                        <span>Pillar {item.num}</span>
+                        <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+
+              {/* Expandable Deep Corporate Narrative */}
+              <div data-reveal="up" className="mt-10 p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/80 shadow-xs">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <h4 className="text-base sm:text-lg font-bold text-slate-900">
+                      Our End-to-End Partnership Model
+                    </h4>
+                    <p className="text-sm text-slate-500">
+                      Explore how we guide projects from 3D concept prototyping to global delivery.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setExpandedValue(!expandedValue)}
+                    className="water-fill-btn px-6 py-2.5 rounded-xl border border-slate-900 bg-white text-slate-900 font-bold text-xs uppercase tracking-wider hover:shadow transition-all shrink-0 cursor-pointer"
+                  >
+                    <span>{expandedValue ? "Hide Details" : "Read Full Philosophy"}</span>
+                  </button>
+                </div>
+
+                {expandedValue && (
+                  <div className="mt-6 pt-6 border-t border-slate-100 text-sm sm:text-base text-slate-600 leading-relaxed space-y-4 animate-in fade-in duration-300">
+                    <p>
+                      Our core values shape our company culture — guiding every decision, action, and interaction.
+                      They unite our team around what Xclusive Can Ltd. stands for globally, inspiring a shared sense of
+                      purpose and pride. True to our heritage, these values also serve as an inspiration for the future,
+                      ensuring our continued relevance in an increasingly dynamic and competitive world.
+                    </p>
+                    <p>
+                      We offer our clients comprehensive support, from initial concepts to final delivery, ensuring
+                      efficiency, quality, and circumspection at every stage. Whether it&apos;s developing advanced packaging
+                      for fast-moving consumer goods or crafting specialized solutions for industrial needs, our focus
+                      remains on delivering tangible results and long-term value for our partners worldwide.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+
+          {/* ══════════════════════════════════════════════════════════════
+              SECTION 3: Our Purpose Drives Our Culture (Balanced Split Layout)
+             ══════════════════════════════════════════════════════════════ */}
+          <section className="relative w-full py-20 sm:py-28 bg-white border-b border-slate-100">
+            <div className="w-[91.6667%] max-w-[1920px] mx-auto px-4 sm:px-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+                {/* Left Column: Mission Narrative (6 Cols) */}
+                <div data-reveal="up" className="lg:col-span-6 space-y-6">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-800 text-xs font-bold uppercase tracking-wider">
+                    <Sparkles className="w-3.5 h-3.5 text-cyan-600" />
+                    <span>Corporate Mission &amp; Purpose</span>
+                  </div>
+
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.12]">
+                    Our Purpose Drives{" "}
+                    <span className="bg-gradient-to-r from-slate-900 via-[#1f5f8b] to-[#18b2a0] bg-clip-text text-transparent">
+                      Our Culture
+                    </span>
+                  </h2>
+                  <div className="w-20 h-1 rounded-full bg-gradient-to-r from-[#1f5f8b] to-[#18b2a0]" />
+
+                  <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
+                    Our culture at Xclusive Can Ltd. is built around a shared purpose: to shape the future of sustainable
+                    and intelligent packaging through innovation and collaboration. This purpose fuels every decision we
+                    make and every challenge we embrace.
+                  </p>
+
+                  <p className="text-sm sm:text-base text-slate-500 leading-relaxed font-normal">
+                    We believe that true innovation thrives in a culture of curiosity, teamwork, and continuous learning.
+                    Every member of our organization contributes ideas that move us forward, creating a progressive
+                    environment that inspires accountability and excellence.
+                  </p>
+
+                  {/* Highlights Checklist */}
+                  <div className="space-y-2.5 pt-2">
+                    <div className="flex items-center gap-2.5 text-sm font-semibold text-slate-700">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                      <span>Zero-Defect Quality Assurance Protocol</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-sm font-semibold text-slate-700">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                      <span>Continuous Technical Workforce Training</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-sm font-semibold text-slate-700">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                      <span>Inclusive Workplace Safety Standards</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Column: 3 Culture Pillar Cards (6 Cols) */}
+                <div data-reveal="scale" className="delay-150 lg:col-span-6 space-y-4">
+                  <div className="p-6 rounded-2xl bg-[#f8fbfe] border border-slate-200/80 hover:border-cyan-400/50 hover:shadow-md transition-all group">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-600 shrink-0 group-hover:scale-110 transition-transform">
+                        <TrendingUp className="w-6 h-6 stroke-[2.2]" />
+                      </div>
+                      <div>
+                        <h4 className="text-base font-bold text-slate-900 group-hover:text-[#1f5f8b] transition-colors">
+                          Curiosity &amp; Boundless Innovation
+                        </h4>
+                        <p className="text-sm text-slate-600 mt-1 leading-relaxed">
+                          Empowering our engineers to pioneer novel polymer blends and ergonomic shapes that reduce raw material usage while increasing bottle durability.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-6 rounded-2xl bg-[#f8fbfe] border border-slate-200/80 hover:border-emerald-400/50 hover:shadow-md transition-all group">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0 group-hover:scale-110 transition-transform">
+                        <Users className="w-6 h-6 stroke-[2.2]" />
+                      </div>
+                      <div>
+                        <h4 className="text-base font-bold text-slate-900 group-hover:text-[#1f5f8b] transition-colors">
+                          Team Synergy &amp; Personal Ownership
+                        </h4>
+                        <p className="text-sm text-slate-600 mt-1 leading-relaxed">
+                          Every team member holds personal ownership of packaging safety, ensuring that every batch leaving the dock is compliant with international benchmarks.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-6 rounded-2xl bg-[#f8fbfe] border border-slate-200/80 hover:border-blue-400/50 hover:shadow-md transition-all group">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0 group-hover:scale-110 transition-transform">
+                        <Globe className="w-6 h-6 stroke-[2.2]" />
+                      </div>
+                      <div>
+                        <h4 className="text-base font-bold text-slate-900 group-hover:text-[#1f5f8b] transition-colors">
+                          Global Relevance &amp; Sustainability
+                        </h4>
+                        <p className="text-sm text-slate-600 mt-1 leading-relaxed">
+                          Aligning industrial practices with international climate goals by investing in post-consumer recycled resins and zero-landfill manufacturing.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ══════════════════════════════════════════════════════════════
+              SECTION 4: Our Strength (32+ Years Manufacturing Powerhouse)
+             ══════════════════════════════════════════════════════════════ */}
+          <section className="relative w-full py-20 sm:py-28 bg-[#fbfdff] border-b border-slate-100">
+            <div className="w-[91.6667%] max-w-[1920px] mx-auto px-4 sm:px-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+                {/* Left Column: Heading & Capabilities (6 Cols) */}
+                <div data-reveal="up" className="lg:col-span-6 space-y-6">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-800 text-xs font-bold uppercase tracking-wider">
+                    <ShieldCheck className="w-3.5 h-3.5 text-cyan-600" />
+                    <span>Decades of Proven Mastery</span>
+                  </div>
+
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.12]">
+                    Our{" "}
+                    <span className="bg-gradient-to-r from-slate-900 via-[#1f5f8b] to-[#18b2a0] bg-clip-text text-transparent">
+                      Strength
+                    </span>
+                  </h2>
+                  <div className="w-20 h-1 rounded-full bg-gradient-to-r from-[#1f5f8b] to-[#18b2a0]" />
+
+                  <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
+                    With over 32 years of hands-on experience in the manufacturing of plastic and metal packaging products,
+                    we have built a legacy of excellence, innovation, and trust. Our strength lies in our deep industry
+                    expertise, cutting-edge technology, and unwavering commitment to quality.
+                  </p>
+
+                  <p className="text-sm sm:text-base text-slate-500 leading-relaxed font-normal">
+                    Supported by state-of-the-art European blow molding and injection machinery, a skilled technical workforce,
+                    and a dedicated R&amp;D team, we consistently achieve the highest standards of performance, durability,
+                    and aesthetic finish.
+                  </p>
+
+                  {/* Highlights Checklist */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <div className="flex items-center gap-2.5 text-sm font-semibold text-slate-700">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                      <span>Custom 3D CAD Mold Tooling</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-sm font-semibold text-slate-700">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                      <span>European Robotic Lines</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-sm font-semibold text-slate-700">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                      <span>In-House Stress &amp; Drop Lab</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-sm font-semibold text-slate-700">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                      <span>DGDA &amp; Pharma Certified</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Column: 4 Clean Power Stat Cards Grid (6 Cols) */}
+                <div data-reveal="scale" className="delay-150 lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-lg hover:border-cyan-400/50 transition-all group">
+                    <div className="w-12 h-12 rounded-2xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-600 mb-4 group-hover:scale-105 transition-transform">
+                      <Clock className="w-6 h-6 stroke-[2.2]" />
+                    </div>
+                    <div className="text-4xl font-black text-slate-900 tracking-tight">32+</div>
+                    <div className="text-sm font-bold text-slate-700 mt-1">Years Heritage</div>
+                    <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                      Pioneering engineered containers since 1992 across domestic and global markets.
+                    </p>
+                  </div>
+
+                  <div className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-lg hover:border-cyan-400/50 transition-all group">
+                    <div className="w-12 h-12 rounded-2xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-600 mb-4 group-hover:scale-105 transition-transform">
+                      <Factory className="w-6 h-6 stroke-[2.2]" />
+                    </div>
+                    <div className="text-4xl font-black text-slate-900 tracking-tight">50M+</div>
+                    <div className="text-sm font-bold text-slate-700 mt-1">Monthly Units</div>
+                    <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                      Mass automated throughput delivering consistent supply to Fortune 500 partners.
+                    </p>
+                  </div>
+
+                  <div className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-lg hover:border-emerald-400/50 transition-all group">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 mb-4 group-hover:scale-105 transition-transform">
+                      <Award className="w-6 h-6 stroke-[2.2]" />
+                    </div>
+                    <div className="text-4xl font-black text-slate-900 tracking-tight">2 Plants</div>
+                    <div className="text-sm font-bold text-slate-700 mt-1">Q Pail &amp; XCL</div>
+                    <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                      Specialized metal container and high-density plastic polymer industrial campuses.
+                    </p>
+                  </div>
+
+                  <div className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-lg hover:border-cyan-400/50 transition-all group">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-4 group-hover:scale-105 transition-transform">
+                      <Microscope className="w-6 h-6 stroke-[2.2]" />
+                    </div>
+                    <div className="text-4xl font-black text-slate-900 tracking-tight">100%</div>
+                    <div className="text-sm font-bold text-slate-700 mt-1">Virgin Quality</div>
+                    <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                      Zero-compromise food &amp; pharmaceutical grade polymer certifications.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ══════════════════════════════════════════════════════════════
+              SECTION 5: Why Choose Us (6-Card Bento Grid)
+             ══════════════════════════════════════════════════════════════ */}
+          <section className="relative w-full py-20 sm:py-28 bg-white border-b border-slate-100">
+            <div className="w-[91.6667%] max-w-[1920px] mx-auto px-4 sm:px-8">
+              {/* Center Heading */}
+              <div data-reveal="up" className="max-w-3xl mx-auto text-center space-y-3 mb-16">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-800 text-xs font-bold uppercase tracking-wider">
+                  <Award className="w-3.5 h-3.5 text-cyan-600" />
+                  <span>The Xclusive Advantage</span>
+                </div>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.12]">
+                  Why Choose{" "}
+                  <span className="bg-gradient-to-r from-slate-900 via-[#1f5f8b] to-[#18b2a0] bg-clip-text text-transparent">
+                    Us
+                  </span>
+                </h2>
+                <div className="w-20 h-1 rounded-full bg-gradient-to-r from-[#1f5f8b] to-[#18b2a0] mx-auto" />
+                <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-normal pt-2">
+                  Six foundational pillars that make Xclusive Can Limited the preferred packaging manufacturing
+                  partner for leading pharmaceutical, chemical, and food conglomerates.
+                </p>
+              </div>
+
+              {/* 6-Card Interactive Bento Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {whyChooseUsCards.map((card, idx) => {
+                  const Icon = card.icon;
+                  return (
+                    <article
+                      key={idx}
+                      data-reveal="up"
+                      style={{ animationDelay: `${idx * 80}ms` }}
+                      className="water-fill-card group relative rounded-3xl bg-[#fbfdff] p-7 sm:p-8 border border-slate-200/80 shadow-[0_8px_25px_rgba(0,0,0,0.02)] hover:shadow-[0_18px_45px_rgba(0,194,232,0.12)] hover:border-cyan-400/50 transition-all duration-300 flex flex-col justify-between"
+                    >
+                      <div>
+                        {/* Icon Badge */}
+                        <div className="w-12 h-12 rounded-2xl bg-cyan-50 border border-cyan-100 text-cyan-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-xs">
+                          <Icon className="w-6 h-6 stroke-[2.2]" />
+                        </div>
+
+                        {/* Title & Desc */}
+                        <h3 className="text-lg sm:text-xl font-bold text-slate-900 group-hover:text-[#1f5f8b] transition-colors mb-2.5">
+                          {card.title}
+                        </h3>
+                        <p className="text-sm text-slate-600 leading-relaxed font-normal">
+                          {card.desc}
+                        </p>
+                      </div>
+
+                      {/* Bottom Micro Indicator */}
+                      <div className="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-400 group-hover:text-[#1f5f8b] transition-colors">
+                        <span>Pillar {idx + 1}</span>
+                        <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+
+          {/* ══════════════════════════════════════════════════════════════
+              SECTION 6: B2B Closing Consultation Banner
+             ══════════════════════════════════════════════════════════════ */}
+          <section className="relative w-full py-20 sm:py-24 bg-gradient-to-b from-white to-[#f4f8fb]">
+            <div className="w-[91.6667%] max-w-[1920px] mx-auto px-4 sm:px-8">
+              <div
+                data-reveal="scale"
+                className="relative rounded-[32px] sm:rounded-[40px] bg-gradient-to-br from-[#0c2236] via-[#10334f] to-[#174668] text-white p-8 sm:p-14 lg:p-16 shadow-[0_25px_65px_rgba(12,34,54,0.3)] overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-10"
+              >
+                {/* Ambient Ripple Rings */}
+                <div className="absolute -bottom-16 -left-16 w-80 h-80 rounded-full border border-cyan-400/20 pointer-events-none" />
+                <div className="absolute -bottom-8 -left-8 w-60 h-60 rounded-full border border-cyan-400/30 pointer-events-none" />
+
+                <div className="relative z-10 max-w-2xl space-y-4">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-400/15 border border-cyan-400/30 text-cyan-300 text-xs font-bold uppercase tracking-wider">
+                    <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
+                    <span>Start Your Project</span>
+                  </div>
+                  <h3 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-[1.12]">
+                    Ready to Transform Your{" "}
+                    <span className="bg-gradient-to-r from-cyan-200 via-sky-300 to-white bg-clip-text text-transparent">
+                      Packaging Line?
+                    </span>
+                  </h3>
+                  <p className="text-base sm:text-lg text-cyan-100/85 leading-relaxed font-normal">
+                    Partner with Bangladesh&apos;s premier LEED Platinum certified packaging manufacturer.
+                    Request custom mold quotes, technical datasheets, or schedule a campus visit.
+                  </p>
+                </div>
+
+                <div className="relative z-10 flex flex-col sm:flex-row items-center gap-4 shrink-0 w-full sm:w-auto">
+                  <button
+                    onClick={() => setIsRFQOpen(true)}
+                    className="water-fill-btn w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-white text-slate-900 font-extrabold text-sm tracking-wide shadow-xl hover:shadow-2xl transition-all cursor-pointer active:scale-95"
+                  >
+                    <span>Request A Quote</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                  <Link
+                    href="/products"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl border border-white/40 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-bold text-sm transition-all active:scale-95 text-center"
+                  >
+                    <span>View Product Catalog</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
       </main>
 
       {/* Global Footer */}
@@ -248,4 +753,3 @@ export default function OurBusinessPage() {
     </div>
   );
 }
-

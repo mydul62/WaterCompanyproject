@@ -17,6 +17,35 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/find-our-product",
+        destination: "/products",
+        permanent: true,
+      },
+      {
+        source: "/achievements",
+        destination: "/certificates",
+        permanent: true,
+      },
+      {
+        source: "/career",
+        destination: "/careers",
+        permanent: true,
+      },
+      {
+        source: "/brands",
+        destination: "/brands-we-work-with",
+        permanent: true,
+      },
+      {
+        source: "/clients",
+        destination: "/brands-we-work-with",
+        permanent: true,
+      },
+    ];
+  },
   experimental: {
     cpus: 1,
   },

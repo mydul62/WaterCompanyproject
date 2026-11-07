@@ -7,46 +7,65 @@ export default function ScrollRevealProvider({ children }: { children: React.Rea
   const pathname = usePathname();
 
   useEffect(() => {
-    if (typeof window === "undefined" || !("IntersectionObserver" in window)) return;
+    if (typeof window === "undefined") return;
 
-    // Single high-performance IntersectionObserver instance
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-revealed");
-            // Immediately unobserve to release memory and avoid CPU re-checks
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        root: null,
-        rootMargin: "0px 0px -40px 0px", // triggers slightly before scrolling fully into view
-        threshold: 0.1,
-      }
-    );
-
-    // Small delay to ensure DOM is hydrated
-    const timer = setTimeout(() => {
+    const revealElements = () => {
       const elements = document.querySelectorAll("[data-reveal]");
+      const windowHeight = window.innerHeight;
       elements.forEach((el) => {
-        // If already in initial viewport, reveal immediately
         const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
+        // Element is in or near viewport
+        if (rect.top <= windowHeight - 40 && rect.bottom >= 20) {
           el.classList.add("is-revealed");
-        } else {
-          observer.observe(el);
+        } else if (rect.top > windowHeight + 100 || rect.bottom < -100) {
+          // Reset when scrolled completely out of view for lively in-out re-triggering
+          el.classList.remove("is-revealed");
         }
       });
-    }, 60);
+    };
+
+    // Run immediately and after hydration to ensure no initial hidden states
+    revealElements();
+    const t1 = setTimeout(revealElements, 60);
+    const t2 = setTimeout(revealElements, 250);
+    const t3 = setTimeout(revealElements, 600);
+
+    // High performance scroll & resize listener
+    window.addEventListener("scroll", revealElements, { passive: true });
+    window.addEventListener("resize", revealElements, { passive: true });
+
+    // Hardware-accelerated IntersectionObserver
+    let observer: IntersectionObserver | null = null;
+    if ("IntersectionObserver" in window) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-revealed");
+            } else {
+              const rect = entry.target.getBoundingClientRect();
+              if (rect.top > window.innerHeight + 100 || rect.bottom < -100) {
+                entry.target.classList.remove("is-revealed");
+              }
+            }
+          });
+        },
+        { rootMargin: "0px 0px -40px 0px", threshold: 0.05 }
+      );
+
+      const allReveal = document.querySelectorAll("[data-reveal]");
+      allReveal.forEach((el) => observer?.observe(el));
+    }
 
     return () => {
-      clearTimeout(timer);
-      observer.disconnect();
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      window.removeEventListener("scroll", revealElements);
+      window.removeEventListener("resize", revealElements);
+      observer?.disconnect();
     };
   }, [pathname]);
 
   return <>{children}</>;
 }
-

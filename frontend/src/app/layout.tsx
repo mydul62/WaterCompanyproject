@@ -36,11 +36,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Sonsie+One&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen bg-white text-slate-900 antialiased selection:bg-cyan-500 selection:text-white font-sans">
+      <body className="min-h-screen bg-white text-slate-900 antialiased selection:bg-cyan-500 selection:text-white" style={{ fontFamily: "'Ubuntu', sans-serif" }}>
         <SmoothScroll>
           <ScrollRevealProvider>{children}</ScrollRevealProvider>
         </SmoothScroll>

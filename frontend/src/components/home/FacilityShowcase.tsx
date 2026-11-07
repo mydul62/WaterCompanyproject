@@ -63,13 +63,16 @@ export default function FacilityShowcase() {
       <div className="relative z-10 w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12">
         <div className="max-w-[700px] space-y-6 sm:space-y-7">
           {/* Eyebrow Badge */}
-          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-cyan-50/90 border border-cyan-200/70 text-cyan-800 text-xs font-bold uppercase tracking-wider shadow-xs">
+          <div
+            data-reveal="up"
+            className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-cyan-50/90 border border-cyan-200/70 text-cyan-800 text-xs font-bold uppercase tracking-wider shadow-xs"
+          >
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span>World-Class Packaging Plant &bull; Since 2010</span>
           </div>
 
           {/* Heading */}
-          <div className="space-y-1">
+          <div data-reveal="up" className="delay-100 space-y-1">
             <h2 className="text-4xl sm:text-5xl lg:text-[52px] font-black text-slate-900 tracking-tight leading-[1.08]">
               About{" "}
               <span className="bg-gradient-to-r from-slate-900 via-[#1f5f8b] to-[#18b2a0] bg-clip-text text-transparent">
@@ -80,40 +83,47 @@ export default function FacilityShowcase() {
           </div>
 
           {/* Core Message in Slate-Blue */}
-          <p className="text-lg sm:text-xl lg:text-[21px] font-semibold text-[#3b667e] leading-[1.48] tracking-normal">
+          <p
+            data-reveal="up"
+            className="delay-150 text-lg sm:text-xl lg:text-[21px] font-semibold text-[#3b667e] leading-[1.48] tracking-normal"
+          >
             We empower your brand with custom engineered tin and plastic packaging solutions that give you a
             competitive edge in domestic and global markets.
           </p>
 
           {/* 4 Minimalist Luxury Stat Cards with Liquid Water Rise Hover */}
           <div className="grid grid-cols-2 gap-3.5 pt-1">
-            {pillars.map((item, idx) => (
-              <div
-                key={idx}
-                className="water-fill-card group p-3.5 sm:p-4 rounded-2xl bg-white/85 hover:bg-white backdrop-blur-md border border-slate-200/70 shadow-xs hover:shadow-lg transition-all duration-300 cursor-pointer"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 rounded-xl bg-slate-50 border border-slate-100 group-hover:scale-110 transition-transform">
-                    {item.icon}
+            {pillars.map((item, idx) => {
+              const delays = ["delay-100", "delay-150", "delay-200", "delay-250"];
+              return (
+                <div
+                  key={idx}
+                  data-reveal="scale"
+                  className={`water-fill-card group p-3.5 sm:p-4 rounded-2xl bg-white/85 hover:bg-white backdrop-blur-md border border-slate-200/70 shadow-xs hover:shadow-lg transition-all duration-300 cursor-pointer ${delays[idx % delays.length]}`}
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2 rounded-xl bg-slate-50 border border-slate-100 group-hover:scale-110 transition-transform">
+                      {item.icon}
+                    </div>
+                    <div>
+                      <b className="block text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-cyan-700 transition-colors">
+                        {item.metric}
+                      </b>
+                      <small className="text-[11px] text-slate-500 font-medium block">
+                        {item.label}
+                      </small>
+                    </div>
                   </div>
-                  <div>
-                    <b className="block text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-cyan-700 transition-colors">
-                      {item.metric}
-                    </b>
-                    <small className="text-[11px] text-slate-500 font-medium block">
-                      {item.label}
-                    </small>
-                  </div>
+                  <p className="text-[11px] sm:text-xs text-slate-500 font-medium pl-0.5 line-clamp-1">
+                    {item.desc}
+                  </p>
                 </div>
-                <p className="text-[11px] sm:text-xs text-slate-500 font-medium pl-0.5 line-clamp-1">
-                  {item.desc}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Action Buttons with Liquid Water Wave Hover Fill */}
-          <div className="flex flex-wrap items-center gap-3.5 pt-2">
+          <div data-reveal="up" className="delay-200 flex flex-wrap items-center gap-3.5 pt-2">
             <Link
               href="/products"
               className="water-fill-btn inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm tracking-wide shadow-md hover:shadow-lg transition-all active:scale-95 group"

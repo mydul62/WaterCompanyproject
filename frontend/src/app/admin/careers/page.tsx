@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Briefcase,
   Search,
@@ -77,6 +77,23 @@ export default function AdminCareersPage() {
   const [apps, setApps] = useState<Application[]>(INITIAL_APPLICATIONS);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const stored = JSON.parse(localStorage.getItem("xcl_career_applications") || "[]");
+        if (Array.isArray(stored) && stored.length > 0) {
+          setApps((prev) => {
+            const existingIds = new Set(prev.map((p) => p.id));
+            const fresh = stored.filter((s: Application) => !existingIds.has(s.id));
+            return [...fresh, ...prev];
+          });
+        }
+      } catch (e) {
+        console.error("Failed to load local applications", e);
+      }
+    }
+  }, []);
 
   const filtered = apps.filter((a) => {
     const matchSearch =

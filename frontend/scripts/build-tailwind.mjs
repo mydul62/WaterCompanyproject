@@ -66,125 +66,206 @@ async function build() {
 
   // Exact styles from user's provided snippets
   const customOverrides = `
-/* Global Large Screen Fluid Typography & Progressive Zoom Scaling */
+/* Global Ubuntu Typography - Standard Crisp 16px Scale */
 html {
-  font-size: 16.5px;
+  font-family: 'Ubuntu', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-size: 16px;
 }
-@media (min-width: 1024px) {
-  html {
-    font-size: 17.5px;
-  }
+
+body {
+  font-family: 'Ubuntu', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
-@media (min-width: 1280px) {
-  html {
-    font-size: 18.5px;
-  }
+
+/* ══════════════════════════════════════════════════════════════
+   Guaranteed Zero-Break Header Navigation & Button Typography
+   ══════════════════════════════════════════════════════════════ */
+header nav a,
+header ul li,
+header ul li a,
+header ul li a span,
+.water-fill-btn,
+.water-fill-btn span {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  flex-shrink: 0 !important;
 }
-@media (min-width: 1440px) {
-  html {
-    font-size: 19.5px;
-  }
+
+/* ══════════════════════════════════════════════════════════════
+   Zero-Cost Hardware-Accelerated Scroll Reveal Animations
+   ══════════════════════════════════════════════════════════════ */
+[data-reveal="up"] {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
-@media (min-width: 1640px) {
-  html {
-    font-size: 20.5px;
-  }
+[data-reveal="up"].is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+  will-change: auto;
 }
+
+[data-reveal="scale"] {
+  opacity: 0;
+  transform: scale(0.93) translateY(20px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+[data-reveal="scale"].is-revealed {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  will-change: auto;
+}
+
+[data-reveal="fade"] {
+  opacity: 0;
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-reveal="fade"].is-revealed {
+  opacity: 1;
+}
+
+[data-reveal="left"] {
+  opacity: 0;
+  transform: translateX(-36px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+[data-reveal="left"].is-revealed {
+  opacity: 1;
+  transform: translateX(0);
+  will-change: auto;
+}
+
+[data-reveal="right"] {
+  opacity: 0;
+  transform: translateX(36px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+[data-reveal="right"].is-revealed {
+  opacity: 1;
+  transform: translateX(0);
+  will-change: auto;
+}
+
+.delay-75 { transition-delay: 75ms !important; }
+.delay-100 { transition-delay: 100ms !important; }
+.delay-150 { transition-delay: 150ms !important; }
+.delay-200 { transition-delay: 200ms !important; }
+.delay-250 { transition-delay: 250ms !important; }
+.delay-300 { transition-delay: 300ms !important; }
+.delay-350 { transition-delay: 350ms !important; }
+.delay-400 { transition-delay: 400ms !important; }
+.delay-500 { transition-delay: 500ms !important; }
 
 
 
 /* ══════════════════════════════════════════════════════════════
-   Authentic Liquid Water Wave Fill Hover Effect (GPU Accelerated)
+   Authentic Bottom-Left Corner Liquid Wave Surge (Diagonal Fluid Flow)
    ══════════════════════════════════════════════════════════════ */
 .water-fill-btn {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Secondary Translucent Crest Wave */
+/* Secondary Translucent Crest Wave from Bottom-Left */
 .water-fill-btn::before {
   content: "";
   position: absolute;
-  inset: -2px;
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
-  background: linear-gradient(180deg, rgba(56, 189, 248, 0.45) 0%, rgba(14, 165, 233, 0.25) 100%);
-  transform: translateY(105%);
-  border-radius: 45% 45% 0 0;
-  transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) 0.04s, border-radius 0.5s ease;
+  bottom: 0;
+  left: 0;
+  width: 230%;
+  height: 230%;
+  background: radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.6) 0%, rgba(14, 165, 233, 0.35) 45%, transparent 75%);
+  transform: translate(-100%, 100%);
+  border-radius: 0 100% 0 0;
+  transition: transform 1.0s cubic-bezier(0.25, 0.1, 0.25, 1), border-radius 0.9s ease;
   z-index: 1;
   pointer-events: none;
 }
 
-/* Primary Rich Ocean Water Fill Layer */
+/* Primary Ocean Water Fill Layer from Bottom-Left */
 .water-fill-btn::after {
   content: "";
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
-  transform: translateY(102%);
-  border-radius: 35% 35% 0 0;
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), border-radius 0.45s ease;
+  bottom: 0;
+  left: 0;
+  width: 220%;
+  height: 220%;
+  background: radial-gradient(circle at bottom left, #0369a1 0%, #0284c7 48%, #00c2d8 82%);
+  transform: translate(-100%, 100%);
+  border-radius: 0 90% 0 0;
+  transition: transform 0.9s cubic-bezier(0.25, 0.1, 0.25, 1), border-radius 0.8s ease;
   z-index: 2;
   pointer-events: none;
 }
 
-.water-fill-btn:hover::before,
-.water-fill-btn:hover::after {
-  transform: translateY(0);
+.water-fill-btn:hover::before {
+  transform: translate(0, 0);
   border-radius: 0;
+  transition: transform 1.6s cubic-bezier(0.25, 0.1, 0.25, 1), border-radius 1.5s ease;
+}
+
+.water-fill-btn:hover::after {
+  transform: translate(0, 0);
+  border-radius: 0;
+  transition: transform 1.45s cubic-bezier(0.25, 0.1, 0.25, 1), border-radius 1.35s ease;
 }
 
 .water-fill-btn > * {
   position: relative;
   z-index: 3;
-  transition: color 0.3s ease, transform 0.3s ease;
+  transition: color 0.4s ease, transform 0.4s ease;
 }
 
 .water-fill-btn:hover > * {
   color: #ffffff !important;
 }
 
-/* Dark variant for white/transparent buttons */
-.water-fill-btn-dark::after {
-  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-}
-
-/* Glassy Liquid Water Rise for Feature / Bento Cards */
+/* ══════════════════════════════════════════════════════════════
+   Cards: Extra Slow, Serene & Luxurious Liquid Water Surge
+   ══════════════════════════════════════════════════════════════ */
 .water-fill-card {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s ease, box-shadow 0.5s ease;
 }
 
+/* Clean Translucent Liquid Water Surge from Bottom-Left Corner */
 .water-fill-card::before {
   content: "";
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to top, rgba(14, 165, 233, 0.16) 0%, rgba(56, 189, 248, 0.08) 55%, transparent 100%);
-  transform: translateY(102%);
-  border-radius: 35% 35% 0 0;
-  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.5s ease;
+  bottom: 0;
+  left: 0;
+  width: 250%;
+  height: 250%;
+  background: radial-gradient(circle at bottom left, 
+    rgba(2, 132, 199, 0.3) 0%, 
+    rgba(6, 182, 212, 0.22) 40%, 
+    rgba(56, 189, 248, 0.14) 68%, 
+    transparent 100%);
+  transform: translate(-100%, 100%);
+  border-radius: 0 95% 0 0;
+  transition: transform 1.4s cubic-bezier(0.25, 0.1, 0.25, 1), border-radius 1.2s ease;
   z-index: 0;
   pointer-events: none;
 }
 
+/* Extra Slow Hover-In: Calmer, Gentler 2.4-second gradual water fill */
 .water-fill-card:hover::before {
-  transform: translateY(0);
+  transform: translate(0, 0);
   border-radius: 0;
+  transition: transform 2.4s cubic-bezier(0.25, 0.1, 0.25, 1), border-radius 2.2s ease;
 }
 
 .water-fill-card:hover {
-  border-color: rgba(56, 189, 248, 0.6) !important;
-  box-shadow: 0 16px 36px -10px rgba(14, 165, 233, 0.22) !important;
-  transform: translateY(-4px);
+  border-color: rgba(6, 182, 212, 0.68) !important;
+  box-shadow: 0 22px 50px -12px rgba(6, 182, 212, 0.26) !important;
+  transform: translateY(-5px);
 }
 
 .water-fill-card > * {

@@ -54,14 +54,16 @@ export default function PressStoriesSection() {
           </div>
         </div>
 
-        {/* 4 High-End Editorial Press Cards */}
+        {/* 4 High-End Editorial Press Cards with Liquid Water Wave Hover */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
-          {PRESS_STORIES.map((story, idx) => (
-            <article
-              key={story.id}
-              data-reveal="up"
-              className={`delay-${(idx + 1) * 100} group rounded-3xl bg-white border border-slate-200/80 hover:border-cyan-400/50 p-4 shadow-[0_10px_35px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,194,232,0.15)] hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between overflow-hidden`}
-            >
+          {PRESS_STORIES.map((story, idx) => {
+            const delays = ["delay-75", "delay-150", "delay-200", "delay-250"];
+            return (
+              <article
+                key={story.id}
+                data-reveal="scale"
+                className={`water-fill-card group rounded-3xl bg-white border border-slate-200/80 p-4 shadow-[0_10px_35px_rgba(0,0,0,0.04)] flex flex-col justify-between overflow-hidden cursor-pointer ${delays[idx % delays.length]}`}
+              >
               <div className="space-y-3.5">
                 {/* Card Top Metadata Strip */}
                 <div className="flex items-center justify-between gap-2 px-1 pt-1">
@@ -139,8 +141,9 @@ export default function PressStoriesSection() {
                 </Link>
               </div>
             </article>
-          ))}
-        </div>
+          );
+        })}
+      </div>
 
         {/* View All Press Link */}
         <div className="mt-12 sm:mt-16 text-center">

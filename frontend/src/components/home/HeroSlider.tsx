@@ -97,24 +97,24 @@ export default function HeroSlider() {
             <div className="space-y-1 sm:space-y-2">
               {/* Line 1 */}
               <div className="flex flex-wrap items-baseline gap-2 sm:gap-3">
-                <span className="text-5xl sm:text-7xl lg:text-8xl font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]">
+                <span className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]">
                   {slide.line1Bold}
                 </span>
-                <span className="text-4xl sm:text-6xl lg:text-7xl font-medium text-white/95 tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]">
+                <span className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-medium text-white/95 tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]">
                   {slide.line1Light}
                 </span>
               </div>
 
               {/* Line 2 with Hollow Stroke Outline Text */}
               <div className="flex flex-wrap items-baseline gap-2 sm:gap-3">
-                <span className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]">
+                <span className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]">
                   {slide.line2We}
                 </span>
                 <span
-                  className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)] transition-all duration-300"
+                  className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)] transition-all duration-300"
                   style={{
                     color: "transparent",
-                    WebkitTextStroke: "2.8px #ffffff",
+                    WebkitTextStroke: "2px #ffffff",
                   }}
                 >
                   {slide.line2Outline}

@@ -724,22 +724,51 @@ export default function ProductsPage() {
           }
         }
         .prd-card {
+          position: relative;
           background: var(--card);
           border: 1px solid var(--line);
           border-radius: var(--radius);
           overflow: hidden;
+          isolation: isolate;
           display: flex;
           flex-direction: column;
           text-decoration: none;
           color: inherit;
-          transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+          transition: transform .35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .35s ease, border-color .35s ease;
           animation: prd-in .4s both;
           cursor: pointer;
         }
+        .prd-card::before {
+          content: "";
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 250%;
+          height: 250%;
+          background: radial-gradient(circle at bottom left, 
+            rgba(2, 132, 199, 0.3) 0%, 
+            rgba(6, 182, 212, 0.22) 40%, 
+            rgba(56, 189, 248, 0.14) 68%, 
+            transparent 100%);
+          transform: translate(-100%, 100%);
+          border-radius: 0 95% 0 0;
+          transition: transform 1.4s cubic-bezier(0.25, 0.1, 0.25, 1), border-radius 1.2s ease;
+          z-index: 0;
+          pointer-events: none;
+        }
+        .prd-card:hover::before {
+          transform: translate(0, 0);
+          border-radius: 0;
+          transition: transform 2.4s cubic-bezier(0.25, 0.1, 0.25, 1), border-radius 2.2s ease;
+        }
         .prd-card:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 18px 40px rgba(15,30,46,.12);
-          border-color: #cfdbe6;
+          transform: translateY(-5px);
+          box-shadow: 0 22px 50px -12px rgba(6, 182, 212, 0.26);
+          border-color: rgba(6, 182, 212, 0.68);
+        }
+        .prd-card > * {
+          position: relative;
+          z-index: 1;
         }
         @keyframes prd-in {
           from { opacity: 0; transform: translateY(12px); }

@@ -73,48 +73,51 @@ export default function ProductShowcase() {
           </div>
         </div>
 
-        {/* 4 Glass Pedestal Product Cards - Direct Click to Product Details */}
+        {/* 4 Glass Pedestal Product Cards with Liquid Water Wave Hover */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {productCards.map((card, idx) => (
-            <Link
-              key={card.id}
-              href={`/products/${card.slug}`}
-              data-reveal="up"
-              className={`delay-${(idx + 1) * 100} group block rounded-3xl overflow-hidden bg-white/80 backdrop-blur-xl border border-white/90 p-5 shadow-[0_12px_35px_rgba(0,0,0,0.05)] hover:shadow-[0_22px_55px_rgba(0,194,232,0.18)] hover:border-cyan-400/40 hover:-translate-y-2 transition-all duration-300 relative cursor-pointer`}
-            >
-              {/* Category Pill Tag */}
-              <div className="absolute top-4 left-4 z-10 px-3.5 py-1 rounded-full bg-slate-900/85 backdrop-blur-md text-xs sm:text-sm font-extrabold text-white shadow-sm">
-                {card.category}
-              </div>
+          {productCards.map((card, idx) => {
+            const delays = ["delay-75", "delay-150", "delay-200", "delay-250"];
+            return (
+              <Link
+                key={card.id}
+                href={`/products/${card.slug}`}
+                data-reveal="scale"
+                className={`water-fill-card group block rounded-3xl overflow-hidden bg-white/85 backdrop-blur-xl border border-white/90 p-5 shadow-[0_12px_35px_rgba(0,0,0,0.05)] relative cursor-pointer ${delays[idx % delays.length]}`}
+              >
+                {/* Category Pill Tag */}
+                <div className="absolute top-4 left-4 z-10 px-3.5 py-1 rounded-full bg-slate-900/85 backdrop-blur-md text-xs sm:text-sm font-extrabold text-white shadow-sm">
+                  {card.category}
+                </div>
 
-              {/* Image Container with Pedestal Effect - Pure & Clean, No Quick View Overlay */}
-              <div className="relative w-full h-56 sm:h-64 rounded-2xl bg-gradient-to-b from-slate-50/80 to-slate-100/60 overflow-hidden flex items-center justify-center">
-                <Image
-                  src={card.image}
-                  alt={card.title}
-                  fill
-                  className="object-contain p-4 group-hover:scale-108 group-hover:-translate-y-1 transition-transform duration-500 ease-out"
-                />
-              </div>
+                {/* Image Container with Pedestal Effect */}
+                <div className="relative w-full h-56 sm:h-64 rounded-2xl bg-gradient-to-b from-slate-50/80 to-slate-100/60 overflow-hidden flex items-center justify-center">
+                  <Image
+                    src={card.image}
+                    alt={card.title}
+                    fill
+                    className="object-contain p-4 group-hover:scale-108 group-hover:-translate-y-1 transition-transform duration-500 ease-out"
+                  />
+                </div>
 
-              {/* Title */}
-              <div className="pt-4 text-center">
-                <h3 className="text-base sm:text-lg font-extrabold text-slate-900 line-clamp-1 group-hover:text-cyan-600 transition-colors">
-                  {card.title}
-                </h3>
-                <span className="inline-flex items-center gap-1 text-sm font-bold text-cyan-600 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  View Product Details &rarr;
-                </span>
-              </div>
-            </Link>
-          ))}
+                {/* Title */}
+                <div className="pt-4 text-center">
+                  <h3 className="text-base sm:text-lg font-extrabold text-slate-900 line-clamp-1 group-hover:text-cyan-700 transition-colors">
+                    {card.title}
+                  </h3>
+                  <span className="inline-flex items-center gap-1 text-sm font-bold text-cyan-600 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    View Product Details &rarr;
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
         </div>
 
-        {/* View Full Catalog CTA */}
-        <div className="mt-14 sm:mt-16 text-center">
+        {/* View Full Catalog CTA with Liquid Water Hover */}
+        <div data-reveal="up" className="delay-150 mt-14 sm:mt-16 text-center">
           <Link
             href="/products"
-            className="inline-flex items-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm sm:text-base hover:bg-cyan-600 transition-all shadow-xl hover:shadow-[0_15px_35px_rgba(0,194,232,0.35)] active:scale-95 group cursor-pointer"
+            className="water-fill-btn inline-flex items-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm sm:text-base shadow-xl hover:shadow-[0_15px_35px_rgba(0,194,232,0.35)] active:scale-95 group cursor-pointer"
           >
             <span>View Full Products Catalog (300+ Items)</span>
             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
