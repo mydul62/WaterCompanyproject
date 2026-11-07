@@ -104,11 +104,11 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
             </p>
           </div>
 
-          {/* Right: Contact Us Button */}
+          {/* Right: Contact Us Button with Liquid Water Hover */}
           <div className="shrink-0">
             <button
               onClick={onOpenRFQ}
-              className="px-8 py-3.5 rounded-2xl bg-slate-900 text-white font-bold text-sm sm:text-base hover:bg-cyan-600 transition-all shadow-lg hover:shadow-[0_10px_25px_rgba(0,194,232,0.3)] active:scale-95 cursor-pointer inline-flex items-center gap-2"
+              className="water-fill-btn px-8 py-3.5 rounded-2xl bg-slate-900 text-white font-bold text-sm sm:text-base shadow-lg hover:shadow-[0_10px_25px_rgba(0,194,232,0.3)] active:scale-95 cursor-pointer inline-flex items-center gap-2"
             >
               <span>Contact Us</span>
               <ArrowRight className="w-4 h-4" />
@@ -117,7 +117,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
         </div>
 
         {/* Section Header: About AquaPure */}
-        <div data-reveal="up" className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-14 sm:mb-18">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-14 sm:mb-18">
           <div className="max-w-2xl space-y-3.5">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200/90 text-cyan-800 text-xs font-bold uppercase tracking-wider shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-cyan-500 animate-pulse" />
@@ -141,14 +141,14 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <a
                 href="#products"
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-sm shadow-md hover:shadow-cyan-500/25 transition-all"
+                className="water-fill-btn inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-cyan-600 text-white font-bold text-sm shadow-md hover:shadow-cyan-500/25 transition-all"
               >
                 <span>Explore Products</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
               <button
                 onClick={onOpenRFQ}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl border border-slate-300 bg-white/80 hover:bg-white text-slate-800 font-bold text-sm shadow-sm hover:shadow transition-all"
+                className="water-fill-btn inline-flex items-center gap-2 px-6 py-2.5 rounded-xl border border-slate-300 bg-white/80 text-slate-800 font-bold text-sm shadow-sm hover:shadow transition-all"
               >
                 <span>Partner With Us</span>
               </button>

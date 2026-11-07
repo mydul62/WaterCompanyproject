@@ -85,12 +85,12 @@ export default function FacilityShowcase() {
             competitive edge in domestic and global markets.
           </p>
 
-          {/* 4 Minimalist Luxury Stat Cards */}
+          {/* 4 Minimalist Luxury Stat Cards with Liquid Water Rise Hover */}
           <div className="grid grid-cols-2 gap-3.5 pt-1">
             {pillars.map((item, idx) => (
               <div
                 key={idx}
-                className="group p-3.5 sm:p-4 rounded-2xl bg-white/85 hover:bg-white backdrop-blur-md border border-slate-200/70 hover:border-cyan-300 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                className="water-fill-card group p-3.5 sm:p-4 rounded-2xl bg-white/85 hover:bg-white backdrop-blur-md border border-slate-200/70 shadow-xs hover:shadow-lg transition-all duration-300 cursor-pointer"
               >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="p-2 rounded-xl bg-slate-50 border border-slate-100 group-hover:scale-110 transition-transform">
@@ -112,11 +112,11 @@ export default function FacilityShowcase() {
             ))}
           </div>
 
-          {/* Action Buttons */}
+          {/* Action Buttons with Liquid Water Wave Hover Fill */}
           <div className="flex flex-wrap items-center gap-3.5 pt-2">
             <Link
               href="/products"
-              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-slate-900 hover:bg-[#1f5f8b] text-white font-bold text-sm tracking-wide shadow-md hover:shadow-lg transition-all active:scale-95 group"
+              className="water-fill-btn inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm tracking-wide shadow-md hover:shadow-lg transition-all active:scale-95 group"
             >
               <span>Explore Products</span>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -124,9 +124,9 @@ export default function FacilityShowcase() {
 
             <button
               onClick={() => setIsVideoOpen(true)}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-slate-200 bg-white/80 hover:bg-white text-slate-700 font-bold text-sm shadow-xs hover:shadow transition-all cursor-pointer"
+              className="water-fill-btn inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-slate-200 bg-white/90 text-slate-700 font-bold text-sm shadow-xs hover:shadow transition-all cursor-pointer group"
             >
-              <Play className="w-4 h-4 text-cyan-600 fill-cyan-600" />
+              <Play className="w-4 h-4 text-cyan-600 fill-cyan-600 transition-colors group-hover:text-white group-hover:fill-white" />
               <span>Plant Video Tour</span>
             </button>
           </div>

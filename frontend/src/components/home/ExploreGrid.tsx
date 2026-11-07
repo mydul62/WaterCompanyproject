@@ -113,15 +113,14 @@ export default function ExploreGrid() {
           </p>
         </div>
 
-        {/* 13 Glass Frosted Tiles Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
-          {EXPLORE_ITEMS.map((item, idx) => (
-            <Link
-              key={idx}
-              href={item.href}
-              data-reveal="scale"
-              className={`delay-${((idx % 4) + 1) * 100} group relative p-6 sm:p-7 rounded-3xl bg-white/75 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_45px_rgba(0,194,232,0.18)] hover:border-cyan-400/40 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden`}
-            >
+          {/* 13 Glass Frosted Tiles Grid with Liquid Water Rise Hover */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+            {EXPLORE_ITEMS.map((item, idx) => (
+              <Link
+                key={idx}
+                href={item.href}
+                className="water-fill-card group relative p-6 sm:p-7 rounded-3xl bg-white/75 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_45px_rgba(0,194,232,0.18)] hover:border-cyan-400/40 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+              >
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-slate-50/90 border border-slate-100 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition-transform">
                   {item.icon}

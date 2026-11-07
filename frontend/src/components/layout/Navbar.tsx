@@ -427,17 +427,17 @@ export default function Navbar() {
           })}
         </ul>
 
-        {/* Quick Quote CTA on Desktop */}
+        {/* Quick Quote CTA on Desktop with Liquid Water Fill Hover Effect */}
         <div className="hidden lg:flex items-center gap-3 shrink-0">
           <Link
             href="/request-quote"
-            className={`px-4 xl:px-6 py-2.5 xl:py-3 rounded-xl font-extrabold text-[12px] xl:text-[13px] uppercase tracking-wider transition-all duration-300 shadow-md whitespace-nowrap shrink-0 ${
+            className={`water-fill-btn px-4 xl:px-6 py-2.5 xl:py-3 rounded-xl font-extrabold text-[12px] xl:text-[13px] uppercase tracking-wider shadow-md whitespace-nowrap shrink-0 active:scale-95 ${
               isPastHero
-                ? "bg-[#1f5f8b] hover:bg-[#2a86b8] text-white shadow-cyan-900/10"
-                : "bg-white/95 hover:bg-white text-slate-900 shadow-black/10 backdrop-blur-md"
+                ? "bg-[#1f5f8b] text-white shadow-cyan-900/10"
+                : "bg-white/95 text-slate-900 shadow-black/10 backdrop-blur-md"
             }`}
           >
-            Request A Quote
+            <span>Request A Quote</span>
           </Link>
         </div>
 

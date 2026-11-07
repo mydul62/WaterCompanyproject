@@ -51,13 +51,13 @@ export default function OperationalPillars() {
             </div>
           </div>
 
-          {/* Clean Rounded Read More Button matching Screenshot */}
+          {/* Clean Rounded Read More Button with Liquid Water Hover Fill */}
           <div className="pt-2">
             <a
               href="/products"
-              className="inline-block px-7 py-2.5 rounded-lg border border-slate-900 text-slate-900 bg-white font-semibold text-xs sm:text-sm tracking-wide hover:bg-slate-900 hover:text-white transition-all shadow-xs active:scale-95"
+              className="water-fill-btn inline-block px-7 py-2.5 rounded-lg border border-slate-900 text-slate-900 bg-white font-semibold text-xs sm:text-sm tracking-wide shadow-xs active:scale-95"
             >
-              Read More..
+              <span>Read More..</span>
             </a>
           </div>
         </div>
