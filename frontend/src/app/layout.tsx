@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import SmoothScroll from "@/components/common/SmoothScroll";
+import ScrollRevealProvider from "@/components/common/ScrollRevealProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -29,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -39,7 +41,9 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-white text-slate-900 antialiased selection:bg-cyan-500 selection:text-white font-sans">
-        {children}
+        <SmoothScroll>
+          <ScrollRevealProvider>{children}</ScrollRevealProvider>
+        </SmoothScroll>
       </body>
     </html>
   );

@@ -66,7 +66,7 @@ const MOCK_RFQS = [
 
 export default function AdminOverviewPage() {
   return (
-    <div className="space-y-8 max-w-[1638px] mx-auto">
+    <div className="space-y-8 max-w-[1643px] mx-auto">
       {/* Page Title & Quick Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

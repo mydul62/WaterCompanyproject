@@ -52,7 +52,7 @@ export default function QualityBottlePacksSection() {
 
   return (
     <section className="py-24 sm:py-32 bg-white overflow-hidden">
-      <div className="max-w-[1638px] mx-auto px-6 sm:px-12 lg:px-16">
+      <div className="max-w-[1643px] mx-auto px-6 sm:px-12 lg:px-16">
         {/* Section Header (Screenshot 39c7284a) */}
         <div className="text-center max-w-2xl mx-auto mb-16 sm:mb-20">
           <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-[#0f172a] leading-[1.2] tracking-tight">

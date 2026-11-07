@@ -53,7 +53,7 @@ export default function OurBusinessPage() {
 
         {/* Section 1: Who We Are matching Screenshot */}
         <section className="w-full py-16 sm:py-24 border-b border-slate-100">
-          <div className="w-full max-w-[1638px] mx-auto px-6 sm:px-12 text-center">
+          <div className="w-full max-w-[1643px] mx-auto px-6 sm:px-12 text-center">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-black tracking-tight mb-6">
               Who We Are
             </h2>
@@ -99,7 +99,7 @@ export default function OurBusinessPage() {
 
         {/* Section 2: The value we offer matching Screenshot */}
         <section className="w-full py-16 sm:py-20 border-b border-slate-100">
-          <div className="w-full max-w-[1638px] mx-auto px-6 sm:px-12">
+          <div className="w-full max-w-[1643px] mx-auto px-6 sm:px-12">
             <div className="max-w-4xl">
               <div>
                 <h2 className="text-3xl sm:text-4xl font-black text-black tracking-tight inline-block border-b-4 border-black pb-1 mb-6">
@@ -142,7 +142,7 @@ export default function OurBusinessPage() {
 
         {/* Section 3: Our purpose drives our culture matching Screenshot */}
         <section className="w-full py-16 sm:py-20 border-b border-slate-100">
-          <div className="w-full max-w-[1638px] mx-auto px-6 sm:px-12">
+          <div className="w-full max-w-[1643px] mx-auto px-6 sm:px-12">
             <div className="max-w-4xl">
               <div>
                 <h2 className="text-3xl sm:text-4xl font-black text-black tracking-tight inline-block border-b-4 border-black pb-1 mb-6">
@@ -175,7 +175,7 @@ export default function OurBusinessPage() {
 
         {/* Section 4: Our Strength matching Screenshot */}
         <section className="w-full py-16 sm:py-20 border-b border-slate-100">
-          <div className="w-full max-w-[1638px] mx-auto px-6 sm:px-12">
+          <div className="w-full max-w-[1643px] mx-auto px-6 sm:px-12">
             <div className="max-w-4xl">
               <div>
                 <h2 className="text-3xl sm:text-4xl font-black text-black tracking-tight inline-block border-b-4 border-black pb-1 mb-6">
@@ -220,7 +220,7 @@ export default function OurBusinessPage() {
 
         {/* Section 5: Why Choose Us matching Screenshot 6408e270 */}
         <section className="w-full py-20 sm:py-24">
-          <div className="w-full max-w-[1638px] mx-auto px-6 sm:px-12 text-center">
+          <div className="w-full max-w-[1643px] mx-auto px-6 sm:px-12 text-center">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-black tracking-tight mb-10">
               Why Choose Us
             </h2>

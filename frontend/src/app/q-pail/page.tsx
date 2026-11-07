@@ -56,7 +56,7 @@ export default function QPailPage() {
 
         {/* Section 1: Logo, Heading & Specs */}
         <section className="w-full pt-14 pb-16">
-          <div className="w-full max-w-[1638px] mx-auto px-6 sm:px-12 text-center">
+          <div className="w-full max-w-[1643px] mx-auto px-6 sm:px-12 text-center">
             {/* Q Pail Circular Logo matching Screenshot */}
             <div className="flex justify-center mb-4">
               <div className="flex items-center gap-2.5 px-4 py-2 rounded-full border border-slate-200 bg-white shadow-sm">

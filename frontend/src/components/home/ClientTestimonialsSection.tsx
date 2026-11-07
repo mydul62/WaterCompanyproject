@@ -87,7 +87,7 @@ export default function ClientTestimonialsSection() {
         </svg>
       </div>
 
-      <div className="max-w-[1638px] mx-auto px-6 sm:px-12 lg:px-16 relative z-10">
+      <div className="max-w-[1643px] mx-auto px-6 sm:px-12 lg:px-16 relative z-10">
         {/* Header Row: Title & Pagination Dots (Screenshot 27e76023) */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-16 sm:mb-20">
           <div>

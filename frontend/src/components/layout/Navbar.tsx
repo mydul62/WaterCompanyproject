@@ -5,520 +5,493 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
-  Search,
-  ShoppingCart,
   Menu,
   X,
   ChevronDown,
+  Building2,
+  BookOpen,
+  ShieldCheck,
+  Briefcase,
+  Leaf,
+  FlaskConical,
+  Factory,
+  HelpCircle,
+  FileText,
+  Sparkles,
+  Award,
+  Users,
+  Newspaper,
   ArrowRight,
-  Droplet,
-  CheckCircle2,
-  Trash2,
-  Phone,
-  Mail,
 } from "lucide-react";
+
+interface SubMenuItem {
+  label: string;
+  href: string;
+  desc: string;
+  icon: React.ComponentType<{ className?: string }>;
+  iconColor: string;
+  iconBg: string;
+}
+
+interface NavItem {
+  label: string;
+  href: string;
+  sub?: SubMenuItem[];
+  spotlight?: {
+    image: string;
+    title: string;
+    subtitle: string;
+    badge: string;
+    href: string;
+  };
+}
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isPastHero, setIsPastHero] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-
-  // Search modal state
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Cart / Sample Drawer state
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartItems, setCartItems] = useState([
-    {
-      id: "sample-1",
-      name: "5-Gallon Commercial Water Bottle",
-      variant: "BPA-Free Polycarbonate with Cap",
-      qty: 1,
-      image: "/acuasafe/water-bottle-splash.jpg",
-      price: "Sample (Free)",
-    },
-  ]);
+  const [activeHover, setActiveHover] = useState<string | null>(null);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsPastHero(window.scrollY > 30);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
+
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [pathname]);
 
-  const openRFQ = () => {
-    window.dispatchEvent(new CustomEvent("open-rfq"));
-  };
-
-  const navMenuItems = [
+  const navItems: NavItem[] = [
     {
-      label: "Home",
-      href: "/",
+      label: "About Us",
+      href: "/#about",
       sub: [
-        { label: "Bottled Water Delivery (Current)", href: "/" },
-        { label: "Commercial Dispenser Systems", href: "/#services" },
-        { label: "Purification & Purity Standards", href: "/sustainability" },
-        { label: "Packaging & Bottling Plant", href: "/our-business" },
+        {
+          label: "Our Business",
+          href: "/our-business",
+          desc: "2 specialized packaging plants: Q Pail & Xclusive Can",
+          icon: Building2,
+          iconColor: "text-blue-600",
+          iconBg: "bg-blue-50 border-blue-100",
+        },
+        {
+          label: "Our Story",
+          href: "/#about",
+          desc: "Pioneering engineered containers since 2010",
+          icon: BookOpen,
+          iconColor: "text-amber-600",
+          iconBg: "bg-amber-50 border-amber-100",
+        },
+        {
+          label: "Brand & Quality",
+          href: "/#overview",
+          desc: "DGDA compliant, USGBC LEED Platinum audited",
+          icon: ShieldCheck,
+          iconColor: "text-emerald-600",
+          iconBg: "bg-emerald-50 border-emerald-100",
+        },
+        {
+          label: "Career",
+          href: "/#explore",
+          desc: "Join our automated cleanroom engineering team",
+          icon: Briefcase,
+          iconColor: "text-purple-600",
+          iconBg: "bg-purple-50 border-purple-100",
+        },
       ],
+      spotlight: {
+        image: "/cropped/factory-bg-clean.png",
+        title: "Tongi & Kaligonj Plant",
+        subtitle: "50M+ Monthly Units Capacity with Class 100k Cleanrooms",
+        badge: "LEED Platinum Campus",
+        href: "/#about",
+      },
     },
     {
-      label: "Pages",
-      href: "/our-business",
+      label: "Sustainability",
+      href: "/#overview",
       sub: [
-        { label: "Our Business & Plant", href: "/our-business" },
-        { label: "Q Pail Manufacturing Division", href: "/q-pail" },
-        { label: "LEED Platinum Sustainability", href: "/sustainability" },
-        { label: "Research & Development (R&D)", href: "/research-and-development" },
-        { label: "Tool Room & Precision Machining", href: "/tool-room" },
-        { label: "Career & Open Positions", href: "/careers" },
-        { label: "Frequently Asked Questions (FAQs)", href: "/faqs" },
+        {
+          label: "Zero-Carbon Campus",
+          href: "/#overview",
+          desc: "USGBC certified zero-carbon & solar powered",
+          icon: Leaf,
+          iconColor: "text-emerald-600",
+          iconBg: "bg-emerald-50 border-emerald-100",
+        },
+        {
+          label: "R & D Lab",
+          href: "/#supply-chain",
+          desc: "In-house precision CNC molds & barrier polymers",
+          icon: FlaskConical,
+          iconColor: "text-cyan-600",
+          iconBg: "bg-cyan-50 border-cyan-100",
+        },
+        {
+          label: "Plant Facility",
+          href: "/#about",
+          desc: "Class 100k automated sterile production lines",
+          icon: Factory,
+          iconColor: "text-blue-600",
+          iconBg: "bg-blue-50 border-blue-100",
+        },
       ],
+      spotlight: {
+        image: "/cropped/harbor-supply.png",
+        title: "100% Green Operations",
+        subtitle: "Zero landfill waste & 100% recyclable food-grade polymers",
+        badge: "USGBC Verified",
+        href: "/#overview",
+      },
     },
     {
-      label: "Services",
-      href: "/#services",
-      sub: [
-        { label: "Residential Bottled Water Delivery", href: "/#services" },
-        { label: "Corporate Dispenser Rental & Setup", href: "/#services" },
-        { label: "Automated Monthly Water Subscription", href: "/#services" },
-        { label: "Custom Label Mineral Water", href: "/products" },
-        { label: "Water Quality Testing & Filtration", href: "/sustainability" },
-      ],
-    },
-    {
-      label: "Shop",
+      label: "Find Our Product",
       href: "/products",
-      sub: [
-        { label: "All Products & Containers", href: "/products" },
-        { label: "5-Gallon Water Jars & Bottles", href: "/products?genre=Plastic" },
-        { label: "Plastic Bottles & Containers", href: "/products?genre=Plastic" },
-        { label: "Metal Cans & Tin Pails", href: "/products?genre=Metal" },
-        { label: "Water Cooler Dispensers", href: "/products" },
-      ],
     },
     {
-      label: "Elements",
-      href: "/sustainability",
+      label: "Knowledge Hub",
+      href: "/#explore",
       sub: [
-        { label: "5-Steps Purity Filtration Process", href: "/#filtration" },
-        { label: "Certifications: ISO, FSSC & GMP", href: "/#certifications" },
-        { label: "LEED Platinum Eco Credentials", href: "/sustainability" },
-        { label: "Request Free Sample Service", href: "/products" },
+        {
+          label: "FAQs",
+          href: "/#footer",
+          desc: "Answers regarding MOQs, custom tooling & delivery",
+          icon: HelpCircle,
+          iconColor: "text-indigo-600",
+          iconBg: "bg-indigo-50 border-indigo-100",
+        },
+        {
+          label: "Case Studies",
+          href: "/#explore",
+          desc: "How we scaled packaging for pharma & paints",
+          icon: FileText,
+          iconColor: "text-cyan-600",
+          iconBg: "bg-cyan-50 border-cyan-100",
+        },
+        {
+          label: "Blog & Insights",
+          href: "/#media",
+          desc: "Trends in biodegradable polymers and can welding",
+          icon: Sparkles,
+          iconColor: "text-amber-600",
+          iconBg: "bg-amber-50 border-amber-100",
+        },
       ],
+      spotlight: {
+        image: "/cropped/category-icons-exact.png",
+        title: "Technical Knowledge",
+        subtitle: "Engineering whitepapers, drop test standards & material guides",
+        badge: "Free Resource",
+        href: "/#explore",
+      },
     },
     {
-      label: "Blog",
-      href: "/#media",
+      label: "Achievements",
+      href: "/#footer",
       sub: [
-        { label: "Benefits of Pure Drinking Water", href: "/#media" },
-        { label: "Eco-Friendly Bottle Recycling Guide", href: "/sustainability" },
-        { label: "Industry Stories & Press Releases", href: "/#media" },
+        {
+          label: "Awards & Certificates",
+          href: "/#footer",
+          desc: "ISO 9001, HACCP, GMP & DGDA compliance",
+          icon: Award,
+          iconColor: "text-amber-600",
+          iconBg: "bg-amber-50 border-amber-100",
+        },
+        {
+          label: "Brands We Work With",
+          href: "/#explore",
+          desc: "Radiant Pharma, Asian Paints, Samuda & more",
+          icon: Users,
+          iconColor: "text-blue-600",
+          iconBg: "bg-blue-50 border-blue-100",
+        },
       ],
+      spotlight: {
+        image: "/cropped/triangle-icons.png",
+        title: "National Industrial Trust",
+        subtitle: "Partner of choice for Fortune 500 pharmaceutical and chemical conglomerates",
+        badge: "Certified Excellence",
+        href: "/#footer",
+      },
     },
     {
-      label: "Contact",
-      href: "/#contact",
-      onClick: (e: React.MouseEvent) => {
-        e.preventDefault();
-        openRFQ();
+      label: "Media and Contacts",
+      href: "/media",
+      sub: [
+        {
+          label: "National Press Stories",
+          href: "/media",
+          desc: "Prothom Alo, Daily Star, Samakal & Bonik Barta",
+          icon: Newspaper,
+          iconColor: "text-red-600",
+          iconBg: "bg-red-50 border-red-100",
+        },
+        {
+          label: "Press Highlights",
+          href: "/#media",
+          desc: "Curated cuttings, editorial photos & transcripts",
+          icon: Sparkles,
+          iconColor: "text-cyan-600",
+          iconBg: "bg-cyan-50 border-cyan-100",
+        },
+      ],
+      spotlight: {
+        image: "/cropped/product-card-1.png",
+        title: "Featured in Top Dailies",
+        subtitle: "Read the story of industrial transformation in national headlines",
+        badge: "Press Archive",
+        href: "/media",
       },
     },
   ];
 
   return (
-    <>
-      {/* Top Header Bar matching Acuasafe Screenshot c1caf1c3.jpg */}
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 bg-white transition-all duration-300 ${
-          isScrolled
-            ? "shadow-[0_4px_25px_rgba(0,0,0,0.08)] py-3"
-            : "py-4 sm:py-5 border-b border-slate-100"
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out ${
+        isPastHero
+          ? "w-full p-0 shadow-[0_10px_35px_rgba(0,0,0,0.06)]"
+          : "p-1.5 sm:px-3 sm:py-3.5"
+      }`}
+      style={
+        isPastHero
+          ? {
+              backgroundColor: "rgba(255, 255, 255, 0.88)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              borderBottom: "1px solid rgba(0, 0, 0, 0.08)",
+            }
+          : undefined
+      }
+    >
+      <div
+        className={`relative flex items-center justify-between transition-all duration-500 ease-in-out ${
+          isPastHero
+            ? "w-full max-w-[1920px] mx-auto h-[80px] sm:h-[86px] px-6 sm:px-10 rounded-none border-none bg-transparent text-[#1a1a1a]"
+            : "w-[98%] max-w-[1920px] mx-auto h-[74px] sm:h-[80px] px-6 sm:px-8 rounded-2xl border border-white/45 text-white shadow-[0_12px_40px_rgba(0,0,0,0.12)]"
         }`}
+        style={
+          !isPastHero
+            ? {
+                backgroundColor: "rgba(255, 255, 255, 0.28)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                boxShadow:
+                  "0 15px 40px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.6)",
+              }
+            : undefined
+        }
       >
-        <div className="max-w-[1638px] mx-auto px-4 sm:px-8 lg:px-12 flex items-center justify-between">
-          {/* Brand Logo: Acuasafe Droplet Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-2 transition-transform hover:scale-[1.02] select-none"
-          >
-            <div className="relative h-10 sm:h-11 w-44 sm:w-48">
-              <Image
-                src="/acuasafe/acuasafe-logo.svg"
-                alt="Acuasafe - Drinking Water Delivery & Bottled Water"
-                fill
-                className="object-contain object-left"
-                priority
-              />
-            </div>
-          </Link>
+        {/* Brand Logo: Authentic Xclusive Can Limited */}
+        <Link
+          href="/"
+          className="flex items-center gap-3 transition-transform hover:scale-[1.02] select-none"
+        >
+          <div className="relative h-11 sm:h-13 w-40 sm:w-48 shrink-0 drop-shadow-sm">
+            <Image
+              src="/cropped/xclusive-logo.png"
+              alt="Xclusive Can Limited"
+              fill
+              className="object-contain object-left"
+              priority
+            />
+          </div>
+        </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-[15px] font-semibold text-[#1e293b]">
-            {navMenuItems.map((item, idx) => {
-              const isHome = item.label === "Home";
-              const isActive =
-                (isHome && pathname === "/") ||
-                (item.href === "/products" && pathname?.startsWith("/products")) ||
-                (item.href === "/our-business" && pathname === "/our-business");
+        {/* Desktop Nav Links */}
+        <ul className="hidden lg:flex items-center gap-2 xl:gap-4 2xl:gap-6 list-none text-[12px] xl:text-[13px] 2xl:text-[14px] uppercase font-extrabold tracking-wider shrink-0">
+          {navItems.map((item, idx) => {
+            const isActive =
+              (item.href === "/products" &&
+                (pathname === "/products" || pathname === "/find-our-product")) ||
+              (item.href === "/" && pathname === "/");
 
-              return (
-                <div
-                  key={idx}
-                  className="relative group py-2"
-                  onMouseEnter={() => item.sub && setActiveDropdown(item.label)}
-                  onMouseLeave={() => setActiveDropdown(null)}
+            return (
+              <li
+                key={idx}
+                className="relative py-6 group cursor-pointer shrink-0"
+                onMouseEnter={() => item.sub && setActiveHover(item.label)}
+                onMouseLeave={() => setActiveHover(null)}
+              >
+                <Link
+                  href={item.href}
+                  className={`flex items-center gap-1.5 transition-all duration-200 px-2.5 py-1.5 rounded-xl whitespace-nowrap shrink-0 ${
+                    isActive
+                      ? "text-[#0284c7] font-extrabold bg-cyan-500/10 shadow-[0_0_15px_rgba(0,194,232,0.15)]"
+                      : isPastHero
+                      ? "text-slate-900 hover:text-[#0284c7] hover:bg-black/5"
+                      : "text-white drop-shadow-sm hover:text-white hover:bg-white/20 hover:backdrop-blur-md"
+                  }`}
                 >
-                  <Link
-                    href={item.href}
-                    onClick={item.onClick}
-                    className={`flex items-center gap-1 transition-colors duration-200 ${
-                      isActive
-                        ? "text-[#00c2e8] font-bold"
-                        : "hover:text-[#00c2e8] text-[#1e293b]"
-                    }`}
-                  >
-                    <span>{item.label}</span>
-                    {item.sub && (
-                      <ChevronDown
-                        className={`w-4 h-4 transition-transform duration-200 ${
-                          activeDropdown === item.label ? "rotate-180 text-[#00c2e8]" : "text-slate-400"
-                        }`}
-                      />
-                    )}
-                  </Link>
-
-                  {/* Dropdown Menu */}
-                  {item.sub && activeDropdown === item.label && (
-                    <div className="absolute left-0 top-full pt-2 min-w-[260px] animate-in fade-in slide-in-from-top-2 duration-200 z-50">
-                      <div className="bg-white rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.12)] border border-slate-100 p-2.5 flex flex-col gap-1">
-                        {item.sub.map((subItem, sIdx) => (
-                          <Link
-                            key={sIdx}
-                            href={subItem.href}
-                            className="px-4 py-2.5 rounded-xl text-[14px] text-slate-700 hover:text-[#00c2e8] hover:bg-[#e6f9fd] font-medium transition-all flex items-center justify-between group/sub"
-                          >
-                            <span>{subItem.label}</span>
-                            <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-2 group-hover/sub:opacity-100 group-hover/sub:translate-x-0 transition-all text-[#00c2e8]" />
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
+                  <span className="whitespace-nowrap">{item.label}</span>
+                  {item.sub && (
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 opacity-60 transition-transform duration-250 shrink-0 ${
+                        activeHover === item.label ? "rotate-180 opacity-100" : ""
+                      }`}
+                    />
                   )}
-                </div>
-              );
-            })}
-          </nav>
+                </Link>
 
-          {/* Right Action Icons & Request A Quote CTA */}
-          <div className="flex items-center gap-4 sm:gap-6">
-            {/* Search Trigger */}
-            <button
-              onClick={() => setIsSearchOpen(true)}
-              className="text-slate-700 hover:text-[#00c2e8] transition-colors p-2 rounded-full hover:bg-slate-100"
-              aria-label="Search"
-              title="Search Products & Content"
-            >
-              <Search className="w-5 h-5 stroke-[2.2]" />
-            </button>
+                {/* ══════════════════════════════════════════════════════════════
+                    OPTION 3: Stripe / Tesla Style Informative Glass Mega Panel
+                   ══════════════════════════════════════════════════════════════ */}
+                {item.sub && activeHover === item.label && (
+                  <div className="absolute left-1/2 -translate-x-1/2 top-[85%] pt-3 z-50 animate-in fade-in slide-in-from-top-3 duration-250">
+                    {/* Triangular Pointer Notch */}
+                    <div className="w-4 h-4 bg-white/95 rotate-45 border-t border-l border-white/80 absolute top-1 left-1/2 -translate-x-1/2 z-10 shadow-xs" />
 
-            {/* Shopping Cart / Samples Badge */}
-            <button
-              onClick={() => setIsCartOpen(true)}
-              className="relative text-slate-700 hover:text-[#00c2e8] transition-colors p-2 rounded-full hover:bg-slate-100"
-              aria-label="View Cart and Samples"
-              title="Cart / Sample Requests"
-            >
-              <ShoppingCart className="w-5 h-5 stroke-[2.2]" />
-              <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-[#00c2e8] text-white text-[10px] font-extrabold rounded-full flex items-center justify-center shadow-sm">
-                {cartItems.reduce((acc, it) => acc + it.qty, 0)}
-              </span>
-            </button>
-
-            {/* Request A Quote Button (Cyan Pill) */}
-            <button
-              onClick={openRFQ}
-              className="hidden sm:inline-flex items-center justify-center px-6 sm:px-7 py-2.5 rounded-full bg-[#00c2e8] hover:bg-[#00acc1] text-white font-bold text-[14px] tracking-wide shadow-[0_4px_16px_rgba(0,194,232,0.35)] transition-all duration-200 hover:scale-105 active:scale-95"
-            >
-              Request A Quote
-            </button>
-
-            {/* Mobile Hamburger Toggle */}
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden p-2 text-slate-800 hover:text-[#00c2e8] rounded-lg transition-colors"
-              aria-label="Open Mobile Menu"
-            >
-              {mobileOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Spacer so content does not hide behind fixed navbar */}
-      <div className="h-[72px] sm:h-[84px]" />
-
-      {/* Mobile Menu Drawer */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setMobileOpen(false)}
-          />
-          <div className="fixed top-0 right-0 bottom-0 w-[85%] max-w-[360px] bg-white shadow-2xl p-6 flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-300">
-            <div>
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
-                <div className="relative h-9 w-36">
-                  <Image
-                    src="/acuasafe/acuasafe-logo.svg"
-                    alt="Acuasafe"
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                <button
-                  onClick={() => setMobileOpen(false)}
-                  className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-
-              {/* Mobile Quick Search */}
-              <div className="mb-6 relative">
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-full pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-[#00c2e8]"
-                />
-                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
-              </div>
-
-              {/* Mobile Navigation List */}
-              <div className="space-y-2">
-                {navMenuItems.map((item, idx) => (
-                  <div key={idx} className="border-b border-slate-50 pb-2">
-                    <button
-                      onClick={() =>
-                        setActiveDropdown(activeDropdown === item.label ? null : item.label)
-                      }
-                      className="w-full flex items-center justify-between py-2 text-left font-semibold text-slate-800 text-[15px]"
-                    >
-                      <Link
-                        href={item.href}
-                        onClick={(e) => {
-                          if (item.sub) {
-                            e.preventDefault();
-                            setActiveDropdown(
-                              activeDropdown === item.label ? null : item.label
-                            );
-                          } else {
-                            if (item.onClick) item.onClick(e);
-                            setMobileOpen(false);
-                          }
-                        }}
-                        className="flex-1"
-                      >
-                        {item.label}
-                      </Link>
-                      {item.sub && (
-                        <ChevronDown
-                          className={`w-4 h-4 text-slate-400 transition-transform ${
-                            activeDropdown === item.label ? "rotate-180 text-[#00c2e8]" : ""
-                          }`}
-                        />
-                      )}
-                    </button>
-
-                    {item.sub && activeDropdown === item.label && (
-                      <div className="pl-4 pt-1 pb-2 space-y-1.5 border-l-2 border-[#00c2e8]/40 ml-2">
-                        {item.sub.map((sub, sIdx) => (
-                          <Link
-                            key={sIdx}
-                            href={sub.href}
-                            onClick={() => setMobileOpen(false)}
-                            className="block py-1 text-sm text-slate-600 hover:text-[#00c2e8]"
-                          >
-                            {sub.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-6 border-t border-slate-100">
-              <button
-                onClick={() => {
-                  setMobileOpen(false);
-                  openRFQ();
-                }}
-                className="w-full py-3 rounded-full bg-[#00c2e8] text-white font-bold text-center shadow-lg hover:bg-[#00acc1] transition-colors"
-              >
-                Request A Quote
-              </button>
-              <div className="mt-4 flex items-center justify-center gap-4 text-xs text-slate-500">
-                <span className="flex items-center gap-1">
-                  <Phone className="w-3.5 h-3.5 text-[#00c2e8]" /> +880 1819 343635
-                </span>
-                <span className="flex items-center gap-1">
-                  <Mail className="w-3.5 h-3.5 text-[#00c2e8]" /> info@acuasafe.com
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Interactive Quick Search Modal */}
-      {isSearchOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl w-full max-w-2xl p-6 shadow-2xl border border-slate-100 animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-              <div className="flex items-center gap-3 flex-1">
-                <Search className="w-6 h-6 text-[#00c2e8]" />
-                <input
-                  type="text"
-                  placeholder="Search water bottles, dispensers, pails, certifications..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full text-lg font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none"
-                  autoFocus
-                />
-              </div>
-              <button
-                onClick={() => setIsSearchOpen(false)}
-                className="p-1.5 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-800"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Quick Suggestions */}
-            <div className="mt-4">
-              <p className="text-xs uppercase font-bold text-slate-400 tracking-wider mb-2">
-                Quick Results
-              </p>
-              <div className="space-y-2 max-h-60 overflow-y-auto">
-                {[
-                  { title: "5-Gallon Commercial Water Bottle (H2O Clear)", href: "/products/plastic-bottle-1" },
-                  { title: "Liquid Washing Container (HDPE)", href: "/products/plastic-bottle-2" },
-                  { title: "Chemical Bottle 500ML", href: "/products/plastic-bottle-3" },
-                  { title: "LEED Platinum Sustainability Report", href: "/sustainability" },
-                  { title: "Q Pail Manufacturing Division & Printing", href: "/q-pail" },
-                ]
-                  .filter((item) =>
-                    item.title.toLowerCase().includes(searchQuery.toLowerCase())
-                  )
-                  .map((item, idx) => (
-                    <Link
-                      key={idx}
-                      href={item.href}
-                      onClick={() => setIsSearchOpen(false)}
-                      className="flex items-center justify-between p-3 rounded-xl hover:bg-[#e6f9fd] text-slate-700 hover:text-[#00c2e8] transition-colors"
-                    >
-                      <span className="text-sm font-semibold">{item.title}</span>
-                      <ArrowRight className="w-4 h-4 text-[#00c2e8]" />
-                    </Link>
-                  ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Cart & Sample Request Drawer */}
-      {isCartOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end">
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setIsCartOpen(false)}
-          />
-          <div className="relative w-full max-w-md bg-white shadow-2xl h-full p-6 flex flex-col justify-between z-10 animate-in slide-in-from-right duration-300">
-            <div>
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
-                <div className="flex items-center gap-2">
-                  <ShoppingCart className="w-5 h-5 text-[#00c2e8]" />
-                  <h3 className="text-lg font-bold text-slate-900">Your Sample Basket</h3>
-                </div>
-                <button
-                  onClick={() => setIsCartOpen(false)}
-                  className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-
-              {cartItems.length === 0 ? (
-                <div className="text-center py-12 text-slate-500">
-                  <Droplet className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                  <p className="font-semibold">Your basket is empty</p>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Add sample bottles or containers to request free industrial testing.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {cartItems.map((item) => (
                     <div
-                      key={item.id}
-                      className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 border border-slate-100"
+                      className="min-w-[640px] max-w-[700px] rounded-3xl p-5 shadow-[0_30px_70px_rgba(0,0,0,0.2)] border border-white/90 grid grid-cols-12 gap-5 items-stretch"
+                      style={{
+                        backgroundColor: "rgba(255, 255, 255, 0.96)",
+                        backdropFilter: "blur(32px)",
+                        WebkitBackdropFilter: "blur(32px)",
+                      }}
                     >
-                      <div className="relative w-14 h-14 bg-white rounded-xl overflow-hidden shrink-0 border border-slate-200">
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          fill
-                          className="object-cover"
-                        />
+                      {/* Left Column: Interactive Rich Links (7 cols) */}
+                      <div className="col-span-7 space-y-1.5 text-left">
+                        <div className="px-3 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                          {item.label} Overview
+                        </div>
+                        {item.sub.map((s, sIdx) => {
+                          const Icon = s.icon;
+                          return (
+                            <Link
+                              key={sIdx}
+                              href={s.href}
+                              className="group/item flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-all duration-200 cursor-pointer"
+                            >
+                              <div className={`p-2.5 rounded-xl border ${s.iconBg} ${s.iconColor} shrink-0 group-hover/item:scale-105 transition-transform`}>
+                                <Icon className="w-4 h-4" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between">
+                                  <h4 className="text-sm font-bold text-slate-900 group-hover/item:text-[#1f5f8b] transition-colors">
+                                    {s.label}
+                                  </h4>
+                                  <ArrowRight className="w-3.5 h-3.5 text-[#1f5f8b] opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-200" />
+                                </div>
+                                <p className="text-xs text-slate-500 font-medium leading-relaxed line-clamp-1 mt-0.5">
+                                  {s.desc}
+                                </p>
+                              </div>
+                            </Link>
+                          );
+                        })}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-bold text-slate-800 truncate">
-                          {item.name}
-                        </h4>
-                        <p className="text-xs text-slate-500">{item.variant}</p>
-                        <p className="text-xs font-semibold text-[#00c2e8] mt-0.5">
-                          {item.price}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => setCartItems([])}
-                        className="p-2 text-slate-400 hover:text-red-500 transition-colors"
-                        title="Remove item"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+
+                      {/* Right Column: Featured Spotlight Visual Card (5 cols) */}
+                      {item.spotlight && (
+                        <div className="col-span-5 rounded-2xl bg-gradient-to-b from-slate-50 to-slate-100 border border-slate-200/80 p-4 flex flex-col justify-between text-left space-y-3">
+                          <div className="space-y-2">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full bg-cyan-100 text-[#1f5f8b] text-[10.5px] font-bold uppercase tracking-wider">
+                              {item.spotlight.badge}
+                            </span>
+                            <div className="relative w-full h-24 rounded-xl overflow-hidden bg-white border border-slate-200/60">
+                              <Image
+                                src={item.spotlight.image}
+                                alt={item.spotlight.title}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                            <h5 className="text-xs font-bold text-slate-900 line-clamp-1">
+                              {item.spotlight.title}
+                            </h5>
+                            <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+                              {item.spotlight.subtitle}
+                            </p>
+                          </div>
+                          <Link
+                            href={item.spotlight.href}
+                            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1f5f8b] hover:text-cyan-600 transition-colors pt-1"
+                          >
+                            <span>Learn More</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </Link>
+                        </div>
+                      )}
                     </div>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* Quick Quote CTA on Desktop */}
+        <div className="hidden lg:flex items-center gap-3 shrink-0">
+          <Link
+            href="/request-quote"
+            className={`px-4 xl:px-6 py-2.5 xl:py-3 rounded-xl font-extrabold text-[12px] xl:text-[13px] uppercase tracking-wider transition-all duration-300 shadow-md whitespace-nowrap shrink-0 ${
+              isPastHero
+                ? "bg-[#1f5f8b] hover:bg-[#2a86b8] text-white shadow-cyan-900/10"
+                : "bg-white/95 hover:bg-white text-slate-900 shadow-black/10 backdrop-blur-md"
+            }`}
+          >
+            Request A Quote
+          </Link>
+        </div>
+
+        {/* Mobile Hamburger Toggle */}
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className={`lg:hidden p-2 rounded-xl text-2xl transition-colors cursor-pointer ${
+            isPastHero
+              ? "text-slate-900 hover:bg-black/5"
+              : "text-white hover:bg-white/15"
+          }`}
+          aria-label="Toggle menu"
+        >
+          {mobileOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
+        </button>
+      </div>
+
+      {/* Mobile Menu Glass Dropdown */}
+      {mobileOpen && (
+        <div
+          className="lg:hidden mx-4 sm:mx-8 mt-3 p-6 rounded-2xl text-white shadow-2xl border border-white/20 space-y-3.5 animate-in fade-in duration-200"
+          style={{
+            backgroundColor: "rgba(15, 23, 42, 0.96)",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+          }}
+        >
+          {navItems.map((item, idx) => (
+            <div key={idx} className="border-b border-white/10 pb-2.5">
+              <Link
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
+                className="block text-sm font-bold uppercase tracking-wider hover:text-cyan-300 py-1"
+              >
+                {item.label}
+              </Link>
+              {item.sub && (
+                <div className="pl-4 mt-1.5 space-y-1.5 border-l border-white/20">
+                  {item.sub.map((s, sIdx) => (
+                    <Link
+                      key={sIdx}
+                      href={s.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="block text-xs text-slate-300 hover:text-cyan-300 py-0.5"
+                    >
+                      {s.label}
+                    </Link>
                   ))}
                 </div>
               )}
             </div>
-
-            <div className="pt-6 border-t border-slate-100">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-semibold text-slate-600">Sample Charge</span>
-                <span className="text-base font-bold text-emerald-600">FREE (0.00 USD)</span>
-              </div>
-              <button
-                onClick={() => {
-                  setIsCartOpen(false);
-                  openRFQ();
-                }}
-                className="w-full py-3.5 rounded-full bg-[#00c2e8] text-white font-bold text-sm shadow-[0_6px_20px_rgba(0,194,232,0.4)] hover:bg-[#00acc1] transition-all hover:scale-[1.02]"
-              >
-                Proceed to Request Samples
-              </button>
-            </div>
-          </div>
+          ))}
         </div>
       )}
-    </>
+    </header>
   );
 }

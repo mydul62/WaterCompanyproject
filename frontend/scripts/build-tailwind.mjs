@@ -18,8 +18,13 @@ async function build() {
 
   // Explicitly ensure critical classes are included
   const essentialCandidates = [
+    'max-w-[1920px]',
+    'max-w-[1880px]',
+    'max-w-[1643px]',
     'max-w-[1638px]',
     'max-w-[1480px]',
+    'w-[98%]',
+    'w-[96%]',
     'w-[54%]',
     'w-[55%]',
     'w-[56%]',
@@ -61,6 +66,33 @@ async function build() {
 
   // Exact styles from user's provided snippets
   const customOverrides = `
+/* Global Large Screen Fluid Typography & Progressive Zoom Scaling */
+html {
+  font-size: 16.5px;
+}
+@media (min-width: 1024px) {
+  html {
+    font-size: 17.5px;
+  }
+}
+@media (min-width: 1280px) {
+  html {
+    font-size: 18.5px;
+  }
+}
+@media (min-width: 1440px) {
+  html {
+    font-size: 19.5px;
+  }
+}
+@media (min-width: 1640px) {
+  html {
+    font-size: 20.5px;
+  }
+}
+
+
+
 /* Custom Modern Bento & AquaPure Styles matching user snippet */
 :root {
   --aqua-bg: #f3f9fd;
@@ -246,18 +278,27 @@ async function build() {
 .bento-wrap, .wrap {
   position: relative;
   z-index: 1;
-  width: 100%;
-  max-width: 1638px;
+  width: 96%;
+  max-width: 1880px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 24px;
-  padding-right: 24px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 @media (min-width: 640px) {
   .bento-wrap, .wrap {
-    padding-left: 48px;
-    padding-right: 48px;
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .bento-wrap, .wrap {
+    width: 96%;
+    max-width: 1880px;
+    padding-left: 28px;
+    padding-right: 28px;
   }
 }
 
@@ -1200,6 +1241,127 @@ async function build() {
   .explore-card {
     min-height: 0;
   }
+}
+
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float-gentle {
+  animation: floatGentle 5s ease-in-out infinite;
+}
+
+@keyframes heroSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(65px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-title {
+  animation: heroSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-hero-desc {
+  animation: heroSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.14s both;
+}
+
+.animate-hero-btns {
+  animation: heroSlideUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.26s both;
+}
+
+.animate-hero-visual {
+  animation: heroSlideUp 0.95s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+}
+
+/* Glassmorphism & Modern Animations */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.glass-panel-dark {
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1.5deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 25px rgba(0, 194, 232, 0.35), 0 0 50px rgba(0, 194, 232, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 45px rgba(0, 194, 232, 0.65), 0 0 80px rgba(0, 194, 232, 0.3);
+  }
+}
+
+@keyframes glassShimmer {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.glass-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.glass-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transform: translateX(-150%) skewX(-20deg);
+  pointer-events: none;
+}
+.glass-shimmer:hover::after {
+  animation: glassShimmer 1.2s ease-in-out;
 }
 
 ::-webkit-scrollbar {

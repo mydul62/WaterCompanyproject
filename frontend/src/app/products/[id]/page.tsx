@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import RFQDrawer from "@/components/rfq/RFQDrawer";
 import { getProductById, CATALOG_PRODUCTS } from "@/data/catalogData";
 import { Share2, Check } from "lucide-react";
 
@@ -20,7 +19,6 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
   const product = getProductById(resolvedParams.id) || CATALOG_PRODUCTS[0];
 
   const [activeImage, setActiveImage] = useState(product.image);
-  const [isRFQOpen, setIsRFQOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   // Fallback thumbnails if gallery is shorter than 3
@@ -59,10 +57,11 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
         {/* Sky-Blue Hero Banner matching Screenshot be6f6ac5 */}
         <div
           id="hero"
+          style={{ clipPath: "polygon(0 0, 100% 0, 100% 88%, 0 100%)" }}
           className="relative w-full h-[220px] sm:h-[280px] bg-gradient-to-r from-[#8fcfe7] via-[#9ad7ec] to-[#ace0f3] overflow-hidden flex items-center select-none"
         >
           {/* Subtle Vector Background Illustration Overlay */}
-          <div className="absolute right-0 top-0 bottom-0 w-full sm:w-[55%] pointer-events-none opacity-20 flex items-center justify-end pr-8 sm:pr-16">
+          <div className="absolute right-0 top-0 bottom-0 w-full sm:w-[55%] pointer-events-none opacity-25 flex items-center justify-end pr-8 sm:pr-16">
             <svg
               className="w-full h-full max-h-[220px]"
               viewBox="0 0 600 240"
@@ -89,7 +88,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
             </svg>
           </div>
 
-          <div className="relative z-10 w-full max-w-[1638px] mx-auto px-6 sm:px-12 pt-14">
+          <div className="relative z-10 w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8 pt-14 pb-4">
             <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight drop-shadow-sm">
               Product Details
             </h1>
@@ -100,7 +99,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
         </div>
 
         {/* Breadcrumb Navigation matching Screenshot */}
-        <div className="w-full max-w-[1638px] mx-auto px-6 sm:px-12 pt-8 pb-4 text-xs sm:text-sm text-slate-500 font-medium">
+        <div className="w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8 pt-8 pb-4 text-sm sm:text-base text-slate-500 font-medium">
           <Link href="/" className="hover:text-[#5a8ea7] transition-colors">
             Home
           </Link>
@@ -112,11 +111,11 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
           <span className="text-slate-900 font-bold">{product.name}</span>
         </div>
 
-        {/* Product Details Section strictly constrained to max-w-[1638px] */}
+        {/* Product Details Section strictly constrained to fluid grand canvas */}
         <section className="w-full pb-20 pt-2">
-          <div className="w-full max-w-[1638px] mx-auto px-6 sm:px-12">
+          <div className="w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8">
             {/* Main Product Heading in Soft Slate Blue */}
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#5a8ea7] tracking-tight mb-8 sm:mb-10">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#5a8ea7] tracking-tight mb-8 sm:mb-10">
               {product.name}
             </h2>
 
@@ -125,7 +124,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
               {/* Left Column: Big Product Image + 3 Thumbnails */}
               <div className="w-full lg:w-[48%] space-y-4">
                 {/* Main Large Image Card */}
-                <div className="relative aspect-[4/3] w-full rounded-2xl bg-white border border-slate-200/90 shadow-sm overflow-hidden p-6 flex items-center justify-center">
+                <div className="relative aspect-[4/3] w-full rounded-2xl bg-gradient-to-b from-[#f8fafc] to-[#edf2f7] border border-slate-200/90 shadow-sm overflow-hidden p-6 flex items-center justify-center">
                   <Image
                     src={activeImage}
                     alt={product.name}
@@ -143,7 +142,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
                       <button
                         key={idx}
                         onClick={() => setActiveImage(thumb)}
-                        className={`relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-white border-2 p-2 overflow-hidden cursor-pointer transition-all ${
+                        className={`relative w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-gradient-to-b from-[#f8fafc] to-[#edf2f7] border-2 p-2 overflow-hidden cursor-pointer transition-all ${
                           isSelected
                             ? "border-[#5a8ea7] shadow-md ring-2 ring-[#5a8ea7]/20 scale-105"
                             : "border-slate-200 hover:border-slate-300 opacity-80 hover:opacity-100"
@@ -166,74 +165,74 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
               <div className="w-full lg:w-[52%] space-y-8 flex-1 select-none">
                 {/* 1. Description */}
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-[#5a8ea7] mb-2 tracking-tight">
+                  <h3 className="text-xl sm:text-2xl font-bold text-[#5a8ea7] mb-2 tracking-tight">
                     Description
                   </h3>
-                  <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+                  <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-medium">
                     {product.description}
                   </p>
                 </div>
 
                 {/* 2. Specification */}
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-[#5a8ea7] mb-2 tracking-tight">
+                  <h3 className="text-xl sm:text-2xl font-bold text-[#5a8ea7] mb-2 tracking-tight">
                     Specification
                   </h3>
-                  <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+                  <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-medium">
                     {product.specification || "No specification available"}
                   </p>
-                  <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-slate-100 text-xs sm:text-sm text-slate-700">
+                  <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-slate-100 text-sm sm:text-base text-slate-700">
                     <div>
-                      <span className="text-slate-400 font-semibold block">Material:</span>
-                      <span className="font-medium text-slate-800">{product.material || "Food Grade HDPE / PET"}</span>
+                      <span className="text-slate-400 font-bold block text-xs sm:text-sm uppercase tracking-wider">Material:</span>
+                      <span className="font-semibold text-slate-900">{product.material || "Food Grade HDPE / PET"}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 font-semibold block">Capacity:</span>
-                      <span className="font-medium text-slate-800">{product.capacity || "Standard"}</span>
+                      <span className="text-slate-400 font-bold block text-xs sm:text-sm uppercase tracking-wider">Capacity:</span>
+                      <span className="font-semibold text-slate-900">{product.capacity || "Standard"}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 font-semibold block">Shape:</span>
-                      <span className="font-medium text-slate-800">{product.shape}</span>
+                      <span className="text-slate-400 font-bold block text-xs sm:text-sm uppercase tracking-wider">Shape:</span>
+                      <span className="font-semibold text-slate-900">{product.shape}</span>
                     </div>
                     <div>
-                      <span className="text-slate-400 font-semibold block">Manufacturer:</span>
-                      <span className="font-medium text-slate-800">{product.factory}</span>
+                      <span className="text-slate-400 font-bold block text-xs sm:text-sm uppercase tracking-wider">Manufacturer:</span>
+                      <span className="font-semibold text-slate-900">{product.factory}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* 3. Usage */}
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-[#5a8ea7] mb-2 tracking-tight">
+                  <h3 className="text-xl sm:text-2xl font-bold text-[#5a8ea7] mb-2 tracking-tight">
                     Usage
                   </h3>
-                  <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+                  <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-medium">
                     {product.usage || "No usage description available"}
                   </p>
                 </div>
 
                 {/* 4. Action Buttons Row matching Screenshot be6f6ac5 */}
                 <div className="pt-4 flex flex-wrap items-center gap-3.5 sm:gap-4">
-                  {/* Request For Sample Button */}
-                  <button
-                    onClick={() => setIsRFQOpen(true)}
-                    className="px-7 py-3 rounded-lg bg-[#5f686d] hover:bg-[#4b5358] text-white font-semibold text-sm transition-all shadow-sm active:scale-95 cursor-pointer"
+                  {/* Request For Sample Button -> Direct Dedicated Page */}
+                  <Link
+                    href={`/request-quote?product=${product.slug}&type=sample`}
+                    className="px-8 py-3.5 rounded-xl bg-[#5f686d] hover:bg-[#4b5358] text-white font-bold text-sm sm:text-base transition-all shadow-sm active:scale-95 cursor-pointer inline-flex items-center justify-center"
                   >
                     Request For Sample
-                  </button>
+                  </Link>
 
-                  {/* Request A Quote Button */}
-                  <button
-                    onClick={() => setIsRFQOpen(true)}
-                    className="px-7 py-3 rounded-lg bg-[#6ba3be] hover:bg-[#5890ab] text-white font-semibold text-sm transition-all shadow-sm active:scale-95 cursor-pointer"
+                  {/* Request A Quote Button -> Direct Dedicated Page */}
+                  <Link
+                    href={`/request-quote?product=${product.slug}&type=quote`}
+                    className="px-8 py-3.5 rounded-xl bg-[#6ba3be] hover:bg-[#5890ab] text-white font-bold text-sm sm:text-base transition-all shadow-sm active:scale-95 cursor-pointer inline-flex items-center justify-center"
                   >
                     Request A Quote
-                  </button>
+                  </Link>
 
                   {/* Share Button */}
                   <button
                     onClick={handleShare}
-                    className="px-7 py-3 rounded-lg bg-[#1a1a1a] hover:bg-black text-white font-semibold text-sm transition-all flex items-center gap-2 shadow-sm active:scale-95 cursor-pointer"
+                    className="px-8 py-3.5 rounded-xl bg-[#1a1a1a] hover:bg-black text-white font-bold text-sm sm:text-base transition-all flex items-center gap-2 shadow-sm active:scale-95 cursor-pointer"
                   >
                     {copied ? (
                       <>
@@ -256,24 +255,6 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
 
       {/* Global Footer */}
       <Footer />
-
-      {/* Interactive Quotation & Sample Request Drawer */}
-      <RFQDrawer
-        isOpen={isRFQOpen}
-        onClose={() => setIsRFQOpen(false)}
-        initialProduct={{
-          id: product.id,
-          name: product.name,
-          category: product.genre.toLowerCase() as any,
-          categoryLabel: product.genre,
-          material: product.material || "Virgin HDPE",
-          capacityRange: product.capacity || "Custom",
-          applications: [product.subCategory],
-          image: product.image,
-          description: product.description,
-          features: [],
-        }}
-      />
     </div>
   );
 }

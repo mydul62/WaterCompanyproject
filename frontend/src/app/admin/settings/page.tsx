@@ -25,7 +25,7 @@ export default function AdminSettingsPage() {
   };
 
   return (
-    <div className="space-y-8 max-w-[1638px] mx-auto">
+    <div className="space-y-8 max-w-[1643px] mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

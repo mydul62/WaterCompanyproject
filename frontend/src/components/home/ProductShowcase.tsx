@@ -1,106 +1,126 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { X, ZoomIn } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 export default function ProductShowcase() {
-  const [selectedProduct, setSelectedProduct] = useState<{ image: string; title: string } | null>(null);
-
   const productCards = [
-    { id: 1, image: "/cropped/product-card-1.png", title: "White Plastic Bottle with Blue Gear-Ring Cap" },
-    { id: 2, image: "/cropped/product-card-2.png", title: "Conical White Plastic Cup / Tub" },
-    { id: 3, image: "/cropped/product-card-3.png", title: "Precision Dropper Bottle with Yellow Nozzle & Cap" },
-    { id: 4, image: "/cropped/product-card-4.png", title: "Rectangular Translucent Container with Clear Lid" },
+    {
+      id: "p1",
+      slug: "pharmaceutical-bottle",
+      image: "/cropped/product-card-1.png",
+      title: "White Plastic Bottle with Blue Gear-Ring Cap",
+      category: "PET Bottle",
+    },
+    {
+      id: "p2",
+      slug: "liquid-washing-container",
+      image: "/cropped/product-card-2.png",
+      title: "Conical White Plastic Cup / Tub",
+      category: "Container",
+    },
+    {
+      id: "p3",
+      slug: "oral-syringe",
+      image: "/cropped/product-card-3.png",
+      title: "Precision Dropper Bottle with Yellow Nozzle & Cap",
+      category: "Pharma Dropper",
+    },
+    {
+      id: "p4",
+      slug: "vitamin-container",
+      image: "/cropped/product-card-4.png",
+      title: "Rectangular Translucent Container with Clear Lid",
+      category: "Food Packaging",
+    },
   ];
 
   return (
-    <section id="products" className="w-full bg-white py-16 sm:py-24">
-      <div className="w-full max-w-[1638px] mx-auto px-6 sm:px-12">
-        {/* Section Header matching Screenshot 2026-11-04 130325.png */}
-        <div className="text-center space-y-2 mb-10 sm:mb-14">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-black tracking-tight">
+    <section id="products" className="relative w-full bg-[#f8fafc] py-20 sm:py-28 overflow-hidden select-none">
+      {/* Ambient Glass Glow Orbs */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-cyan-400/8 rounded-full blur-[140px] pointer-events-none" />
+
+      <div className="w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8 relative z-10">
+        {/* Section Header */}
+        <div data-reveal="up" className="text-center space-y-3 mb-12 sm:mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-800 text-xs font-bold uppercase tracking-wider shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 text-cyan-500 animate-pulse" />
+            <span>Engineered Containers Catalog</span>
+          </div>
+
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight">
             Discover Our Product
           </h2>
-          <p className="text-slate-500 font-medium text-base sm:text-lg">
+          <p className="text-slate-500 font-bold text-lg sm:text-xl">
             Plastic &amp; Tin Container
           </p>
         </div>
 
-        {/* 5 Exact Blue Outline Category Icons from Screenshot 2026-11-04 130325.png */}
-        <div className="flex justify-center mb-12 sm:mb-16">
-          <div className="relative w-full max-w-[680px] h-16 sm:h-20">
-            <Image
-              src="/cropped/category-icons-exact.png"
-              alt="Plastic and Tin Container Categories (Tin Can, Cylinder Bottle, Jerry Can, Industrial Pail, Rectangular Tub)"
-              fill
-              className="object-contain"
-              priority
-            />
+        {/* 5 Exact Blue Outline Category Icons in Glass Capsule */}
+        <div data-reveal="scale" className="delay-100 flex justify-center mb-12 sm:mb-16">
+          <div className="p-3 sm:p-5 rounded-3xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_10px_35px_rgba(0,0,0,0.05)] hover:shadow-lg transition-all">
+            <div className="relative w-full max-w-[680px] h-16 sm:h-20">
+              <Image
+                src="/cropped/category-icons-exact.png"
+                alt="Plastic and Tin Container Categories (Tin Can, Cylinder Bottle, Jerry Can, Industrial Pail, Rectangular Tub)"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
           </div>
         </div>
 
-        {/* 4 Exact Product Cards from Screenshot 2026-11-04 130325.png */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {productCards.map((card) => (
-            <div
+        {/* 4 Glass Pedestal Product Cards - Direct Click to Product Details */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          {productCards.map((card, idx) => (
+            <Link
               key={card.id}
-              onClick={() => setSelectedProduct({ image: card.image, title: card.title })}
-              className="group cursor-pointer rounded-2xl overflow-hidden bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)] hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative h-56 sm:h-64 border border-slate-100"
+              href={`/products/${card.slug}`}
+              data-reveal="up"
+              className={`delay-${(idx + 1) * 100} group block rounded-3xl overflow-hidden bg-white/80 backdrop-blur-xl border border-white/90 p-5 shadow-[0_12px_35px_rgba(0,0,0,0.05)] hover:shadow-[0_22px_55px_rgba(0,194,232,0.18)] hover:border-cyan-400/40 hover:-translate-y-2 transition-all duration-300 relative cursor-pointer`}
             >
-              <Image
-                src={card.image}
-                alt={card.title}
-                fill
-                className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                <span className="p-2.5 rounded-full bg-white/90 text-black shadow-md">
-                  <ZoomIn className="w-5 h-5" />
+              {/* Category Pill Tag */}
+              <div className="absolute top-4 left-4 z-10 px-3.5 py-1 rounded-full bg-slate-900/85 backdrop-blur-md text-xs sm:text-sm font-extrabold text-white shadow-sm">
+                {card.category}
+              </div>
+
+              {/* Image Container with Pedestal Effect - Pure & Clean, No Quick View Overlay */}
+              <div className="relative w-full h-56 sm:h-64 rounded-2xl bg-gradient-to-b from-slate-50/80 to-slate-100/60 overflow-hidden flex items-center justify-center">
+                <Image
+                  src={card.image}
+                  alt={card.title}
+                  fill
+                  className="object-contain p-4 group-hover:scale-108 group-hover:-translate-y-1 transition-transform duration-500 ease-out"
+                />
+              </div>
+
+              {/* Title */}
+              <div className="pt-4 text-center">
+                <h3 className="text-base sm:text-lg font-extrabold text-slate-900 line-clamp-1 group-hover:text-cyan-600 transition-colors">
+                  {card.title}
+                </h3>
+                <span className="inline-flex items-center gap-1 text-sm font-bold text-cyan-600 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  View Product Details &rarr;
                 </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
-        {/* Link to Dedicated Products Catalog Page */}
-        <div className="mt-12 text-center">
+        {/* View Full Catalog CTA */}
+        <div className="mt-14 sm:mt-16 text-center">
           <Link
             href="/products"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#5a8ea7] text-white font-bold text-sm sm:text-base hover:bg-[#487388] transition-all shadow-md hover:shadow-lg active:scale-95"
+            className="inline-flex items-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm sm:text-base hover:bg-cyan-600 transition-all shadow-xl hover:shadow-[0_15px_35px_rgba(0,194,232,0.35)] active:scale-95 group cursor-pointer"
           >
             <span>View Full Products Catalog (300+ Items)</span>
-            <span className="text-lg">&rarr;</span>
+            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
       </div>
-
-      {/* Product Image Zoom Modal */}
-      {selectedProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-2xl bg-white rounded-2xl overflow-hidden shadow-2xl p-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="text-base font-bold text-black">{selectedProduct.title}</h3>
-              <button
-                onClick={() => setSelectedProduct(null)}
-                className="p-1 rounded text-slate-500 hover:text-black hover:bg-slate-100 transition-colors"
-                aria-label="Close modal"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="relative aspect-4/3 w-full mt-2">
-              <Image
-                src={selectedProduct.image}
-                alt={selectedProduct.title}
-                fill
-                className="object-contain"
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 }

@@ -5,13 +5,24 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import RFQDrawer from "@/components/rfq/RFQDrawer";
 import { CATALOG_PRODUCTS, CatalogProduct } from "@/data/catalogData";
-import { ChevronDown, ChevronUp, Search, Download, ArrowRight, ArrowLeft, X, Eye } from "lucide-react";
+import { X, Search, ChevronDown, ArrowRight, Sparkles } from "lucide-react";
 
-const CATALOG_DATA = CATALOG_PRODUCTS;
+interface ProductItem {
+  id: string;
+  n: string; // name
+  d: string; // description
+  f: string; // factory
+  m: string; // material line: Plastic | Metal
+  c: string; // category
+  s: string; // svg icon key
+  img?: string; // real photo if available
+  slug?: string;
+  spec?: string;
+}
 
-const PLASTIC_SUB_CATEGORIES = [
+const FACTORIES = ["Q Pail Limited", "Xclusive Can Limited"];
+const PLASTIC_CATS = [
   "Food",
   "Home Care",
   "Personal Care",
@@ -22,717 +33,1067 @@ const PLASTIC_SUB_CATEGORIES = [
   "Paint",
   "Agro Vet",
 ];
+const METAL_CATS = ["Group Products", "Paint", "Chemical"];
 
-const METAL_SUB_CATEGORIES = [
-  "Food",
-  "Home Care",
-  "Personal Care",
-  "Paint",
-  "Lubricant",
-  "Chemical",
-  "Container",
-];
-
-const EXPORT_TYPES = ["Direct Export", "Indirect Export"];
-const SHAPE_TYPES: ("Square" | "Oblong" | "Oval" | "Rectangular" | "Circular")[] = [
-  "Square",
-  "Oblong",
-  "Oval",
-  "Rectangular",
-  "Circular",
+// Seed items from user template combined with catalog data
+const ALL_PRODUCTS: ProductItem[] = [
+  {
+    id: "tp1",
+    n: "Pharmaceutical Bottle",
+    d: "100 ml HDPE pharmaceuticals bottle made with food grade virgin material.",
+    f: "Q Pail Limited",
+    m: "Plastic",
+    c: "Pharmaceutical",
+    s: "bottle",
+    img: "/images/catalog/cat-prod-1.png",
+    slug: "pharmaceutical-bottle",
+    spec: "100 ml nominal capacity, child-resistant cap option, USP compliant.",
+  },
+  {
+    id: "tp2",
+    n: "Liquid Washing Container",
+    d: "HDPE washing powder container for home care usage.",
+    f: "Q Pail Limited",
+    m: "Plastic",
+    c: "Home Care",
+    s: "detergent",
+    img: "/images/catalog/cat-prod-2.png",
+    slug: "liquid-washing-container",
+    spec: "Ergonomic molded handle with anti-leak pour spout, 1000ml.",
+  },
+  {
+    id: "tp3",
+    n: "Vitamin Container",
+    d: "26 gm container (Menacal-D) with cap for pharmaceutical uses. Used for Radiant Pharma.",
+    f: "Q Pail Limited",
+    m: "Plastic",
+    c: "Pharmaceutical",
+    s: "jar",
+    img: "/images/catalog/cat-prod-3.png",
+    slug: "vitamin-container",
+    spec: "Induction heat sealable foil barrier, tamper-evident cap.",
+  },
+  {
+    id: "tp4",
+    n: "Paint Pail",
+    d: "Round pail with metal handle for decorative and industrial paints.",
+    f: "Q Pail Limited",
+    m: "Plastic",
+    c: "Paint",
+    s: "pail",
+    img: "/images/catalog/prod-7.png",
+    slug: "paint-pail",
+    spec: "Reinforced rim, heavy-gauge wire bail handle with roller grip.",
+  },
+  {
+    id: "tp5",
+    n: "Bitumen Paint Can",
+    d: "Heavy-gauge tin can for bituminous paint with tight-seal lid.",
+    f: "Xclusive Can Limited",
+    m: "Metal",
+    c: "Paint",
+    s: "can",
+    img: "/Infoimages/Screenshot 2026-11-04 130154.png",
+    slug: "bitumen-paint-can",
+    spec: "Three-piece welded tinplate with rust-inhibitive internal varnish.",
+  },
+  {
+    id: "tp6",
+    n: "Lubricant Container",
+    d: "Leak-proof lubricant bottle with tamper-evident closure.",
+    f: "Q Pail Limited",
+    m: "Plastic",
+    c: "Lubricant",
+    s: "bottle",
+    img: "/images/catalog/cat-prod-8.png",
+    slug: "lubricant-container",
+    spec: "Multi-layer barrier against oil migration, translucent view stripe.",
+  },
+  // Additional Real Catalog Items
+  {
+    id: "p5",
+    n: "Oral Syringe & Dropper",
+    d: "High precision measured dosing syringe and dropper for pediatric medications.",
+    f: "Xclusive Can Limited",
+    m: "Plastic",
+    c: "Pharmaceutical",
+    s: "bottle",
+    img: "/cropped/product-card-3.png",
+    slug: "oral-syringe",
+    spec: "Indelible graduation markings, medical grade polypropylene.",
+  },
+  {
+    id: "p6",
+    n: "Agro Vet Bottle",
+    d: "500 ML White color HDPE Agro Vet Bottle with Inner Seal and Cap.",
+    f: "Xclusive Can Limited",
+    m: "Plastic",
+    c: "Agro Vet",
+    s: "bottle",
+    img: "/cropped/product-card-1.png",
+    slug: "agro-bottle",
+    spec: "Fluorinated barrier against aggressive agrochemical solvents.",
+  },
+  {
+    id: "p7",
+    n: "Chemical Reagent Bottle",
+    d: "500 ML Chemical Bottle used for Samuda Chemical Industries.",
+    f: "Xclusive Can Limited",
+    m: "Plastic",
+    c: "Chemical",
+    s: "bottle",
+    img: "/images/catalog/cat-prod-7.png",
+    slug: "chemical-bottle",
+    spec: "HDPE heavy wall construction with chemical-grade safety cap.",
+  },
+  {
+    id: "p8",
+    n: "Double Handle Jerry Can",
+    d: "4.8 Ltr Double Handle HDPE Jerry Can for bulk fluids and heavy chemicals.",
+    f: "Q Pail Limited",
+    m: "Plastic",
+    c: "Chemical",
+    s: "detergent",
+    img: "/images/catalog/cat-prod-8.png",
+    slug: "double-handle-can",
+    spec: "Dual handles for stable two-handed pour and secure pallet stacking.",
+  },
+  {
+    id: "p9",
+    n: "1 Ltr Calibrated Bottle",
+    d: "1 Ltr industrial chemical bottle with graduated measurement markings.",
+    f: "Xclusive Can Limited",
+    m: "Plastic",
+    c: "Chemical",
+    s: "bottle",
+    img: "/images/catalog/cat-prod-9.png",
+    slug: "1-ltr-chemical-bottle",
+    spec: "UN certified for packaging group II and III hazardous liquids.",
+  },
+  {
+    id: "p10",
+    n: "Personal Care Body Wash Bottle",
+    d: "Crystal-clear PET body-wash bottle with ergonomic dispenser finish.",
+    f: "Xclusive Can Limited",
+    m: "Plastic",
+    c: "Personal Care",
+    s: "bottle",
+    img: "/images/catalog/prod-4.png",
+    slug: "body-wash-bottle",
+    spec: "Recyclable PET resin with high gloss finish and custom colors.",
+  },
+  {
+    id: "p11",
+    n: "Industrial Metal Paint Can",
+    d: "Welded electrolytic tinplate metal can for decorative paint & industrial coatings.",
+    f: "Xclusive Can Limited",
+    m: "Metal",
+    c: "Paint",
+    s: "can",
+    img: "/Infoimages/Screenshot 2026-11-04 130154.png",
+    slug: "3-piece-industrial-paint-can",
+    spec: "Friction-fit lid prevents skinning, compatible with water & solvent paints.",
+  },
+  {
+    id: "p12",
+    n: "High-Pressure Aerosol Spray Can",
+    d: "Tested up to 18 bar burst pressure with specialized interior protective lacquer.",
+    f: "Xclusive Can Limited",
+    m: "Metal",
+    c: "Group Products",
+    s: "can",
+    img: "/Infoimages/Screenshot 2026-11-04 130154.png",
+    slug: "aerosol-spray-can",
+    spec: "DOT-2Q specification, seamless neck curling for standard valve crimp.",
+  },
+  {
+    id: "p13",
+    n: "Food Grade Conical Cup / Tub",
+    d: "Injection-molded white food tub suitable for dairy, yogurt, and butter.",
+    f: "Q Pail Limited",
+    m: "Plastic",
+    c: "Food",
+    s: "jar",
+    img: "/cropped/product-card-2.png",
+    slug: "food-conical-cup",
+    spec: "Freezer-grade polypropylene with IML (In-Mold Labeling) compatibility.",
+  },
+  {
+    id: "p14",
+    n: "Tamper-Evident Food Container",
+    d: "Rectangular translucent food box with snap-tight hermetic seal lid.",
+    f: "Q Pail Limited",
+    m: "Plastic",
+    c: "Food",
+    s: "jar",
+    img: "/cropped/product-card-4.png",
+    slug: "tamper-evident-container",
+    spec: "BPA-free food contact certified, microwave & dishwasher safe.",
+  },
 ];
 
 export default function ProductsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFactories, setSelectedFactories] = useState<string[]>([]);
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [selectedSubCategories, setSelectedSubCategories] = useState<string[]>([]);
-  const [selectedExports, setSelectedExports] = useState<string[]>([]);
-  const [selectedShapes, setSelectedShapes] = useState<string[]>([]);
-  const [isGroupProductsChecked, setIsGroupProductsChecked] = useState(false);
+  const [query, setQuery] = useState("");
+  const [selectedFac, setSelectedFac] = useState<string[]>([]);
+  const [selectedCat, setSelectedCat] = useState<string[]>([]);
 
-  // Accordion open/close states exactly matching screenshots
-  const [isFactoryOpen, setIsFactoryOpen] = useState(true);
-  const [isGenreOpen, setIsGenreOpen] = useState(true);
-  const [isPlasticOpen, setIsPlasticOpen] = useState(true);
-  const [isMetalOpen, setIsMetalOpen] = useState(false);
-  const [isExportOpen, setIsExportOpen] = useState(false);
-  const [isShapeOpen, setIsShapeOpen] = useState(false);
+  // Accordion toggle states
+  const [factoryOpen, setFactoryOpen] = useState(true);
+  const [genreOpen, setGenreOpen] = useState(true);
 
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(12);
+  // Mobile drawer state
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // Quick View Modal & RFQ Drawer state
-  const [quickViewProduct, setQuickViewProduct] = useState<CatalogProduct | null>(null);
-  const [modalActiveImage, setModalActiveImage] = useState<string>("");
-  const [isRFQOpen, setIsRFQOpen] = useState(false);
-  const [selectedProductForRFQ, setSelectedProductForRFQ] = useState<any>(null);
-
-  const handleOpenQuickView = (product: CatalogProduct) => {
-    setQuickViewProduct(product);
-    setModalActiveImage(product.image);
-  };
-
-  const toggleFactory = (factory: string) => {
-    setSelectedFactories((prev) =>
-      prev.includes(factory) ? prev.filter((f) => f !== factory) : [...prev, factory]
+  // Toggle factory filter
+  const toggleFac = (fac: string) => {
+    setSelectedFac((prev) =>
+      prev.includes(fac) ? prev.filter((f) => f !== fac) : [...prev, fac]
     );
-    setCurrentPage(1);
   };
 
-  const toggleSubCategory = (sub: string) => {
-    setSelectedSubCategories((prev) =>
-      prev.includes(sub) ? prev.filter((s) => s !== sub) : [...prev, sub]
+  // Toggle category filter
+  const toggleCat = (cat: string) => {
+    setSelectedCat((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
     );
-    setCurrentPage(1);
   };
 
-  const toggleExport = (exp: string) => {
-    setSelectedExports((prev) =>
-      prev.includes(exp) ? prev.filter((e) => e !== exp) : [...prev, exp]
-    );
-    setCurrentPage(1);
+  // Remove chip
+  const removeChip = (val: string) => {
+    setSelectedFac((prev) => prev.filter((f) => f !== val));
+    setSelectedCat((prev) => prev.filter((c) => c !== val));
   };
 
-  const toggleShape = (shape: string) => {
-    setSelectedShapes((prev) =>
-      prev.includes(shape) ? prev.filter((s) => s !== shape) : [...prev, shape]
-    );
-    setCurrentPage(1);
+  // Clear all filters
+  const clearAll = () => {
+    setQuery("");
+    setSelectedFac([]);
+    setSelectedCat([]);
   };
 
+  // Counts for filters
+  const counts = useMemo(() => {
+    const facCounts: Record<string, number> = {};
+    const catCounts: Record<string, number> = {};
+
+    FACTORIES.forEach((f) => {
+      facCounts[f] = ALL_PRODUCTS.filter((p) => p.f === f).length;
+    });
+
+    PLASTIC_CATS.forEach((c) => {
+      catCounts[c] = ALL_PRODUCTS.filter((p) => p.m === "Plastic" && p.c === c).length;
+    });
+
+    METAL_CATS.forEach((c) => {
+      catCounts[c] = ALL_PRODUCTS.filter((p) => p.m === "Metal" && p.c === c).length;
+    });
+
+    return { facCounts, catCounts };
+  }, []);
+
+  // Filtered products list
   const filteredProducts = useMemo(() => {
-    return CATALOG_DATA.filter((product) => {
-      const matchesSearch =
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const q = query.trim().toLowerCase();
+    return ALL_PRODUCTS.filter((p) => {
+      const matchFac = selectedFac.length === 0 || selectedFac.includes(p.f);
+      const matchCat = selectedCat.length === 0 || selectedCat.includes(p.c);
+      const matchQuery =
+        !q ||
+        p.n.toLowerCase().includes(q) ||
+        p.d.toLowerCase().includes(q) ||
+        p.c.toLowerCase().includes(q) ||
+        p.f.toLowerCase().includes(q);
 
-      const matchesFactory =
-        selectedFactories.length === 0 || selectedFactories.includes(product.factory);
-
-      const matchesGenre =
-        selectedGenres.length === 0 || selectedGenres.includes(product.genre);
-
-      const matchesSubCategory =
-        selectedSubCategories.length === 0 ||
-        selectedSubCategories.includes(product.subCategory);
-
-      const matchesShape =
-        selectedShapes.length === 0 || selectedShapes.includes(product.shape);
-
-      return matchesSearch && matchesFactory && matchesGenre && matchesSubCategory && matchesShape;
+      return matchFac && matchCat && matchQuery;
     });
-  }, [searchQuery, selectedFactories, selectedGenres, selectedSubCategories, selectedShapes]);
+  }, [query, selectedFac, selectedCat]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / itemsPerPage));
-  const displayedProducts = filteredProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const activeChips = [...selectedFac, ...selectedCat];
 
-  const handleOpenRFQ = (product: CatalogProduct) => {
-    setSelectedProductForRFQ({
-      id: product.id,
-      name: product.name,
-      category: product.genre.toLowerCase(),
-      categoryLabel: product.genre,
-      material: product.material || (product.genre === "Metal" ? "Electrolytic Tinplate" : "HDPE / PET"),
-      capacityRange: product.capacity || "Custom",
-      applications: [product.shape, product.subCategory],
-      image: product.image,
-      description: product.description,
-      features: ["Custom Branding Available", "ISO Certified Cleanroom Manufacturing"],
-    });
-    setQuickViewProduct(null);
-    setIsRFQOpen(true);
+  // Render SVG illustration
+  const renderThumbIcon = (prod: ProductItem) => {
+    if (prod.img) {
+      return (
+        <div className="relative w-full h-full p-4 flex items-center justify-center">
+          <Image
+            src={prod.img}
+            alt={prod.n}
+            fill
+            className="object-contain p-4 drop-shadow-[0_12px_14px_rgba(15,30,46,0.18)] transition-transform duration-350 group-hover:scale-108"
+            sizes="(max-width: 768px) 100vw, 300px"
+          />
+        </div>
+      );
+    }
+
+    switch (prod.s) {
+      case "detergent":
+        return (
+          <svg viewBox="0 0 80 120" className="w-[46%] h-auto drop-shadow-[0_14px_14px_rgba(15,30,46,0.18)] transition-transform duration-350">
+            <rect x="24" y="2" width="22" height="12" rx="3" fill="#dfe7ee" />
+            <path d="M22 14h26l6 10c10 6 14 14 14 28v52c0 8-5 14-13 14H15c-8 0-13-6-13-14V52c0-14 4-22 14-28z" fill="#fff" stroke="#cbd6df" />
+            <ellipse cx="52" cy="50" rx="10" ry="14" fill="#e3ebf1" stroke="#cbd6df" />
+          </svg>
+        );
+      case "jar":
+        return (
+          <svg viewBox="0 0 80 100" className="w-[46%] h-auto drop-shadow-[0_14px_14px_rgba(15,30,46,0.18)] transition-transform duration-350">
+            <rect x="8" y="4" width="64" height="16" rx="5" fill="#dfe7ee" />
+            <rect x="10" y="18" width="60" height="78" rx="10" fill="#fff" stroke="#cbd6df" />
+            <rect x="18" y="40" width="44" height="30" rx="4" fill="#e8f2f9" />
+          </svg>
+        );
+      case "pail":
+        return (
+          <svg viewBox="0 0 100 100" className="w-[46%] h-auto drop-shadow-[0_14px_14px_rgba(15,30,46,0.18)] transition-transform duration-350">
+            <path d="M18 30c8-30 56-30 64 0" fill="none" stroke="#9fb0bf" strokeWidth="3" />
+            <rect x="10" y="26" width="80" height="10" rx="4" fill="#dfe7ee" />
+            <path d="M14 36h72l-6 56c-.5 4-3 6-7 6H27c-4 0-6.5-2-7-6z" fill="#fff" stroke="#cbd6df" />
+            <rect x="26" y="50" width="48" height="26" rx="4" fill="#e8f2f9" />
+          </svg>
+        );
+      case "can":
+        return (
+          <svg viewBox="0 0 100 100" className="w-[46%] h-auto drop-shadow-[0_14px_14px_rgba(15,30,46,0.18)] transition-transform duration-350">
+            <ellipse cx="50" cy="18" rx="38" ry="9" fill="#cfd8e0" />
+            <path d="M12 18v66c0 5 17 10 38 10s38-5 38-10V18c0 5-17 10-38 10S12 23 12 18z" fill="#aab7c3" />
+            <rect x="12" y="44" width="76" height="30" fill="#1f5f8b" opacity=".85" />
+            <path d="M20 26h60" stroke="#fff" strokeOpacity=".5" strokeWidth="3" />
+          </svg>
+        );
+      case "bottle":
+      default:
+        return (
+          <svg viewBox="0 0 60 120" className="w-[46%] h-auto drop-shadow-[0_14px_14px_rgba(15,30,46,0.18)] transition-transform duration-350">
+            <rect x="22" y="2" width="16" height="14" rx="3" fill="#dfe7ee" />
+            <path d="M20 16h20v10c10 6 12 14 12 26v56c0 6-4 10-10 10H18c-6 0-10-4-10-10V52c0-12 2-20 12-26z" fill="#fff" stroke="#cbd6df" />
+            <rect x="14" y="58" width="32" height="34" rx="4" fill="#e8f2f9" />
+          </svg>
+        );
+    }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      {/* Top Floating / Sticky Header */}
+    <div className="prd-root min-h-screen flex flex-col bg-[#f5f8fb] text-[#0f1e2e]">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+        .prd-root {
+          --ink: #0f1e2e;
+          --muted: #5b6b7b;
+          --line: #e3e9ef;
+          --bg: #f5f8fb;
+          --card: #fff;
+          --brand: #1f5f8b;
+          --brand-2: #2a86b8;
+          --accent: #18b2a0;
+          --brand-soft: #e8f2f9;
+          --radius: 18px;
+          --shadow: 0 1px 2px rgba(15,30,46,.05), 0 8px 24px rgba(15,30,46,.06);
+          font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+        }
+
+        /* HERO */
+        .prd-hero {
+          position: relative;
+          padding: 170px 24px 110px;
+          text-align: center;
+          color: #fff;
+          overflow: hidden;
+          background: radial-gradient(900px 400px at 85% -10%, rgba(24,178,160,.45), transparent 60%),
+                      radial-gradient(700px 400px at 0% 100%, rgba(42,134,184,.5), transparent 60%),
+                      linear-gradient(135deg, #0b2236, #12405f 60%, #1b5d86);
+        }
+        .prd-hero::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          opacity: .07;
+          background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px);
+          background-size: 44px 44px;
+          pointer-events: none;
+        }
+        .prd-hero > * {
+          position: relative;
+        }
+        .prd-eyebrow {
+          display: inline-block;
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: .18em;
+          text-transform: uppercase;
+          padding: 7px 14px;
+          border: 1px solid rgba(255,255,255,.3);
+          border-radius: 999px;
+          margin-bottom: 20px;
+          background: rgba(255,255,255,.08);
+          backdrop-filter: blur(8px);
+        }
+        .prd-hero h1 {
+          font-size: clamp(34px, 6vw, 64px);
+          font-weight: 800;
+          letter-spacing: -.03em;
+          line-height: 1.05;
+        }
+        .prd-hero h1 em {
+          font-style: normal;
+          background: linear-gradient(90deg, #7fe3d6, #9fd3f3);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+        .prd-hero p {
+          max-width: 560px;
+          margin: 18px auto 0;
+          color: #cfe0ec;
+          font-size: 17px;
+          line-height: 1.5;
+        }
+        .prd-stats {
+          display: flex;
+          justify-content: center;
+          gap: 40px;
+          margin-top: 38px;
+          flex-wrap: wrap;
+        }
+        .prd-stats b {
+          display: block;
+          font-size: 26px;
+          font-weight: 800;
+        }
+        .prd-stats small {
+          color: #aac4d6;
+          font-size: 13px;
+        }
+
+        /* LAYOUT */
+        .prd-wrap {
+          width: min(1920px, 98%);
+          margin: -48px auto 80px;
+          position: relative;
+          display: grid;
+          grid-template-columns: 290px 1fr;
+          gap: 28px;
+          align-items: start;
+        }
+        .prd-panel {
+          background: var(--card);
+          border: 1px solid var(--line);
+          border-radius: var(--radius);
+          box-shadow: var(--shadow);
+        }
+
+        /* SIDEBAR */
+        .prd-side {
+          padding: 22px;
+          position: sticky;
+          top: 90px;
+          max-height: calc(100vh - 110px);
+          overflow-y: auto;
+        }
+        .prd-side h2 {
+          font-size: 18px;
+          font-weight: 800;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 6px;
+        }
+        .prd-clear {
+          font-size: 12px;
+          font-weight: 700;
+          color: var(--brand-2);
+          background: none;
+          border: 0;
+          cursor: pointer;
+        }
+        .prd-clear:hover {
+          text-decoration: underline;
+        }
+        .prd-group {
+          border-top: 1px solid var(--line);
+          padding: 14px 0;
+        }
+        .prd-group:first-of-type {
+          border-top: 0;
+        }
+        .prd-gh {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: none;
+          border: 0;
+          font-weight: 700;
+          font-size: 13px;
+          letter-spacing: .06em;
+          text-transform: uppercase;
+          color: var(--brand);
+          padding: 2px 0;
+          cursor: pointer;
+        }
+        .prd-gh svg {
+          transition: transform .25s ease;
+        }
+        .prd-group.closed .prd-gh svg {
+          transform: rotate(-90deg);
+        }
+        .prd-gb {
+          display: grid;
+          gap: 2px;
+          margin-top: 10px;
+        }
+        .prd-group.closed .prd-gb {
+          display: none;
+        }
+        .prd-sub {
+          font-size: 12px;
+          font-weight: 700;
+          color: var(--muted);
+          margin: 10px 0 2px;
+          text-transform: uppercase;
+          letter-spacing: .05em;
+        }
+        .prd-opt {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 7px 8px;
+          border-radius: 10px;
+          font-size: 14px;
+          cursor: pointer;
+          transition: background .15s;
+          color: #2a3a4a;
+          user-select: none;
+        }
+        .prd-opt:hover {
+          background: var(--brand-soft);
+        }
+        .prd-opt input {
+          appearance: none;
+          width: 18px;
+          height: 18px;
+          border: 1.8px solid #b9c7d3;
+          border-radius: 6px;
+          display: grid;
+          place-items: center;
+          transition: .15s;
+          flex: none;
+          cursor: pointer;
+        }
+        .prd-opt input:checked {
+          background: var(--brand);
+          border-color: var(--brand);
+        }
+        .prd-opt input:checked::after {
+          content: "";
+          width: 9px;
+          height: 5px;
+          border: 2px solid #fff;
+          border-top: 0;
+          border-right: 0;
+          transform: rotate(-45deg) translate(1px, -1px);
+        }
+        .prd-opt .prd-n {
+          margin-left: auto;
+          font-size: 12px;
+          color: var(--muted);
+        }
+
+        /* MAIN */
+        .prd-top {
+          display: flex;
+          gap: 12px;
+          padding: 12px;
+          margin-bottom: 18px;
+          align-items: center;
+        }
+        .prd-search {
+          flex: 1;
+          position: relative;
+        }
+        .prd-search svg {
+          position: absolute;
+          left: 18px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: var(--muted);
+          pointer-events: none;
+          width: 20px;
+          height: 20px;
+        }
+        .prd-search input {
+          width: 100%;
+          height: 54px;
+          border: 1.5px solid var(--line);
+          border-radius: 14px;
+          padding: 0 18px 0 52px;
+          font: inherit;
+          font-size: 16px;
+          background: var(--bg);
+          outline: 0;
+          transition: border-color .2s, box-shadow .2s, background .2s;
+        }
+        .prd-search input:focus {
+          border-color: var(--brand-2);
+          background: #fff;
+          box-shadow: 0 0 0 4px rgba(42, 134, 184, .14);
+        }
+        .prd-fbtn {
+          display: none;
+          height: 50px;
+          padding: 0 18px;
+          border-radius: 14px;
+          border: 1.5px solid var(--line);
+          background: #fff;
+          font-weight: 700;
+          font-size: 14px;
+          cursor: pointer;
+          color: var(--ink);
+        }
+        .prd-meta {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin: 0 4px 14px;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+        .prd-meta h3 {
+          font-size: 20px;
+          font-weight: 800;
+          letter-spacing: -.01em;
+        }
+        .prd-count {
+          color: var(--muted);
+          font-size: 14px;
+        }
+        .prd-chips {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+        .prd-chip {
+          display: inline-flex;
+          gap: 6px;
+          align-items: center;
+          background: var(--brand-soft);
+          color: var(--brand);
+          font-size: 12.5px;
+          font-weight: 700;
+          padding: 6px 8px 6px 12px;
+          border-radius: 999px;
+          border: 0;
+          cursor: pointer;
+          transition: background .15s;
+        }
+        .prd-chip:hover {
+          background: #d9eaf5;
+        }
+        .prd-chip i {
+          font-style: normal;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: #fff;
+          display: grid;
+          place-items: center;
+          font-size: 13px;
+          line-height: 1;
+        }
+
+        /* GRID */
+        .prd-grid {
+          display: grid;
+          grid-template-columns: repeat(1, minmax(0, 1fr));
+          gap: 20px;
+        }
+        @media (min-width: 540px) {
+          .prd-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+        }
+        @media (min-width: 900px) {
+          .prd-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+          }
+        }
+        @media (min-width: 1200px) {
+          .prd-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+          }
+        }
+        .prd-card {
+          background: var(--card);
+          border: 1px solid var(--line);
+          border-radius: var(--radius);
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          text-decoration: none;
+          color: inherit;
+          transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+          animation: prd-in .4s both;
+          cursor: pointer;
+        }
+        .prd-card:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 18px 40px rgba(15,30,46,.12);
+          border-color: #cfdbe6;
+        }
+        @keyframes prd-in {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .prd-thumb {
+          position: relative;
+          aspect-ratio: 1/.9;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 10px;
+          border-radius: 12px;
+          background: radial-gradient(circle at 50% 35%, #fff, #e6edf3 75%);
+          overflow: hidden;
+        }
+        .prd-thumb svg {
+          width: 46%;
+          height: auto;
+          filter: drop-shadow(0 14px 14px rgba(15,30,46,.18));
+          transition: transform .35s ease;
+        }
+        .prd-card:hover .prd-thumb svg {
+          transform: scale(1.08) rotate(-3deg);
+        }
+        .prd-tag {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: .04em;
+          text-transform: uppercase;
+          background: #fff;
+          color: var(--brand);
+          padding: 5px 10px;
+          border-radius: 999px;
+          box-shadow: 0 2px 6px rgba(15,30,46,.08);
+          z-index: 2;
+        }
+        .prd-body {
+          padding: 8px 20px 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          flex: 1;
+        }
+        .prd-body h4 {
+          font-size: 18.5px;
+          font-weight: 700;
+          color: var(--ink);
+          line-height: 1.3;
+        }
+        .prd-body p {
+          font-size: 14.5px;
+          color: var(--muted);
+          flex: 1;
+          line-height: 1.48;
+        }
+        .prd-foot {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 8px;
+          padding-top: 14px;
+          border-top: 1px dashed var(--line);
+        }
+        .prd-fac {
+          font-size: 13px;
+          color: var(--muted);
+          font-weight: 600;
+        }
+        .prd-more {
+          font-size: 14px;
+          font-weight: 700;
+          color: var(--brand);
+          display: inline-flex;
+          gap: 6px;
+          align-items: center;
+          transition: gap .2s ease, color .2s ease;
+          background: none;
+          border: 0;
+          cursor: pointer;
+        }
+        .prd-card:hover .prd-more {
+          gap: 10px;
+          color: var(--brand-2);
+        }
+        .prd-empty {
+          grid-column: 1 / -1;
+          text-align: center;
+          padding: 60px 20px;
+          color: var(--muted);
+        }
+        .prd-empty b {
+          display: block;
+          color: var(--ink);
+          font-size: 18px;
+          margin-bottom: 6px;
+        }
+
+        /* DRAWER / RESPONSIVE */
+        .prd-scrim {
+          display: none;
+        }
+        @media (max-width: 960px) {
+          .prd-wrap {
+            grid-template-columns: 1fr;
+          }
+          .prd-fbtn {
+            display: block;
+          }
+          .prd-side {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: min(320px, 88vw);
+            max-height: none;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            z-index: 80;
+            transform: translateX(-105%);
+            transition: transform .3s ease;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+          }
+          .prd-side.open {
+            transform: none;
+          }
+          .prd-scrim.open {
+            display: block;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 20, 30, .45);
+            backdrop-filter: blur(4px);
+            z-index: 70;
+          }
+          .prd-hero {
+            padding-top: 140px;
+          }
+        }
+      `}</style>
+
+      {/* Floating Glass Navbar */}
       <Navbar />
 
-      <main className="flex-1">
-        {/* Exact Hero Banner matching Screenshot */}
-        <div id="hero" className="relative w-full h-[260px] sm:h-[340px] lg:h-[380px] overflow-hidden flex items-center justify-center">
-          <Image
-            src="/images/products-banner.jpg"
-            alt="Products We Manufacture - Xclusive Can Limited"
-            fill
-            className="object-cover object-center"
-            priority
-          />
-          <div className="absolute inset-0 bg-black/55 backdrop-blur-[0.5px]" />
-          <div className="relative z-10 text-center px-4 pt-16 sm:pt-20">
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-wider uppercase drop-shadow-md">
-              Products We Manufacture
-            </h1>
+      {/* HERO SECTION */}
+      <header className="prd-hero" id="hero">
+        <span className="prd-eyebrow">Our Catalogue</span>
+        <h1>
+          Products We <em>Manufacture</em>
+        </h1>
+        <p>
+          Precision-made plastic and metal packaging for pharmaceutical, home care,
+          paint, food and industrial use.
+        </p>
+        <div className="prd-stats">
+          <div>
+            <b>2</b>
+            <small>Factories</small>
+          </div>
+          <div>
+            <b>2</b>
+            <small>Material lines</small>
+          </div>
+          <div>
+            <b>9</b>
+            <small>Product categories</small>
           </div>
         </div>
+      </header>
 
-        {/* Catalog Main Container strictly locked to max-w-[1638px] */}
-        <section className="w-full py-10 sm:py-14">
-          <div className="w-full max-w-[1638px] mx-auto px-6 sm:px-12">
-            {/* Section Subheading matching Screenshot */}
-            <h2 className="text-xl sm:text-2xl font-bold text-[#5a8ea7] tracking-tight mb-8">
-              Find faster than you can search - with our Category
-            </h2>
+      {/* MAIN TWO-COLUMN CONTENT */}
+      <main className="prd-wrap">
+        {/* SIDEBAR FILTER PANEL */}
+        <aside className={`prd-panel prd-side ${isDrawerOpen ? "open" : ""}`} id="side">
+          <h2>
+            <span>Filters</span>
+            {(selectedFac.length > 0 || selectedCat.length > 0 || query) && (
+              <button className="prd-clear" onClick={clearAll}>
+                Clear all
+              </button>
+            )}
+          </h2>
 
-            {/* Two-Column Layout: Sidebar + Grid */}
-            <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
-              {/* Left Sidebar: Categories Tree */}
-              <aside className="w-full lg:w-64 xl:w-72 shrink-0 space-y-3.5 select-none">
-                <h3 className="text-lg sm:text-xl font-bold text-slate-900 pb-1">
-                  Categories
-                </h3>
-
-                {/* 1. Factory Accordion Header */}
-                <div className="space-y-2">
-                  <button
-                    onClick={() => setIsFactoryOpen(!isFactoryOpen)}
-                    className="w-full bg-[#5a8ea7] text-white px-4 py-2.5 rounded-lg flex items-center justify-between font-bold text-sm shadow-sm transition-colors hover:bg-[#4d7d93]"
-                  >
-                    <span>Factory</span>
-                    {isFactoryOpen ? (
-                      <ChevronUp className="w-4 h-4" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
-                    )}
-                  </button>
-                  {isFactoryOpen && (
-                    <div className="pl-4 pr-2 py-2 space-y-2.5 bg-slate-50/70 rounded-lg text-sm text-slate-700 border border-slate-100">
-                      <label className="flex items-center gap-2.5 cursor-pointer hover:text-black">
-                        <input
-                          type="checkbox"
-                          checked={selectedFactories.includes("Q Pail Limited")}
-                          onChange={() => toggleFactory("Q Pail Limited")}
-                          className="w-4 h-4 rounded border-slate-300 text-[#5a8ea7] focus:ring-[#5a8ea7]"
-                        />
-                        <span>Q Pail Limited</span>
-                      </label>
-                      <label className="flex items-center gap-2.5 cursor-pointer hover:text-black">
-                        <input
-                          type="checkbox"
-                          checked={selectedFactories.includes("Xclusive Can Limited")}
-                          onChange={() => toggleFactory("Xclusive Can Limited")}
-                          className="w-4 h-4 rounded border-slate-300 text-[#5a8ea7] focus:ring-[#5a8ea7]"
-                        />
-                        <span>Xclusive Can Limited</span>
-                      </label>
-                    </div>
-                  )}
-                </div>
-
-                {/* 2. Genre / Section Accordion */}
-                <div className="space-y-2">
-                  <button
-                    onClick={() => setIsGenreOpen(!isGenreOpen)}
-                    className="w-full bg-[#5a8ea7] text-white px-4 py-2.5 rounded-lg flex items-center justify-between font-bold text-sm shadow-sm transition-colors hover:bg-[#4d7d93]"
-                  >
-                    <span>Genre / Section</span>
-                    {isGenreOpen ? (
-                      <ChevronUp className="w-4 h-4" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
-                    )}
-                  </button>
-
-                  {isGenreOpen && (
-                    <div className="space-y-2 pl-2">
-                      {/* Nested Sub-Accordion: Plastic */}
-                      <div className="space-y-1.5">
-                        <button
-                          onClick={() => setIsPlasticOpen(!isPlasticOpen)}
-                          className="w-full bg-[#5a8ea7] text-white px-3.5 py-2 rounded-lg flex items-center justify-between font-bold text-xs shadow-sm transition-colors hover:bg-[#4d7d93]"
-                        >
-                          <span>Plastic</span>
-                          {isPlasticOpen ? (
-                            <ChevronUp className="w-3.5 h-3.5" />
-                          ) : (
-                            <ChevronDown className="w-3.5 h-3.5" />
-                          )}
-                        </button>
-                        {isPlasticOpen && (
-                          <div className="pl-3 pr-2 py-2 space-y-2 bg-slate-50/70 rounded-lg text-xs text-slate-700 border border-slate-100">
-                            {PLASTIC_SUB_CATEGORIES.map((cat) => (
-                              <label
-                                key={cat}
-                                className="flex items-center gap-2 cursor-pointer hover:text-black"
-                              >
-                                <input
-                                  type="checkbox"
-                                  checked={selectedSubCategories.includes(cat)}
-                                  onChange={() => toggleSubCategory(cat)}
-                                  className="w-3.5 h-3.5 rounded border-slate-300 text-[#5a8ea7] focus:ring-[#5a8ea7]"
-                                />
-                                <span>{cat}</span>
-                              </label>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Nested Sub-Accordion: Metal */}
-                      <div className="space-y-1.5">
-                        <button
-                          onClick={() => setIsMetalOpen(!isMetalOpen)}
-                          className="w-full bg-[#5a8ea7] text-white px-3.5 py-2 rounded-lg flex items-center justify-between font-bold text-xs shadow-sm transition-colors hover:bg-[#4d7d93]"
-                        >
-                          <span>Metal</span>
-                          {isMetalOpen ? (
-                            <ChevronUp className="w-3.5 h-3.5" />
-                          ) : (
-                            <ChevronDown className="w-3.5 h-3.5" />
-                          )}
-                        </button>
-                        {isMetalOpen && (
-                          <div className="pl-3 pr-2 py-2 space-y-2 bg-slate-50/70 rounded-lg text-xs text-slate-700 border border-slate-100">
-                            {METAL_SUB_CATEGORIES.map((cat) => (
-                              <label
-                                key={cat}
-                                className="flex items-center gap-2 cursor-pointer hover:text-black"
-                              >
-                                <input
-                                  type="checkbox"
-                                  checked={selectedSubCategories.includes(cat)}
-                                  onChange={() => toggleSubCategory(cat)}
-                                  className="w-3.5 h-3.5 rounded border-slate-300 text-[#5a8ea7] focus:ring-[#5a8ea7]"
-                                />
-                                <span>{cat}</span>
-                              </label>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Group Products Checkbox */}
-                      <label className="flex items-center gap-2.5 pt-2 pl-2 text-xs font-semibold text-slate-700 cursor-pointer hover:text-black">
-                        <input
-                          type="checkbox"
-                          checked={isGroupProductsChecked}
-                          onChange={(e) => setIsGroupProductsChecked(e.target.checked)}
-                          className="w-4 h-4 rounded border-slate-300 text-[#5a8ea7] focus:ring-[#5a8ea7]"
-                        />
-                        <span>Group Products</span>
-                      </label>
-                    </div>
-                  )}
-                </div>
-
-                {/* 3. Export Accordion */}
-                <div className="space-y-2">
-                  <button
-                    onClick={() => setIsExportOpen(!isExportOpen)}
-                    className="w-full bg-[#5a8ea7] text-white px-4 py-2.5 rounded-lg flex items-center justify-between font-bold text-sm shadow-sm transition-colors hover:bg-[#4d7d93]"
-                  >
-                    <span>Export</span>
-                    {isExportOpen ? (
-                      <ChevronUp className="w-4 h-4" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
-                    )}
-                  </button>
-                  {isExportOpen && (
-                    <div className="pl-4 pr-2 py-2 space-y-2 bg-slate-50/70 rounded-lg text-xs text-slate-700 border border-slate-100">
-                      {EXPORT_TYPES.map((exp) => (
-                        <label
-                          key={exp}
-                          className="flex items-center gap-2 cursor-pointer hover:text-black"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selectedExports.includes(exp)}
-                            onChange={() => toggleExport(exp)}
-                            className="w-3.5 h-3.5 rounded border-slate-300 text-[#5a8ea7] focus:ring-[#5a8ea7]"
-                          />
-                          <span>{exp}</span>
-                        </label>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* 4. Shape Accordion */}
-                <div className="space-y-2">
-                  <button
-                    onClick={() => setIsShapeOpen(!isShapeOpen)}
-                    className="w-full bg-[#5a8ea7] text-white px-4 py-2.5 rounded-lg flex items-center justify-between font-bold text-sm shadow-sm transition-colors hover:bg-[#4d7d93]"
-                  >
-                    <span>Shape</span>
-                    {isShapeOpen ? (
-                      <ChevronUp className="w-4 h-4" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
-                    )}
-                  </button>
-                  {isShapeOpen && (
-                    <div className="pl-4 pr-2 py-2 space-y-2 bg-slate-50/70 rounded-lg text-xs text-slate-700 border border-slate-100">
-                      {SHAPE_TYPES.map((shape) => (
-                        <label
-                          key={shape}
-                          className="flex items-center gap-2 cursor-pointer hover:text-black"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selectedShapes.includes(shape)}
-                            onChange={() => toggleShape(shape)}
-                            className="w-3.5 h-3.5 rounded border-slate-300 text-[#5a8ea7] focus:ring-[#5a8ea7]"
-                          />
-                          <span>{shape}</span>
-                        </label>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* 5. Download Catalog Link */}
-                <div className="pt-3 pl-1">
-                  <a
-                    href="#download"
-                    className="text-[#5a8ea7] font-bold text-sm hover:underline inline-flex items-center gap-1.5 transition-colors"
-                  >
-                    <span>Download Catalog</span>
-                  </a>
-                </div>
-              </aside>
-
-              {/* Right Content Area: Search Bar + 3-Col Product Grid */}
-              <div className="flex-1 w-full space-y-6">
-                {/* Search Bar matching Screenshot */}
-                <div className="relative w-full">
+          {/* Group 1: Factory */}
+          <div className={`prd-group ${factoryOpen ? "" : "closed"}`}>
+            <button
+              className="prd-gh"
+              onClick={() => setFactoryOpen((prev) => !prev)}
+            >
+              <span>Factory</span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.4"
+              >
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+            <div className="prd-gb">
+              {FACTORIES.map((fac) => (
+                <label key={fac} className="prd-opt">
                   <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                      setCurrentPage(1);
-                    }}
-                    placeholder="Search for product..."
-                    className="w-full px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-slate-300 focus:border-[#5a8ea7] focus:ring-2 focus:ring-[#5a8ea7]/20 outline-none text-sm transition-all text-slate-900 bg-white placeholder-slate-400"
+                    type="checkbox"
+                    checked={selectedFac.includes(fac)}
+                    onChange={() => toggleFac(fac)}
                   />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery("")}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-black font-bold"
-                    >
-                      Clear
-                    </button>
-                  )}
-                </div>
-
-                {/* Active Filter Chips */}
-                {(selectedFactories.length > 0 ||
-                  selectedSubCategories.length > 0 ||
-                  selectedShapes.length > 0 ||
-                  selectedExports.length > 0 ||
-                  searchQuery) && (
-                  <div className="flex flex-wrap items-center gap-2 pt-1">
-                    <span className="text-xs text-slate-500 font-semibold">Active:</span>
-                    {selectedFactories.map((f) => (
-                      <span
-                        key={f}
-                        className="inline-flex items-center gap-1 text-xs bg-slate-100 text-slate-800 px-2.5 py-1 rounded-full font-medium"
-                      >
-                        {f}
-                        <button onClick={() => toggleFactory(f)} className="hover:text-red-500 ml-1 font-bold">
-                          &times;
-                        </button>
-                      </span>
-                    ))}
-                    {selectedSubCategories.map((s) => (
-                      <span
-                        key={s}
-                        className="inline-flex items-center gap-1 text-xs bg-slate-100 text-slate-800 px-2.5 py-1 rounded-full font-medium"
-                      >
-                        {s}
-                        <button onClick={() => toggleSubCategory(s)} className="hover:text-red-500 ml-1 font-bold">
-                          &times;
-                        </button>
-                      </span>
-                    ))}
-                    {selectedShapes.map((sh) => (
-                      <span
-                        key={sh}
-                        className="inline-flex items-center gap-1 text-xs bg-slate-100 text-slate-800 px-2.5 py-1 rounded-full font-medium"
-                      >
-                        {sh}
-                        <button onClick={() => toggleShape(sh)} className="hover:text-red-500 ml-1 font-bold">
-                          &times;
-                        </button>
-                      </span>
-                    ))}
-                    <button
-                      onClick={() => {
-                        setSelectedFactories([]);
-                        setSelectedSubCategories([]);
-                        setSelectedShapes([]);
-                        setSelectedExports([]);
-                        setSearchQuery("");
-                      }}
-                      className="text-xs text-[#5a8ea7] hover:underline font-bold ml-2"
-                    >
-                      Reset All
-                    </button>
-                  </div>
-                )}
-
-                {/* 3-Column Product Cards Grid with Quick View on Hover */}
-                {displayedProducts.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {displayedProducts.map((product) => (
-                      <div
-                        key={product.id}
-                        className="group bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 p-4 flex flex-col"
-                      >
-                        {/* Image Container with Exact Quick View Overlay */}
-                        <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-[#eef3f6] mb-3.5 flex items-center justify-center p-2">
-                          <Link href={`/products/${product.id}`} className="relative w-full h-full block">
-                            <Image
-                              src={product.image}
-                              alt={product.name}
-                              fill
-                              className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
-                            />
-                          </Link>
-
-                          {/* Dark Hover Overlay matching Screenshot */}
-                          <div className="absolute inset-0 bg-[#1e252f]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 pointer-events-none group-hover:pointer-events-auto">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleOpenQuickView(product);
-                              }}
-                              className="px-6 py-2.5 rounded-lg bg-[#5a8ea7] hover:bg-[#487388] text-white font-bold text-sm shadow-lg transition-transform active:scale-95 cursor-pointer"
-                            >
-                              Quick View
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Title */}
-                        <Link href={`/products/${product.id}`}>
-                          <h3 className="text-base font-bold text-slate-900 group-hover:text-[#5a8ea7] transition-colors line-clamp-1 cursor-pointer">
-                            {product.name}
-                          </h3>
-                        </Link>
-
-                        {/* Description */}
-                        <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 mt-1.5 leading-relaxed flex-1">
-                          {product.description}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-16 border border-dashed border-slate-200 rounded-2xl space-y-3">
-                    <p className="text-slate-500 font-medium">No products match your current filters.</p>
-                    <button
-                      onClick={() => {
-                        setSelectedFactories([]);
-                        setSelectedSubCategories([]);
-                        setSelectedShapes([]);
-                        setSelectedExports([]);
-                        setSearchQuery("");
-                      }}
-                      className="px-4 py-2 bg-[#5a8ea7] text-white text-xs font-bold rounded-lg hover:bg-[#487388]"
-                    >
-                      Reset All Filters
-                    </button>
-                  </div>
-                )}
-
-                {/* Pagination matching Screenshot */}
-                <div className="pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-600 font-medium">
-                  {/* Left: Item Counter */}
-                  <div>
-                    1-{displayedProducts.length} of 300 items
-                  </div>
-
-                  {/* Center: Page Numbers */}
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
-                      className="p-1.5 rounded hover:bg-slate-100 disabled:opacity-40"
-                    >
-                      <ArrowLeft className="w-3.5 h-3.5" />
-                    </button>
-                    {[1, 2, 3, 4, 5].map((page) => (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`w-7 h-7 rounded text-xs font-bold transition-colors ${
-                          currentPage === page
-                            ? "bg-[#5a8ea7] text-white"
-                            : "hover:bg-slate-100 text-slate-700"
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    ))}
-                    <span className="px-1 text-slate-400">...</span>
-                    <button
-                      onClick={() => setCurrentPage(25)}
-                      className="w-7 h-7 rounded text-xs font-bold hover:bg-slate-100 text-slate-700"
-                    >
-                      25
-                    </button>
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                      disabled={currentPage === totalPages}
-                      className="p-1.5 rounded hover:bg-slate-100 disabled:opacity-40"
-                    >
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-
-                  {/* Right: Per page & Go to Page */}
-                  <div className="flex items-center gap-3">
-                    <div className="border border-slate-200 rounded-lg px-2.5 py-1 text-xs bg-white shadow-sm flex items-center gap-1">
-                      <span>12 / page</span>
-                      <ChevronDown className="w-3 h-3 text-slate-500" />
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs">
-                      <span>Go to</span>
-                      <input
-                        type="text"
-                        defaultValue="1"
-                        className="w-9 px-1.5 py-0.5 border border-slate-200 rounded text-center text-xs"
-                      />
-                      <span>Page</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                  <span>{fac}</span>
+                  <span className="prd-n">{counts.facCounts[fac] || 0}</span>
+                </label>
+              ))}
             </div>
+          </div>
+
+          {/* Group 2: Genre / Section */}
+          <div className={`prd-group ${genreOpen ? "" : "closed"}`}>
+            <button
+              className="prd-gh"
+              onClick={() => setGenreOpen((prev) => !prev)}
+            >
+              <span>Genre / Section</span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.4"
+              >
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+            <div className="prd-gb">
+              <div className="prd-sub">Plastic</div>
+              {PLASTIC_CATS.map((cat) => (
+                <label key={`plastic-${cat}`} className="prd-opt">
+                  <input
+                    type="checkbox"
+                    checked={selectedCat.includes(cat)}
+                    onChange={() => toggleCat(cat)}
+                  />
+                  <span>{cat}</span>
+                  <span className="prd-n">{counts.catCounts[cat] || 0}</span>
+                </label>
+              ))}
+
+              <div className="prd-sub">Metal</div>
+              {METAL_CATS.map((cat) => (
+                <label key={`metal-${cat}`} className="prd-opt">
+                  <input
+                    type="checkbox"
+                    checked={selectedCat.includes(cat)}
+                    onChange={() => toggleCat(cat)}
+                  />
+                  <span>{cat}</span>
+                  <span className="prd-n">{counts.catCounts[cat] || 0}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        </aside>
+
+        {/* RIGHT CONTENT COLUMN */}
+        <section>
+          {/* Top Search & Filter Bar */}
+          <div className="prd-panel prd-top">
+            <button
+              className="prd-fbtn"
+              onClick={() => setIsDrawerOpen(true)}
+            >
+              ☰ Filters
+            </button>
+            <label className="prd-search">
+              <Search className="w-4.5 h-4.5" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search for product…"
+                autoComplete="off"
+              />
+            </label>
+          </div>
+
+          {/* Meta & Active Chips Strip */}
+          <div className="prd-meta">
+            <div>
+              <h3>All products</h3>
+              <span className="prd-count">
+                {filteredProducts.length} product
+                {filteredProducts.length === 1 ? "" : "s"} found
+              </span>
+            </div>
+            {activeChips.length > 0 && (
+              <div className="prd-chips">
+                {activeChips.map((chip) => (
+                  <button
+                    key={chip}
+                    className="prd-chip"
+                    onClick={() => removeChip(chip)}
+                  >
+                    <span>{chip}</span>
+                    <i>×</i>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Product Cards Grid */}
+          <div className="prd-grid">
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((p, idx) => (
+                <Link
+                  key={p.id}
+                  href={`/products/${p.slug || p.id}`}
+                  className="prd-card group"
+                  style={{ animationDelay: `${idx * 40}ms` }}
+                >
+                  <div className="prd-thumb">
+                    <span className="prd-tag">{p.c}</span>
+                    {renderThumbIcon(p)}
+                  </div>
+                  <div className="prd-body">
+                    <h4>{p.n}</h4>
+                    <p>{p.d}</p>
+                    <div className="prd-foot">
+                      <span className="prd-fac">{p.f}</span>
+                      <span className="prd-more">
+                        <span>Details</span>
+                        <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <div className="prd-empty">
+                <b>No products match</b>
+                <p>Try removing a filter or searching a different term.</p>
+              </div>
+            )}
           </div>
         </section>
       </main>
 
+      {/* Scrim Overlay for Mobile Drawer */}
+      <div
+        className={`prd-scrim ${isDrawerOpen ? "open" : ""}`}
+        onClick={() => setIsDrawerOpen(false)}
+      />
+
       {/* Global Footer */}
       <Footer />
-
-      {/* Quick View Product Modal matching media_1793843275916_6d8379c6.jpg */}
-      {quickViewProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl p-6 sm:p-10 border border-slate-100 animate-in zoom-in-95 duration-200">
-            {/* Top-Right Close Button */}
-            <button
-              onClick={() => setQuickViewProduct(null)}
-              className="absolute right-5 top-5 p-2 rounded-full text-slate-400 hover:text-black hover:bg-slate-100 transition-colors cursor-pointer"
-              aria-label="Close modal"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              {/* Left Column: Big Image + 3 Thumbnails */}
-              <div className="space-y-4">
-                {/* Big Preview Image Container */}
-                <div className="relative aspect-[4/3] w-full rounded-2xl bg-white border border-slate-200/90 shadow-sm overflow-hidden p-6 flex items-center justify-center">
-                  <Image
-                    src={modalActiveImage || quickViewProduct.image}
-                    alt={quickViewProduct.name}
-                    fill
-                    className="object-contain p-4 transition-all duration-300"
-                  />
-                </div>
-
-                {/* 3 Thumbnails Row */}
-                <div className="flex items-center gap-3">
-                  {(quickViewProduct.gallery && quickViewProduct.gallery.length >= 3
-                    ? quickViewProduct.gallery.slice(0, 3)
-                    : [quickViewProduct.image, "/images/catalog/cat-prod-2.png", "/images/catalog/cat-prod-1.png"]
-                  ).map((thumb, idx) => {
-                    const isSelected = (modalActiveImage || quickViewProduct.image) === thumb;
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => setModalActiveImage(thumb)}
-                        className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white border-2 p-1.5 overflow-hidden cursor-pointer transition-all ${
-                          isSelected
-                            ? "border-[#5a8ea7] shadow-md ring-2 ring-[#5a8ea7]/20 scale-105"
-                            : "border-slate-200 hover:border-slate-300 opacity-75 hover:opacity-100"
-                        }`}
-                        aria-label={`Thumbnail ${idx + 1}`}
-                      >
-                        <Image
-                          src={thumb}
-                          alt={`${quickViewProduct.name} thumbnail ${idx + 1}`}
-                          fill
-                          className="object-contain p-1.5"
-                        />
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Right Column: Title, Description, Buttons */}
-              <div className="space-y-6 select-none">
-                <div>
-                  <h3 className="text-2xl sm:text-3xl font-bold text-[#5a8ea7] tracking-tight">
-                    {quickViewProduct.name}
-                  </h3>
-                </div>
-
-                <div>
-                  <h4 className="text-base font-bold text-[#5a8ea7] mb-2 tracking-tight">
-                    Description
-                  </h4>
-                  <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-                    {quickViewProduct.description}
-                  </p>
-                </div>
-
-                {/* Action Buttons Row matching Screenshot 6d8379c6 */}
-                <div className="pt-4 flex flex-wrap items-center gap-3">
-                  {/* Request For Sample Button */}
-                  <button
-                    onClick={() => {
-                      handleOpenRFQ(quickViewProduct);
-                      setQuickViewProduct(null);
-                    }}
-                    className="px-5 py-2.5 rounded-lg bg-[#5f686d] hover:bg-[#4b5358] text-white font-semibold text-xs sm:text-sm transition-all shadow-sm active:scale-95 cursor-pointer"
-                  >
-                    Request For Sample
-                  </button>
-
-                  {/* Request A Quote Button */}
-                  <button
-                    onClick={() => {
-                      handleOpenRFQ(quickViewProduct);
-                      setQuickViewProduct(null);
-                    }}
-                    className="px-5 py-2.5 rounded-lg bg-[#6ba3be] hover:bg-[#5890ab] text-white font-semibold text-xs sm:text-sm transition-all shadow-sm active:scale-95 cursor-pointer"
-                  >
-                    Request A Quote
-                  </button>
-
-                  {/* View Details Button */}
-                  <Link
-                    href={`/products/${quickViewProduct.id}`}
-                    className="px-5 py-2.5 rounded-lg bg-[#1a1a1a] hover:bg-black text-white font-semibold text-xs sm:text-sm transition-all shadow-sm active:scale-95 cursor-pointer inline-flex items-center justify-center"
-                  >
-                    View Details
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* RFQ Drawer */}
-      <RFQDrawer
-        isOpen={isRFQOpen}
-        onClose={() => {
-          setIsRFQOpen(false);
-          setSelectedProductForRFQ(null);
-        }}
-        initialProduct={selectedProductForRFQ}
-      />
     </div>
   );
 }

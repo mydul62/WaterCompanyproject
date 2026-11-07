@@ -10,7 +10,7 @@ export default function SafeWaterStorySection() {
 
   return (
     <section className="py-20 sm:py-28 bg-white overflow-hidden">
-      <div className="max-w-[1638px] mx-auto px-6 sm:px-12 lg:px-16">
+      <div className="max-w-[1643px] mx-auto px-6 sm:px-12 lg:px-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Visual: Exact Circular Icy Bottle Artwork from Screenshot e82811f7 */}
           <div className="lg:col-span-6 flex items-center justify-center">
