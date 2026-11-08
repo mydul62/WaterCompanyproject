@@ -387,96 +387,101 @@ export default function CareerPage() {
             HERO SECTION: Full-Height Sticky Hero with Clean Workplace
             (Smooth curtain reveal scroll matching other pages)
            ══════════════════════════════════════════════════════════════ */}
+        {/* ============================================================ */}
+        {/* HERO SECTION: FULL-HEIGHT ARCHITECTURE (100VH)             */}
+        {/* ============================================================ */}
         <section
           id="hero"
-          className="sticky top-0 z-0 w-full h-screen min-h-[660px] max-h-[920px] overflow-hidden select-none flex items-center"
+          className="sticky top-0 z-0 w-full h-screen min-h-[680px] sm:min-h-[760px] lg:min-h-[820px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
         >
           {/* Authentic Modern Office & Engineering Team Background */}
-          <Image
-            src="/images/business-hero-office.jpg"
-            alt="Xclusive Can Limited Corporate Engineering & Operations Team"
-            fill
-            className="object-cover object-center"
-            priority
-          />
+          <div className="absolute inset-0 w-full h-full">
+            <Image
+              src="/images/business-hero-office.jpg"
+              alt="Xclusive Can Limited Corporate Engineering & Operations Team"
+              fill
+              className="object-cover object-center opacity-85 scale-102 transition-transform duration-1000 ease-out"
+              priority
+            />
+            {/* Multi-layer Gradient Vignettes */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a1f33] via-black/50 to-black/60" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-transparent to-black/55" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(10,31,51,0.6)_100%)]" />
+          </div>
 
-          {/* Cinematic Vignette Overlays matching Website Theme */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/60 to-slate-950/40 pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/40 to-transparent pointer-events-none" />
+          {/* Top Spacer for Navbar */}
+          <div className="h-28 sm:h-36 shrink-0" />
 
-          {/* Hero Content Overlay */}
-          <div className="relative z-10 w-[91.6667%] max-w-[1920px] mx-auto px-4 sm:px-8 flex flex-col justify-between h-full pt-28 sm:pt-36 pb-12">
-            <div className="max-w-3xl space-y-6 my-auto">
-              {/* Breadcrumbs */}
-              <div className="inline-flex items-center gap-2 text-xs font-semibold text-cyan-200/90 uppercase tracking-widest">
-                <Link href="/" className="hover:text-white transition-colors">Home</Link>
-                <span>/</span>
-                <span className="text-white">About Us</span>
-                <span>/</span>
-                <span className="text-cyan-400">Careers</span>
+          {/* Centered Typography & Action Buttons */}
+          <div className="relative z-10 text-center px-4 max-w-5xl mx-auto space-y-5 sm:space-y-6">
+            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white text-xs sm:text-sm font-bold shadow-xl shadow-black/20">
+              <Briefcase className="w-4 h-4 text-[#38bdf8] animate-pulse" />
+              <span>Careers at Xclusive Can Limited &bull; Since 1992</span>
+            </div>
+
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white tracking-[0.2em] sm:tracking-[0.25em] drop-shadow-[0_4px_30px_rgba(0,0,0,0.85)] uppercase pl-[0.2em]">
+              Careers
+            </h1>
+
+            <p className="text-xs sm:text-sm md:text-base uppercase tracking-[0.28em] font-bold text-[#38bdf8] drop-shadow-lg pl-[0.28em] max-w-3xl mx-auto">
+              Shape The Future Of Packaging &bull; 850+ Experts &bull; 2 Mega Plants
+            </p>
+
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
+              <a
+                href="#open-positions"
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-white hover:bg-slate-100 text-[#0a1f33] font-bold text-xs sm:text-sm shadow-xl transition-all hover:-translate-y-0.5 cursor-pointer"
+              >
+                <span>Explore Open Positions</span>
+                <ChevronRight className="w-4 h-4" />
+              </a>
+              <button
+                type="button"
+                onClick={() => setIsGeneralApplyOpen(true)}
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-xl border border-white/30 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-bold text-xs sm:text-sm transition-all hover:-translate-y-0.5 cursor-pointer"
+              >
+                <span>Submit Spontaneous CV</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Bottom Area: KPI Bar + Animated Scroll Indicator */}
+          <div className="relative z-10 w-full max-w-5xl mx-auto px-4 pb-6 sm:pb-8 flex flex-col items-center gap-6">
+            <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-center">
+                <div className="text-xl sm:text-2xl font-black text-white">32+ Years</div>
+                <div className="text-[11px] text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Manufacturing Stability</div>
               </div>
-
-              {/* Eyebrow Pill */}
-              <div>
-                <div className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-full border border-cyan-400/30 bg-cyan-400/15 backdrop-blur-md text-cyan-300 text-xs sm:text-sm font-bold uppercase tracking-wider shadow-lg shadow-black/15">
-                  <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
-                  <span>Careers at Xclusive Can Limited &bull; Since 1992</span>
-                </div>
+              <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-center">
+                <div className="text-xl sm:text-2xl font-black text-white">850+ Experts</div>
+                <div className="text-[11px] text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Engineers &amp; Technicians</div>
               </div>
-
-              {/* Headline */}
-              <div className="space-y-2">
-                <h1 className="text-4xl sm:text-6xl lg:text-[68px] font-bold text-white tracking-tight leading-[1.06] drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
-                  Shape the Future of{" "}
-                  <span className="bg-gradient-to-r from-white via-cyan-200 to-sky-300 bg-clip-text text-transparent">
-                    Packaging
-                  </span>
-                </h1>
+              <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-center">
+                <div className="text-xl sm:text-2xl font-black text-white">2 Mega Plants</div>
+                <div className="text-[11px] text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Gazipur &amp; Tongi Campuses</div>
               </div>
-
-              {/* Subtitle */}
-              <p className="text-base sm:text-lg lg:text-xl text-white/90 font-normal leading-relaxed drop-shadow-md max-w-2xl">
-                Join an elite multidisciplinary team of engineers, technicians, and commercial leaders operating Bangladesh’s premier LEED Platinum industrial packaging campuses in Gazipur and Tongi.
-              </p>
-
-              {/* Action Buttons */}
-              <div className="pt-2 flex flex-wrap items-center gap-4">
-                <a
-                  href="#open-positions"
-                  className="water-fill-btn inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-white text-slate-900 font-extrabold text-sm tracking-wide shadow-xl hover:shadow-2xl transition-all cursor-pointer active:scale-95"
-                >
-                  <span>Explore Open Positions</span>
-                  <ChevronRight className="w-4 h-4" />
-                </a>
-                <button
-                  onClick={() => setIsGeneralApplyOpen(true)}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/40 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-bold text-sm transition-all active:scale-95 cursor-pointer"
-                >
-                  <span>Submit Spontaneous CV</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+              <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-center">
+                <div className="text-xl sm:text-2xl font-black text-white">Zero Incident</div>
+                <div className="text-[11px] text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Safety Index Mandate</div>
               </div>
             </div>
 
-            {/* Bottom Hero Metric KPI Bar */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 pt-6 border-t border-white/15">
-              <div className="p-3.5 sm:p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
-                <div className="text-2xl sm:text-3xl font-bold text-white tracking-tight">32+ Years</div>
-                <div className="text-xs text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Manufacturing Stability</div>
+            <button
+              type="button"
+              onClick={() => {
+                const el = document.getElementById("content");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
+            >
+              <span className="text-[11px] uppercase tracking-widest font-semibold group-hover:tracking-[0.25em] transition-all">
+                Explore Culture &amp; Opportunities
+              </span>
+              <div className="w-7 h-11 rounded-full border-2 border-white/30 flex items-start justify-center p-1 backdrop-blur-sm group-hover:border-[#38bdf8] transition-colors">
+                <div className="w-1.5 h-2.5 rounded-full bg-[#38bdf8] animate-bounce" />
               </div>
-              <div className="p-3.5 sm:p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
-                <div className="text-2xl sm:text-3xl font-bold text-white tracking-tight">850+ Experts</div>
-                <div className="text-xs text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Engineers &amp; Technicians</div>
-              </div>
-              <div className="p-3.5 sm:p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
-                <div className="text-2xl sm:text-3xl font-bold text-white tracking-tight">2 Mega Plants</div>
-                <div className="text-xs text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Gazipur &amp; Tongi Campuses</div>
-              </div>
-              <div className="p-3.5 sm:p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
-                <div className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Zero Incident</div>
-                <div className="text-xs text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Safety Index Mandate</div>
-              </div>
-            </div>
+            </button>
           </div>
         </section>
 
@@ -485,7 +490,7 @@ export default function CareerPage() {
            ══════════════════════════════════════════════════════════════ */}
         <div
           id="content"
-          className="relative z-10 bg-white shadow-[0_-20px_50px_rgba(0,0,0,0.18)]"
+          className="relative z-10 bg-white rounded-t-[32px] sm:rounded-t-[48px] shadow-[0_-25px_60px_rgba(0,0,0,0.22)] border-t border-white/60"
         >
           {/* ══════════════════════════════════════════════════════════════
               SECTION 1: Why Build Your Career With Us?

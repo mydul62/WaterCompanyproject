@@ -1,14 +1,23 @@
 import { Router } from "express";
-import { MediaController } from "./media.controller";
+import { MediaController, uploadMiddleware } from "./media.controller";
 
 const router = Router();
 
-router.get("/", MediaController.getAll);
-router.get("/:id", MediaController.getById);
-router.post("/", MediaController.create);
-router.put("/:id", MediaController.update);
-router.patch("/:id", MediaController.update);
-router.delete("/:id", MediaController.delete);
+// Imaple Uploader & Media Library endpoints
+router.post("/upload", uploadMiddleware.single("file"), MediaController.upload);
+router.post("/upload-multiple", uploadMiddleware.array("files", 10), MediaController.uploadMultiple);
+router.get("/assets", MediaController.getAllAssets);
+router.put("/assets/:id", MediaController.updateAsset);
+router.delete("/assets/:id", MediaController.deleteAsset);
+
+// Press stories endpoints
+router.get("/stories", MediaController.getAllStories);
+router.post("/stories", MediaController.createStory);
+router.put("/stories/:id", MediaController.updateStory);
+router.delete("/stories/:id", MediaController.deleteStory);
+
+// Backwards compatibility aliases
+router.get("/", MediaController.getAllStories);
+router.post("/", MediaController.createStory);
 
 export const mediaRoutes = router;
-

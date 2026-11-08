@@ -85,7 +85,7 @@ export default function PressStoriesSection() {
                     src={story.image}
                     alt={story.title}
                     fill
-                    className="object-contain p-2 group-hover:scale-106 transition-transform duration-500 drop-shadow-sm"
+                    className="object-contain p-2 transform-gpu group-hover:scale-106 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] drop-shadow-sm"
                   />
 
                   {/* Zoom Lightbox Trigger Overlay */}

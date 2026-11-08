@@ -6,7 +6,7 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import RFQDrawer from "@/components/rfq/RFQDrawer";
-import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle2, Factory } from "lucide-react";
 
 export default function QPailPage() {
   const [isRFQOpen, setIsRFQOpen] = useState(false);
@@ -38,24 +38,71 @@ export default function QPailPage() {
       {/* Top Glassmorphic Navbar */}
       <Navbar />
 
-      <main className="flex-1">
-        {/* Hero Sunset Building Banner matching Screenshot 652ab805 */}
-        <div
+      <main className="flex-1 relative">
+        {/* ============================================================ */}
+        {/* 1. HERO SECTION: FULL-HEIGHT ARCHITECTURE (100VH)             */}
+        {/* ============================================================ */}
+        <section
           id="hero"
-          className="relative w-full h-[280px] sm:h-[400px] lg:h-[480px] overflow-hidden select-none"
+          className="sticky top-0 z-0 w-full h-screen min-h-[640px] sm:min-h-[720px] lg:min-h-[800px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
         >
-          <Image
-            src="/images/qpail/qpail-hero.jpg"
-            alt="Q Pail Limited Industrial Complex"
-            fill
-            className="object-cover object-center"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
-        </div>
+          {/* Background Image */}
+          <div className="absolute inset-0 w-full h-full">
+            <Image
+              src="/images/qpail/qpail-hero.jpg"
+              alt="Q Pail Limited Industrial Complex"
+              fill
+              className="object-cover object-center opacity-85 scale-102 transition-transform duration-1000 ease-out"
+              priority
+            />
+            {/* Multi-layer Gradient Vignettes */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a1f33] via-black/45 to-black/60" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(10,31,51,0.6)_100%)]" />
+          </div>
 
-        {/* Section 1: Logo, Heading & Specs */}
-        <section className="w-full pt-14 pb-16">
+          {/* Top Spacer for Navbar */}
+          <div className="h-28 sm:h-36 shrink-0" />
+
+          {/* Centered Typography */}
+          <div className="relative z-10 text-center px-4 max-w-5xl mx-auto space-y-4 sm:space-y-6">
+            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white text-xs sm:text-sm font-bold shadow-xl shadow-black/20">
+              <Factory className="w-4 h-4 text-[#38bdf8] animate-pulse" />
+              <span>Sister Concern &bull; High-Capacity Plastic Molding &bull; Est. 1992</span>
+            </div>
+
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white tracking-[0.2em] sm:tracking-[0.25em] drop-shadow-[0_4px_30px_rgba(0,0,0,0.85)] uppercase pl-[0.2em]">
+              Q Pail
+            </h1>
+
+            <p className="text-xs sm:text-sm md:text-base uppercase tracking-[0.28em] font-bold text-[#38bdf8] drop-shadow-lg pl-[0.28em] max-w-3xl mx-auto">
+              54,000 SQ FT Facility &bull; Automated Molding &bull; High-Definition Decoration
+            </p>
+          </div>
+
+          {/* Animated Scroll Down Indicator */}
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById("qpail-content");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="relative z-10 pb-8 sm:pb-12 flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
+          >
+            <span className="text-[11px] uppercase tracking-widest font-semibold group-hover:tracking-[0.25em] transition-all">
+              Explore Plant Specs &amp; Facilities
+            </span>
+            <div className="w-8 h-12 rounded-full border-2 border-white/30 flex items-start justify-center p-1.5 backdrop-blur-sm group-hover:border-[#38bdf8] transition-colors">
+              <div className="w-1.5 h-3 rounded-full bg-[#38bdf8] animate-bounce" />
+            </div>
+          </button>
+        </section>
+
+        {/* Section 1: Logo, Heading & Specs - Lifts over Hero */}
+        <section
+          id="qpail-content"
+          className="relative z-10 w-full pt-14 pb-16 bg-white rounded-t-[32px] sm:rounded-t-[48px] shadow-[0_-25px_60px_rgba(0,0,0,0.22)] border-t border-white/60"
+        >
           <div className="w-full max-w-[1643px] mx-auto px-6 sm:px-12 text-center">
             {/* Q Pail Circular Logo matching Screenshot */}
             <div className="flex justify-center mb-4">

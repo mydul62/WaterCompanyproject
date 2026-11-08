@@ -15,6 +15,14 @@ const nextConfig: NextConfig = {
         protocol: "http",
         hostname: "localhost",
       },
+      {
+        protocol: "https",
+        hostname: "api.xclusivecanltd.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.xclusivecanltd.com",
+      },
     ],
   },
   async redirects() {

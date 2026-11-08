@@ -102,102 +102,103 @@ export default function OurBusinessPage() {
         {/* ══════════════════════════════════════════════════════════════
             HERO SECTION: Full-Height Sticky Hero with Corporate Office
            ══════════════════════════════════════════════════════════════ */}
-        <div
+        {/* ============================================================ */}
+        {/* 1. HERO SECTION: FULL-HEIGHT ARCHITECTURE (100VH)             */}
+        {/* ============================================================ */}
+        <section
           id="hero"
-          className="sticky top-0 z-0 w-full h-screen min-h-[720px] overflow-hidden select-none flex items-center"
+          className="sticky top-0 z-0 w-full h-screen min-h-[680px] sm:min-h-[760px] lg:min-h-[820px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
         >
           {/* Authentic Corporate Office Team & Workstation Background */}
-          <Image
-            src="/images/business-hero-office.jpg"
-            alt="Xclusive Can Limited Corporate Office and Team Workstation"
-            fill
-            className="object-cover object-center"
-            priority
-          />
+          <div className="absolute inset-0 w-full h-full">
+            <Image
+              src="/images/business-hero-office.jpg"
+              alt="Xclusive Can Limited Corporate Office and Team Workstation"
+              fill
+              className="object-cover object-center opacity-85 scale-102 transition-transform duration-1000 ease-out"
+              priority
+            />
+            {/* Multi-layer Gradient Vignettes */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a1f33] via-black/50 to-black/60" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-transparent to-black/55" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(10,31,51,0.6)_100%)]" />
+          </div>
 
-          {/* Cinematic Deep Frosted Vignette */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/45 to-slate-950/40 pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-slate-950/30 pointer-events-none" />
-          <div className="absolute top-1/4 left-10 w-[500px] h-[500px] bg-cyan-400/10 rounded-full blur-[140px] pointer-events-none" />
-          <div className="absolute bottom-1/4 right-10 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[140px] pointer-events-none" />
+          {/* Top Spacer for Navbar */}
+          <div className="h-28 sm:h-36 shrink-0" />
 
-          {/* Hero Content Overlay */}
-          <div className="relative z-10 w-[91.6667%] max-w-[1920px] mx-auto px-4 sm:px-8 flex flex-col justify-between h-full pt-28 sm:pt-36 pb-10">
-            {/* Main Headline & Narrative */}
-            <div className="max-w-3xl space-y-6 my-auto">
-              {/* Breadcrumb Navigation */}
-              <div className="inline-flex items-center gap-2 text-xs font-semibold text-cyan-200/90 uppercase tracking-widest">
-                <Link href="/" className="hover:text-white transition-colors">Home</Link>
-                <span>/</span>
-                <span className="text-white">About Us</span>
-                <span>/</span>
-                <span className="text-cyan-400">Our Business</span>
-              </div>
-
-              {/* Glassy Tag Badge */}
-              <div>
-                <div className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 rounded-full border border-white/30 bg-white/15 backdrop-blur-md text-white text-xs sm:text-sm font-bold uppercase tracking-wider shadow-lg shadow-black/15">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>Industrial Packaging Pioneers &bull; Since 1992</span>
-                </div>
-              </div>
-
-              {/* Headline */}
-              <div className="space-y-2">
-                <h1 className="text-4xl sm:text-6xl lg:text-[68px] font-black text-white tracking-tight leading-[1.06] drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
-                  Our{" "}
-                  <span className="bg-gradient-to-r from-white via-cyan-200 to-sky-300 bg-clip-text text-transparent">
-                    Business
-                  </span>
-                </h1>
-              </div>
-
-              {/* Subtitle */}
-              <p className="text-base sm:text-lg lg:text-xl text-white/90 font-normal leading-relaxed drop-shadow-md max-w-2xl">
-                The Xclusive Can Ltd. Majukhan campus is an eco-friendly, green building compliant industrial center
-                featuring centralized, automated cleanrooms and sustainable packaging solutions.
-              </p>
-
-              {/* Interactive CTA Buttons with Liquid Water Surge */}
-              <div className="pt-2 flex flex-wrap items-center gap-4">
-                <button
-                  onClick={() => setIsRFQOpen(true)}
-                  className="water-fill-btn inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-white text-slate-900 font-extrabold text-sm tracking-wide shadow-xl hover:shadow-2xl transition-all cursor-pointer active:scale-95"
-                >
-                  <span>Request Corporate Consultation</span>
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-                <a
-                  href="#overview"
-                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/40 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-bold text-sm transition-all active:scale-95 cursor-pointer"
-                >
-                  <span>Explore Capabilities</span>
-                  <ArrowRight className="w-4 h-4" />
-                </a>
-              </div>
+          {/* Centered Typography & CTAs */}
+          <div className="relative z-10 text-center px-4 max-w-5xl mx-auto space-y-5 sm:space-y-6">
+            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white text-xs sm:text-sm font-bold shadow-xl shadow-black/20">
+              <Building2 className="w-4 h-4 text-[#38bdf8] animate-pulse" />
+              <span>About Us &bull; Sustainable Industrial Operations &bull; Since 1992</span>
             </div>
 
-            {/* Floating Hero Bottom KPI Metric Bar */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 pt-6 border-t border-white/15">
-              <div className="p-3.5 sm:p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
-                <div className="text-2xl sm:text-3xl font-black text-white tracking-tight">32+ Years</div>
-                <div className="text-xs text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Manufacturing Mastery</div>
-              </div>
-              <div className="p-3.5 sm:p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
-                <div className="text-2xl sm:text-3xl font-black text-white tracking-tight">50M+ Units</div>
-                <div className="text-xs text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Monthly Production</div>
-              </div>
-              <div className="p-3.5 sm:p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
-                <div className="text-2xl sm:text-3xl font-black text-white tracking-tight">Class 100k</div>
-                <div className="text-xs text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Automated Cleanrooms</div>
-              </div>
-              <div className="p-3.5 sm:p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20">
-                <div className="text-2xl sm:text-3xl font-black text-white tracking-tight">LEED Platinum</div>
-                <div className="text-xs text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Zero-Carbon Campus</div>
-              </div>
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white tracking-[0.18em] sm:tracking-[0.22em] drop-shadow-[0_4px_30px_rgba(0,0,0,0.85)] uppercase pl-[0.18em]">
+              Our Business
+            </h1>
+
+            <p className="text-xs sm:text-sm md:text-base uppercase tracking-[0.28em] font-bold text-[#38bdf8] drop-shadow-lg pl-[0.28em] max-w-3xl mx-auto">
+              LEED Platinum Campus &bull; Automated Cleanrooms &bull; 50M+ Monthly Units
+            </p>
+
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
+              <button
+                type="button"
+                onClick={() => setIsRFQOpen(true)}
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-white hover:bg-slate-100 text-[#0a1f33] font-bold text-xs sm:text-sm shadow-xl transition-all hover:-translate-y-0.5 cursor-pointer"
+              >
+                <span>Request Consultation</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+              <a
+                href="#curtain-reveal"
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-xl border border-white/30 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-bold text-xs sm:text-sm transition-all hover:-translate-y-0.5 cursor-pointer"
+              >
+                <span>Explore Capabilities</span>
+                <ArrowRight className="w-4 h-4" />
+              </a>
             </div>
           </div>
-        </div>
+
+          {/* Bottom Area: KPI Bar + Animated Scroll Indicator */}
+          <div className="relative z-10 w-full max-w-5xl mx-auto px-4 pb-6 sm:pb-8 flex flex-col items-center gap-6">
+            <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-center">
+                <div className="text-xl sm:text-2xl font-black text-white">32+ Years</div>
+                <div className="text-[11px] text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Manufacturing Mastery</div>
+              </div>
+              <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-center">
+                <div className="text-xl sm:text-2xl font-black text-white">50M+ Units</div>
+                <div className="text-[11px] text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Monthly Production</div>
+              </div>
+              <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-center">
+                <div className="text-xl sm:text-2xl font-black text-white">Class 100k</div>
+                <div className="text-[11px] text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Automated Cleanrooms</div>
+              </div>
+              <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-center">
+                <div className="text-xl sm:text-2xl font-black text-white">LEED Platinum</div>
+                <div className="text-[11px] text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Zero-Carbon Campus</div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                const el = document.getElementById("curtain-reveal");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
+            >
+              <span className="text-[11px] uppercase tracking-widest font-semibold group-hover:tracking-[0.25em] transition-all">
+                Explore Facilities &amp; Campus
+              </span>
+              <div className="w-7 h-11 rounded-full border-2 border-white/30 flex items-start justify-center p-1 backdrop-blur-sm group-hover:border-[#38bdf8] transition-colors">
+                <div className="w-1.5 h-2.5 rounded-full bg-[#38bdf8] animate-bounce" />
+              </div>
+            </button>
+          </div>
+        </section>
 
         {/* ══════════════════════════════════════════════════════════════
             CURTAIN BODY: Smooth 3D Rise on Scroll

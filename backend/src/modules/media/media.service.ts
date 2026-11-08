@@ -1,86 +1,137 @@
+import { prisma } from "../../config/prisma";
 import { ApiError } from "../../utils/apiError";
+import fs from "fs";
+import path from "path";
 
-export interface MediaStory {
-  id: string;
-  title: string;
-  banglaTitle: string;
-  newspaper: string;
-  date: string;
-  summary: string;
-  highlightQuote: string;
-  image: string;
-  tag: string;
+export interface UploadedFilePayload {
+  filename: string;
+  originalname: string;
+  mimetype: string;
+  size: number;
+  path?: string;
 }
 
-let mediaStore: MediaStory[] = [
-  {
-    id: "story-1",
-    title: "Nasir's Packaging Enterprise Crosses 100-Crore Milestone",
-    banglaTitle: "নাসিরের ব্যবসা এখন শতকোটি টাকার",
-    newspaper: "The Daily Prothom Alo",
-    date: "Special Industrial Report",
-    summary:
-      "A deep-dive investigation into how visionary entrepreneur Nasir built Xclusive Can Limited from an ambitious local workshop into Bangladesh's leading packaging powerhouse.",
-    highlightQuote:
-      "From struggling beginnings to establishing a 100-crore state-of-the-art packaging benchmark with LEED Platinum certification.",
-    image: "/Infoimages/Screenshot 2026-11-04 130333.png",
-    tag: "Founder's Journey",
-  },
-];
-
 export class MediaService {
-  static async getAll() {
-    return mediaStore;
+  // ══════════════════════════════════════════════════════════════
+  // IMAPLE MEDIA LIBRARY ASSET MANAGEMENT
+  // ══════════════════════════════════════════════════════════════
+  static async getAllAssets(search?: string, mimeCategory?: string) {
+    const where: any = {};
+    if (search) {
+      where.OR = [
+        { filename: { contains: search } },
+        { originalName: { contains: search } },
+        { altText: { contains: search } },
+      ];
+    }
+
+    if (mimeCategory && mimeCategory !== "all") {
+      if (mimeCategory === "image") {
+        where.mimeType = { startsWith: "image/" };
+      } else if (mimeCategory === "document") {
+        where.OR = [
+          { mimeType: { contains: "pdf" } },
+          { mimeType: { contains: "word" } },
+          { mimeType: { contains: "text" } },
+        ];
+      }
+    }
+
+    return prisma.mediaAsset.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+    });
   }
 
-  static async getById(id: string) {
-    const story = mediaStore.find((s) => s.id === id);
-    if (!story) {
-      throw new ApiError(404, "Story not found.");
+  static async registerUploadedAsset(file: UploadedFilePayload, altText?: string) {
+    // Generate public URL
+    const relativeUrl = `/uploads/${file.filename}`;
+
+    return prisma.mediaAsset.create({
+      data: {
+        filename: file.filename,
+        originalName: file.originalname,
+        mimeType: file.mimetype,
+        size: file.size,
+        url: relativeUrl,
+        altText: altText || file.originalname.split(".")[0],
+        folder: "uploads",
+      },
+    });
+  }
+
+  static async updateAsset(id: string, payload: { altText?: string; caption?: string }) {
+    return prisma.mediaAsset.update({
+      where: { id },
+      data: payload,
+    });
+  }
+
+  static async deleteAsset(id: string) {
+    const asset = await prisma.mediaAsset.findUnique({ where: { id } });
+    if (!asset) throw new ApiError(404, "Media asset not found.");
+
+    // Delete local file if it resides in /uploads
+    if (asset.url.startsWith("/uploads/")) {
+      const diskPath = path.join(process.cwd(), "public", asset.url);
+      if (fs.existsSync(diskPath)) {
+        try {
+          fs.unlinkSync(diskPath);
+        } catch (e) {
+          console.warn("Could not remove disk file:", e);
+        }
+      }
     }
+
+    return prisma.mediaAsset.delete({ where: { id } });
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  // PRESS & MEDIA STORIES
+  // ══════════════════════════════════════════════════════════════
+  static async getAllStories() {
+    return prisma.pressStory.findMany({
+      orderBy: { publishDate: "desc" },
+    });
+  }
+
+  static async getStoryBySlug(slug: string) {
+    const story = await prisma.pressStory.findUnique({ where: { slug } });
+    if (!story) throw new ApiError(404, "Press story not found.");
     return story;
   }
 
-  static async create(payload: Partial<MediaStory>) {
+  static async createStory(payload: any) {
     if (!payload.title || !payload.newspaper) {
-      throw new ApiError(400, "Title and newspaper are required.");
+      throw new ApiError(400, "Title and Newspaper are required.");
     }
 
-    const newStory: MediaStory = {
-      id: `story-${Date.now()}`,
-      title: payload.title,
-      banglaTitle: payload.banglaTitle || payload.title,
-      newspaper: payload.newspaper,
-      date: payload.date || "Special Industrial Report",
-      summary: payload.summary || "",
-      highlightQuote: payload.highlightQuote || "",
-      image: payload.image || "/Infoimages/Screenshot 2026-11-04 130333.png",
-      tag: payload.tag || "Milestone",
-    };
+    const slug =
+      payload.slug?.toLowerCase().trim().replace(/[^a-z0-9-]/g, "-") ||
+      payload.title.toLowerCase().trim().replace(/[^a-z0-9-]/g, "-");
 
-    mediaStore.unshift(newStory);
-    return newStory;
+    return prisma.pressStory.create({
+      data: {
+        title: payload.title,
+        banglaTitle: payload.banglaTitle || payload.title,
+        slug,
+        newspaper: payload.newspaper,
+        summary: payload.summary || "",
+        highlightQuote: payload.highlightQuote || null,
+        clippingUrl: payload.clippingUrl || payload.image || "/Infoimages/Screenshot 2026-11-04 130333.png",
+        tag: payload.tag || "Industrial Milestone",
+      },
+    });
   }
 
-  static async update(id: string, payload: Partial<MediaStory>) {
-    const index = mediaStore.findIndex((s) => s.id === id);
-    if (index === -1) {
-      throw new ApiError(404, "Story not found to update.");
-    }
-
-    mediaStore[index] = {
-      ...mediaStore[index],
-      ...payload,
-    };
-    return mediaStore[index];
+  static async updateStory(id: string, payload: any) {
+    return prisma.pressStory.update({
+      where: { id },
+      data: payload,
+    });
   }
 
-  static async delete(id: string) {
-    const index = mediaStore.findIndex((s) => s.id === id);
-    if (index === -1) {
-      throw new ApiError(404, "Story not found to delete.");
-    }
-    return mediaStore.splice(index, 1)[0];
+  static async deleteStory(id: string) {
+    return prisma.pressStory.delete({ where: { id } });
   }
 }
-

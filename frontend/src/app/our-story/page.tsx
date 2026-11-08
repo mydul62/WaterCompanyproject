@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, History, Sparkles } from "lucide-react";
 
 interface Milestone {
   year: string;
@@ -221,48 +221,64 @@ export default function OurStoryPage() {
       </aside>
 
       <main className="flex-1 relative">
-        {/* ══════════════════════════════════════════════════════════════
-            HERO SECTION: Full-Height Sticky Hero with "Since 1992"
-           ══════════════════════════════════════════════════════════════ */}
-        <div
+        {/* ============================================================ */}
+        {/* HERO SECTION: FULL-HEIGHT ARCHITECTURE (100VH)             */}
+        {/* ============================================================ */}
+        <section
           id="hero"
-          className="sticky top-0 z-0 w-full h-screen min-h-[720px] overflow-hidden select-none flex items-center justify-center"
+          className="sticky top-0 z-0 w-full h-screen min-h-[680px] sm:min-h-[760px] lg:min-h-[820px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
         >
           {/* Authentic Dual Factory Buildings Background (Q Pail & XCL at Sunset) */}
-          <Image
-            src="/images/story-hero-buildings.jpg"
-            alt="Xclusive Can & Q Pail Manufacturing Campuses at Sunset - Since 1992"
-            fill
-            className="object-cover object-center"
-            priority
-          />
-
-          {/* Deep Cinematic Ambient Vignette */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/35 pointer-events-none" />
-          <div className="absolute inset-0 bg-slate-950/20 pointer-events-none" />
-
-          {/* Centerpiece Grand Typography strictly matching Screenshot 1 */}
-          <div className="relative z-10 text-center space-y-1 sm:space-y-3 px-4 pointer-events-none">
-            {/* "Since" in Sonsie One / Serif Display */}
-            <div
-              className="text-6xl sm:text-8xl md:text-9xl lg:text-[130px] xl:text-[150px] font-normal text-[#f4efe8] tracking-wider italic leading-none drop-shadow-[0_6px_25px_rgba(0,0,0,0.85)]"
-              style={{ fontFamily: "'Sonsie One', Georgia, serif" }}
-            >
-              Since
-            </div>
-
-            {/* "1992" in Hollow Outline White Stroke */}
-            <div
-              className="text-7xl sm:text-9xl md:text-[140px] lg:text-[180px] xl:text-[210px] font-black tracking-tight leading-none drop-shadow-[0_8px_30px_rgba(0,0,0,0.9)]"
-              style={{
-                color: "transparent",
-                WebkitTextStroke: "2.5px #ffffff",
-              }}
-            >
-              1992
-            </div>
+          <div className="absolute inset-0 w-full h-full">
+            <Image
+              src="/images/story-hero-buildings.jpg"
+              alt="Xclusive Can & Q Pail Manufacturing Campuses at Sunset - Since 1992"
+              fill
+              className="object-cover object-center opacity-85 scale-102 transition-transform duration-1000 ease-out"
+              priority
+            />
+            {/* Multi-layer Gradient Vignettes */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a1f33] via-black/45 to-black/60" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-transparent to-black/55" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(10,31,51,0.6)_100%)]" />
           </div>
-        </div>
+
+          {/* Top Spacer for Navbar */}
+          <div className="h-28 sm:h-36 shrink-0" />
+
+          {/* Centered Typography */}
+          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto space-y-4 sm:space-y-6">
+            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white text-xs sm:text-sm font-bold shadow-xl shadow-black/20">
+              <History className="w-4 h-4 text-[#38bdf8] animate-pulse" />
+              <span>About Us &bull; Corporate Heritage &bull; Since 1992</span>
+            </div>
+
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white tracking-[0.2em] sm:tracking-[0.25em] drop-shadow-[0_4px_30px_rgba(0,0,0,0.85)] uppercase pl-[0.2em]">
+              Our Story
+            </h1>
+
+            <p className="text-xs sm:text-sm md:text-base uppercase tracking-[0.3em] font-bold text-[#38bdf8] drop-shadow-lg pl-[0.3em] max-w-2xl mx-auto">
+              Three Decades of Precision Packaging Excellence &bull; 1992 &ndash; 2026
+            </p>
+          </div>
+
+          {/* Animated Scroll Down Indicator */}
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById("milestone-1992");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="relative z-10 pb-8 sm:pb-12 flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
+          >
+            <span className="text-[11px] uppercase tracking-widest font-semibold group-hover:tracking-[0.25em] transition-all">
+              Explore Timeline &amp; Milestones
+            </span>
+            <div className="w-8 h-12 rounded-full border-2 border-white/30 flex items-start justify-center p-1.5 backdrop-blur-sm group-hover:border-[#38bdf8] transition-colors">
+              <div className="w-1.5 h-3 rounded-full bg-[#38bdf8] animate-bounce" />
+            </div>
+          </button>
+        </section>
 
         {/* ══════════════════════════════════════════════════════════════
             STACKING CURTAIN DECK: Each year rises & stacks over the previous

@@ -3,7 +3,7 @@ import { RFQService } from "../rfq/rfq.service";
 
 export class AnalyticsService {
   static async getOverview() {
-    const { products } = await ProductService.getAll();
+    const products = await ProductService.getAll();
     const { rfqs } = await RFQService.getAll();
 
     const pendingRfqs = rfqs.filter((r) => r.status === "New Inquiry" || r.status === "PENDING").length;

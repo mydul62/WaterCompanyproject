@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -7,90 +7,193 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum Role {
-  SUPER_ADMIN
-  ADMIN
-  SALES_MANAGER
-}
-
-enum MaterialType {
-  TINPLATE
-  PET_PLASTIC
-  HDPE_PLASTIC
-  PP_PLASTIC
-  ALUMINUM
-  CLOSURE_METAL_PLASTIC
-}
-
-enum QuoteStatus {
-  PENDING
-  REVIEWING
-  QUOTED
-  SAMPLE_DISPATCHED
-  CLOSED_WON
-  REJECTED
-}
-
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
   name      String
-  role      Role     @default(ADMIN)
+  role      String   @default("ADMIN") // SUPER_ADMIN, ADMIN, EDITOR
+  avatar    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Category {
-  id          String       @id @default(uuid())
-  name        String       @unique
-  slug        String       @unique
+model Page {
+  id             String         @id @default(uuid())
+  title          String
+  slug           String         @unique
+  description    String?
+  status         String         @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
+  template       String         @default("default") // default, full-width, landing
+  seoTitle       String?
+  seoDescription String?
+  seoKeywords    String?
+  ogImage        String?
+  publishedAt    DateTime?
+  sections       PageSection[]
+  revisions      PageRevision[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model PageSection {
+  id          String   @id @default(uuid())
+  pageId      String
+  page        Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  sectionType String   // hero, features, stats, text_media, cards_grid, logos_grid, cta, faq, custom
+  name        String
+  order       Int      @default(0)
+  isVisible   Boolean  @default(true)
+  settings    String   @default("{}") // JSON string: background, padding, colors, alignments
+  content     String   @default("{}") // JSON string: headings, texts, media, items, buttons
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PageRevision {
+  id            String   @id @default(uuid())
+  pageId        String
+  page          Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  versionNumber Int
+  title         String
+  snapshot      String   // Full JSON snapshot of page & sections
+  notes         String?
+  createdBy     String?
+  createdAt     DateTime @default(now())
+}
+
+model NavigationMenu {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  location    String           @unique // HEADER_PRIMARY, FOOTER_QUICK, FOOTER_PRODUCTS, UTILITY
+  isPublished Boolean          @default(true)
+  items       NavigationItem[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model NavigationItem {
+  id          String          @id @default(uuid())
+  menuId      String
+  menu        NavigationMenu  @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  parentId    String?
+  parent      NavigationItem? @relation("MenuTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children    NavigationItem[] @relation("MenuTree")
+  label       String
+  linkType    String          @default("INTERNAL") // INTERNAL, EXTERNAL, PRODUCT, CATEGORY
+  url         String
+  target      String          @default("_self") // _self, _blank
+  order       Int             @default(0)
+  iconName    String?
+  badgeText   String?
+  badgeColor  String?
   description String?
-  material    MaterialType
-  products    Product[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  isVisible   Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model LinkItem {
+  id             String   @id @default(uuid())
+  title          String
+  slug           String   @unique
+  destinationUrl String
+  target         String   @default("_self")
+  category       String   @default("GENERAL") // NAV, FOOTER, BUTTON, SOCIAL, EXTERNAL
+  clickCount     Int      @default(0)
+  isActive       Boolean  @default(true)
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Category {
+  id             String    @id @default(uuid())
+  name           String    @unique
+  slug           String    @unique
+  description    String?
+  material       String    @default("TINPLATE") // TINPLATE, PET_PLASTIC, HDPE_PLASTIC, PP_PLASTIC, ALUMINUM
+  order          Int       @default(0)
+  isActive       Boolean   @default(true)
+  image          String?
+  seoTitle       String?
+  seoDescription String?
+  products       Product[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 model Product {
-  id            String        @id @default(uuid())
-  name          String
-  slug          String        @unique
-  sku           String?       @unique
-  description   String
-  categoryId    String
-  category      Category      @relation(fields: [categoryId], references: [id])
-  material      MaterialType
-  capacityRange String
-  neckSize      String?
-  applications  String[]
-  features      String[]
-  imageUrl      String
-  galleryUrls   String[]      @default([])
-  tdsPdfUrl     String?
-  isFeatured    Boolean       @default(false)
-  isActive      Boolean       @default(true)
-  quoteItems    QuoteItem[]
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id             String       @id @default(uuid())
+  name           String
+  slug           String       @unique
+  sku            String?      @unique
+  description    String
+  categoryId     String
+  category       Category     @relation(fields: [categoryId], references: [id])
+  material       String       @default("TINPLATE")
+  capacityRange  String
+  neckSize       String?
+  factory        String       @default("Xclusive Can Limited")
+  applications   String       @default("[]") // JSON string of applications
+  features       String       @default("[]") // JSON string of features
+  specifications String       @default("{}") // JSON string of technical specs (weight, height, diameter, etc.)
+  imageUrl       String
+  galleryUrls    String       @default("[]") // JSON string of gallery images
+  tdsPdfUrl      String?
+  isFeatured     Boolean      @default(false)
+  isActive       Boolean      @default(true)
+  order          Int          @default(0)
+  seoTitle       String?
+  seoDescription String?
+  quoteItems     QuoteItem[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model MediaAsset {
+  id           String   @id @default(uuid())
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+  url          String
+  thumbnail    String?
+  altText      String?
+  caption      String?
+  folder       String   @default("uploads")
+  width        Int?
+  height       Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SiteSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String   // Plain text or JSON string
+  category  String   @default("GENERAL") // BRANDING, CONTACT, SOCIAL, SEO, FOOTER
+  isPublic  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model QuoteRequest {
-  id              String      @id @default(uuid())
-  quoteNumber     String      @unique
-  companyName     String
-  contactPerson   String
-  email           String
-  phone           String
-  category        String
-  volume          String
-  capacity        String?
-  customPrinting  Boolean     @default(true)
-  notes           String?
-  status          QuoteStatus @default(PENDING)
-  items           QuoteItem[]
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  id             String      @id @default(uuid())
+  quoteNumber    String      @unique
+  companyName    String
+  contactPerson  String
+  email          String
+  phone          String
+  category       String
+  volume         String
+  capacity       String?
+  customPrinting Boolean     @default(true)
+  notes          String?
+  status         String      @default("PENDING") // PENDING, REVIEWING, QUOTED, CLOSED_WON, REJECTED
+  items          QuoteItem[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
 }
 
 model QuoteItem {
@@ -101,6 +204,45 @@ model QuoteItem {
   product        Product?     @relation(fields: [productId], references: [id])
   customSpecs    String?
   quantity       Int          @default(10000)
+}
+
+model CareerJob {
+  id               String              @id @default(uuid())
+  title            String
+  department       String
+  facility         String
+  location         String
+  type             String              @default("Full-Time")
+  experience       String
+  summary          String
+  responsibilities String              @default("[]") // JSON array of responsibilities
+  requirements     String              @default("[]") // JSON array of requirements
+  benefits         String              @default("[]") // JSON array of benefits
+  badgeColor       String              @default("bg-blue-50 text-blue-700 border-blue-200")
+  isActive         Boolean             @default(true)
+  order            Int                 @default(0)
+  applications     CareerApplication[]
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+}
+
+model CareerApplication {
+  id             String     @id @default(uuid())
+  jobId          String?
+  job            CareerJob? @relation(fields: [jobId], references: [id])
+  name           String
+  email          String
+  phone          String
+  position       String
+  experience     String
+  currentCompany String?
+  facility       String     @default("Gazipur Facility")
+  portfolioUrl   String?
+  resumeUrl      String?
+  coverNote      String?
+  status         String     @default("New") // New, Shortlisted, Interview, Hired, Rejected
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 }
 
 model PressStory {
@@ -128,4 +270,3 @@ model Inquiry {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 }
-

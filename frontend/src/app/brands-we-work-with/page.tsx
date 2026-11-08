@@ -20,6 +20,7 @@ import {
   Cpu,
   Leaf,
   Layers,
+  Handshake,
 } from "lucide-react";
 
 interface BrandItem {
@@ -146,50 +147,63 @@ export default function BrandsWeWorkWithPage() {
             HERO SECTION: Full-Height Sticky Hero with Authentic Handshake
             (Matches uploaded client reference screenshot exactly)
            ══════════════════════════════════════════════════════════════ */}
+        {/* ============================================================ */}
+        {/* HERO SECTION: FULL-HEIGHT ARCHITECTURE (100VH)             */}
+        {/* ============================================================ */}
         <section
           id="hero"
-          className="sticky top-0 z-0 w-full h-screen min-h-[640px] max-h-[920px] overflow-hidden select-none flex items-center justify-center"
+          className="sticky top-0 z-0 w-full h-screen min-h-[640px] sm:min-h-[720px] lg:min-h-[800px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
         >
           {/* Authentic Handshake Photo Background */}
-          <Image
-            src="/images/brands-hero.jpg"
-            alt="Xclusive Can Limited - Brands We Work With Partnership Handshake"
-            fill
-            className="object-cover object-center"
-            priority
-          />
+          <div className="absolute inset-0 w-full h-full">
+            <Image
+              src="/images/brands-hero.jpg"
+              alt="Xclusive Can Limited - Brands We Work With Partnership Handshake"
+              fill
+              className="object-cover object-center opacity-85 scale-102 transition-transform duration-1000 ease-out"
+              priority
+            />
+            {/* Multi-layer Gradient Vignettes */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a1f33] via-black/45 to-black/60" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(10,31,51,0.6)_100%)]" />
+          </div>
 
-          {/* Moody Spotlight Vignette Matching Reference Screenshot */}
-          <div className="absolute inset-0 bg-black/45 pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-slate-950/40 pointer-events-none" />
+          {/* Top Spacer to account for Navbar */}
+          <div className="h-28 sm:h-36 shrink-0" />
 
-          {/* Centered Headline strictly matching reference screenshot */}
-          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto space-y-4">
-            {/* Breadcrumb Navigation */}
-            <div className="inline-flex items-center gap-2 text-xs font-semibold text-slate-300 uppercase tracking-widest justify-center">
-              <Link href="/" className="hover:text-white transition-colors">Home</Link>
-              <span>/</span>
-              <span className="text-white">Achievements</span>
-              <span>/</span>
-              <span className="text-cyan-400">Brands We Work With</span>
+          {/* Centered Typography */}
+          <div className="relative z-10 text-center px-4 max-w-5xl mx-auto space-y-4 sm:space-y-6">
+            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white text-xs sm:text-sm font-bold shadow-xl shadow-black/20">
+              <Handshake className="w-4 h-4 text-[#38bdf8] animate-pulse" />
+              <span>Achievements &bull; Trusted Enterprise Partnerships &bull; Since 1992</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold text-white tracking-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-white tracking-[0.14em] sm:tracking-[0.18em] drop-shadow-[0_4px_30px_rgba(0,0,0,0.85)] uppercase pl-[0.14em]">
               Brands We Work With
             </h1>
 
-            <p className="text-sm sm:text-base md:text-lg text-slate-200/90 font-normal max-w-2xl mx-auto drop-shadow-md leading-relaxed">
-              Trusted packaging manufacturing partner for Bangladesh’s leading paint, pharmaceutical, FMCG, and industrial chemical enterprises since 1992.
+            <p className="text-xs sm:text-sm md:text-base uppercase tracking-[0.28em] font-bold text-[#38bdf8] drop-shadow-lg pl-[0.28em] max-w-3xl mx-auto">
+              Paints &bull; Pharmaceuticals &bull; FMCG &bull; Industrial Lubricants
             </p>
           </div>
 
-          {/* Subtle Bottom Scroll Cue */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 pointer-events-none text-white/70">
-            <span className="text-[11px] uppercase tracking-widest font-semibold">Scroll to explore</span>
-            <div className="w-5 h-8 rounded-full border border-white/40 flex items-start justify-center p-1">
-              <div className="w-1.5 h-2.5 rounded-full bg-white animate-bounce" />
+          {/* Animated Scroll Down Indicator */}
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById("content");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="relative z-10 pb-8 sm:pb-12 flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
+          >
+            <span className="text-[11px] uppercase tracking-widest font-semibold group-hover:tracking-[0.25em] transition-all">
+              Explore Brand Partners &amp; Clients
+            </span>
+            <div className="w-8 h-12 rounded-full border-2 border-white/30 flex items-start justify-center p-1.5 backdrop-blur-sm group-hover:border-[#38bdf8] transition-colors">
+              <div className="w-1.5 h-3 rounded-full bg-[#38bdf8] animate-bounce" />
             </div>
-          </div>
+          </button>
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
@@ -197,7 +211,7 @@ export default function BrandsWeWorkWithPage() {
            ══════════════════════════════════════════════════════════════ */}
         <div
           id="content"
-          className="relative z-10 bg-white shadow-[0_-20px_50px_rgba(0,0,0,0.18)]"
+          className="relative z-10 bg-white rounded-t-[32px] sm:rounded-t-[48px] shadow-[0_-25px_60px_rgba(0,0,0,0.22)] border-t border-white/60"
         >
           {/* ══════════════════════════════════════════════════════════════
               SECTION 1: Our Clients & Business Associates

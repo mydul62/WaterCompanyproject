@@ -10,12 +10,20 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // Disable Lenis inside iframe or editor builder so native wheel and touch scrolling work 100% smoothly
+    if (window.self !== window.top || window.location.search.includes("editor=true")) {
+      return;
+    }
+
     // Initialize Lenis with built-in autoRaf (V-Sync synchronized)
     const lenis = new Lenis({
-      duration: 1.1,
+      duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: "vertical",
+      gestureOrientation: "vertical",
       smoothWheel: true,
-      syncTouch: false, // Native touch for phones/tablets, no lag
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.5,
       autoRaf: true, // Built-in V-Sync RAF loop, zero frame collision
     });
 

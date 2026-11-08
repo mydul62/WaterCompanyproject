@@ -3,32 +3,45 @@ import { SettingsService } from "./settings.service";
 import { sendResponse } from "../../utils/response";
 
 export class SettingsController {
-  static async getSettings(_req: Request, res: Response, next: NextFunction) {
+  static async getAll(_req: Request, res: Response, next: NextFunction) {
     try {
-      const settings = await SettingsService.getSettings();
+      const data = await SettingsService.getAll();
       return sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: "Settings retrieved successfully.",
-        data: settings,
+        message: "Settings retrieved.",
+        data,
       });
     } catch (err) {
       return next(err);
     }
   }
 
-  static async updateSettings(req: Request, res: Response, next: NextFunction) {
+  static async getPublic(_req: Request, res: Response, next: NextFunction) {
     try {
-      const settings = await SettingsService.updateSettings(req.body);
+      const data = await SettingsService.getPublic();
       return sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: "Settings updated successfully.",
-        data: settings,
+        message: "Public settings retrieved.",
+        data,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const updated = await SettingsService.updateBatch(req.body);
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Settings saved successfully.",
+        data: updated,
       });
     } catch (err) {
       return next(err);
     }
   }
 }
-

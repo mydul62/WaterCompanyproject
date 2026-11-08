@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { ENV } from "../config/env";
 import { ApiError } from "../utils/apiError";
-import { Role } from "@prisma/client";
+export type Role = "SUPER_ADMIN" | "ADMIN" | "EDITOR" | "SALES_MANAGER";
 
 export interface AuthUser {
   userId: string;

@@ -4,15 +4,26 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronUp } from "lucide-react";
+import { api } from "@/lib/api";
 
 export default function Footer() {
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [settings, setSettings] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const handleScroll = () => {
       setShowScrollTop(window.scrollY > 300);
     };
     window.addEventListener("scroll", handleScroll);
+
+    // Fetch live backend footer settings
+    api.settings
+      .getMap()
+      .then((res) => {
+        if (res?.data) setSettings(res.data);
+      })
+      .catch(() => {});
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -43,24 +54,33 @@ export default function Footer() {
 
             <div className="space-y-3 text-xs sm:text-sm text-slate-700 leading-relaxed">
               <p>
-                Plot#53/1, Block#B, Kaligonj Road, Majukhan, Gazipur, Dhaka, Bangladesh.
+                {settings["factory_gazipur"] ||
+                  "Plot#53/1, Block#B, Kaligonj Road, Majukhan, Gazipur, Dhaka, Bangladesh."}
               </p>
               <p>
-                Plot#B 196, BSCIC I/A, Tongi, Gazipur, Dhaka, Bangladesh
+                {settings["factory_tongi"] ||
+                  "Plot#B 196, BSCIC I/A, Tongi, Gazipur, Dhaka, Bangladesh"}
               </p>
             </div>
 
             <div className="space-y-1.5 text-xs sm:text-sm text-slate-700">
               <p className="font-bold text-slate-900">Phone:</p>
-              <p>Sales &amp; Marketing: +8801819343635, +8801680240524, +8801914238240</p>
-              <p>Local Procurement: +8801818950946, +8801819312914</p>
-              <p>Foreign Purchase: +8801841984208</p>
+              <p>
+                Sales: {settings["phone_sales"] || "+8801819343635, +8801680240524"}
+              </p>
+              <p>
+                Procurement: {settings["phone_domestic"] || "+8801818950946"}
+              </p>
             </div>
 
             <div className="space-y-1.5 text-xs sm:text-sm text-slate-700">
               <p className="font-bold text-slate-900">Email:</p>
-              <p>Sales &amp; Marketing: marketing@qpail.com</p>
-              <p>Procurement: commercial@qpail.com</p>
+              <p>
+                Sales &amp; Marketing: {settings["email_sales"] || "marketing@qpail.com"}
+              </p>
+              <p>
+                Procurement: {settings["email_procurement"] || "commercial@qpail.com"}
+              </p>
             </div>
 
             {/* Social Icons (Black rounded square buttons matching Screenshot) */}
@@ -108,7 +128,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2.5 text-xs sm:text-sm text-slate-700">
               <li>
-                <Link href="#footer" className="hover:text-black">
+                <Link href="/faqs" className="hover:text-black">
                   FAQs
                 </Link>
               </li>

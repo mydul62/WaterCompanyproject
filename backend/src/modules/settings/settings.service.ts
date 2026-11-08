@@ -1,48 +1,58 @@
-export interface CompanySettings {
-  name: string;
-  brandGroup: string;
-  foundedYear: number;
-  headquarters: string;
-  plant2: string;
-  contacts: {
-    sales1: string;
-    sales2: string;
-    foreignPurchase: string;
-    emailMarketing: string;
-  };
-  certifications: string[];
-}
-
-let companySettings: CompanySettings = {
-  name: "Xclusive Can Limited",
-  brandGroup: "Xclusive Can & Q Pail Ltd.",
-  foundedYear: 1992,
-  headquarters: "Plot#53/1, Block#B, Kaligonj Road, Majukhan, Gazipur, Dhaka, Bangladesh",
-  plant2: "Plot#B 196, BSCIC I/A, Tongi, Gazipur, Dhaka, Bangladesh",
-  contacts: {
-    sales1: "+8801819343635",
-    sales2: "+8801680240524",
-    foreignPurchase: "+8801841984208",
-    emailMarketing: "marketing@qpail.com",
-  },
-  certifications: ["LEED Platinum", "ISO 9001:2015", "FSSC 22000", "GMP Certified"],
-};
+import { prisma } from "../../config/prisma";
 
 export class SettingsService {
-  static async getSettings() {
-    return companySettings;
+  static async getAll() {
+    const records = await prisma.siteSetting.findMany({
+      orderBy: { key: "asc" },
+    });
+
+    const settingsMap: Record<string, string> = {};
+    for (const r of records) {
+      settingsMap[r.key] = r.value;
+    }
+
+    return {
+      records,
+      settings: settingsMap,
+    };
   }
 
-  static async updateSettings(payload: Partial<CompanySettings>) {
-    companySettings = {
-      ...companySettings,
-      ...payload,
-      contacts: {
-        ...companySettings.contacts,
-        ...(payload.contacts || {}),
-      },
-    };
-    return companySettings;
+  static async getPublic() {
+    const records = await prisma.siteSetting.findMany({
+      where: { isPublic: true },
+    });
+
+    const publicMap: Record<string, string> = {};
+    for (const r of records) {
+      publicMap[r.key] = r.value;
+    }
+    return publicMap;
+  }
+
+  static async updateBatch(payload: Record<string, string>) {
+    const keys = Object.keys(payload);
+    for (const key of keys) {
+      const val = payload[key];
+      let category = "GENERAL";
+      if (key.includes("logo") || key.includes("name") || key.includes("tagline") || key.includes("brand")) {
+        category = "BRANDING";
+      } else if (key.includes("phone") || key.includes("email") || key.includes("headquarter") || key.includes("plant")) {
+        category = "CONTACT";
+      } else if (key.includes("social") || key.includes("facebook") || key.includes("youtube") || key.includes("linkedin")) {
+        category = "SOCIAL";
+      } else if (key.includes("seo") || key.includes("meta")) {
+        category = "SEO";
+      } else if (key.includes("footer") || key.includes("copyright")) {
+        category = "FOOTER";
+      }
+
+      await prisma.siteSetting.upsert({
+        where: { key },
+        update: { value: String(val), category },
+        create: { key, value: String(val), category, isPublic: true },
+      });
+    }
+
+    return this.getAll();
   }
 }
-

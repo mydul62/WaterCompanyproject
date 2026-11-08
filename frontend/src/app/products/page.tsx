@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { CATALOG_PRODUCTS, CatalogProduct } from "@/data/catalogData";
-import { X, Search, ChevronDown, ArrowRight, Sparkles } from "lucide-react";
+import { X, Search, ChevronDown, ArrowRight, Sparkles, Layers } from "lucide-react";
+import { api } from "@/lib/api";
 
 interface ProductItem {
   id: string;
@@ -233,9 +234,45 @@ const ALL_PRODUCTS: ProductItem[] = [
 ];
 
 export default function ProductsPage() {
+  const [productsList, setProductsList] = useState<ProductItem[]>(ALL_PRODUCTS);
   const [query, setQuery] = useState("");
   const [selectedFac, setSelectedFac] = useState<string[]>([]);
   const [selectedCat, setSelectedCat] = useState<string[]>([]);
+
+  useEffect(() => {
+    api.products
+      .getAll()
+      .then((res) => {
+        if (res?.data && res.data.length > 0) {
+          const backendItems: ProductItem[] = res.data.map((p: any) => ({
+            id: p.id,
+            n: p.name,
+            d: p.description || "",
+            f: p.factory || "Xclusive Can Limited",
+            m:
+              p.material?.toLowerCase().includes("tin") ||
+              p.material?.toLowerCase().includes("steel")
+                ? "Metal"
+                : "Plastic",
+            c:
+              typeof p.category === "object" && p.category !== null
+                ? p.category.name
+                : p.categoryLabel ||
+                  (typeof p.category === "string" ? p.category : "Paint"),
+            s:
+              p.material?.toLowerCase().includes("tin") ||
+              p.material?.toLowerCase().includes("steel")
+                ? "can"
+                : "bottle",
+            img: p.image || "/images/catalog/cat-prod-1.png",
+            slug: p.slug,
+            spec: p.capacityRange || "",
+          }));
+          setProductsList(backendItems);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Accordion toggle states
   const [factoryOpen, setFactoryOpen] = useState(true);
@@ -277,24 +314,24 @@ export default function ProductsPage() {
     const catCounts: Record<string, number> = {};
 
     FACTORIES.forEach((f) => {
-      facCounts[f] = ALL_PRODUCTS.filter((p) => p.f === f).length;
+      facCounts[f] = productsList.filter((p) => p.f === f).length;
     });
 
     PLASTIC_CATS.forEach((c) => {
-      catCounts[c] = ALL_PRODUCTS.filter((p) => p.m === "Plastic" && p.c === c).length;
+      catCounts[c] = productsList.filter((p) => p.m === "Plastic" && p.c === c).length;
     });
 
     METAL_CATS.forEach((c) => {
-      catCounts[c] = ALL_PRODUCTS.filter((p) => p.m === "Metal" && p.c === c).length;
+      catCounts[c] = productsList.filter((p) => p.m === "Metal" && p.c === c).length;
     });
 
     return { facCounts, catCounts };
-  }, []);
+  }, [productsList]);
 
   // Filtered products list
   const filteredProducts = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return ALL_PRODUCTS.filter((p) => {
+    return productsList.filter((p) => {
       const matchFac = selectedFac.length === 0 || selectedFac.includes(p.f);
       const matchCat = selectedCat.length === 0 || selectedCat.includes(p.c);
       const matchQuery =
@@ -306,7 +343,7 @@ export default function ProductsPage() {
 
       return matchFac && matchCat && matchQuery;
     });
-  }, [query, selectedFac, selectedCat]);
+  }, [productsList, query, selectedFac, selectedCat]);
 
   const activeChips = [...selectedFac, ...selectedCat];
 
@@ -469,7 +506,7 @@ export default function ProductsPage() {
         /* LAYOUT */
         .prd-wrap {
           width: min(1920px, 98%);
-          margin: -48px auto 80px;
+          margin: 0 auto 80px;
           position: relative;
           display: grid;
           grid-template-columns: 290px 1fr;
@@ -912,33 +949,72 @@ export default function ProductsPage() {
       {/* Floating Glass Navbar */}
       <Navbar />
 
-      {/* HERO SECTION */}
-      <header className="prd-hero" id="hero">
-        <span className="prd-eyebrow">Our Catalogue</span>
-        <h1>
-          Products We <em>Manufacture</em>
-        </h1>
-        <p>
-          Precision-made plastic and metal packaging for pharmaceutical, home care,
-          paint, food and industrial use.
-        </p>
-        <div className="prd-stats">
-          <div>
-            <b>2</b>
-            <small>Factories</small>
-          </div>
-          <div>
-            <b>2</b>
-            <small>Material lines</small>
-          </div>
-          <div>
-            <b>9</b>
-            <small>Product categories</small>
-          </div>
+      {/* ============================================================ */}
+      {/* 1. HERO SECTION: FULL-HEIGHT ARCHITECTURE (100VH)             */}
+      {/* ============================================================ */}
+      <section
+        id="hero"
+        className="sticky top-0 z-0 w-full h-screen min-h-[640px] sm:min-h-[720px] lg:min-h-[800px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
+      >
+        {/* Background Image */}
+        <div className="absolute inset-0 w-full h-full">
+          <Image
+            src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1920&q=80"
+            alt="Products Catalogue - Xclusive Can Limited"
+            fill
+            className="object-cover object-center opacity-85 scale-102 transition-transform duration-1000 ease-out"
+            priority
+          />
+          {/* Multi-layer Gradient Vignettes */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a1f33] via-black/45 to-black/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(10,31,51,0.6)_100%)]" />
         </div>
-      </header>
 
-      {/* MAIN TWO-COLUMN CONTENT */}
+        {/* Top Spacer for Navbar */}
+        <div className="h-28 sm:h-36 shrink-0" />
+
+        {/* Centered Typography */}
+        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto space-y-4 sm:space-y-6">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white text-xs sm:text-sm font-bold shadow-xl shadow-black/20">
+            <Layers className="w-4 h-4 text-[#38bdf8] animate-pulse" />
+            <span>Find Our Product &bull; High-Precision Packaging Solutions</span>
+          </div>
+
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white tracking-[0.2em] sm:tracking-[0.25em] drop-shadow-[0_4px_30px_rgba(0,0,0,0.85)] uppercase pl-[0.2em]">
+            Products
+          </h1>
+
+          <p className="text-xs sm:text-sm md:text-base uppercase tracking-[0.28em] font-bold text-[#38bdf8] drop-shadow-lg pl-[0.28em] max-w-3xl mx-auto">
+            Plastic &bull; Metal Packaging &bull; 2 Mega Plants &bull; 9 Specialized Categories
+          </p>
+        </div>
+
+        {/* Animated Scroll Down Indicator */}
+        <button
+          type="button"
+          onClick={() => {
+            const el = document.getElementById("product-content");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}
+          className="relative z-10 pb-8 sm:pb-12 flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
+        >
+          <span className="text-[11px] uppercase tracking-widest font-semibold group-hover:tracking-[0.25em] transition-all">
+            Explore Product Catalogue &amp; Filters
+          </span>
+          <div className="w-8 h-12 rounded-full border-2 border-white/30 flex items-start justify-center p-1.5 backdrop-blur-sm group-hover:border-[#38bdf8] transition-colors">
+            <div className="w-1.5 h-3 rounded-full bg-[#38bdf8] animate-bounce" />
+          </div>
+        </button>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 2. MAIN TWO-COLUMN CONTENT: Smooth Rise Over Hero             */}
+      {/* ============================================================ */}
+      <div
+        id="product-content"
+        className="relative z-10 bg-[#f5f8fb] rounded-t-[32px] sm:rounded-t-[48px] shadow-[0_-25px_60px_rgba(0,0,0,0.22)] border-t border-white/60 pt-12 sm:pt-16 pb-16"
+      >
       <main className="prd-wrap">
         {/* SIDEBAR FILTER PANEL */}
         <aside className={`prd-panel prd-side ${isDrawerOpen ? "open" : ""}`} id="side">
@@ -1114,6 +1190,7 @@ export default function ProductsPage() {
           </div>
         </section>
       </main>
+      </div>
 
       {/* Scrim Overlay for Mobile Drawer */}
       <div
