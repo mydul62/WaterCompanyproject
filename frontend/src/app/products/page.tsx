@@ -251,17 +251,17 @@ export default function ProductsPage() {
             f: p.factory || "Xclusive Can Limited",
             m:
               p.material?.toLowerCase().includes("tin") ||
-              p.material?.toLowerCase().includes("steel")
+                p.material?.toLowerCase().includes("steel")
                 ? "Metal"
                 : "Plastic",
             c:
               typeof p.category === "object" && p.category !== null
                 ? p.category.name
                 : p.categoryLabel ||
-                  (typeof p.category === "string" ? p.category : "Paint"),
+                (typeof p.category === "string" ? p.category : "Paint"),
             s:
               p.material?.toLowerCase().includes("tin") ||
-              p.material?.toLowerCase().includes("steel")
+                p.material?.toLowerCase().includes("steel")
                 ? "can"
                 : "bottle",
             img: p.image || "/images/catalog/cat-prod-1.png",
@@ -271,7 +271,7 @@ export default function ProductsPage() {
           setProductsList(backendItems);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   // Accordion toggle states
@@ -954,7 +954,7 @@ export default function ProductsPage() {
       {/* ============================================================ */}
       <section
         id="hero"
-        className="sticky top-0 z-0 w-full h-screen min-h-[640px] sm:min-h-[720px] lg:min-h-[800px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
+        className="relative lg:sticky lg:top-0 z-0 w-full min-h-[540px] sm:min-h-[640px] lg:h-screen lg:min-h-[800px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
       >
         {/* Background Image */}
         <div className="absolute inset-0 w-full h-full">
@@ -1013,183 +1013,183 @@ export default function ProductsPage() {
       {/* ============================================================ */}
       <div
         id="product-content"
-        className="relative z-10 bg-[#f5f8fb] rounded-t-[32px] sm:rounded-t-[48px] shadow-[0_-25px_60px_rgba(0,0,0,0.22)] border-t border-white/60 pt-12 sm:pt-16 pb-16"
+        className="relative z-10 bg-[#f5f8fb] rounded-t-[28px] sm:rounded-t-[36px] lg:rounded-t-[48px] shadow-sm lg:shadow-[0_-25px_60px_rgba(0,0,0,0.22)] border-t border-white/60 pt-12 sm:pt-16 pb-16"
       >
-      <main className="prd-wrap">
-        {/* SIDEBAR FILTER PANEL */}
-        <aside className={`prd-panel prd-side ${isDrawerOpen ? "open" : ""}`} id="side">
-          <h2>
-            <span>Filters</span>
-            {(selectedFac.length > 0 || selectedCat.length > 0 || query) && (
-              <button className="prd-clear" onClick={clearAll}>
-                Clear all
+        <main className="prd-wrap">
+          {/* SIDEBAR FILTER PANEL */}
+          <aside className={`prd-panel prd-side ${isDrawerOpen ? "open" : ""}`} id="side">
+            <h2>
+              <span>Filters</span>
+              {(selectedFac.length > 0 || selectedCat.length > 0 || query) && (
+                <button className="prd-clear" onClick={clearAll}>
+                  Clear all
+                </button>
+              )}
+            </h2>
+
+            {/* Group 1: Factory */}
+            <div className={`prd-group ${factoryOpen ? "" : "closed"}`}>
+              <button
+                className="prd-gh"
+                onClick={() => setFactoryOpen((prev) => !prev)}
+              >
+                <span>Factory</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
               </button>
-            )}
-          </h2>
-
-          {/* Group 1: Factory */}
-          <div className={`prd-group ${factoryOpen ? "" : "closed"}`}>
-            <button
-              className="prd-gh"
-              onClick={() => setFactoryOpen((prev) => !prev)}
-            >
-              <span>Factory</span>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.4"
-              >
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </button>
-            <div className="prd-gb">
-              {FACTORIES.map((fac) => (
-                <label key={fac} className="prd-opt">
-                  <input
-                    type="checkbox"
-                    checked={selectedFac.includes(fac)}
-                    onChange={() => toggleFac(fac)}
-                  />
-                  <span>{fac}</span>
-                  <span className="prd-n">{counts.facCounts[fac] || 0}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Group 2: Genre / Section */}
-          <div className={`prd-group ${genreOpen ? "" : "closed"}`}>
-            <button
-              className="prd-gh"
-              onClick={() => setGenreOpen((prev) => !prev)}
-            >
-              <span>Genre / Section</span>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.4"
-              >
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </button>
-            <div className="prd-gb">
-              <div className="prd-sub">Plastic</div>
-              {PLASTIC_CATS.map((cat) => (
-                <label key={`plastic-${cat}`} className="prd-opt">
-                  <input
-                    type="checkbox"
-                    checked={selectedCat.includes(cat)}
-                    onChange={() => toggleCat(cat)}
-                  />
-                  <span>{cat}</span>
-                  <span className="prd-n">{counts.catCounts[cat] || 0}</span>
-                </label>
-              ))}
-
-              <div className="prd-sub">Metal</div>
-              {METAL_CATS.map((cat) => (
-                <label key={`metal-${cat}`} className="prd-opt">
-                  <input
-                    type="checkbox"
-                    checked={selectedCat.includes(cat)}
-                    onChange={() => toggleCat(cat)}
-                  />
-                  <span>{cat}</span>
-                  <span className="prd-n">{counts.catCounts[cat] || 0}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        </aside>
-
-        {/* RIGHT CONTENT COLUMN */}
-        <section>
-          {/* Top Search & Filter Bar */}
-          <div className="prd-panel prd-top">
-            <button
-              className="prd-fbtn"
-              onClick={() => setIsDrawerOpen(true)}
-            >
-              ☰ Filters
-            </button>
-            <label className="prd-search">
-              <Search className="w-4.5 h-4.5" />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search for product…"
-                autoComplete="off"
-              />
-            </label>
-          </div>
-
-          {/* Meta & Active Chips Strip */}
-          <div className="prd-meta">
-            <div>
-              <h3>All products</h3>
-              <span className="prd-count">
-                {filteredProducts.length} product
-                {filteredProducts.length === 1 ? "" : "s"} found
-              </span>
-            </div>
-            {activeChips.length > 0 && (
-              <div className="prd-chips">
-                {activeChips.map((chip) => (
-                  <button
-                    key={chip}
-                    className="prd-chip"
-                    onClick={() => removeChip(chip)}
-                  >
-                    <span>{chip}</span>
-                    <i>×</i>
-                  </button>
+              <div className="prd-gb">
+                {FACTORIES.map((fac) => (
+                  <label key={fac} className="prd-opt">
+                    <input
+                      type="checkbox"
+                      checked={selectedFac.includes(fac)}
+                      onChange={() => toggleFac(fac)}
+                    />
+                    <span>{fac}</span>
+                    <span className="prd-n">{counts.facCounts[fac] || 0}</span>
+                  </label>
                 ))}
               </div>
-            )}
-          </div>
+            </div>
 
-          {/* Product Cards Grid */}
-          <div className="prd-grid">
-            {filteredProducts.length > 0 ? (
-              filteredProducts.map((p, idx) => (
-                <Link
-                  key={p.id}
-                  href={`/products/${p.slug || p.id}`}
-                  className="prd-card group"
-                  style={{ animationDelay: `${idx * 40}ms` }}
+            {/* Group 2: Genre / Section */}
+            <div className={`prd-group ${genreOpen ? "" : "closed"}`}>
+              <button
+                className="prd-gh"
+                onClick={() => setGenreOpen((prev) => !prev)}
+              >
+                <span>Genre / Section</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
                 >
-                  <div className="prd-thumb">
-                    <span className="prd-tag">{p.c}</span>
-                    {renderThumbIcon(p)}
-                  </div>
-                  <div className="prd-body">
-                    <h4>{p.n}</h4>
-                    <p>{p.d}</p>
-                    <div className="prd-foot">
-                      <span className="prd-fac">{p.f}</span>
-                      <span className="prd-more">
-                        <span>Details</span>
-                        <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              ))
-            ) : (
-              <div className="prd-empty">
-                <b>No products match</b>
-                <p>Try removing a filter or searching a different term.</p>
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div className="prd-gb">
+                <div className="prd-sub">Plastic</div>
+                {PLASTIC_CATS.map((cat) => (
+                  <label key={`plastic-${cat}`} className="prd-opt">
+                    <input
+                      type="checkbox"
+                      checked={selectedCat.includes(cat)}
+                      onChange={() => toggleCat(cat)}
+                    />
+                    <span>{cat}</span>
+                    <span className="prd-n">{counts.catCounts[cat] || 0}</span>
+                  </label>
+                ))}
+
+                <div className="prd-sub">Metal</div>
+                {METAL_CATS.map((cat) => (
+                  <label key={`metal-${cat}`} className="prd-opt">
+                    <input
+                      type="checkbox"
+                      checked={selectedCat.includes(cat)}
+                      onChange={() => toggleCat(cat)}
+                    />
+                    <span>{cat}</span>
+                    <span className="prd-n">{counts.catCounts[cat] || 0}</span>
+                  </label>
+                ))}
               </div>
-            )}
-          </div>
-        </section>
-      </main>
+            </div>
+          </aside>
+
+          {/* RIGHT CONTENT COLUMN */}
+          <section>
+            {/* Top Search & Filter Bar */}
+            <div className="prd-panel prd-top">
+              <button
+                className="prd-fbtn"
+                onClick={() => setIsDrawerOpen(true)}
+              >
+                ☰ Filters
+              </button>
+              <label className="prd-search">
+                <Search className="w-4.5 h-4.5" />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search for product…"
+                  autoComplete="off"
+                />
+              </label>
+            </div>
+
+            {/* Meta & Active Chips Strip */}
+            <div className="prd-meta">
+              <div>
+                <h3>All products</h3>
+                <span className="prd-count">
+                  {filteredProducts.length} product
+                  {filteredProducts.length === 1 ? "" : "s"} found
+                </span>
+              </div>
+              {activeChips.length > 0 && (
+                <div className="prd-chips">
+                  {activeChips.map((chip) => (
+                    <button
+                      key={chip}
+                      className="prd-chip"
+                      onClick={() => removeChip(chip)}
+                    >
+                      <span>{chip}</span>
+                      <i>×</i>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Product Cards Grid */}
+            <div className="prd-grid">
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map((p, idx) => (
+                  <Link
+                    key={p.id}
+                    href={`/products/${p.slug || p.id}`}
+                    className="prd-card group"
+                    style={{ animationDelay: `${idx * 40}ms` }}
+                  >
+                    <div className="prd-thumb">
+                      <span className="prd-tag">{p.c}</span>
+                      {renderThumbIcon(p)}
+                    </div>
+                    <div className="prd-body">
+                      <h4>{p.n}</h4>
+                      <p>{p.d}</p>
+                      <div className="prd-foot">
+                        <span className="prd-fac">{p.f}</span>
+                        <span className="prd-more">
+                          <span>Details</span>
+                          <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <div className="prd-empty">
+                  <b>No products match</b>
+                  <p>Try removing a filter or searching a different term.</p>
+                </div>
+              )}
+            </div>
+          </section>
+        </main>
       </div>
 
       {/* Scrim Overlay for Mobile Drawer */}

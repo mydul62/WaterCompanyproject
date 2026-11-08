@@ -113,8 +113,8 @@ export default function ExploreGrid() {
           </p>
         </div>
 
-          {/* 13 Glass Frosted Tiles Grid with Liquid Water Rise Hover */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+          {/* 13 Glass Frosted Tiles Grid with Liquid Water Rise Hover (2 columns on mobile, 3-4 on larger screens) */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-6">
             {EXPLORE_ITEMS.map((item, idx) => {
               const delays = ["delay-75", "delay-100", "delay-150", "delay-200"];
               return (
@@ -122,26 +122,26 @@ export default function ExploreGrid() {
                   key={idx}
                   href={item.href}
                   data-reveal="scale"
-                  className={`water-fill-card group relative p-6 sm:p-7 rounded-3xl bg-white/75 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_45px_rgba(0,194,232,0.18)] hover:border-cyan-400/40 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden ${delays[idx % delays.length]}`}
+                  className={`water-fill-card group relative p-3.5 sm:p-6 lg:p-7 rounded-2xl sm:rounded-3xl bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgba(0,194,232,0.18)] hover:border-cyan-400/40 hover:-translate-y-1 sm:hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden ${delays[idx % delays.length]}`}
                 >
-                  <div className="space-y-4">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-50/90 border border-slate-100 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition-transform">
+                  <div className="space-y-2.5 sm:space-y-4">
+                    <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-50/90 border border-slate-100 flex items-center justify-center text-lg sm:text-2xl shadow-inner group-hover:scale-110 transition-transform">
                       {item.icon}
                     </div>
 
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-bold text-slate-900 group-hover:text-cyan-600 transition-colors flex items-center justify-between">
+                    <div className="space-y-1 sm:space-y-2">
+                      <h3 className="text-xs sm:text-base lg:text-lg font-bold text-slate-900 group-hover:text-cyan-600 transition-colors flex items-center justify-between leading-snug">
                         <span>{item.title}</span>
-                        <ArrowUpRight className="w-4 h-4 opacity-0 -translate-x-2 translate-y-2 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all text-cyan-600" />
+                        <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 opacity-0 -translate-x-1.5 sm:-translate-x-2 translate-y-1.5 sm:translate-y-2 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all text-cyan-600 shrink-0" />
                       </h3>
-                      <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                      <p className="text-[10.5px] sm:text-xs lg:text-sm text-slate-500 leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-none">
                         {item.description}
                       </p>
                     </div>
                   </div>
 
                   {/* Bottom Subtle Glowing Line on Hover */}
-                  <div className="w-0 group-hover:w-full h-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mt-5 transition-all duration-300" />
+                  <div className="w-0 group-hover:w-full h-0.5 sm:h-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mt-3 sm:mt-5 transition-all duration-300" />
                 </Link>
               );
             })}

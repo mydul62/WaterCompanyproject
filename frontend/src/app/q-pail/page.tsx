@@ -44,7 +44,7 @@ export default function QPailPage() {
         {/* ============================================================ */}
         <section
           id="hero"
-          className="sticky top-0 z-0 w-full h-screen min-h-[640px] sm:min-h-[720px] lg:min-h-[800px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
+          className="relative lg:sticky lg:top-0 z-0 w-full min-h-[540px] sm:min-h-[640px] lg:h-screen lg:min-h-[800px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
         >
           {/* Background Image */}
           <div className="absolute inset-0 w-full h-full">
@@ -101,7 +101,7 @@ export default function QPailPage() {
         {/* Section 1: Logo, Heading & Specs - Lifts over Hero */}
         <section
           id="qpail-content"
-          className="relative z-10 w-full pt-14 pb-16 bg-white rounded-t-[32px] sm:rounded-t-[48px] shadow-[0_-25px_60px_rgba(0,0,0,0.22)] border-t border-white/60"
+          className="relative z-10 w-full pt-14 pb-16 bg-white rounded-t-[28px] sm:rounded-t-[36px] lg:rounded-t-[48px] shadow-sm lg:shadow-[0_-25px_60px_rgba(0,0,0,0.22)] border-t border-white/60"
         >
           <div className="w-full max-w-[1643px] mx-auto px-6 sm:px-12 text-center">
             {/* Q Pail Circular Logo matching Screenshot */}
