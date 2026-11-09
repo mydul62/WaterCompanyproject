@@ -113,8 +113,30 @@ export class ProductService {
   }
 
   static async create(payload: any) {
-    if (!payload.name || !payload.categoryId) {
-      throw new ApiError(400, "Product name and category are required.");
+    if (!payload.name) {
+      throw new ApiError(400, "Product name is required.");
+    }
+
+    let categoryId = payload.categoryId;
+    if (!categoryId && payload.category) {
+      const cat = await prisma.category.findFirst({
+        where: {
+          OR: [
+            { id: payload.category },
+            { slug: payload.category },
+            { name: payload.category },
+          ],
+        },
+      });
+      if (cat) categoryId = cat.id;
+    }
+    if (!categoryId) {
+      const firstCat = await prisma.category.findFirst();
+      if (firstCat) categoryId = firstCat.id;
+    }
+
+    if (!categoryId) {
+      throw new ApiError(400, "A valid product category is required.");
     }
 
     const slug =
@@ -132,7 +154,7 @@ export class ProductService {
         slug,
         sku: payload.sku || `SKU-${Date.now().toString().slice(-6)}`,
         description: payload.description || "",
-        categoryId: payload.categoryId,
+        categoryId,
         material: payload.material || "TINPLATE",
         capacityRange: payload.capacityRange || "Custom",
         neckSize: payload.neckSize || null,
@@ -140,7 +162,7 @@ export class ProductService {
         applications: typeof payload.applications === "string" ? payload.applications : JSON.stringify(payload.applications || []),
         features: typeof payload.features === "string" ? payload.features : JSON.stringify(payload.features || []),
         specifications: typeof payload.specifications === "string" ? payload.specifications : JSON.stringify(payload.specifications || {}),
-        imageUrl: payload.imageUrl || "/cropped/product-card-1.png",
+        imageUrl: payload.imageUrl || payload.image || "/cropped/product-card-1.png",
         galleryUrls: typeof payload.galleryUrls === "string" ? payload.galleryUrls : JSON.stringify(payload.galleryUrls || []),
         tdsPdfUrl: payload.tdsPdfUrl || null,
         isFeatured: payload.isFeatured === true,
@@ -174,6 +196,20 @@ export class ProductService {
       payload.slug = cleanSlug;
     }
 
+    let resolvedCategoryId = payload.categoryId;
+    if (!resolvedCategoryId && payload.category) {
+      const cat = await prisma.category.findFirst({
+        where: {
+          OR: [
+            { id: payload.category },
+            { slug: payload.category },
+            { name: payload.category },
+          ],
+        },
+      });
+      if (cat) resolvedCategoryId = cat.id;
+    }
+
     const updated = await prisma.product.update({
       where: { id },
       data: {
@@ -181,7 +217,7 @@ export class ProductService {
         slug: payload.slug ?? existing.slug,
         sku: payload.sku ?? existing.sku,
         description: payload.description ?? existing.description,
-        categoryId: payload.categoryId ?? existing.categoryId,
+        categoryId: resolvedCategoryId ?? existing.categoryId,
         material: payload.material ?? existing.material,
         capacityRange: payload.capacityRange ?? existing.capacityRange,
         neckSize: payload.neckSize ?? existing.neckSize,
@@ -195,7 +231,7 @@ export class ProductService {
         specifications: payload.specifications !== undefined
           ? (typeof payload.specifications === "string" ? payload.specifications : JSON.stringify(payload.specifications))
           : existing.specifications,
-        imageUrl: payload.imageUrl ?? existing.imageUrl,
+        imageUrl: payload.imageUrl ?? payload.image ?? existing.imageUrl,
         galleryUrls: payload.galleryUrls !== undefined
           ? (typeof payload.galleryUrls === "string" ? payload.galleryUrls : JSON.stringify(payload.galleryUrls))
           : existing.galleryUrls,

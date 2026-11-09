@@ -5,6 +5,7 @@ const router = Router();
 
 // Category routes
 router.get("/categories", ProductController.getCategories);
+router.get("/categories/all", ProductController.getCategories);
 router.post("/categories", ProductController.createCategory);
 router.put("/categories/:id", ProductController.updateCategory);
 router.delete("/categories/:id", ProductController.deleteCategory);

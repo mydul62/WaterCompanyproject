@@ -17,6 +17,20 @@ export class PageController {
     }
   }
 
+  static async getById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const page = await PageService.getEditorData(req.params.id);
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Page retrieved successfully.",
+        data: page,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
   static async getBySlug(req: Request, res: Response, next: NextFunction) {
     try {
       const page = await PageService.getBySlug(req.params.slug);
@@ -73,6 +87,20 @@ export class PageController {
     }
   }
 
+  static async saveDraft(req: Request, res: Response, next: NextFunction) {
+    try {
+      const page = await PageService.saveDraft(req.params.id, req.body);
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Draft saved successfully.",
+        data: page,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
   static async saveSections(req: Request, res: Response, next: NextFunction) {
     try {
       const { sections } = req.body;
@@ -88,15 +116,50 @@ export class PageController {
     }
   }
 
+  static async reorderSections(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { sections } = req.body;
+      const updated = await PageService.reorderSections(req.params.id, sections || []);
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Sections reordered successfully.",
+        data: updated,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
   static async publish(req: any, res: Response, next: NextFunction) {
     try {
-      const { notes } = req.body;
-      const published = await PageService.publishPage(req.params.id, notes, req.user?.name);
+      const { notes, publishedContent, draftContent } = req.body;
+      const published = await PageService.publishPage(req.params.id, {
+        notes,
+        author: req.user?.name || "Administrator",
+        publishedContent,
+        draftContent,
+      });
       return sendResponse(res, {
         statusCode: 200,
         success: true,
         message: "Page published successfully.",
         data: published,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async createRevision(req: any, res: Response, next: NextFunction) {
+    try {
+      const { note } = req.body;
+      const revision = await PageService.createRevision(req.params.id, note, req.user?.name);
+      return sendResponse(res, {
+        statusCode: 201,
+        success: true,
+        message: "Revision created successfully.",
+        data: revision,
       });
     } catch (err) {
       return next(err);
@@ -145,4 +208,3 @@ export class PageController {
     }
   }
 }
-

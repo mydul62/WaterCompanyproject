@@ -264,7 +264,7 @@ export default function ProductsPage() {
                 p.material?.toLowerCase().includes("steel")
                 ? "can"
                 : "bottle",
-            img: p.image || "/images/catalog/cat-prod-1.png",
+            img: p.imageUrl || p.image || "/images/catalog/cat-prod-1.png",
             slug: p.slug,
             spec: p.capacityRange || "",
           }));

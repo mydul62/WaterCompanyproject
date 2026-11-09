@@ -193,6 +193,29 @@ const AVAILABLE_PAGES: PageConfig[] = [
       { id: "footer", name: "4. Global Footer", selector: "footer" },
     ],
   },
+  {
+    key: "q-pail",
+    title: "Q Pail - Industrial Packaging",
+    slug: "/q-pail",
+    sections: [
+      { id: "qpail-hero", name: "1. Q Pail Hero Banner", selector: "#hero" },
+      { id: "qpail-specs", name: "2. Specs Table & Facility Photo Slider", selector: "main > div:nth-child(2)" },
+      { id: "qpail-history", name: "3. Company Journey & Brand Partners", selector: "main > div:nth-child(2) > div:nth-child(1) > div:nth-child(3)" },
+      { id: "qpail-print", name: "4. Printing Facilities (Screen, HTP, DOP)", selector: "main > div:nth-child(2) > div:nth-child(1) > div:nth-child(5)" },
+      { id: "footer", name: "5. Global Footer", selector: "footer" },
+    ],
+  },
+  {
+    key: "request-quote",
+    title: "Request a Quote (RFQ)",
+    slug: "/request-quote",
+    sections: [
+      { id: "rfq-hero", name: "1. RFQ Hero Banner", selector: "main > section:nth-child(1)" },
+      { id: "rfq-form", name: "2. Interactive RFQ Form & Configurator", selector: "main > section:nth-child(2)" },
+      { id: "rfq-contacts", name: "3. Direct Commercial Contacts & Fast-Track SLA", selector: "main > section:nth-child(3)" },
+      { id: "footer", name: "4. Global Footer", selector: "footer" },
+    ],
+  },
 ];
 
 export interface BreadcrumbItem {
@@ -298,14 +321,42 @@ export default function ElementorVisualEditor({
 
   const loadInitialData = async () => {
     try {
+      let combined: Record<string, any> = {};
+
       if (typeof window !== "undefined") {
         const cached = localStorage.getItem("waterweb_visual_overrides");
         if (cached) {
-          const parsed = JSON.parse(cached);
-          setOverrides(parsed);
-          setHistoryStack([parsed]);
-          setHistoryIndex(0);
+          try {
+            combined = JSON.parse(cached);
+          } catch (e) {}
         }
+      }
+
+      // Fetch page from database by slug or ID
+      const targetSlug = activePage.slug === "/" ? "home" : activePage.slug.replace(/^\//, "");
+      const pageRes = await api.pages.getBySlug(targetSlug).catch(() =>
+        api.pages.getById(pageParamId).catch(() => null)
+      );
+
+      if (pageRes?.data) {
+        const p = pageRes.data;
+        const dbContent = p.draftContent && p.draftContent !== "{}" ? p.draftContent : p.publishedContent;
+        if (dbContent && dbContent !== "{}") {
+          try {
+            const parsedDb = typeof dbContent === "string" ? JSON.parse(dbContent) : dbContent;
+            if (parsedDb[currentPageKey]) {
+              combined = { ...combined, ...parsedDb };
+            } else {
+              combined[currentPageKey] = { ...(combined[currentPageKey] || {}), ...parsedDb };
+            }
+          } catch (e) {}
+        }
+      }
+
+      if (Object.keys(combined).length > 0) {
+        setOverrides(combined);
+        setHistoryStack([combined]);
+        setHistoryIndex(0);
       }
 
       const linkRes = await api.links.getAll();
@@ -834,7 +885,18 @@ export default function ElementorVisualEditor({
       if (typeof window !== "undefined") {
         localStorage.setItem("waterweb_visual_overrides", JSON.stringify(overrides));
       }
-      await api.pages.saveDraft(pageParamId, Object.values(overrides[currentPageKey] || {}));
+
+      const targetSlug = activePage.slug === "/" ? "home" : activePage.slug.replace(/^\//, "");
+      await api.pages.saveDraft(targetSlug, {
+        draftContent: overrides,
+        pageKey: currentPageKey,
+      }).catch(async () => {
+        await api.pages.saveDraft(pageParamId, {
+          draftContent: overrides,
+          pageKey: currentPageKey,
+        });
+      });
+
       showNotification("Draft saved to backend database!");
     } catch (err) {
       showNotification("Draft state saved locally!");
@@ -849,12 +911,34 @@ export default function ElementorVisualEditor({
     try {
       if (typeof window !== "undefined") {
         localStorage.setItem("waterweb_visual_overrides", JSON.stringify(overrides));
+        localStorage.setItem("waterweb_live_published_overrides", JSON.stringify(overrides));
+
+        window.dispatchEvent(
+          new CustomEvent("cms-page-published", {
+            detail: { pageKey: currentPageKey, overrides },
+          })
+        );
+        try {
+          const bc = new BroadcastChannel("waterweb_cms_sync");
+          bc.postMessage({ type: "PAGE_PUBLISHED", pageKey: currentPageKey, overrides });
+          bc.close();
+        } catch (e) {}
       }
-      await api.pages.update(pageParamId, {
-        status: "PUBLISHED",
-        sections: Object.values(overrides[currentPageKey] || {}),
+
+      const targetSlug = activePage.slug === "/" ? "home" : activePage.slug.replace(/^\//, "");
+      await api.pages.publish(targetSlug, {
+        notes: `Published edits for ${activePage.title}`,
+        publishedContent: overrides,
+        draftContent: overrides,
+      }).catch(async () => {
+        await api.pages.publish(pageParamId, {
+          notes: `Published edits for ${activePage.title}`,
+          publishedContent: overrides,
+          draftContent: overrides,
+        });
       });
-      await api.pages.saveRevision(pageParamId, `Published edits for ${activePage.title}`);
+
+      await api.pages.saveRevision(targetSlug, `Published edits for ${activePage.title}`).catch(() => {});
       showNotification("Published live! Changes are visible on the public website.");
     } catch (err) {
       showNotification("Page published! (Synced to database)");

@@ -29,6 +29,8 @@ model Page {
   seoDescription String?
   seoKeywords    String?
   ogImage        String?
+  draftContent   String         @default("{}") // JSON string of visual overrides / draft state
+  publishedContent String       @default("{}") // JSON string of visual overrides / live state
   publishedAt    DateTime?
   sections       PageSection[]
   revisions      PageRevision[]

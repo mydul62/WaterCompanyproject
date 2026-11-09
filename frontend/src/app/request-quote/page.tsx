@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { CATALOG_PRODUCTS, getProductById, CatalogProduct } from "@/data/catalogData";
+import { api } from "@/lib/api";
 import {
   CheckCircle2,
   Clock,
@@ -61,13 +62,26 @@ function RequestQuoteContent() {
     selectedProduct ||
     CATALOG_PRODUCTS[0];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      await api.inquiries.submit({
+        companyName: formData.company || `${formData.firstName} ${formData.lastName}`.trim(),
+        contactPerson: `${formData.firstName} ${formData.lastName}`.trim() || formData.company,
+        email: formData.email,
+        phone: formData.phone,
+        category: currentProduct?.name || "Engineered Packaging",
+        volume: formData.quantity,
+        capacity: formData.material,
+        notes: `Product: ${currentProduct?.name} | Closure: ${formData.closure} | Country: ${formData.country} | Physical Sample: ${formData.needPhysicalSample ? "Yes" : "No"} | Notes: ${formData.comments}`,
+      });
+    } catch (e) {
+      console.warn("Could not submit to backend, proceeding with fallback confirmation:", e);
+    } finally {
       setIsSubmitting(false);
       setSubmitted(true);
-    }, 900);
+    }
   };
 
   return (

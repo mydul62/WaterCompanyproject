@@ -168,6 +168,7 @@ export default function AdminProductsPage() {
 
           return {
             ...p,
+            image: p.imageUrl || p.image || "/images/catalog/cat-prod-1.png",
             category: catSlug,
             categoryLabel: p.categoryLabel || catName,
             capacityRange: p.capacityRange || "Standard",

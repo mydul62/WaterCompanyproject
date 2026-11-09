@@ -168,6 +168,26 @@ const DEFAULT_PAGES: PageRecord[] = [
     updatedAt: new Date().toISOString(),
     _count: { sections: 4, revisions: 1 },
   },
+  {
+    id: "page-q-pail",
+    title: "Q Pail - Industrial Packaging Division",
+    slug: "/q-pail",
+    status: "PUBLISHED",
+    metaTitle: "Q Pail Limited | Industrial Injection Molded Pails & Drums",
+    metaDescription: "Heavy-duty plastic pails and airtight containers for paints, chemicals, and lubricants.",
+    updatedAt: new Date().toISOString(),
+    _count: { sections: 5, revisions: 2 },
+  },
+  {
+    id: "page-request-quote",
+    title: "Request a Quote (RFQ)",
+    slug: "/request-quote",
+    status: "PUBLISHED",
+    metaTitle: "Request an Engineered Container Quote | Fast SLA",
+    metaDescription: "Custom tin can, aerosol, and plastic pail quotations delivered within 24 hours.",
+    updatedAt: new Date().toISOString(),
+    _count: { sections: 4, revisions: 1 },
+  },
 ];
 
 export default function PageManagementPage() {

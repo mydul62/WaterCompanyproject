@@ -1,4 +1,4 @@
-// Centralized API Client for Xclusive Can Limited & Q Pail Platform
+ // Centralized API Client for Xclusive Can Limited & Q Pail Platform
 // Connects frontend to Express + Prisma Backend REST API
 
 const API_BASE_URL =
@@ -130,15 +130,21 @@ class ApiClient {
         method: "DELETE",
       });
     },
-    publish: async (id: string) => {
+    publish: async (id: string, data?: any) => {
       return this.request<any>(`/pages/${id}/publish`, {
         method: "POST",
+        body: data ? JSON.stringify(data) : undefined,
       });
     },
-    saveDraft: async (id: string, sections: any[]) => {
+    saveDraft: async (id: string, data: any) => {
+      const body = Array.isArray(data)
+        ? { sections: data }
+        : typeof data === "object"
+        ? data
+        : { draftContent: data };
       return this.request<any>(`/pages/${id}/draft`, {
         method: "POST",
-        body: JSON.stringify({ sections }),
+        body: JSON.stringify(body),
       });
     },
     reorderSections: async (id: string, sectionOrders: { id: string; sortOrder: number }[]) => {
@@ -225,25 +231,25 @@ class ApiClient {
   // Categories
   categories = {
     getAll: async () => {
-      return this.request<any[]>("/products/categories/all");
+      return this.request<any[]>("/categories");
     },
     getById: async (id: string) => {
-      return this.request<any>(`/products/categories/${id}`);
+      return this.request<any>(`/categories/${id}`);
     },
     create: async (data: any) => {
-      return this.request<any>("/products/categories", {
+      return this.request<any>("/categories", {
         method: "POST",
         body: JSON.stringify(data),
       });
     },
     update: async (id: string, data: any) => {
-      return this.request<any>(`/products/categories/${id}`, {
+      return this.request<any>(`/categories/${id}`, {
         method: "PUT",
         body: JSON.stringify(data),
       });
     },
     delete: async (id: string) => {
-      return this.request<any>(`/products/categories/${id}`, {
+      return this.request<any>(`/categories/${id}`, {
         method: "DELETE",
       });
     },
@@ -401,6 +407,52 @@ class ApiClient {
   analytics = {
     getOverview: async () => {
       return this.request<any>("/analytics/overview");
+    },
+  };
+
+  // Careers & Applications
+  careers = {
+    getAll: async () => {
+      return this.request<any[]>("/careers");
+    },
+    getById: async (id: string) => {
+      return this.request<any>(`/careers/${id}`);
+    },
+    create: async (data: any) => {
+      return this.request<any>("/careers", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    },
+    updateStatus: async (id: string, status: string) => {
+      return this.request<any>(`/careers/${id}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+      });
+    },
+    delete: async (id: string) => {
+      return this.request<any>(`/careers/${id}`, {
+        method: "DELETE",
+      });
+    },
+  };
+
+  // RFQ & Inquiries
+  inquiries = {
+    getAll: async () => {
+      return this.request<any[]>("/inquiries");
+    },
+    submit: async (data: any) => {
+      return this.request<any>("/inquiries", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    },
+    updateStatus: async (id: string, status: string) => {
+      return this.request<any>(`/inquiries/${id}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+      });
     },
   };
 }

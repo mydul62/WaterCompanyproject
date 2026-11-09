@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { X, Send, CheckCircle2, ShieldCheck, Upload, FileText, ArrowRight } from "lucide-react";
 import { ProductItem } from "@/data/companyData";
+import { api } from "@/lib/api";
 
 interface RFQDrawerProps {
   isOpen: boolean;
@@ -27,11 +28,17 @@ export default function RFQDrawer({ isOpen, onClose, initialProduct }: RFQDrawer
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const generated = `RFQ-2026-XCL-${Math.floor(1000 + Math.random() * 9000)}`;
-    setRfqNumber(generated);
-    setSubmitted(true);
+    const fallbackNumber = `RFQ-2026-XCL-${Math.floor(1000 + Math.random() * 9000)}`;
+    try {
+      const res = await api.inquiries.submit(formData);
+      setRfqNumber(res?.data?.id || fallbackNumber);
+    } catch (err) {
+      setRfqNumber(fallbackNumber);
+    } finally {
+      setSubmitted(true);
+    }
   };
 
   const handleReset = () => {

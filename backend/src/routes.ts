@@ -4,6 +4,7 @@ import { pageRoutes } from "./modules/pages/page.route";
 import { navigationRoutes } from "./modules/navigation/navigation.route";
 import { linkRoutes } from "./modules/links/link.route";
 import { productRoutes } from "./modules/product/product.route";
+import { categoryRoutes } from "./modules/product/category.route";
 import { mediaRoutes } from "./modules/media/media.route";
 import { settingsRoutes } from "./modules/settings/settings.route";
 import { userRoutes } from "./modules/user/user.route";
@@ -20,7 +21,7 @@ router.use("/pages", pageRoutes);
 router.use("/navigation", navigationRoutes);
 router.use("/links", linkRoutes);
 router.use("/products", productRoutes);
-router.use("/categories", productRoutes); // alias
+router.use("/categories", categoryRoutes);
 router.use("/media", mediaRoutes);
 router.use("/settings", settingsRoutes);
 router.use("/users", userRoutes);

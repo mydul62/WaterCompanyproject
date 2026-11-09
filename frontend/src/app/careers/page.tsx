@@ -6,6 +6,7 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import RFQDrawer from "@/components/rfq/RFQDrawer";
+import { api } from "@/lib/api";
 import {
   Briefcase,
   MapPin,
@@ -339,15 +340,10 @@ export default function CareerPage() {
     };
 
     try {
-      // 1. Attempt submitting to backend API
+      // 1. Submit to backend API
       try {
-        await fetch("http://localhost:5000/api/v1/careers", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+        await api.careers.create(payload);
       } catch (err) {
-        // Backend offline fallback - gracefully handled
         console.warn("Backend API sync skipped; saved locally:", err);
       }
 

@@ -28,7 +28,7 @@ export class AuthController {
 
   static async me(req: any, res: Response, next: NextFunction) {
     try {
-      const userId = req.user?.id;
+      const userId = req.user?.id || req.user?.userId;
       const user = await AuthService.getMe(userId);
       return sendResponse(res, {
         statusCode: 200,

@@ -496,6 +496,168 @@ async function main() {
         },
       ],
     },
+    {
+      title: "Product Catalog",
+      slug: "products",
+      description: "Explore our comprehensive portfolio of tin cans, aerosol containers, and plastic pails.",
+      status: "PUBLISHED",
+      sections: [
+        {
+          sectionType: "hero",
+          name: "Product Catalog Hero",
+          order: 1,
+          settings: JSON.stringify({ background: "#0f172a" }),
+          content: JSON.stringify({
+            title: "Industrial Packaging Portfolio",
+            subtitle: "Engineered for durability, chemical resistance, and premium shelf appeal.",
+          }),
+        },
+      ],
+    },
+    {
+      title: "Press & Media Coverage",
+      slug: "media",
+      description: "National news features, press releases, factory inauguration stories, and media gallery.",
+      status: "PUBLISHED",
+      sections: [
+        {
+          sectionType: "hero",
+          name: "Media Hero",
+          order: 1,
+          settings: JSON.stringify({ background: "#0f172a" }),
+          content: JSON.stringify({
+            title: "Press & Media Center",
+            subtitle: "Latest industrial milestones and news clippings featuring Xclusive Can & Q Pail.",
+          }),
+        },
+      ],
+    },
+    {
+      title: "Research & Development (R&D)",
+      slug: "rnd",
+      description: "Advanced tooling, polymer testing, structural finite element analysis, and sustainability research.",
+      status: "PUBLISHED",
+      sections: [
+        {
+          sectionType: "hero",
+          name: "R&D Hero Banner",
+          order: 1,
+          settings: JSON.stringify({ background: "#020617" }),
+          content: JSON.stringify({
+            title: "Pioneering Precision Packaging",
+            subtitle: "European tooling labs and in-house polymer research driving packaging performance.",
+          }),
+        },
+      ],
+    },
+    {
+      title: "Tool Room Facility",
+      slug: "tool-room",
+      description: "State-of-the-art mold making, CNC milling, wire EDM, and precision optical inspection.",
+      status: "PUBLISHED",
+      sections: [
+        {
+          sectionType: "hero",
+          name: "Tool Room Hero",
+          order: 1,
+          settings: JSON.stringify({ background: "#020617" }),
+          content: JSON.stringify({
+            title: "Precision Tool Room & Mold Engineering",
+            subtitle: "Sub-micron tolerance die crafting with Japanese CNC and Swiss EDM machinery.",
+          }),
+        },
+      ],
+    },
+    {
+      title: "Frequently Asked Questions (FAQs)",
+      slug: "faqs",
+      description: "Common questions about ordering, minimum order quantities (MOQ), tooling, and deliveries.",
+      status: "PUBLISHED",
+      sections: [
+        {
+          sectionType: "hero",
+          name: "FAQs Hero",
+          order: 1,
+          settings: JSON.stringify({ background: "#0f172a" }),
+          content: JSON.stringify({
+            title: "Knowledge Hub & FAQ",
+            subtitle: "Answers to common commercial, technical, and logistics inquiries.",
+          }),
+        },
+      ],
+    },
+    {
+      title: "Case Studies & Client Impact",
+      slug: "case-studies",
+      description: "Real-world packaging transformations for Berger, Asian Paints, Radiant Pharma, and Square.",
+      status: "PUBLISHED",
+      sections: [
+        {
+          sectionType: "hero",
+          name: "Case Studies Hero",
+          order: 1,
+          settings: JSON.stringify({ background: "#0f172a" }),
+          content: JSON.stringify({
+            title: "Proven Impact & Case Studies",
+            subtitle: "How our packaging innovations reduced leakage, cut costs, and protected product integrity.",
+          }),
+        },
+      ],
+    },
+    {
+      title: "Blog & Technical Insights",
+      slug: "blog",
+      description: "Technical articles on tinplate corrosion inhibition, barrier properties of virgin HDPE, and recycling.",
+      status: "PUBLISHED",
+      sections: [
+        {
+          sectionType: "hero",
+          name: "Blog Hero",
+          order: 1,
+          settings: JSON.stringify({ background: "#0f172a" }),
+          content: JSON.stringify({
+            title: "Engineering Insights & Articles",
+            subtitle: "Technical papers and industry trends in metal lithography and plastic polymers.",
+          }),
+        },
+      ],
+    },
+    {
+      title: "Q Pail - Industrial Packaging Division",
+      slug: "q-pail",
+      description: "Specialized HDPE and PP plastic injection-molded buckets, drums, and pails.",
+      status: "PUBLISHED",
+      sections: [
+        {
+          sectionType: "hero",
+          name: "Q Pail Hero",
+          order: 1,
+          settings: JSON.stringify({ background: "#0f172a" }),
+          content: JSON.stringify({
+            title: "Q Pail Limited",
+            subtitle: "Heavy-duty plastic pails and airtight containers for paints, chemicals, and food.",
+          }),
+        },
+      ],
+    },
+    {
+      title: "Request a Quote (RFQ)",
+      slug: "request-quote",
+      description: "Submit custom container specifications and get an expedited quotation within 24 hours.",
+      status: "PUBLISHED",
+      sections: [
+        {
+          sectionType: "hero",
+          name: "RFQ Hero",
+          order: 1,
+          settings: JSON.stringify({ background: "#0f172a" }),
+          content: JSON.stringify({
+            title: "Request an Engineered Quote",
+            subtitle: "Tell us your volume, material requirements, and printing specifications.",
+          }),
+        },
+      ],
+    },
   ];
 
   for (const p of pagesData) {

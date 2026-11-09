@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { api } from "@/lib/api";
 import {
   LayoutDashboard,
   Layers,
@@ -69,7 +70,28 @@ const NAVIGATION_GROUPS: NavGroup[] = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (pathname === "/admin/login") return;
+    const token = typeof window !== "undefined" ? localStorage.getItem("waterweb_admin_token") : null;
+    const hasCookie = typeof document !== "undefined" && document.cookie.includes("xcl_token");
+    if (!token && !hasCookie) {
+      router.push("/admin/login");
+    }
+  }, [pathname, router]);
+
+  const handleSignOut = async () => {
+    try {
+      await api.auth.logout();
+    } catch (e) {}
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("waterweb_admin_token");
+      localStorage.removeItem("waterweb_admin_user");
+    }
+    router.push("/admin/login");
+  };
 
   // If in visual page builder full-screen mode, let it take full viewport
   const isBuilder = pathname.includes("/builder");
@@ -164,13 +186,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <span className="text-[9px] text-slate-500">Gazipur HQ System</span>
               </div>
             </div>
-            <Link
-              href="/admin/login"
-              className="text-slate-500 hover:text-red-400 transition-colors p-1"
+            <button
+              onClick={handleSignOut}
+              className="text-slate-500 hover:text-red-400 transition-colors p-1 cursor-pointer"
               title="Sign Out"
             >
               <LogOut className="w-3.5 h-3.5" />
-            </Link>
+            </button>
           </div>
         </div>
       </aside>

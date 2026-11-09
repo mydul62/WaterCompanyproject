@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SmoothScroll from "@/components/common/SmoothScroll";
 import ScrollRevealProvider from "@/components/common/ScrollRevealProvider";
+import LivePageHydrator from "@/components/cms/LivePageHydrator";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -42,7 +43,10 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-white text-slate-900 antialiased selection:bg-cyan-500 selection:text-white" style={{ fontFamily: "'Ubuntu', sans-serif" }}>
         <SmoothScroll>
-          <ScrollRevealProvider>{children}</ScrollRevealProvider>
+          <ScrollRevealProvider>
+            <LivePageHydrator />
+            {children}
+          </ScrollRevealProvider>
         </SmoothScroll>
       </body>
     </html>
