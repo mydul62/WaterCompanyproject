@@ -53,7 +53,7 @@ const FAQS_DATA: FaqItem[] = [
     category: "Custom Tooling & R&D",
     question: "How long does custom mold design and tooling development take in your in-house Tool Room?",
     answer:
-      "Because Xclusive Can operates a fully integrated in-house Tool Room equipped with 5-axis CNC machining, wire EDM spark erosion, and optical CMM metrology, our tooling lead time is among the fastest in South Asia. Typical timeline:\n• 3D CAD & Moldflow Simulation: 3–5 working days\n• Tooling Machining & EDM Spark Cutting: 10–14 working days\n• Manual Lapping, Fitting & Pilot Trial: 4–6 working days\nOverall tooling turnaround is generally 3 to 4 weeks from final CAD approval to first pilot articles.",
+      "Because Noor Plastic Industries operates an integrated in-house Tool Room equipped with 5-axis CNC machining, wire EDM spark erosion, and optical CMM metrology, our tooling lead time is among the fastest in Bangladesh. Typical timeline:\n• 3D CAD & Moldflow Simulation: 3–5 working days\n• Tooling Machining & EDM Spark Cutting: 10–14 working days\n• Manual Lapping, Fitting & Pilot Trial: 4–6 working days\nOverall tooling turnaround is generally 3 to 4 weeks from final CAD approval to first pilot articles.",
     tags: ["Tooling", "CNC", "Lead Time", "In-House Tool Room"],
   },
   {
@@ -67,9 +67,9 @@ const FAQS_DATA: FaqItem[] = [
   {
     id: "faq-5",
     category: "Quality & Certifications",
-    question: "Which international food-grade and environmental certifications does Xclusive Can hold?",
+    question: "Which international food-grade and environmental certifications does Noor Plastic Industries hold?",
     answer:
-      "Our Gazipur and Tongi manufacturing campuses operate under world-class international standards, including:\n• USGBC LEED Platinum Certification (Green Campus & Carbon-Conscious Operations)\n• ISO 9001:2015 (Total Quality Management)\n• ISO 14001:2015 (Environmental Management System)\n• FSSC 22000 & HACCP (Food Safety Packaging Compliance)\n• UN-Hazardous Materials Packaging Certification (For chemical and solvent drums)\n• DGDA Cleanroom Standards (Class 100k sterile pharmaceutical production).",
+      "Our Kaliakoir, Gazipur manufacturing campus operates under world-class international standards, including:\n• ISO 9001:2015 (Total Quality Management)\n• ISO 14001:2015 (Environmental Management System)\n• FSSC 22000 & HACCP (Food-Grade Packaging & Water Dispenser Compliance)\n• BSTI & e-Trade Licensed Commercial Compliance\n• DGDA Cleanroom Standards (Class 100k sterile pharmaceutical production).",
     tags: ["LEED Platinum", "ISO 9001", "FSSC 22000", "Food Grade", "UN Hazmat"],
   },
   {
@@ -85,7 +85,7 @@ const FAQS_DATA: FaqItem[] = [
     category: "Delivery & Logistics",
     question: "What are standard delivery lead times across Bangladesh and export markets?",
     answer:
-      "For repeat orders of cataloged products, dispatch from our Gazipur and Tongi distribution centers occurs within 3 to 7 business days. For specialized seasonal runs, delivery schedules are aligned with client enterprise ERP forecasts. We maintain dedicated fleet logistics covering all major industrial corridors across Dhaka, Chittagong, Narayanganj, and Bogra, with direct port logistics for export consignments.",
+      "For repeat orders of cataloged products, dispatch from our Kaliakoir, Gazipur distribution center occurs within 3 to 7 business days. For specialized seasonal runs, delivery schedules are aligned with client enterprise forecasts. We maintain dedicated fleet logistics covering Dhaka, Gazipur, Chattagong, Narayanganj, and key industrial corridors.",
     tags: ["Delivery", "Logistics", "Supply Chain", "Export"],
   },
   {
@@ -400,7 +400,7 @@ export default function FaqsPage() {
                   Request a Quote
                 </Link>
                 <a
-                  href="tel:+8801819343635"
+                  href="tel:+8801711987275"
                   className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm border border-white/20 text-center transition-all flex items-center justify-center gap-2"
                 >
                   <Phone className="w-4 h-4 text-cyan-300" />

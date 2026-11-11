@@ -1,9 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Play, X, Droplets } from "lucide-react";
 import { api } from "@/lib/api";
+import {
+  HeroSlide,
+  DEFAULT_HERO_BANNERS,
+  LOCAL_BANNER_STORAGE_KEY,
+  BANNERS_UPDATED_EVENT,
+  normalizeHeroSlide,
+  resolveBannerMediaUrl,
+  getLocalBanners,
+} from "@/data/heroBanners";
 
 const DEFAULT_HERO_YOUTUBE_EMBED =
   "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0";
@@ -62,74 +71,6 @@ function resolveHeroVideoSource(rawUrl: string): {
   }
 }
 
-interface HeroSlide {
-  id: string;
-  num: string;
-  lines: [string, string, string];
-  description: string;
-  readMoreHref: string;
-  offerEyebrow1: string;
-  offerEyebrow2: string;
-  offerPrice: string;
-  offerUnit: string;
-  visualLayout: "duo" | "trio";
-}
-
-const SLIDES: HeroSlide[] = [
-  {
-    id: "slide-1",
-    num: "01",
-    lines: ["Delivered Right", "To Your Home &", "Office Door."],
-    description:
-      "Duty obligations of business will frequently occur pleasures be repudiated and annoyances accepted.",
-    readMoreHref: "/products",
-    offerEyebrow1: "Limited",
-    offerEyebrow2: "Time Offer",
-    offerPrice: "$15.50",
-    offerUnit: "Per bottle",
-    visualLayout: "duo",
-  },
-  {
-    id: "slide-2",
-    num: "02",
-    lines: ["Aguapure Dealer", "Is Closer Than", "You Think"],
-    description:
-      "Quisque semper nulla sit amet dignissim efficitur. Fusce ac enim quis purus volutpat finibus.",
-    readMoreHref: "/our-business",
-    offerEyebrow1: "Limited",
-    offerEyebrow2: "Time Offer",
-    offerPrice: "$15.50",
-    offerUnit: "Per bottle",
-    visualLayout: "duo",
-  },
-  {
-    id: "slide-3",
-    num: "03",
-    lines: ["100% Pure Water", "Sealed Fresh For", "Every Occasion."],
-    description:
-      "Precision multi-stage filtration and certified cleanroom bottling engineered for daily home and office hydration.",
-    readMoreHref: "/certificates",
-    offerEyebrow1: "Special",
-    offerEyebrow2: "Bulk Offer",
-    offerPrice: "$14.00",
-    offerUnit: "Per bottle",
-    visualLayout: "duo",
-  },
-  {
-    id: "slide-4",
-    num: "04",
-    lines: ["Bulk 3-Bottle", "Family & Office", "Water Packs."],
-    description:
-      "Triple-bottle 5-gallon purified mineral water bundles delivered straight to your home or workplace.",
-    readMoreHref: "/products",
-    offerEyebrow1: "Special",
-    offerEyebrow2: "Bulk Offer",
-    offerPrice: "$39.00",
-    offerUnit: "3 Bottles",
-    visualLayout: "trio",
-  },
-];
-
 // Deterministic ambient bubble parameters so SSR and CSR hydrate identically
 const AMBIENT_BUBBLES = [
   { left: "16%", bottom: "12%", size: 10, dur: "10.5s", delay: "0.4s" },
@@ -145,20 +86,64 @@ const AMBIENT_BUBBLES = [
 ];
 
 export default function HeroSlider() {
+  const [slides, setSlides] = useState<HeroSlide[]>(DEFAULT_HERO_BANNERS);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
-  const [videoUrl, setVideoUrl] = useState("");
+  const [globalVideoUrl, setGlobalVideoUrl] = useState("");
+
+  const loadBanners = useCallback(async () => {
+    try {
+      const res = await api.banners.getPublic();
+      if (Array.isArray(res?.data)) {
+        const active = res.data
+          .map((item, idx) => normalizeHeroSlide(item, idx))
+          .filter((s) => s.isActive);
+        setSlides(active.length > 0 ? active : DEFAULT_HERO_BANNERS);
+        return;
+      }
+    } catch {
+      const local = getLocalBanners();
+      if (local) {
+        const active = local.filter((s) => s.isActive);
+        setSlides(active.length > 0 ? active : DEFAULT_HERO_BANNERS);
+      }
+    }
+  }, []);
 
   useEffect(() => {
+    loadBanners();
+
     api.settings
       .getMap()
       .then((res) => {
         if (res?.data?.["hero_video_url"]) {
-          setVideoUrl(res.data["hero_video_url"]);
+          setGlobalVideoUrl(res.data["hero_video_url"]);
         }
       })
       .catch(() => {});
-  }, []);
+
+    const handleBannerSync = () => {
+      loadBanners();
+    };
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === LOCAL_BANNER_STORAGE_KEY) {
+        loadBanners();
+      }
+    };
+
+    window.addEventListener(BANNERS_UPDATED_EVENT, handleBannerSync);
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      window.removeEventListener(BANNERS_UPDATED_EVENT, handleBannerSync);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, [loadBanners]);
+
+  useEffect(() => {
+    if (activeIndex >= slides.length && slides.length > 0) {
+      setActiveIndex(0);
+    }
+  }, [slides.length, activeIndex]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -170,14 +155,26 @@ export default function HeroSlider() {
 
   // Auto-advance slides every 7.5s (pauses only while video modal is open)
   useEffect(() => {
-    if (isVideoOpen) return;
+    if (isVideoOpen || slides.length <= 1) return;
     const timer = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % SLIDES.length);
+      setActiveIndex((prev) => (prev + 1) % slides.length);
     }, 7500);
     return () => clearInterval(timer);
-  }, [activeIndex, isVideoOpen]);
+  }, [activeIndex, isVideoOpen, slides.length]);
 
-  const currentSlide = SLIDES[activeIndex];
+  const safeIndex = activeIndex < slides.length ? activeIndex : 0;
+  const currentSlide = slides[safeIndex] || DEFAULT_HERO_BANNERS[0];
+
+  const bgImg = resolveBannerMediaUrl(
+    currentSlide.backgroundImage || "/images/hero/hero-bubbles-bg.jpg"
+  );
+  const platformImg = resolveBannerMediaUrl(
+    currentSlide.platformImage || "/images/hero/hero-splash-platform.jpg"
+  );
+  const fgImg = resolveBannerMediaUrl(currentSlide.foregroundImage);
+  const secondaryImg = resolveBannerMediaUrl(
+    currentSlide.secondaryImage || "/images/hero/bottle-horizontal.png"
+  );
 
   return (
     <section
@@ -187,7 +184,7 @@ export default function HeroSlider() {
       {/* Stage 0 (0.0s): Full-Bleed Underwater Bubbles Background + Oceanic Depth */}
       <div className="hero-anim-bg absolute inset-0 z-0 pointer-events-none">
         <img
-          src="/images/hero/hero-bubbles-bg.jpg"
+          src={bgImg}
           alt="Underwater blue ripples and rising bubbles"
           className="w-full h-full object-cover object-center"
         />
@@ -222,14 +219,15 @@ export default function HeroSlider() {
         aria-label="Hero slides navigation"
         className="hidden md:flex flex-col items-center justify-center gap-8 absolute left-0 top-0 bottom-0 w-[74px] lg:w-[82px] xl:w-[92px] bg-[#2163B5]/35 backdrop-blur-[2px] border-r border-white/10 z-30 pt-24"
       >
-        {SLIDES.map((slide, idx) => {
-          const isActive = idx === activeIndex;
+        {slides.map((slide, idx) => {
+          const isActive = idx === safeIndex;
+          const displayNum = slide.num || String(idx + 1).padStart(2, "0");
           return (
             <button
               key={slide.id}
               type="button"
               onClick={() => setActiveIndex(idx)}
-              aria-label={`View slide ${slide.num}`}
+              aria-label={`View slide ${displayNum}`}
               aria-current={isActive ? "true" : undefined}
               className={`text-[15px] xl:text-[16px] tracking-[0.06em] transition-all duration-300 cursor-pointer px-3 py-1.5 ${
                 isActive
@@ -237,7 +235,7 @@ export default function HeroSlider() {
                   : "text-white/85 hover:text-white font-medium"
               }`}
             >
-              {slide.num}
+              {displayNum}
             </button>
           );
         })}
@@ -253,15 +251,21 @@ export default function HeroSlider() {
           <div className="w-full lg:w-[50%] pl-1 md:pl-16 lg:pl-14 xl:pl-16 z-20">
             {/* Stage 1 (0.35s+): Slow Staggered Headline Drop from Top */}
             <h1 className="font-hero-display text-white font-normal text-[38px] sm:text-[50px] lg:text-[60px] xl:text-[68px] leading-[1.12] tracking-[-0.01em] mb-6">
-              <span className="hero-anim-line-1 block">
-                {currentSlide.lines[0]}
-              </span>
-              <span className="hero-anim-line-2 block">
-                {currentSlide.lines[1]}
-              </span>
-              <span className="hero-anim-line-3 block">
-                {currentSlide.lines[2]}
-              </span>
+              {currentSlide.lines[0] && (
+                <span className="hero-anim-line-1 block">
+                  {currentSlide.lines[0]}
+                </span>
+              )}
+              {currentSlide.lines[1] && (
+                <span className="hero-anim-line-2 block">
+                  {currentSlide.lines[1]}
+                </span>
+              )}
+              {currentSlide.lines[2] && (
+                <span className="hero-anim-line-3 block">
+                  {currentSlide.lines[2]}
+                </span>
+              )}
             </h1>
 
             {/* Stage 2 (0.95s): Supporting Description */}
@@ -273,11 +277,11 @@ export default function HeroSlider() {
             <div className="hero-anim-actions flex flex-wrap items-center gap-7 sm:gap-10">
               {/* READ MORE with Pale-Cyan Tilted Leaf Accent */}
               <Link
-                href={currentSlide.readMoreHref}
+                href={currentSlide.readMoreHref || "/products"}
                 className="relative inline-flex items-center group py-1.5 cursor-pointer"
               >
                 <span className="relative z-10 text-[13.5px] sm:text-[14px] font-bold uppercase tracking-[0.08em] text-white group-hover:text-[#CBEFFF] transition-colors pr-1.5">
-                  READ MORE
+                  {currentSlide.readMoreLabel || "READ MORE"}
                 </span>
                 <span
                   aria-hidden="true"
@@ -296,10 +300,10 @@ export default function HeroSlider() {
                 </span>
                 <span className="flex flex-col leading-tight">
                   <span className="text-[13px] sm:text-[14px] font-bold uppercase tracking-[0.07em] text-white group-hover:text-[#CBEFFF] transition-colors">
-                    WATCH VIDEO
+                    {currentSlide.watchVideoLabel || "WATCH VIDEO"}
                   </span>
                   <span className="text-[13.5px] sm:text-[14.5px] text-white/80 font-normal mt-0.5">
-                    Production to Delivery
+                    {currentSlide.watchVideoSub || "Production to Delivery"}
                   </span>
                 </span>
               </button>
@@ -307,8 +311,9 @@ export default function HeroSlider() {
 
             {/* Mobile Slide Controls (< md) */}
             <div className="flex md:hidden items-center gap-3 mt-7">
-              {SLIDES.map((slide, idx) => {
-                const isActive = idx === activeIndex;
+              {slides.map((slide, idx) => {
+                const isActive = idx === safeIndex;
+                const displayNum = slide.num || String(idx + 1).padStart(2, "0");
                 return (
                   <button
                     key={slide.id}
@@ -320,7 +325,7 @@ export default function HeroSlider() {
                         : "bg-white/15 text-white/85"
                     }`}
                   >
-                    {slide.num}
+                    {displayNum}
                   </button>
                 );
               })}
@@ -329,24 +334,24 @@ export default function HeroSlider() {
         </div>
 
         {/* Right Visual Composition (Splash Platform + Bottles + Offer Badge) */}
-        {/* Desktop: Anchored Bottom-Right exactly matching reference proportions */}
         <div className="relative mt-6 lg:mt-0 ml-auto w-[94%] sm:w-[82%] lg:w-[46.5%] xl:w-[45%] h-[280px] sm:h-[340px] lg:h-[58%] lg:max-h-[640px] lg:absolute lg:right-0 lg:bottom-0 z-20 pointer-events-none">
           {/* Stage 4 (1.35s): Water Splash Platform Sliding in Smoothly from RIGHT */}
           <div className="hero-anim-platform absolute inset-0 rounded-tl-[26px] lg:rounded-tl-[32px] overflow-hidden shadow-[-16px_-10px_42px_rgba(3,30,74,0.28)] bg-[#CFE7FA]">
             <img
-              src="/images/hero/hero-splash-platform.jpg"
+              src={platformImg}
               alt="Crystal clear water splash platform"
               className="w-full h-full object-cover object-center"
             />
           </div>
 
-          {currentSlide.visualLayout === "trio" ? (
-            /* Stage 5 (1.85s): Three Standing 5-Gallon Bottles Trio Rising from Bottom */
+          {currentSlide.visualLayout === "trio" ||
+          currentSlide.visualLayout === "custom" ? (
+            /* Trio or Custom Single Showcase Image Rising from Bottom */
             <div className="hero-anim-bottle-vertical absolute inset-x-0 mx-auto bottom-[6%] h-[112%] sm:h-[114%] lg:h-[118%] w-[88%] z-30 flex items-end justify-center">
               <img
-                src="/images/hero/bottles-trio.png"
-                alt="3-Pack 5-Gallon 100% Pure Water bottles"
-                className="max-h-full w-auto max-w-full object-contain drop-shadow-[0_18px_28px_rgba(3,38,94,0.34)]"
+                src={fgImg}
+                alt={currentSlide.lines.filter(Boolean).join(" ")}
+                className="max-h-full w-auto max-w-full object-contain rounded-2xl drop-shadow-[0_18px_28px_rgba(3,38,94,0.34)]"
               />
             </div>
           ) : (
@@ -354,7 +359,7 @@ export default function HeroSlider() {
               {/* Stage 6 (2.05s): Horizontal Lying 5-Gallon Bottle Behind Standing Jug */}
               <div className="hero-anim-bottle-horizontal absolute right-[1%] bottom-[12%] w-[57%] z-20">
                 <img
-                  src="/images/hero/bottle-horizontal.png"
+                  src={secondaryImg}
                   alt="5-Gallon horizontal water dispenser bottle"
                   className="w-full h-auto object-contain drop-shadow-[0_14px_22px_rgba(4,48,108,0.28)]"
                 />
@@ -363,7 +368,7 @@ export default function HeroSlider() {
               {/* Stage 5 (1.85s): Standing Vertical 5-Gallon Bottle Rising from Bottom */}
               <div className="hero-anim-bottle-vertical absolute left-[12%] sm:left-[13%] bottom-[6.5%] h-[116%] lg:h-[122%] z-30 flex items-end">
                 <img
-                  src="/images/hero/bottle-vertical.png"
+                  src={fgImg}
                   alt="5-Gallon 100% Pure Water bottle"
                   className="h-full w-auto object-contain drop-shadow-[0_18px_28px_rgba(3,38,94,0.34)]"
                 />
@@ -372,90 +377,96 @@ export default function HeroSlider() {
           )}
 
           {/* Stage 7 (2.75s): Circular Promotional Offer Badge Overlapping Standing Shoulder */}
-          <div
-            className={`hero-anim-badge absolute z-40 ${
-              currentSlide.visualLayout === "trio"
-                ? "left-[57%] sm:left-[58%] -top-[10%] lg:-top-[9%] xl:-top-[10%]"
-                : "left-[34%] -top-[11%] lg:-top-[10%] xl:-top-[11%]"
-            }`}
-          >
-            <div className="relative flex items-center justify-center">
-              {/* Thin Offset Concentric Outer Circle Ring (Reference Detail) */}
-              <div
-                aria-hidden="true"
-                className="w-[104px] h-[104px] sm:w-[126px] sm:h-[126px] lg:w-[138px] lg:h-[138px] xl:w-[152px] xl:h-[152px] rounded-full border border-[#094E9B]/85 absolute translate-x-[5px] -translate-y-[4px] pointer-events-none"
-              />
-              {/* Main Deep Royal-Blue Offer Badge Disc */}
-              <div className="relative w-[100px] h-[100px] sm:w-[122px] sm:h-[122px] lg:w-[134px] lg:h-[134px] xl:w-[148px] xl:h-[148px] rounded-full bg-gradient-to-br from-[#0657AF] via-[#04499A] to-[#013B82] shadow-[0_14px_34px_rgba(2,28,72,0.38)] flex flex-col items-center justify-center text-center text-white px-2">
-                <span className="text-[11px] sm:text-[12.5px] xl:text-[14px] font-medium leading-[1.2] text-[#E4FFFF]">
-                  {currentSlide.offerEyebrow1}
-                </span>
-                <span className="text-[11px] sm:text-[12.5px] xl:text-[14px] font-medium leading-[1.2] text-[#E4FFFF]">
-                  {currentSlide.offerEyebrow2}
-                </span>
-                <span className="text-[22px] sm:text-[26px] xl:text-[31px] font-bold leading-none my-1 tracking-tight text-white">
-                  {currentSlide.offerPrice}
-                </span>
-                <span className="text-[11px] sm:text-[12px] xl:text-[13px] font-normal text-white/90 leading-none">
-                  {currentSlide.offerUnit}
-                </span>
+          {currentSlide.showOfferBadge && (
+            <div
+              className={`hero-anim-badge absolute z-40 ${
+                currentSlide.visualLayout === "trio" ||
+                currentSlide.visualLayout === "custom"
+                  ? "left-[57%] sm:left-[58%] -top-[10%] lg:-top-[9%] xl:-top-[10%]"
+                  : "left-[34%] -top-[11%] lg:-top-[10%] xl:-top-[11%]"
+              }`}
+            >
+              <div className="relative flex items-center justify-center">
+                {/* Thin Offset Concentric Outer Circle Ring */}
+                <div
+                  aria-hidden="true"
+                  className="w-[104px] h-[104px] sm:w-[126px] sm:h-[126px] lg:w-[138px] lg:h-[138px] xl:w-[152px] xl:h-[152px] rounded-full border border-[#094E9B]/85 absolute translate-x-[5px] -translate-y-[4px] pointer-events-none"
+                />
+                {/* Main Deep Royal-Blue Offer Badge Disc */}
+                <div className="relative w-[100px] h-[100px] sm:w-[122px] sm:h-[122px] lg:w-[134px] lg:h-[134px] xl:w-[148px] xl:h-[148px] rounded-full bg-gradient-to-br from-[#0657AF] via-[#04499A] to-[#013B82] shadow-[0_14px_34px_rgba(2,28,72,0.38)] flex flex-col items-center justify-center text-center text-white px-2">
+                  <span className="text-[11px] sm:text-[12.5px] xl:text-[14px] font-medium leading-[1.2] text-[#E4FFFF]">
+                    {currentSlide.offerEyebrow1}
+                  </span>
+                  <span className="text-[11px] sm:text-[12.5px] xl:text-[14px] font-medium leading-[1.2] text-[#E4FFFF]">
+                    {currentSlide.offerEyebrow2}
+                  </span>
+                  <span className="text-[22px] sm:text-[26px] xl:text-[31px] font-bold leading-none my-1 tracking-tight text-white">
+                    {currentSlide.offerPrice}
+                  </span>
+                  <span className="text-[11px] sm:text-[12px] xl:text-[13px] font-normal text-white/90 leading-none">
+                    {currentSlide.offerUnit}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
       {/* Video / Production-to-Delivery Modal */}
-      {isVideoOpen && (() => {
-        const media = resolveHeroVideoSource(videoUrl);
-        return (
-          <div
-            className="fixed inset-0 z-[100] bg-[#041836]/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
-            onClick={() => setIsVideoOpen(false)}
-          >
+      {isVideoOpen &&
+        (() => {
+          const media = resolveHeroVideoSource(
+            currentSlide.videoUrl || globalVideoUrl
+          );
+          return (
             <div
-              className="relative w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl border border-white/20"
-              onClick={(e) => e.stopPropagation()}
+              className="fixed inset-0 z-[100] bg-[#041836]/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
+              onClick={() => setIsVideoOpen(false)}
             >
-              <div className="bg-[#0E489C] text-white px-6 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <Droplets className="w-5 h-5 text-[#75B5F5]" />
-                  <h3 className="font-hero-display text-xl sm:text-2xl tracking-wide">
-                    Production to Delivery
-                  </h3>
+              <div
+                className="relative w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl border border-white/20"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="bg-[#0E489C] text-white px-6 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <Droplets className="w-5 h-5 text-[#75B5F5]" />
+                    <h3 className="font-hero-display text-xl sm:text-2xl tracking-wide">
+                      {currentSlide.watchVideoSub || "Production to Delivery"}
+                    </h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsVideoOpen(false)}
+                    aria-label="Close modal"
+                    className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center cursor-pointer transition-colors"
+                  >
+                    <X className="w-4.5 h-4.5" />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setIsVideoOpen(false)}
-                  aria-label="Close modal"
-                  className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center cursor-pointer transition-colors"
-                >
-                  <X className="w-4.5 h-4.5" />
-                </button>
-              </div>
 
-              <div className="aspect-video w-full bg-black">
-                {media.type === "video" ? (
-                  <video
-                    src={media.src}
-                    controls
-                    autoPlay
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <iframe
-                    src={media.src}
-                    title="Production to Delivery Video"
-                    className="w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                    allowFullScreen
-                  />
-                )}
+                <div className="aspect-video w-full bg-black">
+                  {media.type === "video" ? (
+                    <video
+                      src={media.src}
+                      controls
+                      autoPlay
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <iframe
+                      src={media.src}
+                      title="Production to Delivery Video"
+                      className="w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                      allowFullScreen
+                    />
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })()}
+          );
+        })()}
     </section>
   );
 }

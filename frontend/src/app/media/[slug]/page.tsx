@@ -4,7 +4,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { PRESS_STORIES, getStoryBySlug } from "@/data/mediaData";
+import {
+  PRESS_STORIES,
+  PressStory,
+  getStoryBySlug,
+  normalizePressStory,
+} from "@/data/mediaData";
 import {
   Calendar,
   Clock,
@@ -23,21 +28,38 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  return PRESS_STORIES.map((story) => ({
-    slug: story.slug,
-  }));
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
+
+async function fetchLiveStories(): Promise<PressStory[]> {
+  try {
+    const apiBase =
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+    const res = await fetch(`${apiBase}/media/stories`, {
+      cache: "no-store",
+    });
+    if (res.ok) {
+      const json = await res.json();
+      if (Array.isArray(json?.data) && json.data.length > 0) {
+        return json.data.map(normalizePressStory);
+      }
+    }
+  } catch {
+    // Fallback to static editorial defaults
+  }
+  return PRESS_STORIES;
 }
 
 export default async function MediaStoryPage({ params }: PageProps) {
   const { slug } = await params;
-  const story = getStoryBySlug(slug);
+  const allStories = await fetchLiveStories();
+  const story = getStoryBySlug(slug, allStories);
 
   if (!story) {
     notFound();
   }
 
-  const otherStories = PRESS_STORIES.filter((s) => s.id !== story.id);
+  const otherStories = allStories.filter((s) => s.id !== story.id);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900 select-none">
@@ -123,6 +145,7 @@ export default async function MediaStoryPage({ params }: PageProps) {
                     src={story.image}
                     alt={story.title}
                     fill
+                    unoptimized={Boolean(story.image?.startsWith("/uploads/") || story.image?.startsWith("http"))}
                     className="object-contain p-2"
                     priority
                   />
@@ -192,7 +215,7 @@ export default async function MediaStoryPage({ params }: PageProps) {
                     <Share2 className="w-4 h-4 text-slate-400" />
                     <span>শেয়ার করুন:</span>
                     <a
-                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent("https://xclusivecan.com/media/" + story.slug)}`}
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent("https://noorplastic.com/media/" + story.slug)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-3 py-1 rounded-lg bg-slate-100 hover:bg-blue-600 hover:text-white transition-colors"
@@ -200,7 +223,7 @@ export default async function MediaStoryPage({ params }: PageProps) {
                       Facebook
                     </a>
                     <a
-                      href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent("https://xclusivecan.com/media/" + story.slug)}`}
+                      href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent("https://noorplastic.com/media/" + story.slug)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-3 py-1 rounded-lg bg-slate-100 hover:bg-sky-600 hover:text-white transition-colors"
@@ -251,7 +274,7 @@ export default async function MediaStoryPage({ params }: PageProps) {
               <div className="rounded-3xl bg-gradient-to-br from-[#0b2236] to-[#12405f] text-white p-6 shadow-xl space-y-4">
                 <div className="flex items-center gap-2 text-cyan-300 text-xs font-bold uppercase tracking-wider">
                   <Building2 className="w-4 h-4" />
-                  <span>Xclusive Can &bull; Q Pail</span>
+                  <span>Noor Plastic Industries</span>
                 </div>
 
                 <h4 className="text-lg font-bold text-white leading-snug">

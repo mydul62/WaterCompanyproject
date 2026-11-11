@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { api } from "@/lib/api";
+import { CASE_STUDIES_DATA, CaseStudy } from "@/data/caseStudiesData";
 import {
   FileText,
   Sparkles,
@@ -22,231 +24,33 @@ import {
   Award,
 } from "lucide-react";
 
-interface CaseStudy {
-  id: string;
-  client: string;
-  industry: "Paints & Coatings" | "Pharmaceuticals" | "Chemicals & Lubricants" | "FMCG & Food";
-  title: string;
-  subtitle: string;
-  coverImage: string;
-  stats: { label: string; value: string }[];
-  challenge: string;
-  solution: string;
-  results: string[];
-  specs: { key: string; value: string }[];
-  quote: { text: string; author: string; role: string };
-}
-
-const CASE_STUDIES_DATA: CaseStudy[] = [
-  {
-    id: "case-berger",
-    client: "Berger Paints & Asian Paints",
-    industry: "Paints & Coatings",
-    title: "Transitioning 20L Heavy-Duty Pails to 100% Recyclable Polypropylene",
-    subtitle: "Custom-engineered triple-lock tamper-evident lids preventing transit leakage and stacking deformation.",
-    coverImage: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80",
-    stats: [
-      { label: "Transit Leakage", value: "0.00%" },
-      { label: "Top-Load Compressive Strength", value: "+32%" },
-      { label: "Recyclability", value: "100% PP" },
-    ],
-    challenge:
-      "Large 20-liter industrial paint pails were suffering from lid popping and perimeter seal leakage during rugged transport across remote distributor networks. Existing packaging designs also used mixed materials that prevented easy post-consumer recycling.",
-    solution:
-      "Xclusive Can's R&D team deployed 3D Moldflow simulations to redesign the rim geometry, introducing a patented triple-lock elastomeric bead profile. Using our in-house 5-axis CNC machines, we cut hardened multi-cavity molds that inject 100% pure virgin polypropylene with integrated tamper-evident tear bands.",
-    results: [
-      "Zero reported transit leakages across 2.4 million units delivered nationwide.",
-      "Achieved 6-tier vertical warehouse stacking without container buckling.",
-      "Conformed to USGBC LEED and brand owner sustainability targets with 100% monomaterial design.",
-    ],
-    specs: [
-      { key: "Container Capacity", value: "20 Liters (5.28 Gallons)" },
-      { key: "Material", value: "Impact-Modified Polypropylene (PP)" },
-      { key: "Closure System", value: "Triple-Lock Tear Band with Gasketless Seal" },
-      { key: "Drop Test Height", value: "1.8 Meters (Full Container)" },
-    ],
-    quote: {
-      text: "Xclusive Can transformed our flagship industrial packaging. Zero leaks and superior in-mold graphics gave our brand unmatched presence on store shelves.",
-      author: "Head of Supply Chain",
-      role: "Tier-1 Paint Corporation, Bangladesh",
-    },
-  },
-  {
-    id: "case-square",
-    client: "Square Pharma & Beximco",
-    industry: "Pharmaceuticals",
-    title: "Class 100k Sterile Production of Precision Dropper Bottles",
-    subtitle: "Gamma-sterilized medical bottles with calibrated drop-tip orifices and child-resistant closures.",
-    coverImage: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1600&q=80",
-    stats: [
-      { label: "Cleanroom Standard", value: "Class 100k" },
-      { label: "Drop Volume Accuracy", value: "±0.02 mL" },
-      { label: "DGDA Compliance", value: "100%" },
-    ],
-    challenge:
-      "Pharmaceutical formulations required sterile ophthalmic and oral dropper containers manufactured in automated particulate-controlled cleanrooms. Conventional suppliers suffered from inconsistent dropper orifice tolerances causing medication dosage variances.",
-    solution:
-      "We established a dedicated Class 100,000 automated cleanroom manufacturing cell at our Gazipur campus with HEPA-filtered air positive pressure. In our Tool Room, we fabricated optical-grade EDM tooling with sub-micron tip orifices, backed by automated optical sorting machines.",
-    results: [
-      "Certified by the Directorate General of Drug Administration (DGDA) for sterile formulation packaging.",
-      "Dosage accuracy validated within ±0.02 mL across 10 million produced units.",
-      "Completely automated production eliminating human physical contact from pellet to hermetic carton sealing.",
-    ],
-    specs: [
-      { key: "Volume Capacities", value: "10 mL, 15 mL, 30 mL" },
-      { key: "Resin Specification", value: "Medical-Grade LDPE & HDPE" },
-      { key: "Sterilization Compatibility", value: "Gamma Radiation & ETO" },
-      { key: "Cleanroom Standard", value: "ISO Class 8 (Class 100,000)" },
-    ],
-    quote: {
-      text: "Their automated cleanroom facility and strict microbiological audits make Xclusive Can our most reliable primary packaging partner.",
-      author: "Director of Quality Assurance",
-      role: "Leading Pharmaceutical Manufacturer",
-    },
-  },
-  {
-    id: "case-mobil",
-    client: "Mobil 1 & TotalEnergies",
-    industry: "Chemicals & Lubricants",
-    title: "UN-Certified Tin Containers for Volatile Automotive Lubricants",
-    subtitle: "High-speed electrical resistance seam welding with zero solvent vapor migration.",
-    coverImage: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=1600&q=80",
-    stats: [
-      { label: "Hydrostatic Pressure", value: "250 kPa" },
-      { label: "Weld Integrity", value: "100% Inline" },
-      { label: "UN Hazmat Rating", value: "Group II / III" },
-    ],
-    challenge:
-      "High-performance synthetic motor oils and industrial solvents can attack container internal coatings, leading to seam corrosion, pinhole leaks, and vapor escaping during high-temperature warehouse storage.",
-    solution:
-      "Xclusive Can integrated high-speed European Soudronic electrical resistance seam welders and automated robotic spray lacquer booths. We developed a proprietary epoxy-phenolic internal barrier lacquer cured under infrared tunnels to resist aggressive solvent formulations.",
-    results: [
-      "Full UN Hazmat Packaging Certification for inland and maritime chemical freight.",
-      "2-year accelerated shelf-life stability tests confirmed zero interior lacquer degradation.",
-      "High-definition 6-color metal lithography delivered premium anti-counterfeit holographic effects.",
-    ],
-    specs: [
-      { key: "Can Form Factor", value: "Rectangular & Cylindrical Steel Cans" },
-      { key: "Material", value: "Electrolytic Tinplate (ETP) 0.28mm" },
-      { key: "Seam Technology", value: "Automated Electrical Resistance Welding" },
-      { key: "Internal Coating", value: "Double Epoxy-Phenolic Lacquer" },
-    ],
-    quote: {
-      text: "The structural integrity and anti-counterfeit finishes on Xclusive Can's tin packaging have protected our premium lubricants from transit damage and market imitation.",
-      author: "Operations Manager",
-      role: "Global Energy & Lubricants Brand",
-    },
-  },
-  {
-    id: "case-unilever",
-    client: "Unilever Bangladesh",
-    industry: "FMCG & Food",
-    title: "18% Package Lightweighting Without Sacrificing Top-Load Strength",
-    subtitle: "Finite element stress analysis delivering substantial carbon footprint savings across millions of units.",
-    coverImage: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1600&q=80",
-    stats: [
-      { label: "Weight Reduction", value: "18%" },
-      { label: "Annual Polymer Saved", value: "140 Tons" },
-      { label: "Drop Survival Rate", value: "99.9%" },
-    ],
-    challenge:
-      "Under corporate net-zero sustainability commitments, the client needed to reduce virgin resin usage across high-volume liquid detergent bottles by at least 15% without compromising drop survival or capping torque integrity.",
-    solution:
-      "Our R&D department performed comprehensive FEA drop and compression simulations. By introducing structural micro-ribbing along the bottle shoulders and optimizing base parison thickness, we removed 18% of resin while actually improving vertical compression strength.",
-    results: [
-      "Eliminated 140 metric tons of virgin polymer annually from the supply chain.",
-      "Preserved identical bottle exterior dimensions, requiring zero modifications to client automated filling lines.",
-      "Achieved full drop pass compliance from 1.5 meters onto steel plate surfaces.",
-    ],
-    specs: [
-      { key: "Product Line", value: "High-Volume Liquid Detergent Containers" },
-      { key: "Original Weight vs New", value: "48 grams → 39.3 grams" },
-      { key: "Polymer Base", value: "High-Density Polyethylene (HDPE)" },
-      { key: "Tooling Method", value: "Multi-Cavity Extrusion Blow Molding" },
-    ],
-    quote: {
-      text: "Xclusive Can proved that sustainability and structural performance can go hand in hand. They delivered our lightweighting target seamlessly.",
-      author: "Sustainability Lead",
-      role: "Multinational FMCG Conglomerate",
-    },
-  },
-  {
-    id: "case-marico",
-    client: "Marico Bangladesh (Parachute)",
-    industry: "FMCG & Food",
-    title: "Premium Embossed Tin Cans with High-Gloss Barrier Lacquers",
-    subtitle: "Protecting purity, extending shelf freshness, and elevating consumer shelf prestige.",
-    coverImage: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1600&q=80",
-    stats: [
-      { label: "Barrier Freshness", value: "36 Months" },
-      { label: "Embossing Precision", value: "±0.05 mm" },
-      { label: "Line Speed Compatibility", value: "180 cans/min" },
-    ],
-    challenge:
-      "Consumer brand requirements called for an iconic, embossed metal packaging solution that would preserve organic oils against rancidity and oxygen permeation while resisting denting during nationwide distribution.",
-    solution:
-      "We engineered micro-embossed tinplate tooling in our Tool Room, combining tactile 3D relief with food-contact gold lacquer interiors. Our high-speed seaming tooling ensured consistent dimensional fitment on the client's automated filling lines.",
-    results: [
-      "Zero flavor or aroma degradation over a certified 36-month shelf life.",
-      "Delivered an iconic, luxury look that boosted retail consumer pickup by 24%.",
-      "Seamless operation at 180 cans per minute on client automated packaging lines.",
-    ],
-    specs: [
-      { key: "Application", value: "Pure Edible & Cosmetic Oils" },
-      { key: "Interior Finish", value: "Gold Organosol Food-Contact Lacquer" },
-      { key: "Exterior Finish", value: "High-Gloss UV Litho + 3D Micro-Embossing" },
-      { key: "Hermetic Seal", value: "Double-Seamed Compound Flange" },
-    ],
-    quote: {
-      text: "The precision of the embossing and the flawless barrier coating have made these tins a hallmark of quality for our customers.",
-      author: "Brand Packaging Manager",
-      role: "Leading FMCG Brand",
-    },
-  },
-  {
-    id: "case-reckitt",
-    client: "Reckitt Benckiser",
-    industry: "Chemicals & Lubricants",
-    title: "Calibrated Aerosol Can Lines with Pressure Relief Domes",
-    subtitle: "High-pressure aerosol containment engineered for consumer safety and leakproof aerosolization.",
-    coverImage: "https://images.unsplash.com/photo-1581091870621-1e9b2512f718?auto=format&fit=crop&w=1600&q=80",
-    stats: [
-      { label: "Burst Test Rating", value: "> 18 Bar" },
-      { label: "Inline Leak Testing", value: "100% Water Bath" },
-      { label: "Aerosol Speed", value: "240 cans/min" },
-    ],
-    challenge:
-      "Aerosol containers for household insecticides and sanitizers require extreme pressure containment and failsafe buckle-resistance under hot tropical storage conditions reaching 50°C.",
-    solution:
-      "We engineered specialized dome and bottom end geometries using high-temper tinplate. Every aerosol can passes through an automated warm water bath leak detector and dimensional vision check before palletizing.",
-    results: [
-      "Burst test performance exceeding 18 bar, well above international safety benchmarks.",
-      "Zero safety incidents or seam ruptures across multi-million can deployments.",
-      "Integrated aerosol valve crimping profile delivering 100% airtight closure fitment.",
-    ],
-    specs: [
-      { key: "Nominal Diameters", value: "52mm, 57mm, 65mm" },
-      { key: "Testing Protocol", value: "100% Heated Water Bath at 55°C" },
-      { key: "Buckle Resistance", value: "Exceeds 15 Bar Pressure" },
-      { key: "Valve Collar Standard", value: "1-inch Universal Aperture" },
-    ],
-    quote: {
-      text: "Safety is paramount in aerosol production. Xclusive Can's automated testing lines ensure every container meets our global audit standards.",
-      author: "Senior Technical Auditor",
-      role: "Global Consumer Goods Corporation",
-    },
-  },
-];
-
 export default function CaseStudiesPage() {
+  const [cases, setCases] = useState<CaseStudy[]>(CASE_STUDIES_DATA);
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
   const [selectedCase, setSelectedCase] = useState<CaseStudy | null>(null);
 
+  useEffect(() => {
+    let active = true;
+    api.caseStudies
+      .getPublic()
+      .then((res) => {
+        if (active && Array.isArray(res.data) && res.data.length > 0) {
+          setCases(res.data);
+        }
+      })
+      .catch(() => {
+        // Keep clean fallback CASE_STUDIES_DATA
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   // Filtered Case Studies
   const filteredCases = useMemo(() => {
-    if (activeCategory === "ALL") return CASE_STUDIES_DATA;
-    return CASE_STUDIES_DATA.filter((c) => c.industry === activeCategory);
-  }, [activeCategory]);
+    if (activeCategory === "ALL") return cases;
+    return cases.filter((c) => c.industry === activeCategory);
+  }, [activeCategory, cases]);
 
   return (
     <div className="min-h-screen bg-[#f4f8fb] text-[#0a1f33] font-sans antialiased selection:bg-[#0b6e99] selection:text-white">
@@ -263,7 +67,7 @@ export default function CaseStudiesPage() {
           {/* Background Hero Image */}
           <div className="absolute inset-0 w-full h-full">
             <Image
-              src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1920&q=80"
+              src="/images/business-hero-office.jpg"
               alt="Industrial Packaging Case Studies & Engineering Solutions"
               fill
               priority
@@ -410,6 +214,7 @@ export default function CaseStudiesPage() {
                         src={study.coverImage}
                         alt={study.title}
                         fill
+                        unoptimized={Boolean(study.coverImage?.startsWith("/uploads/") || study.coverImage?.startsWith("http"))}
                         sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                         className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                       />
@@ -493,6 +298,7 @@ export default function CaseStudiesPage() {
                 alt={selectedCase.title}
                 fill
                 priority
+                unoptimized={Boolean(selectedCase.coverImage?.startsWith("/uploads/") || selectedCase.coverImage?.startsWith("http"))}
                 className="object-cover opacity-80"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent" />

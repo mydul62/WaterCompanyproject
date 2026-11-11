@@ -25,8 +25,24 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    const apiBase = (
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"
+    ).replace(/\/api\/v1\/?$/, "");
+    return [
+      {
+        source: "/uploads/:path*",
+        destination: `${apiBase}/uploads/:path*`,
+      },
+    ];
+  },
   async redirects() {
     return [
+      {
+        source: "/q-pail",
+        destination: "/products",
+        permanent: true,
+      },
       {
         source: "/find-our-product",
         destination: "/products",

@@ -24,7 +24,20 @@ import {
   LogOut,
   ChevronRight,
   ShieldCheck,
+  Sliders,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Newspaper,
+  BookOpen,
+  FolderKanban,
+  Award,
 } from "lucide-react";
+
+const SIDEBAR_STORAGE_KEY = "waterweb_admin_sidebar_collapsed";
+
+function isNavItemActive(pathname: string, href: string) {
+  return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+}
 
 interface NavGroup {
   group: string;
@@ -42,9 +55,14 @@ const NAVIGATION_GROUPS: NavGroup[] = [
     group: "CMS & Dynamic Content",
     items: [
       { name: "Overview", href: "/admin", icon: LayoutDashboard },
-      { name: "Pages & Page Builder", href: "/admin/pages", icon: Layers, badge: "Elementor", badgeColor: "bg-blue-600/80 text-blue-200" },
+      { name: "Banner Slider", href: "/admin/banner", icon: Sliders, badge: "Hero", badgeColor: "bg-cyan-600/80 text-cyan-100" },
+      { name: "Pages & Page Builder", href: "/admin/pages", icon: Layers },
       { name: "Product Catalog", href: "/admin/products", icon: Package },
       { name: "Product Categories", href: "/admin/categories", icon: Tags },
+      { name: "Press & Media", href: "/admin/media", icon: Newspaper },
+      { name: "Blog & Insights", href: "/admin/blog", icon: BookOpen },
+      { name: "Case Studies", href: "/admin/case-studies", icon: FolderKanban },
+      { name: "Certificates", href: "/admin/certificates", icon: Award },
       { name: "Media Library (Imaple)", href: "/admin/media-library", icon: ImageIcon },
     ],
   },
@@ -63,7 +81,7 @@ const NAVIGATION_GROUPS: NavGroup[] = [
       { name: "Website Settings", href: "/admin/settings", icon: Settings },
       { name: "User & Role Access", href: "/admin/users", icon: Users },
       { name: "RFQ & Inquiries", href: "/admin/inquiries", icon: FileText, badge: "Live" },
-      { name: "Career Applications", href: "/admin/careers", icon: Briefcase },
+      { name: "Careers & Jobs", href: "/admin/careers", icon: Briefcase, badge: "HR" },
     ],
   },
 ];
@@ -72,6 +90,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setSidebarCollapsed(localStorage.getItem(SIDEBAR_STORAGE_KEY) === "true");
+  }, []);
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      if (typeof window !== "undefined") {
+        localStorage.setItem(SIDEBAR_STORAGE_KEY, String(next));
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (pathname === "/admin/login") return;
@@ -102,96 +136,162 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col lg:flex-row antialiased">
-      {/* Desktop Persistent Sidebar */}
-      <aside className="hidden lg:flex flex-col justify-between w-64 bg-slate-900 border-r border-slate-800 shrink-0 select-none h-screen sticky top-0 overflow-y-auto">
-        <div>
-          {/* Admin Header Logo */}
-          <div className="p-4 border-b border-slate-800 flex items-center justify-between sticky top-0 bg-slate-900 z-10">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-blue-600 text-white font-black text-sm flex items-center justify-center shadow-md shadow-blue-600/30">
-                <span className="text-cyan-300">X</span>C
+      {/* Desktop Persistent Collapsible Sidebar */}
+      <aside
+        aria-label="Admin sidebar navigation"
+        data-lenis-prevent
+        className={`hidden lg:flex flex-col bg-slate-900 border-r border-slate-800 shrink-0 select-none h-screen sticky top-0 overflow-hidden transition-all duration-300 ease-in-out ${
+          sidebarCollapsed ? "w-[76px]" : "w-72"
+        }`}
+      >
+        {/* Pinned Admin Header Logo & Fold Toggle */}
+        <div
+          className={`border-b border-slate-800 bg-slate-900/95 backdrop-blur-sm shrink-0 z-10 transition-all ${
+            sidebarCollapsed
+              ? "px-2 py-3 flex flex-col items-center gap-2.5"
+              : "p-4 flex items-center justify-between gap-2"
+          }`}
+        >
+          <Link
+            href="/"
+            title="Noor Plastic — Back to Public Website"
+            className={`flex items-center ${sidebarCollapsed ? "justify-center" : "gap-3 min-w-0"}`}
+          >
+            <div className="w-9 h-9 rounded-lg bg-blue-600 text-white font-black text-base flex items-center justify-center shadow-md shadow-blue-600/30 shrink-0">
+              <span className="text-cyan-300">N</span>P
+            </div>
+            {!sidebarCollapsed && (
+              <div className="min-w-0">
+                <span className="text-base font-black text-white tracking-tight block truncate">NOOR PLASTIC</span>
+                <span className="text-[11px] text-cyan-400 font-mono tracking-widest uppercase block truncate">
+                  Admin CMS Suite
+                </span>
               </div>
-              <div>
-                <span className="text-sm font-black text-white tracking-tight block">XCLUSIVE CAN</span>
-                <span className="text-[9px] text-cyan-400 font-mono tracking-widest uppercase">Admin CMS Suite</span>
-              </div>
-            </Link>
-          </div>
+            )}
+          </Link>
 
-          {/* Navigation Groups */}
-          <nav className="p-3 space-y-4">
-            {NAVIGATION_GROUPS.map((group) => (
-              <div key={group.group} className="space-y-1">
-                <div className="px-3 py-1 text-[9px] font-black uppercase tracking-wider text-slate-500">
-                  {group.group}
-                </div>
-                {group.items.map((item) => {
-                  const Icon = item.icon;
-                  const isActive =
-                    item.href === "/admin"
-                      ? pathname === "/admin"
-                      : pathname.startsWith(item.href);
-                  return (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
-                        isActive
-                          ? "bg-blue-600 text-white shadow-md shadow-blue-600/25 font-bold"
-                          : "text-slate-400 hover:text-white hover:bg-slate-800/60"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5 truncate">
-                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-white" : "text-slate-400"}`} />
-                        <span className="truncate">{item.name}</span>
-                      </div>
-                      {item.badge && (
-                        <span
-                          className={`text-[9px] px-1.5 py-0.5 rounded-md font-mono font-bold shrink-0 ${
-                            item.badgeColor || "bg-slate-800 text-slate-400"
-                          }`}
-                        >
-                          {item.badge}
-                        </span>
-                      )}
-                    </Link>
-                  );
-                })}
-              </div>
-            ))}
-          </nav>
+          <button
+            type="button"
+            onClick={toggleSidebar}
+            aria-label={sidebarCollapsed ? "Expand sidebar" : "Fold sidebar"}
+            aria-expanded={!sidebarCollapsed}
+            title={sidebarCollapsed ? "Expand sidebar" : "Fold sidebar"}
+            className="p-1.5 rounded-lg border border-slate-800 bg-slate-950/70 text-slate-400 hover:text-white hover:border-slate-700 hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+          >
+            {sidebarCollapsed ? (
+              <PanelLeftOpen className="w-4 h-4 text-cyan-400" />
+            ) : (
+              <PanelLeftClose className="w-4 h-4" />
+            )}
+          </button>
         </div>
 
-        {/* User Session & Public Link */}
-        <div className="p-4 border-t border-slate-800 space-y-2.5 bg-slate-900 sticky bottom-0 z-10">
+        {/* Independent Scrollable Navigation Groups */}
+        <nav
+          data-lenis-prevent
+          className={`flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain admin-scrollbar space-y-5 ${
+            sidebarCollapsed ? "p-2" : "p-3.5"
+          }`}
+        >
+          {NAVIGATION_GROUPS.map((group) => (
+            <div key={group.group} className="space-y-1">
+              {sidebarCollapsed ? (
+                <div className="mx-2 my-1.5 border-t border-slate-800/80" />
+              ) : (
+                <div className="px-3 py-1 text-[11px] font-black uppercase tracking-wider text-slate-500">
+                  {group.group}
+                </div>
+              )}
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const isActive = isNavItemActive(pathname, item.href);
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    title={item.name}
+                    aria-label={item.name}
+                    className={`flex items-center rounded-lg text-sm font-semibold transition-all relative ${
+                      sidebarCollapsed
+                        ? "justify-center px-2 py-2.5"
+                        : "justify-between px-3 py-2.5"
+                    } ${
+                      isActive
+                        ? "bg-blue-600 text-white shadow-md shadow-blue-600/25 font-bold"
+                        : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                    }`}
+                  >
+                    <div className={`flex items-center ${sidebarCollapsed ? "justify-center" : "gap-3 min-w-0"}`}>
+                      <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? "text-white" : "text-slate-400"}`} />
+                      {!sidebarCollapsed && <span className="truncate">{item.name}</span>}
+                    </div>
+                    {sidebarCollapsed && item.badge && (
+                      <span
+                        aria-hidden="true"
+                        className="w-1.5 h-1.5 rounded-full bg-cyan-400 absolute top-1.5 right-1.5"
+                      />
+                    )}
+                    {!sidebarCollapsed && item.badge && (
+                      <span
+                        className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono font-bold shrink-0 ml-2 ${
+                          item.badgeColor || "bg-slate-800 text-slate-400"
+                        }`}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
+
+        {/* Pinned User Session & Public Link */}
+        <div
+          className={`border-t border-slate-800 space-y-2.5 bg-slate-900 shrink-0 z-10 ${
+            sidebarCollapsed ? "p-2.5 flex flex-col items-center" : "p-4"
+          }`}
+        >
           <Link
             href="/"
             target="_blank"
-            className="flex items-center justify-between p-2 rounded-lg bg-slate-950/80 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-300 transition-colors"
+            title="View Public Website"
+            aria-label="View Public Website"
+            className={`flex items-center rounded-lg bg-slate-950/80 hover:bg-slate-800 border border-slate-800 text-[13px] font-semibold text-slate-300 transition-colors ${
+              sidebarCollapsed ? "justify-center p-2.5 w-full" : "justify-between px-3 py-2.5"
+            }`}
           >
             <span className="flex items-center gap-2">
-              <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
-              View Public Website
+              <ExternalLink className="w-4 h-4 text-cyan-400 shrink-0" />
+              {!sidebarCollapsed && <span>View Public Website</span>}
             </span>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+            {!sidebarCollapsed && <ChevronRight className="w-4 h-4 text-slate-500" />}
           </Link>
 
-          <div className="flex items-center justify-between pt-1">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-blue-950 border border-blue-700/50 flex items-center justify-center font-bold text-[11px] text-cyan-400">
+          <div
+            className={`pt-1 flex items-center ${
+              sidebarCollapsed ? "flex-col gap-2.5 justify-center w-full" : "justify-between"
+            }`}
+          >
+            <div className="flex items-center gap-2.5" title="Super Admin — Kaliakoir, Gazipur">
+              <div className="w-8 h-8 rounded-full bg-blue-950 border border-blue-700/50 flex items-center justify-center font-bold text-xs text-cyan-400 shrink-0">
                 SA
               </div>
-              <div className="leading-tight">
-                <span className="text-xs font-bold text-white block">Super Admin</span>
-                <span className="text-[9px] text-slate-500">Gazipur HQ System</span>
-              </div>
+              {!sidebarCollapsed && (
+                <div className="leading-tight">
+                  <span className="text-sm font-bold text-white block">Super Admin</span>
+                  <span className="text-[11px] text-slate-400">Kaliakoir, Gazipur</span>
+                </div>
+              )}
             </div>
             <button
               onClick={handleSignOut}
-              className="text-slate-500 hover:text-red-400 transition-colors p-1 cursor-pointer"
+              className="text-slate-500 hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-slate-800/70 cursor-pointer"
               title="Sign Out"
+              aria-label="Sign Out"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -200,10 +300,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Mobile Header Bar */}
       <div className="lg:hidden bg-slate-900 border-b border-slate-800 p-4 flex items-center justify-between sticky top-0 z-40">
         <Link href="/admin" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-md bg-blue-600 text-white font-black text-xs flex items-center justify-center">
-            XC
+          <div className="w-8 h-8 rounded-md bg-blue-600 text-white font-black text-sm flex items-center justify-center">
+            NP
           </div>
-          <span className="text-xs font-black text-white">XCLUSIVE ADMIN</span>
+          <span className="text-sm font-black text-white">NOOR PLASTIC ADMIN</span>
         </Link>
         <button
           onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
@@ -218,27 +318,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="lg:hidden bg-slate-900 border-b border-slate-800 p-4 space-y-4 max-h-[80vh] overflow-y-auto animate-in slide-in-from-top duration-150">
           {NAVIGATION_GROUPS.map((group) => (
             <div key={group.group} className="space-y-1">
-              <div className="text-[10px] font-black uppercase text-slate-500 tracking-wider px-2">
+              <div className="text-xs font-black uppercase text-slate-500 tracking-wider px-2">
                 {group.group}
               </div>
               {group.items.map((item) => {
                 const Icon = item.icon;
-                const isActive = pathname.startsWith(item.href);
+                const isActive = isNavItemActive(pathname, item.href);
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
                     onClick={() => setMobileSidebarOpen(false)}
-                    className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-bold ${
+                    className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-bold ${
                       isActive ? "bg-blue-600 text-white" : "text-slate-300 hover:bg-slate-800"
                     }`}
                   >
-                    <div className="flex items-center gap-2">
-                      <Icon className="w-4 h-4" />
+                    <div className="flex items-center gap-2.5">
+                      <Icon className="w-[18px] h-[18px]" />
                       <span>{item.name}</span>
                     </div>
                     {item.badge && (
-                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">
                         {item.badge}
                       </span>
                     )}
@@ -250,9 +350,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       )}
 
-      {/* Main Content Workspace */}
-      <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 overflow-y-auto">
-        <div className="max-w-7xl mx-auto">{children}</div>
+      {/* Full-Width Main Content Workspace */}
+      <main className="flex-1 min-w-0 p-4 sm:p-6 lg:px-7 lg:py-6">
+        <div className="w-full">{children}</div>
       </main>
     </div>
   );

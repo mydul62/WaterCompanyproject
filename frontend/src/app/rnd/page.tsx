@@ -65,7 +65,7 @@ export default function RndPage() {
       pill: "01 • Engineering Precision",
       image: "/images/rnd/rnd-cad-design.jpg",
       imageAlt: "CAD 3D Bottle Design and Finite Element Simulation",
-      title: "R&D - fundamental to Xclusive Can's invisible precision",
+      title: "R&D - fundamental to Noor Plastic's invisible precision",
       icon: Cpu,
       themeColor: "cyan",
       chips: [
@@ -135,7 +135,7 @@ export default function RndPage() {
         "USGBC LEED Platinum Campus",
       ],
       content: [
-        "At Xclusive Can Ltd., sustainability is engineered into every design. From post-consumer recycled resins (PCR) and lightweighting to energy-efficient automated cleanroom molds, our R&D initiatives focus on minimizing carbon footprints while maximizing package durability and recyclability.",
+        "At Noor Plastic Industries, sustainability is engineered into every design. From post-consumer recycled resins (PCR) and lightweighting to energy-efficient automated cleanroom molds, our R&D initiatives focus on minimizing carbon footprints while maximizing package durability and recyclability.",
         "We develop eco-conscious packaging solutions that comply with USGBC LEED Platinum standards and international environmental protocols, driving circular packaging systems for future generations.",
       ],
       imagePosition: "right" as const,
@@ -275,7 +275,7 @@ export default function RndPage() {
               >
                 Research and Development at{" "}
                 <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
-                  Xclusive Can Ltd.
+                  Noor Plastic Industries
                 </span>
               </h2>
 
@@ -284,7 +284,7 @@ export default function RndPage() {
                 data-reveal="up"
                 className="text-base sm:text-lg md:text-[19px] text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto"
               >
-                At Xclusive Can Ltd., the R&amp;D team is more than just a department. It is the
+                At Noor Plastic Industries, the R&amp;D team is more than just a department. It is the
                 heartbeat of our commitment to quality and innovation. With every prototype,
                 test, and breakthrough, we push the boundaries of what packaging can achieve.
                 Join us on this journey, where creativity meets advanced technology to shape the
@@ -518,11 +518,11 @@ export default function RndPage() {
                   <div className="pt-6 border-t border-white/10 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-300 font-medium">
                     <span className="flex items-center gap-2">
                       <Phone className="w-3.5 h-3.5 text-cyan-400" />
-                      <span>R&amp;D Sales Hotline: +8801819343635</span>
+                      <span>R&amp;D Sales Hotline: +880 1711-987275</span>
                     </span>
                     <span className="flex items-center gap-2">
                       <Mail className="w-3.5 h-3.5 text-cyan-400" />
-                      <span>Direct Inquiries: marketing@qpail.com</span>
+                      <span>Direct Inquiries: info@noorplastic.com</span>
                     </span>
                   </div>
                 </div>

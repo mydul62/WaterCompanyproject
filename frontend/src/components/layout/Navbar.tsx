@@ -24,7 +24,6 @@ import {
   Handshake,
   Newspaper,
   ArrowRight,
-  Droplets,
 } from "lucide-react";
 import { api } from "@/lib/api";
 
@@ -46,27 +45,7 @@ const NAV_ITEMS: TopNavItem[] = [
   {
     label: "HOME",
     href: "/",
-    hasPlus: true,
-    children: [
-      {
-        label: "Home Overview",
-        href: "/",
-        description: "Hero showcase & water packaging solutions",
-        icon: <Droplets className="w-4 h-4 text-[#094E9B]" />,
-      },
-      {
-        label: "Facility Showcase",
-        href: "/#about",
-        description: "Automated ISO & LEED Platinum manufacturing",
-        icon: <Building2 className="w-4 h-4 text-[#094E9B]" />,
-      },
-      {
-        label: "Operational Pillars",
-        href: "/#overview",
-        description: "Sustainability, R&D & cleanroom quality",
-        icon: <ShieldCheck className="w-4 h-4 text-[#094E9B]" />,
-      },
-    ],
+    hasPlus: false,
   },
   {
     label: "SERVICES",
@@ -76,7 +55,7 @@ const NAV_ITEMS: TopNavItem[] = [
       {
         label: "Our Business",
         href: "/our-business",
-        description: "2 specialized plants: Q Pail & Xclusive Can",
+        description: "Noor Plastic Industries: manufacturing, import & supply",
         icon: <Building2 className="w-4 h-4 text-[#094E9B]" />,
       },
       {
@@ -111,9 +90,9 @@ const NAV_ITEMS: TopNavItem[] = [
         icon: <Package className="w-4 h-4 text-[#094E9B]" />,
       },
       {
-        label: "Q Pail Packaging",
-        href: "/q-pail",
-        description: "Food-grade heavy-duty polymers & closures",
+        label: "Request Bulk Quote",
+        href: "/request-quote",
+        description: "Direct factory MOQ pricing from Noor Plastic Industries",
         icon: <ShieldCheck className="w-4 h-4 text-[#094E9B]" />,
       },
     ],
@@ -151,7 +130,7 @@ const NAV_ITEMS: TopNavItem[] = [
       {
         label: "Our Story",
         href: "/our-story",
-        description: "Pioneering pure engineering since 1992",
+        description: "Noor Plastic Industries heritage in Kaliakoir, Gazipur",
         icon: <BookOpen className="w-4 h-4 text-[#094E9B]" />,
       },
       {
@@ -194,14 +173,14 @@ export default function Navbar() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // CMS Settings with faithful Aguapure reference defaults
+  // CMS Settings with Noor Plastic Industries trade-license defaults
   const [headerInfo, setHeaderInfo] = useState({
-    brandName: "Aguapure",
+    brandName: "Noor Plastic",
     customLogo: "",
     deliveryText: "Immediate Delivery",
-    phone: "1-800-500-333-33",
-    hours: "Mon - Fri: 08.00 to 08.00",
-    email: "info@example.com",
+    phone: "+880 1711-987275",
+    hours: "Sat - Thu: 08.00 to 20.00",
+    email: "info@noorplastic.com",
   });
 
   useEffect(() => {
@@ -241,9 +220,11 @@ export default function Navbar() {
   }, [pathname]);
 
   useEffect(() => {
-    if (searchOpen) {
-      setTimeout(() => searchInputRef.current?.focus(), 60);
-    }
+    if (!searchOpen) return;
+    const t = setTimeout(() => {
+      searchInputRef.current?.focus({ preventScroll: true });
+    }, 180);
+    return () => clearTimeout(t);
   }, [searchOpen]);
 
   useEffect(() => {
@@ -359,7 +340,7 @@ export default function Navbar() {
                   />
                 ) : (
                   <>
-                    {/* 4-Petal Aguapure Water Droplet Emblem */}
+                    {/* 4-Petal Noor Plastic Water Droplet Emblem */}
                     <svg
                       viewBox="0 0 40 40"
                       className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 transition-transform duration-300 group-hover:scale-105"
@@ -529,33 +510,62 @@ export default function Navbar() {
                 className="mx-5 sm:mx-8 h-[6px] bg-[#084D98] rounded-b-[10px] opacity-90 shadow-md"
               />
             )}
-
-            {/* Quick Search Bar Dropdown */}
-            {searchOpen && (
-              <form
-                onSubmit={handleSearchSubmit}
-                className="mt-2 bg-white rounded-2xl shadow-[0_18px_45px_rgba(7,41,94,0.22)] border border-slate-100 p-3 flex items-center gap-3"
-              >
-                <Search className="w-5 h-5 text-[#094E9B] ml-2 shrink-0" />
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search purified water jugs, dispensers, bottles, or containers..."
-                  className="flex-1 bg-transparent text-sm text-slate-800 placeholder-slate-400 focus:outline-none py-1.5"
-                />
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-full bg-[#094E9B] hover:bg-[#073E7E] text-white text-xs font-bold uppercase tracking-wider transition-colors shrink-0 cursor-pointer"
-                >
-                  Search
-                </button>
-              </form>
-            )}
           </div>
         </div>
       </header>
+
+      {/* Full-Screen Dark-Shadow Search Overlay (Rises Smoothly from Bottom) */}
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search site products"
+        aria-hidden={!searchOpen}
+        onClick={() => setSearchOpen(false)}
+        className={`fixed inset-0 z-[80] bg-[#020A14]/85 backdrop-blur-[2px] flex justify-center pt-[24vh] sm:pt-[27vh] px-4 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          searchOpen
+            ? "opacity-100 pointer-events-auto visible"
+            : "opacity-0 pointer-events-none invisible"
+        }`}
+      >
+        {/* Top-Right Close X Icon */}
+        <button
+          type="button"
+          onClick={() => setSearchOpen(false)}
+          aria-label="Close search"
+          tabIndex={searchOpen ? 0 : -1}
+          className="absolute top-5 right-5 sm:top-7 sm:right-9 p-2 text-white/85 hover:text-white transition-all duration-300 hover:rotate-90 cursor-pointer focus:outline-none"
+        >
+          <X className="w-6 h-6 sm:w-7 sm:h-7 stroke-[1.75]" />
+        </button>
+
+        {/* Bottom-to-Up Rising Search Bar Matching Reference */}
+        <form
+          onSubmit={handleSearchSubmit}
+          onClick={(e) => e.stopPropagation()}
+          className={`w-full max-w-[660px] h-[56px] sm:h-[62px] bg-white rounded-[4px] overflow-hidden flex items-stretch shadow-[0_24px_65px_rgba(0,0,0,0.65)] transition-all duration-[650ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            searchOpen
+              ? "translate-y-0 opacity-100 scale-100"
+              : "translate-y-40 sm:translate-y-56 opacity-0 scale-[0.98]"
+          }`}
+        >
+          <input
+            ref={searchInputRef}
+            type="text"
+            tabIndex={searchOpen ? 0 : -1}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search Here"
+            className="flex-1 min-w-0 bg-white text-[#111E32] placeholder:text-[#6B7280] text-[15px] sm:text-[16px] px-5 sm:px-6 focus:outline-none"
+          />
+          <button
+            type="submit"
+            tabIndex={searchOpen ? 0 : -1}
+            className="bg-[#5DC7F4] hover:bg-[#3EB8EE] active:bg-[#2DA8E0] text-white text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.06em] px-6 sm:px-9 shrink-0 transition-colors cursor-pointer whitespace-nowrap"
+          >
+            SEARCH NOW!
+          </button>
+        </form>
+      </div>
 
       {/* Mobile Slide-Over Navigation Drawer */}
       <div

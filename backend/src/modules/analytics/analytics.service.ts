@@ -15,7 +15,7 @@ export class AnalyticsService {
         pendingRfqs,
         annualCapacity: "500 Million Containers",
         leedStandard: "LEED Platinum (USGBC)",
-        operationalFacilities: ["Gazipur Main Complex", "Tongi High-Speed Plant"],
+        operationalFacilities: ["Latifpur-B, Kaliakoir-1750, Gazipur"],
         systemHealth: "100% Operational",
       },
       stats: {

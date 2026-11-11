@@ -6,7 +6,7 @@ async function bootstrap() {
   try {
     const server = app.listen(ENV.PORT, () => {
       console.log(`================================================================`);
-      console.log(`  Xclusive Can Limited & Q Pail REST API Running               `);
+      console.log(`  Noor Plastic Industries REST API Running                      `);
       console.log(`  Port: http://localhost:${ENV.PORT}                            `);
       console.log(`  Health Check: http://localhost:${ENV.PORT}/health              `);
       console.log(`  API Base: http://localhost:${ENV.PORT}/api/v1                 `);

@@ -47,9 +47,9 @@ const DEFAULT_ASSETS: MediaAsset[] = [
   },
   {
     id: "media-2",
-    title: "tongi-q-pail-plant.png",
+    title: "kaliakoir-noor-plastic-plant.png",
     url: "/images/factory/factory-2.png",
-    altText: "Tongi Plastic Injection & Blow Molding Plant",
+    altText: "Kaliakoir Plastic Injection & Blow Molding Plant",
     category: "FACTORY",
     size: 1890000,
     width: 1920,

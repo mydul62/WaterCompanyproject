@@ -6,6 +6,12 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import RFQDrawer from "@/components/rfq/RFQDrawer";
+import { api } from "@/lib/api";
+import {
+  CERTIFICATES_LIST,
+  CERTIFICATE_CATEGORIES,
+  CertificateItem,
+} from "@/data/certificatesData";
 import {
   Award,
   ShieldCheck,
@@ -25,156 +31,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-interface CertificateItem {
-  id: string;
-  title: string;
-  code: string;
-  category: "Quality Management" | "Environmental & Green" | "Workplace Safety" | "Food & Pharma Compliance" | "National Honors";
-  image: string;
-  aspect: "portrait" | "landscape" | "square";
-  bullets: string[];
-  accreditation: string;
-}
-
-const CATEGORIES = [
-  "All Accreditations",
-  "Quality Management",
-  "Environmental & Green",
-  "Workplace Safety",
-  "Food & Pharma Compliance",
-  "National Honors",
-] as const;
-
-type Category = typeof CATEGORIES[number];
-
-const CERTIFICATES_LIST: CertificateItem[] = [
-  {
-    id: "iso-9001",
-    title: "ISO 9001:2015",
-    code: "Quality Management System",
-    category: "Quality Management",
-    image: "/images/cert-iso-9001.jpg",
-    aspect: "portrait",
-    bullets: [
-      "Certified Quality Management System covering end-to-end design, precision tooling, and high-speed automated production.",
-      "Strict incoming raw material inspection (tinplate, virgin polymers, lacquers) and computerized statistical process control (SPC).",
-      "Full batch-level traceability from raw material intake to final palletized delivery across all packaging formats.",
-    ],
-    accreditation: "International Organization for Standardization (ISO) / UKAS Accredited",
-  },
-  {
-    id: "iso-14001",
-    title: "ISO 14001:2015",
-    code: "Environmental Management System",
-    category: "Environmental & Green",
-    image: "/images/cert-iso-14001.jpg",
-    aspect: "portrait",
-    bullets: [
-      "Globally audited Environmental Management System ensuring sustainable and eco-conscious factory operations.",
-      "Zero-landfill industrial waste management, 100% recyclable tin scrap reclamation, and low-VOC printing processes.",
-      "Optimized water recycling and energy management across our Majukhan and Tongi industrial campuses.",
-    ],
-    accreditation: "ISO Environmental Management System / Global Certification Authority",
-  },
-  {
-    id: "iso-45001",
-    title: "ISO 45001:2018",
-    code: "Occupational Health & Safety",
-    category: "Workplace Safety",
-    image: "/images/cert-iso-45001.jpg",
-    aspect: "portrait",
-    bullets: [
-      "International standard for proactive occupational health, safety management, and hazard reduction.",
-      "Zero-incident workforce protocol, ergonomic automated workstations, and protective engineering barriers.",
-      "Comprehensive emergency response systems and continuous technician safety training.",
-    ],
-    accreditation: "International Safety Standards / Accredited Certification Body",
-  },
-  {
-    id: "national-award",
-    title: "National Export Trophy & Industrial Excellence",
-    code: "National Honor",
-    category: "National Honors",
-    image: "/images/cert-national-award.jpg",
-    aspect: "square",
-    bullets: [
-      "Conferred by the Government of Bangladesh for outstanding contribution to the national packaging industry and export expansion.",
-      "Recognition of superior product durability, technological innovation, and sustainable employment generation.",
-      "Prestigious benchmark acknowledging Xclusive Can Limited as an industry vanguard in precision metal container engineering.",
-    ],
-    accreditation: "Ministry of Commerce, People's Republic of Bangladesh",
-  },
-  {
-    id: "dgda-bsti",
-    title: "DGDA & BSTI Regulatory Clearances",
-    code: "Statutory Approvals",
-    category: "Food & Pharma Compliance",
-    image: "/images/cert-dgda-bsti.jpg",
-    aspect: "landscape",
-    bullets: [
-      "Approved supplier under the Directorate General of Drug Administration (DGDA) for sterile pharmaceutical packaging.",
-      "Full compliance with Bangladesh Standards and Testing Institution (BSTI) national packaging standards and metrology.",
-      "Rigorous barrier testing, migration compliance, and tamper-evident closure verification for healthcare containers.",
-    ],
-    accreditation: "Directorate General of Drug Administration & BSTI, Bangladesh",
-  },
-  {
-    id: "haccp",
-    title: "HACCP Food Safety Certification",
-    code: "Hazard Analysis Critical Control Point",
-    category: "Food & Pharma Compliance",
-    image: "/images/cert-haccp.jpg",
-    aspect: "portrait",
-    bullets: [
-      "Systematic preventive approach to biological, chemical, and physical hazards in food-contact packaging.",
-      "Food-grade virgin polymers, bisphenol-free internal lacquers, and airtight hermetic seaming for edible oils and dairy.",
-      "Controlled clean manufacturing zones preventing microbial and airborne contamination.",
-    ],
-    accreditation: "HACCP International Food Safety Compliance System",
-  },
-  {
-    id: "iso-22000",
-    title: "ISO 22000:2018",
-    code: "Food Safety Management System",
-    category: "Food & Pharma Compliance",
-    image: "/images/cert-iso-22000.jpg",
-    aspect: "portrait",
-    bullets: [
-      "Certified Food Safety Management System ensuring complete integrity across the food packaging supply chain.",
-      "Comprehensive prerequisite programs (PRPs), interactive communication, and hazard control protocols.",
-      "Validated for edible oil pails, dairy containers, culinary food cans, and consumer beverage closures.",
-    ],
-    accreditation: "ISO Food Safety Management / International Certification Board",
-  },
-  {
-    id: "leed-platinum",
-    title: "USGBC LEED Platinum Green Building Certification",
-    code: "Sustainable Infrastructure",
-    category: "Environmental & Green",
-    image: "/images/cert-leed-green.jpg",
-    aspect: "portrait",
-    bullets: [
-      "Certified green building facility recognized by the U.S. Green Building Council (USGBC) for sustainable industrial design.",
-      "Extensive rooftop photovoltaic solar energy generation supplying clean power to manufacturing lines.",
-      "Rainwater harvesting reservoirs, advanced cleanroom air purification, and energy-efficient LED automation.",
-    ],
-    accreditation: "U.S. Green Building Council (USGBC) Platinum Rating",
-  },
-  {
-    id: "membership",
-    title: "Certificate of Membership & Corporate Standing",
-    code: "Industry Affiliation",
-    category: "National Honors",
-    image: "/images/cert-membership.jpg",
-    aspect: "landscape",
-    bullets: [
-      "Recognized corporate member of national chambers of commerce, packaging manufacturer federations, and industrial bodies.",
-      "Commitment to ethical labor standards, fair trade practices, and transparent corporate governance.",
-      "Active participant in national circular economy initiatives and post-consumer plastic recycling frameworks.",
-    ],
-    accreditation: "Federation of Bangladesh Chambers of Commerce and Industry (FBCCI)",
-  },
-];
+type Category = (typeof CERTIFICATE_CATEGORIES)[number];
 
 const QUALITY_STANDARDS_DETAILS = [
   {
@@ -216,14 +73,32 @@ const QUALITY_STANDARDS_DETAILS = [
 ];
 
 export default function CertificatesPage() {
+  const [certificates, setCertificates] = useState<CertificateItem[]>(CERTIFICATES_LIST);
   const [selectedCert, setSelectedCert] = useState<CertificateItem | null>(null);
   const [isRFQOpen, setIsRFQOpen] = useState<boolean>(false);
   const [activeCategory, setActiveCategory] = useState<Category>("All Accreditations");
 
+  useEffect(() => {
+    let active = true;
+    api.certificates
+      .getPublic()
+      .then((res) => {
+        if (active && Array.isArray(res.data) && res.data.length > 0) {
+          setCertificates(res.data);
+        }
+      })
+      .catch(() => {
+        // Keep clean fallback CERTIFICATES_LIST
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const filteredCerts =
     activeCategory === "All Accreditations"
-      ? CERTIFICATES_LIST
-      : CERTIFICATES_LIST.filter((cert) => cert.category === activeCategory);
+      ? certificates
+      : certificates.filter((cert) => cert.category === activeCategory);
 
   // Close lightbox on Escape key
   useEffect(() => {
@@ -257,7 +132,7 @@ export default function CertificatesPage() {
           <div className="absolute inset-0 w-full h-full">
             <Image
               src="/images/certificates-hero.jpg"
-              alt="Xclusive Can Limited Awards and Certificates Trophy Spotlight"
+              alt="Noor Plastic Industries Awards and Certificates Trophy Spotlight"
               fill
               className="object-cover object-center opacity-85 scale-102 transition-transform duration-1000 ease-out"
               priority
@@ -275,7 +150,7 @@ export default function CertificatesPage() {
           <div className="relative z-10 text-center px-4 max-w-4xl mx-auto space-y-4 sm:space-y-6">
             <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white text-xs sm:text-sm font-bold shadow-xl shadow-black/20">
               <Award className="w-4 h-4 text-[#38bdf8] animate-pulse" />
-              <span>Achievements &bull; Quality Accreditations &bull; Since 1992</span>
+              <span>Achievements &bull; Quality Accreditations &bull; Kaliakoir, Gazipur</span>
             </div>
 
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white tracking-[0.16em] sm:tracking-[0.2em] drop-shadow-[0_4px_30px_rgba(0,0,0,0.85)] uppercase pl-[0.16em]">
@@ -283,7 +158,7 @@ export default function CertificatesPage() {
             </h1>
 
             <p className="text-xs sm:text-sm md:text-base uppercase tracking-[0.28em] font-bold text-[#38bdf8] drop-shadow-lg pl-[0.28em] max-w-2xl mx-auto">
-              ISO 9001:2015 &bull; LEED Platinum &bull; Intertek &bull; Statutory Approvals
+              ISO 9001:2015 &bull; ISO 14001 &bull; Intertek &bull; Statutory Approvals
             </p>
           </div>
 
@@ -315,13 +190,13 @@ export default function CertificatesPage() {
           {/* ══════════════════════════════════════════════════════════════
               SECTION 1: Our Certificates & Accreditations (Executive Wide Grid)
              ══════════════════════════════════════════════════════════════ */}
-          <section className="pt-20 sm:pt-28 pb-20 px-4 sm:px-6 lg:px-8 border-b border-slate-100">
+          <section id="certificates-grid" className="pt-20 sm:pt-28 pb-20 px-4 sm:px-6 lg:px-8 border-b border-slate-100">
             <div className="max-w-[1520px] w-[96%] mx-auto">
               {/* Section Header */}
               <div className="text-center mb-12 sm:mb-16">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200/80 text-xs font-bold text-slate-700 uppercase tracking-widest mb-4">
                   <ShieldCheck className="w-3.5 h-3.5 text-[#0284c7]" />
-                  <span>Verified Global Compliance &bull; Since 1992</span>
+                  <span>Verified Global Compliance &bull; Noor Plastic Industries</span>
                 </div>
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
                   Our Certificates &amp; Accreditations
@@ -339,7 +214,7 @@ export default function CertificatesPage() {
                     <Award className="w-6 h-6" />
                   </div>
                   <div>
-                    <div className="text-2xl font-black text-slate-900 tracking-tight">9+ Standards</div>
+                    <div className="text-2xl font-black text-slate-900 tracking-tight">{certificates.length}+ Standards</div>
                     <p className="text-xs text-slate-600 mt-1 leading-relaxed">
                       ISO 9001, 14001, 45001, 22000, HACCP, DGDA &amp; BSTI
                     </p>
@@ -351,9 +226,9 @@ export default function CertificatesPage() {
                     <Sparkles className="w-6 h-6" />
                   </div>
                   <div>
-                    <div className="text-2xl font-black text-slate-900 tracking-tight">LEED Platinum</div>
+                    <div className="text-2xl font-black text-slate-900 tracking-tight">Eco-Compliant</div>
                     <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                      USGBC Certified Zero-Carbon Solar Industrial Campus
+                      Energy-Efficient Blow &amp; Injection Molding with Zero-Waste Scrap Recovery
                     </p>
                   </div>
                 </div>
@@ -363,9 +238,9 @@ export default function CertificatesPage() {
                     <ShieldCheck className="w-6 h-6" />
                   </div>
                   <div>
-                    <div className="text-2xl font-black text-slate-900 tracking-tight">DGDA Approved</div>
+                    <div className="text-2xl font-black text-slate-900 tracking-tight">DGDA &amp; BSTI Aligned</div>
                     <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                      Positive-Pressure Class 100,000 Pharma Cleanroom
+                      Food-Grade Virgin Resin &amp; Controlled Pharma Cleanroom Standards
                     </p>
                   </div>
                 </div>
@@ -375,9 +250,9 @@ export default function CertificatesPage() {
                     <CheckCircle2 className="w-6 h-6" />
                   </div>
                   <div>
-                    <div className="text-2xl font-black text-slate-900 tracking-tight">100% Audit Record</div>
+                    <div className="text-2xl font-black text-slate-900 tracking-tight">100% Statutory Record</div>
                     <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                      Over 30 Years of Unblemished Global Statutory Clearances
+                      Verified Kaliakoir Municipal &amp; Industrial Quality Clearances
                     </p>
                   </div>
                 </div>
@@ -385,11 +260,11 @@ export default function CertificatesPage() {
 
               {/* Interactive Category Filter Pills */}
               <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-12">
-                {CATEGORIES.map((cat) => {
+                {CERTIFICATE_CATEGORIES.map((cat) => {
                   const count =
                     cat === "All Accreditations"
-                      ? CERTIFICATES_LIST.length
-                      : CERTIFICATES_LIST.filter((c) => c.category === cat).length;
+                      ? certificates.length
+                      : certificates.filter((c) => c.category === cat).length;
                   const isActive = activeCategory === cat;
 
                   return (
@@ -445,6 +320,7 @@ export default function CertificatesPage() {
                           src={cert.image}
                           alt={cert.title}
                           fill
+                          unoptimized={Boolean(cert.image?.startsWith("/uploads/") || cert.image?.startsWith("http"))}
                           className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 240px, 260px"
                         />
@@ -526,7 +402,7 @@ export default function CertificatesPage() {
                 </h2>
                 <div className="w-20 h-1 bg-[#0284c7] mx-auto mt-4 mb-5 rounded-full" />
                 <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
-                  Certifications and international management systems are not merely credentials framed on our walls—they serve as the operational backbone of every manufacturing line at Xclusive Can Limited.
+                  Certifications and international management systems are not merely credentials framed on our walls—they serve as the operational backbone of every manufacturing line at Noor Plastic Industries.
                 </p>
               </div>
 
@@ -564,7 +440,7 @@ export default function CertificatesPage() {
                     Closed-Loop Ecological Stewardship
                   </h3>
                   <p className="text-sm text-slate-600 leading-relaxed">
-                    Our compliance with ISO 14001 and USGBC LEED Platinum mandates zero-landfill tin reclamation, solar-powered lines, low-VOC printing lacquers, and rainwater harvesting across all facilities.
+                    Our commitment to ISO 14001 environmental management drives closed-loop polymer scrap recovery, energy-efficient molding lines, low-VOC industrial inks, and responsible water stewardship across our Kaliakoir plant.
                   </p>
                 </div>
               </div>
@@ -732,6 +608,7 @@ export default function CertificatesPage() {
                   src={selectedCert.image}
                   alt={selectedCert.title}
                   fill
+                  unoptimized={Boolean(selectedCert.image?.startsWith("/uploads/") || selectedCert.image?.startsWith("http"))}
                   className="object-contain p-2"
                 />
               </div>

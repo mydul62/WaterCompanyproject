@@ -49,7 +49,7 @@ export default function FacilityShowcase() {
         <div className="relative w-full h-full">
           <Image
             src="/cropped/factory-building.png"
-            alt="Xclusive Can Limited LEED Platinum Factory Campus"
+            alt="Noor Plastic Industries Factory Campus in Kaliakoir, Gazipur"
             fill
             className="object-cover object-right"
             priority
@@ -68,7 +68,7 @@ export default function FacilityShowcase() {
             className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-cyan-50/90 border border-cyan-200/70 text-cyan-800 text-xs sm:text-sm font-bold uppercase tracking-wider shadow-xs"
           >
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>World-Class Packaging Plant &bull; Since 2010</span>
+            <span>Noor Plastic Industries &bull; Kaliakoir, Gazipur</span>
           </div>
 
           {/* Heading */}
@@ -87,8 +87,7 @@ export default function FacilityShowcase() {
             data-reveal="up"
             className="delay-150 text-lg sm:text-xl lg:text-[23px] font-semibold text-[#3b667e] leading-[1.48] tracking-normal"
           >
-            We empower your brand with custom engineered tin and plastic packaging solutions that give you a
-            competitive edge in domestic and global markets.
+            We empower homes and businesses through plastic manufacturing, import, supply, and sealed drinking water packaging solutions from our Kaliakoir plant.
           </p>
 
           {/* 4 Minimalist Luxury Stat Cards with Liquid Water Rise Hover */}
@@ -155,7 +154,7 @@ export default function FacilityShowcase() {
           >
             <div className="flex items-center justify-between px-6 py-4 bg-black/40 border-b border-white/10 text-white">
               <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-cyan-300">
-                Xclusive Can Limited &bull; LEED Platinum Factory Campus
+                Noor Plastic Industries &bull; Kaliakoir, Gazipur Plant
               </span>
               <button
                 onClick={() => setIsVideoOpen(false)}

@@ -1,17 +1,24 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
+  const isAdminRoute = Boolean(pathname?.startsWith("/admin"));
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // 1. Disable Lenis inside iframe or editor builder so native wheel and touch scrolling work 100% smoothly
-    if (window.self !== window.top || window.location.search.includes("editor=true")) {
+    // 1. Always use native scrolling inside Admin Dashboard, iframes, or editor builder
+    if (
+      isAdminRoute ||
+      window.self !== window.top ||
+      window.location.search.includes("editor=true")
+    ) {
       return;
     }
 
@@ -28,7 +35,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       return;
     }
 
-    // 3. Initialize Lenis for desktop mouse wheel / trackpads with V-Sync autoRaf
+    // 3. Initialize Lenis for public desktop mouse wheel / trackpads while allowing nested scroll containers (modals/drawers/sidebars)
     try {
       const lenis = new Lenis({
         duration: 1.1,
@@ -36,6 +43,8 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         orientation: "vertical",
         gestureOrientation: "vertical",
         smoothWheel: true,
+        allowNestedScroll: true,
+        stopInertiaOnNavigate: true,
         wheelMultiplier: 1.0,
         touchMultiplier: 0, // Never hijack touch
         autoRaf: true,
@@ -50,7 +59,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     } catch (e) {
       // Graceful fallback to native scrolling
     }
-  }, []);
+  }, [isAdminRoute]);
 
   return <>{children}</>;
 }

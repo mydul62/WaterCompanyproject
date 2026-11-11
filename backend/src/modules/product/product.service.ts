@@ -158,7 +158,7 @@ export class ProductService {
         material: payload.material || "TINPLATE",
         capacityRange: payload.capacityRange || "Custom",
         neckSize: payload.neckSize || null,
-        factory: payload.factory || "Xclusive Can Limited",
+        factory: payload.factory || "Noor Plastic Industries",
         applications: typeof payload.applications === "string" ? payload.applications : JSON.stringify(payload.applications || []),
         features: typeof payload.features === "string" ? payload.features : JSON.stringify(payload.features || []),
         specifications: typeof payload.specifications === "string" ? payload.specifications : JSON.stringify(payload.specifications || {}),

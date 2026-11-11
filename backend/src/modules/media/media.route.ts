@@ -12,8 +12,12 @@ router.delete("/assets/:id", MediaController.deleteAsset);
 
 // Press stories endpoints
 router.get("/stories", MediaController.getAllStories);
+router.get("/stories/slug/:slug", MediaController.getStoryBySlug);
+router.get("/stories/:id", MediaController.getStoryById);
 router.post("/stories", MediaController.createStory);
+router.post("/stories/reset", MediaController.resetStories);
 router.put("/stories/:id", MediaController.updateStory);
+router.patch("/stories/:id", MediaController.updateStory);
 router.delete("/stories/:id", MediaController.deleteStory);
 
 // Backwards compatibility aliases

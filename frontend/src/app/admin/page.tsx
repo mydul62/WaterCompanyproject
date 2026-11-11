@@ -73,7 +73,7 @@ export default function AdminOverviewPage() {
   ];
 
   return (
-    <div className="space-y-8 max-w-[1643px] mx-auto">
+    <div className="space-y-8 w-full">
       {/* Page Title & Quick Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
         <div>
@@ -84,6 +84,13 @@ export default function AdminOverviewPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
+          <Link
+            href="/admin/banner"
+            className="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-cyan-600/25 transition-all hover:scale-[1.02]"
+          >
+            <ImageIcon className="w-3.5 h-3.5" />
+            Manage Hero Banner
+          </Link>
           <Link
             href="/admin/pages"
             className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.02]"
@@ -121,7 +128,7 @@ export default function AdminOverviewPage() {
             <Layers className="w-4 h-4 text-blue-400 group-hover:scale-110 transition-transform" />
           </div>
           <div className="text-3xl font-black text-white font-mono">{stats.pages}</div>
-          <p className="text-[11px] text-cyan-400 font-semibold">Elementor-Grade Builder</p>
+          <p className="text-[11px] text-cyan-400 font-semibold">Visual Page Builder</p>
         </Link>
 
         {/* Catalog Products */}

@@ -21,10 +21,10 @@ export default function SeoManagementPage() {
   const [notification, setNotification] = useState<string | null>(null);
 
   // Global SEO
-  const [metaTitle, setMetaTitle] = useState("Xclusive Can Limited & Q Pail | Sustainable Packaging Leader");
-  const [metaDescription, setMetaDescription] = useState("Pioneering sustainable metal containers, conical steel drums, and rigid plastic packaging solutions engineered for industry leaders across Bangladesh.");
-  const [metaKeywords, setMetaKeywords] = useState("metal cans, tinplate packaging, chemical drums, plastic pails, HDPE bottles, Bangladesh packaging");
-  const [canonicalUrl, setCanonicalUrl] = useState("https://www.xclusivecan.com");
+  const [metaTitle, setMetaTitle] = useState("Noor Plastic | Noor Plastic Industries — Pure Water & Plastic Packaging");
+  const [metaDescription, setMetaDescription] = useState("Noor Plastic Industries (Proprietor: Nurul Islam) — Authorized plastic manufacturing, importing & supplying company in Latifpur-B, Kaliakoir-1750, Gazipur (Trade License #242501300583).");
+  const [metaKeywords, setMetaKeywords] = useState("Noor Plastic, Noor Plastic Industries, pure water dispenser bottle, PET jar, plastic manufacturing Bangladesh, Kaliakoir Gazipur");
+  const [canonicalUrl, setCanonicalUrl] = useState("https://www.noorplastic.com");
   const [ogImageUrl, setOgImageUrl] = useState("/images/factory/factory-1.png");
 
   // Page-specific overrides
@@ -304,11 +304,11 @@ export default function SeoManagementPage() {
             <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-1.5 font-sans">
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 rounded-full bg-blue-600 text-[10px] text-white font-bold flex items-center justify-center">
-                  XC
+                  NP
                 </div>
                 <div>
                   <span className="text-[11px] text-slate-400 block leading-tight">
-                    Xclusive Can Limited
+                    Noor Plastic Industries
                   </span>
                   <span className="text-[10px] font-mono text-slate-500 block leading-tight">
                     {canonicalUrl}
@@ -346,7 +346,7 @@ export default function SeoManagementPage() {
               </div>
               <div className="p-3.5 space-y-1">
                 <span className="text-[10px] font-mono text-slate-500 uppercase">
-                  XCLUSIVECAN.COM
+                  NOORPLASTIC.COM
                 </span>
                 <h4 className="text-xs font-bold text-white truncate">
                   {pageMetaTitle || metaTitle}

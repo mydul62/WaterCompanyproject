@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Users,
   Plus,
@@ -8,80 +9,16 @@ import {
   Edit,
   Trash2,
   CheckCircle,
-  XCircle,
-  ShieldCheck,
   RefreshCw,
-  X,
-  Lock,
-  Mail,
-  UserCheck,
 } from "lucide-react";
 import { api } from "@/lib/api";
-
-interface UserRecord {
-  id: string;
-  name: string;
-  email: string;
-  role: "SUPER_ADMIN" | "ADMIN" | "EDITOR" | "SALES_MANAGER";
-  isActive: boolean;
-  createdAt: string;
-  lastLogin?: string;
-}
-
-const DEFAULT_USERS: UserRecord[] = [
-  {
-    id: "user-1",
-    name: "System Super Administrator",
-    email: "admin@xclusivecan.com",
-    role: "SUPER_ADMIN",
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    lastLogin: new Date().toISOString(),
-  },
-  {
-    id: "user-2",
-    name: "Tariqul Islam (Plant Ops)",
-    email: "tariqul@xclusivecan.com",
-    role: "ADMIN",
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    lastLogin: new Date(Date.now() - 3600000 * 24).toISOString(),
-  },
-  {
-    id: "user-3",
-    name: "Farhana Chowdhury (Content CMS)",
-    email: "farhana@xclusivecan.com",
-    role: "EDITOR",
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    lastLogin: new Date(Date.now() - 3600000 * 48).toISOString(),
-  },
-  {
-    id: "user-4",
-    name: "Kazi Mahmud (Commercial Sales)",
-    email: "sales@qpail.com",
-    role: "SALES_MANAGER",
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    lastLogin: new Date(Date.now() - 3600000 * 72).toISOString(),
-  },
-];
+import { UserRecord, DEFAULT_USERS } from "./_components/UserForm";
 
 export default function UserRoleManagementPage() {
   const [users, setUsers] = useState<UserRecord[]>(DEFAULT_USERS);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("ALL");
-
-  // User Editor Modal
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<UserRecord | null>(null);
-  const [formName, setFormName] = useState("");
-  const [formEmail, setFormEmail] = useState("");
-  const [formPassword, setFormPassword] = useState("");
-  const [formRole, setFormRole] = useState<"SUPER_ADMIN" | "ADMIN" | "EDITOR" | "SALES_MANAGER">("EDITOR");
-  const [formIsActive, setFormIsActive] = useState(true);
-
   const [notification, setNotification] = useState<string | null>(null);
 
   const showNotification = (msg: string) => {
@@ -107,84 +44,13 @@ export default function UserRoleManagementPage() {
     }
   };
 
-  const handleOpenCreate = () => {
-    setEditingUser(null);
-    setFormName("");
-    setFormEmail("");
-    setFormPassword("");
-    setFormRole("EDITOR");
-    setFormIsActive(true);
-    setIsEditorOpen(true);
-  };
-
-  const handleOpenEdit = (u: UserRecord) => {
-    setEditingUser(u);
-    setFormName(u.name);
-    setFormEmail(u.email);
-    setFormPassword("");
-    setFormRole(u.role);
-    setFormIsActive(u.isActive);
-    setIsEditorOpen(true);
-  };
-
-  const handleSaveUser = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const payload: any = {
-      name: formName,
-      email: formEmail,
-      role: formRole,
-      isActive: formIsActive,
-    };
-    if (formPassword) payload.password = formPassword;
-
-    try {
-      if (editingUser) {
-        await api.users.update(editingUser.id, payload);
-        setUsers(
-          users.map((u) =>
-            u.id === editingUser.id ? { ...u, ...payload } : u
-          )
-        );
-        showNotification(`Updated user "${formName}"`);
-      } else {
-        const res = await api.users.create(payload);
-        const created = res.data || {
-          ...payload,
-          id: `user-${Date.now()}`,
-          createdAt: new Date().toISOString(),
-        };
-        setUsers([...users, created]);
-        showNotification(`Created user "${formName}"`);
-      }
-      setIsEditorOpen(false);
-    } catch (err: any) {
-      if (editingUser) {
-        setUsers(
-          users.map((u) =>
-            u.id === editingUser.id ? { ...u, ...payload } : u
-          )
-        );
-        showNotification(`Updated user "${formName}"`);
-      } else {
-        const fallback = {
-          ...payload,
-          id: `user-${Date.now()}`,
-          createdAt: new Date().toISOString(),
-        };
-        setUsers([...users, fallback]);
-        showNotification(`Created user "${formName}"`);
-      }
-      setIsEditorOpen(false);
-    }
-  };
-
   const handleDeleteUser = async (id: string, name: string) => {
     if (!confirm(`Are you sure you want to delete user "${name}"?`)) return;
     try {
       await api.users.delete(id);
       setUsers(users.filter((u) => u.id !== id));
       showNotification(`User "${name}" deleted.`);
-    } catch (err) {
+    } catch {
       setUsers(users.filter((u) => u.id !== id));
       showNotification(`User "${name}" deleted.`);
     }
@@ -196,7 +62,7 @@ export default function UserRoleManagementPage() {
       await api.users.update(u.id, { isActive: updated });
       setUsers(users.map((user) => (user.id === u.id ? { ...user, isActive: updated } : user)));
       showNotification("User status updated.");
-    } catch (err) {
+    } catch {
       setUsers(users.map((user) => (user.id === u.id ? { ...user, isActive: updated } : user)));
       showNotification("User status updated.");
     }
@@ -212,7 +78,6 @@ export default function UserRoleManagementPage() {
 
   return (
     <div className="space-y-6">
-      {/* Toast Notification */}
       {notification && (
         <div className="fixed top-5 right-5 z-50 bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top">
           <CheckCircle className="w-4 h-4" />
@@ -245,13 +110,13 @@ export default function UserRoleManagementPage() {
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-blue-400" : ""}`} />
           </button>
-          <button
-            onClick={handleOpenCreate}
+          <Link
+            href="/admin/users/new"
             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.02]"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
             Add Team Member
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -301,7 +166,6 @@ export default function UserRoleManagementPage() {
             <tbody className="divide-y divide-slate-800/60 font-medium">
               {filteredUsers.map((user) => (
                 <tr key={user.id} className="hover:bg-slate-800/40 transition-colors group">
-                  {/* Team Member */}
                   <td className="py-4 px-5">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-xs text-cyan-400 shrink-0">
@@ -314,7 +178,6 @@ export default function UserRoleManagementPage() {
                     </div>
                   </td>
 
-                  {/* Role */}
                   <td className="py-4 px-4">
                     <span
                       className={`inline-block px-2.5 py-1 rounded-md text-[10px] font-mono font-bold ${
@@ -331,7 +194,6 @@ export default function UserRoleManagementPage() {
                     </span>
                   </td>
 
-                  {/* Status */}
                   <td className="py-4 px-4 text-center">
                     <button
                       onClick={() => handleToggleActive(user)}
@@ -345,21 +207,19 @@ export default function UserRoleManagementPage() {
                     </button>
                   </td>
 
-                  {/* Created */}
                   <td className="py-4 px-4 text-slate-400 font-mono text-[11px]">
                     {new Date(user.createdAt).toLocaleDateString()}
                   </td>
 
-                  {/* Actions */}
                   <td className="py-4 px-5 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => handleOpenEdit(user)}
+                      <Link
+                        href={`/admin/users/${user.id}/edit`}
                         className="p-1.5 rounded-lg bg-slate-800 hover:bg-blue-600 text-slate-300 hover:text-white transition-colors"
                         title="Edit User"
                       >
                         <Edit className="w-3.5 h-3.5" />
-                      </button>
+                      </Link>
                       {user.role !== "SUPER_ADMIN" && (
                         <button
                           onClick={() => handleDeleteUser(user.id, user.name)}
@@ -377,109 +237,6 @@ export default function UserRoleManagementPage() {
           </table>
         </div>
       </div>
-
-      {/* Editor Modal */}
-      {isEditorOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-150">
-          <div className="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-sm font-bold text-white">
-                {editingUser ? `Edit User: ${editingUser.name}` : "Create New Administrator"}
-              </h3>
-              <button
-                onClick={() => setIsEditorOpen(false)}
-                className="text-slate-400 hover:text-white"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveUser} className="space-y-3.5 text-xs">
-              <div>
-                <label className="block text-slate-300 font-bold mb-1">Full Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={formName}
-                  onChange={(e) => setFormName(e.target.value)}
-                  placeholder="e.g. Tariqul Islam"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500 font-bold"
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-300 font-bold mb-1">Email Address *</label>
-                <input
-                  type="email"
-                  required
-                  value={formEmail}
-                  onChange={(e) => setFormEmail(e.target.value)}
-                  placeholder="tariqul@xclusivecan.com"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-300 font-bold mb-1">
-                  {editingUser ? "Change Password (Leave blank to keep)" : "Password *"}
-                </label>
-                <input
-                  type="password"
-                  required={!editingUser}
-                  value={formPassword}
-                  onChange={(e) => setFormPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-300 font-bold mb-1">Role Permission</label>
-                <select
-                  value={formRole}
-                  onChange={(e) => setFormRole(e.target.value as any)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
-                >
-                  <option value="SUPER_ADMIN">SUPER_ADMIN (Full system privileges)</option>
-                  <option value="ADMIN">ADMIN (Products, CMS, RFQ)</option>
-                  <option value="EDITOR">EDITOR (Page Builder & Media)</option>
-                  <option value="SALES_MANAGER">SALES_MANAGER (Inquiries & Catalog)</option>
-                </select>
-              </div>
-
-              <div className="flex items-center gap-2 pt-1">
-                <input
-                  type="checkbox"
-                  id="userActiveToggle"
-                  checked={formIsActive}
-                  onChange={(e) => setFormIsActive(e.target.checked)}
-                  className="w-4 h-4 rounded text-blue-600 bg-slate-950 border-slate-800"
-                />
-                <label htmlFor="userActiveToggle" className="text-slate-300 font-bold">
-                  User Account Active
-                </label>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setIsEditorOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-700 text-xs font-bold text-slate-300 hover:bg-slate-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs"
-                >
-                  Save User
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
-

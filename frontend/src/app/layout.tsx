@@ -5,23 +5,23 @@ import LivePageHydrator from "@/components/cms/LivePageHydrator";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Xclusive Can Limited | Beyond Packaging, We Craft Solutions",
+  title: "Noor Plastic | Noor Plastic Industries — Plastic Manufacturing & Supply",
   description:
-    "Bangladesh's premier manufacturer of custom-engineered tin cans, aerosol containers, and plastic packaging solutions since 1992. LEED Platinum certified manufacturing in Gazipur & Tongi.",
+    "Noor Plastic Industries (Proprietor: Nurul Islam) — Plastic manufacturing, import, supply & pure drinking water packaging in Latifpur, Kaliakoir-1750, Gazipur, Bangladesh. Trade License #242501300583.",
   keywords: [
-    "Xclusive Can",
-    "Q Pail",
-    "Tin Cans Bangladesh",
-    "Packaging Manufacturer",
-    "Aerosol Cans",
-    "Plastic Bottles PET HDPE",
-    "LEED Platinum Factory",
-    "Industrial Packaging Gazipur",
+    "Noor Plastic",
+    "Noor Plastic Industries",
+    "Kaliakoir Gazipur",
+    "Plastic Manufacturer Bangladesh",
+    "Pure Drinking Water Packaging",
+    "PET HDPE Containers",
+    "Trade License 242501300583",
   ],
-  authors: [{ name: "Xclusive Can Limited" }],
+  authors: [{ name: "Noor Plastic Industries" }],
   openGraph: {
-    title: "Xclusive Can Limited | Industrial Packaging Solutions",
-    description: "Beyond packaging, we craft solutions. LEED Platinum Certified manufacturer.",
+    title: "Noor Plastic | Noor Plastic Industries",
+    description:
+      "Plastic manufacturing, import, supply & pure drinking water packaging in Kaliakoir, Gazipur, Bangladesh.",
     type: "website",
   },
 };

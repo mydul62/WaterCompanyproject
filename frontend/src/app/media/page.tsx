@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { PRESS_STORIES } from "@/data/mediaData";
+import { PRESS_STORIES, PressStory, normalizePressStory } from "@/data/mediaData";
+import { api } from "@/lib/api";
 import {
   Newspaper,
   Calendar,
@@ -26,6 +27,7 @@ import {
 } from "lucide-react";
 
 export default function MediaAndContactsPage() {
+  const [stories, setStories] = useState<PressStory[]>(PRESS_STORIES);
   const [selectedOutlet, setSelectedOutlet] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -38,10 +40,30 @@ export default function MediaAndContactsPage() {
     message: "",
   });
 
-  const outlets = ["All", "Prothom Alo", "The Daily Star", "Samakal", "Bonik Barta"];
+  useEffect(() => {
+    let active = true;
+    api.mediaStories
+      .getPublic()
+      .then((res) => {
+        if (active && Array.isArray(res.data) && res.data.length > 0) {
+          setStories(res.data.map(normalizePressStory));
+        }
+      })
+      .catch(() => {
+        // Keep static defaults
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const outlets = useMemo(
+    () => ["All", ...Array.from(new Set(stories.map((s) => s.outlet).filter(Boolean)))],
+    [stories]
+  );
 
   const filteredStories = useMemo(() => {
-    return PRESS_STORIES.filter((story) => {
+    return stories.filter((story) => {
       const matchOutlet = selectedOutlet === "All" || story.outlet === selectedOutlet;
       const matchQuery =
         !searchQuery ||
@@ -50,7 +72,7 @@ export default function MediaAndContactsPage() {
         story.outlet.toLowerCase().includes(searchQuery.toLowerCase());
       return matchOutlet && matchQuery;
     });
-  }, [selectedOutlet, searchQuery]);
+  }, [stories, selectedOutlet, searchQuery]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,7 +106,7 @@ export default function MediaAndContactsPage() {
           <div className="absolute inset-0 w-full h-full">
             <Image
               src="/images/business-hero-office.jpg"
-              alt="Media Coverage & Corporate Contacts - Xclusive Can Limited"
+              alt="Media Coverage & Corporate Contacts - Noor Plastic Industries"
               fill
               priority
               sizes="100vw"
@@ -231,6 +253,7 @@ export default function MediaAndContactsPage() {
                         src={story.image}
                         alt={story.title}
                         fill
+                        unoptimized={Boolean(story.image?.startsWith("/uploads/") || story.image?.startsWith("http"))}
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-[11px] font-bold text-white shadow-sm" style={{ backgroundColor: story.outletColor }}>
@@ -379,93 +402,93 @@ export default function MediaAndContactsPage() {
 
               {/* 3 Facility Location Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-                {/* Plant 1: Xclusive Can Ltd */}
+                {/* Plant 1: Noor Plastic Industries */}
                 <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-sm hover:shadow-lg transition-all space-y-5 flex flex-col justify-between">
                   <div className="space-y-4">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-100">
-                      <span>LEED Platinum Zero-Carbon Plant</span>
+                      <span>Kaliakoir Pourashava Registered Plant</span>
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-slate-900">Xclusive Can Limited</h3>
-                      <p className="text-xs text-slate-500 font-medium mt-0.5">Majukhan Manufacturing Campus</p>
+                      <h3 className="text-xl font-bold text-slate-900">Noor Plastic Industries</h3>
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">Proprietor: Nurul Islam &bull; Trade License #242501300583</p>
                     </div>
                     <div className="space-y-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
                       <div className="flex items-start gap-2.5">
                         <MapPin className="w-4 h-4 text-cyan-600 shrink-0 mt-0.5" />
-                        <span>Plot#53/1, Block#B, Kaligonj Road, Majukhan, Gazipur, Dhaka, Bangladesh.</span>
+                        <span>Holding #5, Ward #02, Latifpur-B, Kaliakoir-1750, Gazipur, Dhaka, Bangladesh.</span>
                       </div>
                       <div className="flex items-center gap-2.5">
                         <Phone className="w-4 h-4 text-cyan-600 shrink-0" />
-                        <span className="font-semibold text-slate-800">+8801819343635, +8801680240524</span>
+                        <span className="font-semibold text-slate-800">+880 1711-987275</span>
                       </div>
                       <div className="flex items-center gap-2.5">
                         <Mail className="w-4 h-4 text-cyan-600 shrink-0" />
-                        <span>sales@xclusivecanltd.com</span>
+                        <span>info@noorplastic.com</span>
                       </div>
                     </div>
                   </div>
                   <div className="pt-4 border-t border-slate-100 text-[11px] text-slate-400 font-medium">
-                    Specialization: 5-Axis CNC Tool Room, Precision Metal Packaging, Tin Printing
+                    Business Type: Plastic Manufacturing, Importing &amp; Supplying
                   </div>
                 </div>
 
-                {/* Plant 2: Q Pail Ltd */}
+                {/* Plant 2: Commercial & Wholesale */}
                 <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-sm hover:shadow-lg transition-all space-y-5 flex flex-col justify-between">
                   <div className="space-y-4">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-100">
-                      <span>54,000 Sq Ft High-Capacity Facility</span>
+                      <span>Plastic Supply &amp; Distribution</span>
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-slate-900">Q Pail Limited</h3>
-                      <p className="text-xs text-slate-500 font-medium mt-0.5">Tongi Industrial Complex</p>
+                      <h3 className="text-xl font-bold text-slate-900">Noor Plastic Supply Wing</h3>
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">Latifpur-B Operations, Gazipur</p>
                     </div>
                     <div className="space-y-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
                       <div className="flex items-start gap-2.5">
                         <MapPin className="w-4 h-4 text-cyan-600 shrink-0 mt-0.5" />
-                        <span>Plot#B 196, BSCIC Industrial Area, Tongi, Gazipur, Dhaka, Bangladesh.</span>
+                        <span>Ward #02, Latifpur, Post Office: Kaliakoir-1750, District: Gazipur, Bangladesh.</span>
                       </div>
                       <div className="flex items-center gap-2.5">
                         <Phone className="w-4 h-4 text-cyan-600 shrink-0" />
-                        <span className="font-semibold text-slate-800">+8801818950946</span>
+                        <span className="font-semibold text-slate-800">+880 1711-987275</span>
                       </div>
                       <div className="flex items-center gap-2.5">
                         <Mail className="w-4 h-4 text-cyan-600 shrink-0" />
-                        <span>marketing@qpail.com</span>
+                        <span>sales@noorplastic.com</span>
                       </div>
                     </div>
                   </div>
                   <div className="pt-4 border-t border-slate-100 text-[11px] text-slate-400 font-medium">
-                    Specialization: High-Speed Plastic Molding, Screen Printing, Heat Transfer (HTP)
+                    Specialization: Purified Water Containers, Plastic Bottles &amp; Industrial Pails
                   </div>
                 </div>
 
-                {/* Office 3: Corporate Communications */}
+                {/* Office 3: Regulatory & Tax Compliance */}
                 <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-sm hover:shadow-lg transition-all space-y-5 flex flex-col justify-between">
                   <div className="space-y-4">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-50 text-cyan-700 text-xs font-bold border border-cyan-100">
-                      <span>Corporate &amp; Commercial Desk</span>
+                      <span>Official Business Registration</span>
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-slate-900">Corporate Headquarters</h3>
-                      <p className="text-xs text-slate-500 font-medium mt-0.5">Commercial &amp; Procurement Wing</p>
+                      <h3 className="text-xl font-bold text-slate-900">Compliance &amp; Inquiries</h3>
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">BIN: 007122199-1205 &bull; TIN: 636404586599</p>
                     </div>
                     <div className="space-y-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
                       <div className="flex items-start gap-2.5">
                         <Building2 className="w-4 h-4 text-cyan-600 shrink-0 mt-0.5" />
-                        <span>Dhaka Commercial Office, Bangladesh.</span>
+                        <span>Kaliakoir Pourashava e-Trade License #242501300583 (FY 2026–2027).</span>
                       </div>
                       <div className="flex items-center gap-2.5">
                         <Clock className="w-4 h-4 text-cyan-600 shrink-0" />
-                        <span>Sun - Thu: 9:00 AM - 6:00 PM (GMT+6)</span>
+                        <span>Sat - Thu: 08:00 AM - 08:00 PM (GMT+6)</span>
                       </div>
                       <div className="flex items-center gap-2.5">
                         <Mail className="w-4 h-4 text-cyan-600 shrink-0" />
-                        <span>commercial@qpail.com</span>
+                        <span>info@noorplastic.com</span>
                       </div>
                     </div>
                   </div>
                   <div className="pt-4 border-t border-slate-100 text-[11px] text-slate-400 font-medium">
-                    Procurement, Vendor Registration &amp; Media Relations Inquiries
+                    Wholesale, Import Supply &amp; Corporate Partner Onboarding
                   </div>
                 </div>
               </div>

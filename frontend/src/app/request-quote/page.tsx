@@ -131,7 +131,7 @@ function RequestQuoteContent() {
               Request a Quote &amp; Samples
             </h1>
             <p className="text-base sm:text-xl font-medium text-white/95 mt-2 drop-shadow-sm max-w-2xl">
-              Partner with Bangladesh&apos;s premier packaging manufacturers — Q Pail Limited &amp; Xclusive Can Limited.
+              Partner directly with Noor Plastic Industries — authorized plastic manufacturing, importing &amp; supply in Kaliakoir, Gazipur.
             </p>
           </div>
         </div>
@@ -326,11 +326,11 @@ function RequestQuoteContent() {
                     <div className="space-y-2 text-sm text-slate-300">
                       <div className="flex items-center gap-3">
                         <Phone className="w-4 h-4 text-cyan-400" />
-                        <span className="font-semibold text-white">+880 1713 000 000</span>
+                        <span className="font-semibold text-white">+880 1711-987275</span>
                       </div>
                       <div className="flex items-center gap-3">
                         <Mail className="w-4 h-4 text-cyan-400" />
-                        <span className="font-medium">corporate-sales@xclusivecan.com</span>
+                        <span className="font-medium">info@noorplastic.com</span>
                       </div>
                     </div>
                   </div>
@@ -346,11 +346,10 @@ function RequestQuoteContent() {
                         setActiveType("quote");
                         setFormData((prev) => ({ ...prev, needPhysicalSample: false }));
                       }}
-                      className={`flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                        activeType === "quote"
-                          ? "bg-white text-slate-900 shadow-sm"
-                          : "text-slate-600 hover:text-slate-900"
-                      }`}
+                      className={`flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${activeType === "quote"
+                        ? "bg-white text-slate-900 shadow-sm"
+                        : "text-slate-600 hover:text-slate-900"
+                        }`}
                     >
                       Request Quotation
                     </button>
@@ -360,11 +359,10 @@ function RequestQuoteContent() {
                         setActiveType("sample");
                         setFormData((prev) => ({ ...prev, needPhysicalSample: true }));
                       }}
-                      className={`flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                        activeType === "sample"
-                          ? "bg-white text-slate-900 shadow-sm"
-                          : "text-slate-600 hover:text-slate-900"
-                      }`}
+                      className={`flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${activeType === "sample"
+                        ? "bg-white text-slate-900 shadow-sm"
+                        : "text-slate-600 hover:text-slate-900"
+                        }`}
                     >
                       Request Physical Samples
                     </button>

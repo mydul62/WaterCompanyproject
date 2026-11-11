@@ -123,14 +123,43 @@ export class MediaController {
   }
 
   // Press Stories
-  static async getAllStories(_req: Request, res: Response, next: NextFunction) {
+  static async getAllStories(req: Request, res: Response, next: NextFunction) {
     try {
-      const stories = await MediaService.getAllStories();
+      const includeInactive = req.query.all === "true";
+      const stories = await MediaService.getAllStories(includeInactive);
       return sendResponse(res, {
         statusCode: 200,
         success: true,
         message: "Press stories retrieved.",
         data: stories,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async getStoryBySlug(req: Request, res: Response, next: NextFunction) {
+    try {
+      const story = await MediaService.getStoryBySlug(req.params.slug);
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Press story retrieved.",
+        data: story,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async getStoryById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const story = await MediaService.getStoryById(req.params.id);
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Press story retrieved.",
+        data: story,
       });
     } catch (err) {
       return next(err);
@@ -173,6 +202,20 @@ export class MediaController {
         success: true,
         message: "Story deleted.",
         data: null,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async resetStories(_req: Request, res: Response, next: NextFunction) {
+    try {
+      const stories = await MediaService.resetStories();
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Press stories reset to defaults.",
+        data: stories,
       });
     } catch (err) {
       return next(err);

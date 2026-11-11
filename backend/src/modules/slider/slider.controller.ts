@@ -3,13 +3,15 @@ import { SliderService } from "./slider.service";
 import { sendResponse } from "../../utils/response";
 
 export class SliderController {
-  static async getAll(_req: Request, res: Response, next: NextFunction) {
+  static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const slides = await SliderService.getAll();
+      const includeInactive =
+        req.query.all === "true" || req.path.endsWith("/admin");
+      const slides = await SliderService.getAll(includeInactive);
       return sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: "Slider items retrieved successfully.",
+        message: "Banner slides retrieved successfully.",
         data: slides,
       });
     } catch (err) {
@@ -23,7 +25,7 @@ export class SliderController {
       return sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: "Slide retrieved successfully.",
+        message: "Banner slide retrieved successfully.",
         data: slide,
       });
     } catch (err) {
@@ -37,7 +39,7 @@ export class SliderController {
       return sendResponse(res, {
         statusCode: 201,
         success: true,
-        message: "Slide created successfully.",
+        message: "Banner slide created successfully.",
         data: slide,
       });
     } catch (err) {
@@ -51,8 +53,36 @@ export class SliderController {
       return sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: "Slide updated successfully.",
+        message: "Banner slide updated successfully.",
         data: slide,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async reorder(req: Request, res: Response, next: NextFunction) {
+    try {
+      const slides = await SliderService.reorder(req.body.orderedIds || []);
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Banner slides reordered successfully.",
+        data: slides,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async resetDefaults(_req: Request, res: Response, next: NextFunction) {
+    try {
+      const slides = await SliderService.resetDefaults();
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Default banner slides restored successfully.",
+        data: slides,
       });
     } catch (err) {
       return next(err);
@@ -65,7 +95,7 @@ export class SliderController {
       return sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: "Slide deleted successfully.",
+        message: "Banner slide deleted successfully.",
         data: slide,
       });
     } catch (err) {
@@ -73,4 +103,3 @@ export class SliderController {
     }
   }
 }
-

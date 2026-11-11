@@ -1,104 +1,343 @@
+import { prisma } from "../../config/prisma";
 import { ApiError } from "../../utils/apiError";
 
-export interface SliderItem {
-  id: string;
-  badge: string;
-  title: string;
-  highlight: string;
-  tagline: string;
-  image: string;
-  order: number;
-  isActive: boolean;
+export interface BannerSlidePayload {
+  num?: string;
+  line1?: string;
+  line2?: string;
+  line3?: string;
+  lines?: [string, string?, string?];
+  title?: string;
+  description?: string;
+  tagline?: string;
+  readMoreLabel?: string;
+  readMoreHref?: string;
+  watchVideoLabel?: string;
+  watchVideoSub?: string;
+  videoUrl?: string;
+  showOfferBadge?: boolean;
+  offerEyebrow1?: string;
+  offerEyebrow2?: string;
+  offerPrice?: string;
+  offerUnit?: string;
+  visualLayout?: "duo" | "trio" | "custom" | string;
+  foregroundImage?: string;
+  secondaryImage?: string;
+  platformImage?: string;
+  backgroundImage?: string;
+  sortOrder?: number;
+  order?: number;
+  isActive?: boolean;
 }
 
-let sliderStore: SliderItem[] = [
+export const DEFAULT_SEED_BANNERS = [
   {
-    id: "slide-1",
-    badge: "100% Recyclable • USGBC Benchmark",
-    title: "Eco-Friendly Tin Cans & Pails",
-    highlight: "LEED Platinum",
-    tagline:
-      "Green, eco-friendly metal & plastic packaging solutions engineered for safety, purity, and circular sustainability.",
-    image: "/Infoimages/Screenshot 2026-11-04 130154.png",
-    order: 1,
+    num: "01",
+    line1: "Delivered Right",
+    line2: "To Your Home &",
+    line3: "Office Door.",
+    description:
+      "Duty obligations of business will frequently occur pleasures be repudiated and annoyances accepted.",
+    readMoreLabel: "READ MORE",
+    readMoreHref: "/products",
+    watchVideoLabel: "WATCH VIDEO",
+    watchVideoSub: "Production to Delivery",
+    videoUrl: "",
+    showOfferBadge: true,
+    offerEyebrow1: "Limited",
+    offerEyebrow2: "Time Offer",
+    offerPrice: "$15.50",
+    offerUnit: "Per bottle",
+    visualLayout: "duo",
+    foregroundImage: "/images/hero/bottle-vertical.png",
+    secondaryImage: "/images/hero/bottle-horizontal.png",
+    platformImage: "/images/hero/hero-splash-platform.jpg",
+    backgroundImage: "/images/hero/hero-bubbles-bg.jpg",
+    sortOrder: 1,
     isActive: true,
   },
   {
-    id: "slide-2",
-    badge: "Food Grade • Zero Contamination",
-    title: "Precision Plastic Bottles & Jars",
-    highlight: "Ultra Purity",
-    tagline:
-      "Cleanroom Class 100,000 certified pharmaceutical containers, PET mineral water bottles, and calibrated dropper tips.",
-    image: "/Infoimages/Screenshot 2026-11-04 130237.png",
-    order: 2,
+    num: "02",
+    line1: "Noor Plastic",
+    line2: "Is Closer Than",
+    line3: "You Think",
+    description:
+      "Direct factory plastic container supply, pure water dispenser jugs, and express delivery across Kaliakoir, Gazipur & Dhaka.",
+    readMoreLabel: "READ MORE",
+    readMoreHref: "/our-business",
+    watchVideoLabel: "WATCH VIDEO",
+    watchVideoSub: "Production to Delivery",
+    videoUrl: "",
+    showOfferBadge: true,
+    offerEyebrow1: "Limited",
+    offerEyebrow2: "Time Offer",
+    offerPrice: "$15.50",
+    offerUnit: "Per bottle",
+    visualLayout: "duo",
+    foregroundImage: "/images/hero/bottle-vertical.png",
+    secondaryImage: "/images/hero/bottle-horizontal.png",
+    platformImage: "/images/hero/hero-splash-platform.jpg",
+    backgroundImage: "/images/hero/hero-bubbles-bg.jpg",
+    sortOrder: 2,
     isActive: true,
   },
   {
-    id: "slide-3",
-    badge: "Heavy Duty • Chemical Resistant",
-    title: "Industrial Q Pail Heavy Containers",
-    highlight: "Impact Armor",
-    tagline:
-      "Engineered for Asian Paints, Berger, and lubricant brands with airtight triple-seal snap lids and heavy-duty steel handles.",
-    image: "/Infoimages/Screenshot 2026-11-04 130325.png",
-    order: 3,
+    num: "03",
+    line1: "100% Pure Water",
+    line2: "Sealed Fresh For",
+    line3: "Every Occasion.",
+    description:
+      "Precision multi-stage filtration and certified cleanroom bottling engineered for daily home and office hydration.",
+    readMoreLabel: "READ MORE",
+    readMoreHref: "/certificates",
+    watchVideoLabel: "WATCH VIDEO",
+    watchVideoSub: "Production to Delivery",
+    videoUrl: "",
+    showOfferBadge: true,
+    offerEyebrow1: "Special",
+    offerEyebrow2: "Bulk Offer",
+    offerPrice: "$14.00",
+    offerUnit: "Per bottle",
+    visualLayout: "duo",
+    foregroundImage: "/images/hero/bottle-vertical.png",
+    secondaryImage: "/images/hero/bottle-horizontal.png",
+    platformImage: "/images/hero/hero-splash-platform.jpg",
+    backgroundImage: "/images/hero/hero-bubbles-bg.jpg",
+    sortOrder: 3,
+    isActive: true,
+  },
+  {
+    num: "04",
+    line1: "Bulk 3-Bottle",
+    line2: "Family & Office",
+    line3: "Water Packs.",
+    description:
+      "Triple-bottle 5-gallon purified mineral water bundles delivered straight to your home or workplace.",
+    readMoreLabel: "READ MORE",
+    readMoreHref: "/products",
+    watchVideoLabel: "WATCH VIDEO",
+    watchVideoSub: "Production to Delivery",
+    videoUrl: "",
+    showOfferBadge: true,
+    offerEyebrow1: "Special",
+    offerEyebrow2: "Bulk Offer",
+    offerPrice: "$39.00",
+    offerUnit: "3 Bottles",
+    visualLayout: "trio",
+    foregroundImage: "/images/hero/bottles-trio.png",
+    secondaryImage: "/images/hero/bottle-horizontal.png",
+    platformImage: "/images/hero/hero-splash-platform.jpg",
+    backgroundImage: "/images/hero/hero-bubbles-bg.jpg",
+    sortOrder: 4,
     isActive: true,
   },
 ];
 
+function serializeBanner(row: any) {
+  return {
+    ...row,
+    lines: [row.line1, row.line2, row.line3] as [string, string, string],
+  };
+}
+
+function formatSlideNum(index: number): string {
+  return String(index + 1).padStart(2, "0");
+}
+
+function normalizePayload(payload: BannerSlidePayload, fallbackOrder = 1) {
+  const line1 =
+    payload.lines?.[0] ?? payload.line1 ?? payload.title ?? "";
+  const line2 = payload.lines?.[1] ?? payload.line2 ?? "";
+  const line3 = payload.lines?.[2] ?? payload.line3 ?? "";
+  const layout =
+    payload.visualLayout === "trio" || payload.visualLayout === "custom"
+      ? payload.visualLayout
+      : "duo";
+
+  return {
+    line1: String(line1).trim(),
+    line2: String(line2).trim(),
+    line3: String(line3).trim(),
+    description: String(payload.description ?? payload.tagline ?? "").trim(),
+    readMoreLabel: String(payload.readMoreLabel || "READ MORE").trim(),
+    readMoreHref: String(payload.readMoreHref || "/products").trim(),
+    watchVideoLabel: String(payload.watchVideoLabel || "WATCH VIDEO").trim(),
+    watchVideoSub: String(
+      payload.watchVideoSub || "Production to Delivery"
+    ).trim(),
+    videoUrl: String(payload.videoUrl || "").trim(),
+    showOfferBadge:
+      payload.showOfferBadge !== undefined ? Boolean(payload.showOfferBadge) : true,
+    offerEyebrow1: String(payload.offerEyebrow1 ?? "Limited").trim(),
+    offerEyebrow2: String(payload.offerEyebrow2 ?? "Time Offer").trim(),
+    offerPrice: String(payload.offerPrice ?? "$15.50").trim(),
+    offerUnit: String(payload.offerUnit ?? "Per bottle").trim(),
+    visualLayout: layout,
+    foregroundImage: String(
+      payload.foregroundImage ||
+        (layout === "trio"
+          ? "/images/hero/bottles-trio.png"
+          : "/images/hero/bottle-vertical.png")
+    ).trim(),
+    secondaryImage: String(
+      payload.secondaryImage || "/images/hero/bottle-horizontal.png"
+    ).trim(),
+    platformImage: String(
+      payload.platformImage || "/images/hero/hero-splash-platform.jpg"
+    ).trim(),
+    backgroundImage: String(
+      payload.backgroundImage || "/images/hero/hero-bubbles-bg.jpg"
+    ).trim(),
+    sortOrder:
+      typeof payload.sortOrder === "number"
+        ? payload.sortOrder
+        : typeof payload.order === "number"
+        ? payload.order
+        : fallbackOrder,
+    isActive: payload.isActive !== undefined ? Boolean(payload.isActive) : true,
+  };
+}
+
 export class SliderService {
-  static async getAll() {
-    return sliderStore.sort((a, b) => a.order - b.order);
+  static async ensureSeededIfEmpty() {
+    const count = await prisma.bannerSlide.count();
+    if (count === 0) {
+      for (const slide of DEFAULT_SEED_BANNERS) {
+        await prisma.bannerSlide.create({ data: slide });
+      }
+    }
+  }
+
+  static async renumberAll() {
+    const slides = await prisma.bannerSlide.findMany({
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    });
+    for (let i = 0; i < slides.length; i++) {
+      const nextNum = formatSlideNum(i);
+      const nextOrder = i + 1;
+      if (slides[i].num !== nextNum || slides[i].sortOrder !== nextOrder) {
+        await prisma.bannerSlide.update({
+          where: { id: slides[i].id },
+          data: { num: nextNum, sortOrder: nextOrder },
+        });
+      }
+    }
+  }
+
+  static async getAll(includeInactive = false) {
+    const slides = await prisma.bannerSlide.findMany({
+      where: includeInactive ? undefined : { isActive: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    });
+    return slides.map(serializeBanner);
   }
 
   static async getById(id: string) {
-    const slide = sliderStore.find((s) => s.id === id);
+    const slide = await prisma.bannerSlide.findUnique({ where: { id } });
     if (!slide) {
-      throw new ApiError(404, "Slide not found.");
+      throw new ApiError(404, "Banner slide not found.");
     }
-    return slide;
+    return serializeBanner(slide);
   }
 
-  static async create(payload: Partial<SliderItem>) {
-    if (!payload.title || !payload.highlight) {
-      throw new ApiError(400, "Title and highlight text are required.");
+  static async create(payload: BannerSlidePayload) {
+    const total = await prisma.bannerSlide.count();
+    const data = normalizePayload(payload, total + 1);
+    if (!data.line1) {
+      throw new ApiError(400, "Headline Line 1 is required.");
     }
 
-    const newSlide: SliderItem = {
-      id: `slide-${Date.now()}`,
-      badge: payload.badge || "Industrial Packaging",
-      title: payload.title,
-      highlight: payload.highlight,
-      tagline: payload.tagline || "",
-      image: payload.image || "/Infoimages/Screenshot 2026-11-04 130154.png",
-      order: payload.order || sliderStore.length + 1,
-      isActive: payload.isActive !== undefined ? payload.isActive : true,
-    };
+    const created = await prisma.bannerSlide.create({
+      data: {
+        ...data,
+        num: payload.num?.trim() || formatSlideNum(total),
+      },
+    });
 
-    sliderStore.push(newSlide);
-    return newSlide;
+    await this.renumberAll();
+    const fresh = await prisma.bannerSlide.findUnique({
+      where: { id: created.id },
+    });
+    return serializeBanner(fresh || created);
   }
 
-  static async update(id: string, payload: Partial<SliderItem>) {
-    const index = sliderStore.findIndex((s) => s.id === id);
-    if (index === -1) {
-      throw new ApiError(404, "Slide not found to update.");
+  static async update(id: string, payload: BannerSlidePayload) {
+    const existing = await prisma.bannerSlide.findUnique({ where: { id } });
+    if (!existing) {
+      throw new ApiError(404, "Banner slide not found to update.");
     }
 
-    sliderStore[index] = {
-      ...sliderStore[index],
-      ...payload,
-    };
-    return sliderStore[index];
+    const merged = normalizePayload(
+      {
+        ...existing,
+        ...payload,
+        lines: payload.lines || [
+          payload.line1 ?? existing.line1,
+          payload.line2 ?? existing.line2,
+          payload.line3 ?? existing.line3,
+        ],
+      },
+      existing.sortOrder
+    );
+
+    if (!merged.line1) {
+      throw new ApiError(400, "Headline Line 1 is required.");
+    }
+
+    const updated = await prisma.bannerSlide.update({
+      where: { id },
+      data: {
+        ...merged,
+        num: payload.num?.trim() || existing.num,
+      },
+    });
+
+    if (payload.sortOrder !== undefined || payload.order !== undefined) {
+      await this.renumberAll();
+    }
+
+    const fresh = await prisma.bannerSlide.findUnique({ where: { id } });
+    return serializeBanner(fresh || updated);
+  }
+
+  static async reorder(orderedIds: string[]) {
+    if (!Array.isArray(orderedIds) || orderedIds.length === 0) {
+      throw new ApiError(400, "orderedIds array is required.");
+    }
+
+    await prisma.$transaction(
+      orderedIds.map((id, index) =>
+        prisma.bannerSlide.update({
+          where: { id },
+          data: {
+            sortOrder: index + 1,
+            num: formatSlideNum(index),
+          },
+        })
+      )
+    );
+
+    return this.getAll(true);
+  }
+
+  static async resetDefaults() {
+    await prisma.$transaction([
+      prisma.bannerSlide.deleteMany({}),
+      ...DEFAULT_SEED_BANNERS.map((slide) =>
+        prisma.bannerSlide.create({ data: slide })
+      ),
+    ]);
+    return this.getAll(true);
   }
 
   static async delete(id: string) {
-    const index = sliderStore.findIndex((s) => s.id === id);
-    if (index === -1) {
-      throw new ApiError(404, "Slide not found to delete.");
+    const existing = await prisma.bannerSlide.findUnique({ where: { id } });
+    if (!existing) {
+      throw new ApiError(404, "Banner slide not found to delete.");
     }
-    return sliderStore.splice(index, 1)[0];
+
+    const deleted = await prisma.bannerSlide.delete({ where: { id } });
+    await this.renumberAll();
+    return serializeBanner(deleted);
   }
 }
-

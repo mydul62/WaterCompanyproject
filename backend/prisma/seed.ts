@@ -1,48 +1,70 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import {
+  DEFAULT_PRESS_STORIES,
+  DEFAULT_BLOG_POSTS,
+  DEFAULT_CASE_STUDIES,
+  DEFAULT_CERTIFICATES,
+  DEFAULT_CAREER_JOBS,
+} from "../src/data/cmsDefaults";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Seeding Xclusive Can Limited database...");
+  console.log("Seeding Noor Plastic Industries database...");
 
   // 1. Super Admin User
   const passwordHash = await bcrypt.hash("admin123456", 10);
   const admin = await prisma.user.upsert({
-    where: { email: "admin@xclusivecan.com" },
+    where: { email: "admin@noorplastic.com" },
     update: { password: passwordHash },
     create: {
-      email: "admin@xclusivecan.com",
+      email: "admin@noorplastic.com",
       name: "System Administrator",
       password: passwordHash,
       role: "SUPER_ADMIN",
-      avatar: "/cropped/xclusive-logo.png",
+      avatar: "",
     },
   });
   console.log("Admin user seeded:", admin.email);
 
   // 2. Global Site Settings
   const settingsData = [
-    { key: "site_name", value: "Xclusive Can Limited", category: "BRANDING" },
-    { key: "brand_group", value: "Xclusive Can & Q Pail Ltd.", category: "BRANDING" },
-    { key: "tagline", value: "Beyond Packaging, We Craft Solutions", category: "BRANDING" },
-    { key: "founded_year", value: "1992", category: "BRANDING" },
-    { key: "logo_url", value: "/cropped/xclusive-logo.png", category: "BRANDING" },
-    { key: "logo_white_url", value: "/cropped/xclusive-logo-white.png", category: "BRANDING" },
-    { key: "headquarters", value: "Plot#53/1, Block#B, Kaligonj Road, Majukhan, Gazipur, Dhaka, Bangladesh", category: "CONTACT" },
-    { key: "plant_tongi", value: "Plot#B 196, BSCIC I/A, Tongi, Gazipur, Dhaka, Bangladesh", category: "CONTACT" },
-    { key: "phone_sales_1", value: "+8801819343635", category: "CONTACT" },
-    { key: "phone_sales_2", value: "+8801680240524", category: "CONTACT" },
-    { key: "phone_foreign_purchase", value: "+8801841984208", category: "CONTACT" },
-    { key: "email_sales", value: "marketing@qpail.com", category: "CONTACT" },
-    { key: "email_procurement", value: "commercial@qpail.com", category: "CONTACT" },
+    { key: "site_name", value: "Noor Plastic Industries", category: "BRANDING" },
+    { key: "brand_group", value: "Noor Plastic", category: "BRANDING" },
+    { key: "tagline", value: "Plastic Manufacturing, Import & Pure Water Packaging", category: "BRANDING" },
+    { key: "founded_year", value: "2024", category: "BRANDING" },
+    { key: "logo_url", value: "", category: "BRANDING" },
+    { key: "logo_white_url", value: "", category: "BRANDING" },
+    { key: "header_brand_name", value: "Noor Plastic", category: "HEADER" },
+    { key: "header_logo_url", value: "", category: "HEADER" },
+    { key: "header_delivery_text", value: "Immediate Delivery", category: "HEADER" },
+    { key: "header_phone", value: "+880 1711-987275", category: "HEADER" },
+    { key: "header_hours", value: "Sat - Thu: 08.00 to 20.00", category: "HEADER" },
+    { key: "header_email", value: "info@noorplastic.com", category: "HEADER" },
+    { key: "headquarters", value: "Holding #5, Ward #02, Latifpur-B, Kaliakoir-1750, Gazipur, Dhaka, Bangladesh", category: "CONTACT" },
+    { key: "factory_gazipur", value: "Holding #5, Ward #02, Latifpur-B, Kaliakoir-1750, Gazipur, Dhaka, Bangladesh", category: "CONTACT" },
+    { key: "plant_tongi", value: "Ward #02, Kaliakoir Pourashava, Gazipur, Dhaka, Bangladesh", category: "CONTACT" },
+    { key: "factory_tongi", value: "Ward #02, Kaliakoir Pourashava, Gazipur, Dhaka, Bangladesh", category: "CONTACT" },
+    { key: "phone_sales", value: "+880 1711-987275", category: "CONTACT" },
+    { key: "phone_sales_1", value: "+880 1711-987275", category: "CONTACT" },
+    { key: "phone_sales_2", value: "+880 1711-987275", category: "CONTACT" },
+    { key: "phone_foreign_purchase", value: "+880 1711-987275", category: "CONTACT" },
+    { key: "phone_procurement", value: "+880 1711-987275", category: "CONTACT" },
+    { key: "email_sales", value: "info@noorplastic.com", category: "CONTACT" },
+    { key: "email_procurement", value: "sales@noorplastic.com", category: "CONTACT" },
+    { key: "proprietor_name", value: "Nurul Islam", category: "LEGAL" },
+    { key: "trade_license_no", value: "242501300583", category: "LEGAL" },
+    { key: "bin_number", value: "007122199-1205", category: "LEGAL" },
+    { key: "tin_number", value: "636404586599", category: "LEGAL" },
     { key: "social_facebook", value: "https://facebook.com", category: "SOCIAL" },
     { key: "social_youtube", value: "https://youtube.com", category: "SOCIAL" },
     { key: "social_linkedin", value: "https://linkedin.com", category: "SOCIAL" },
-    { key: "seo_meta_title", value: "Xclusive Can Limited | Industrial Packaging Solutions", category: "SEO" },
-    { key: "seo_meta_description", value: "Bangladesh's premier manufacturer of custom-engineered tin cans, aerosol containers, and plastic packaging solutions since 1992. LEED Platinum certified manufacturing in Gazipur & Tongi.", category: "SEO" },
-    { key: "seo_meta_keywords", value: "Xclusive Can, Q Pail, Tin Cans Bangladesh, Packaging Manufacturer, Aerosol Cans, Plastic Bottles PET HDPE, LEED Platinum Factory", category: "SEO" },
-    { key: "footer_copyright", value: "Copyright © 1992 - 2026 Xclusive Can Limited. All rights reserved.", category: "FOOTER" },
+    { key: "seo_meta_title", value: "Noor Plastic | Noor Plastic Industries — Pure Water & Plastic Packaging", category: "SEO" },
+    { key: "seo_meta_description", value: "Noor Plastic Industries (Proprietor: Nurul Islam) — Authorized plastic manufacturing, importing & supplying company in Latifpur-B, Kaliakoir-1750, Gazipur. Trade License #242501300583.", category: "SEO" },
+    { key: "seo_meta_keywords", value: "Noor Plastic, Noor Plastic Industries, Pure Water Bottle, PET Dispenser Bottle, Plastic Packaging Bangladesh, Kaliakoir Gazipur", category: "SEO" },
+    { key: "copyright_text", value: "Copyright © 2024 - 2026 Noor Plastic Industries. All rights reserved.", category: "FOOTER" },
+    { key: "footer_copyright", value: "Copyright © 2024 - 2026 Noor Plastic Industries. All rights reserved.", category: "FOOTER" },
   ];
 
   for (const item of settingsData) {
@@ -101,7 +123,7 @@ async function main() {
             menuId: primaryMenu.id,
             label: "Our Business",
             url: "/our-business",
-            description: "2 specialized packaging plants: Q Pail & Xclusive Can",
+            description: "Noor Plastic Industries manufacturing unit in Kaliakoir, Gazipur",
             iconName: "Building2",
             order: 1,
           },
@@ -109,7 +131,7 @@ async function main() {
             menuId: primaryMenu.id,
             label: "Our Story",
             url: "/our-story",
-            description: "Pioneering engineered containers since 1992",
+            description: "Proprietor Nurul Islam • Est. 2024 • Trade License #242501300583",
             iconName: "BookOpen",
             order: 2,
           },
@@ -252,13 +274,13 @@ async function main() {
   // 6. Products Catalog
   const productsData = [
     {
-      name: "Industrial Paint & Chemical Pail (Q Pail)",
-      slug: "industrial-paint-chemical-pail-q-pail",
-      sku: "QP-PAIL-20L",
+      name: "Industrial Paint & Chemical Pail",
+      slug: "industrial-paint-chemical-pail",
+      sku: "NP-PAIL-20L",
       categoryId: catMap["pail-bucket"],
       material: "HDPE_PLASTIC",
       capacityRange: "1 Liter - 25 Liters",
-      factory: "Q Pail Limited",
+      factory: "Noor Plastic Industries",
       description: "Heavy-duty plastic pail with reinforced ribs, airtight gasket lid, and steel handle with plastic grip.",
       applications: JSON.stringify(["Emulsion Paints", "Industrial Inks", "Lubricants", "Adhesives"]),
       features: JSON.stringify(["Triple seal leak-proof lid", "Drop impact resistant", "100% recyclable virgin copolymer PP"]),
@@ -272,11 +294,11 @@ async function main() {
     {
       name: "Aerosol & High-Pressure Tin Container",
       slug: "aerosol-high-pressure-tin-container",
-      sku: "XC-AERO-400ML",
+      sku: "NP-AERO-400ML",
       categoryId: catMap["aerosol-can"] || catMap["tin-can"],
       material: "TINPLATE",
       capacityRange: "150ml - 750ml",
-      factory: "Xclusive Can Limited",
+      factory: "Noor Plastic Industries",
       description: "Three-piece welded aerosol tinplate cans tested up to 18 bar burst pressure with epoxy-phenolic internal lacquer.",
       applications: JSON.stringify(["Insecticides", "Air Fresheners", "Spray Paints", "Automotive Polish"]),
       features: JSON.stringify(["18-bar burst pressure rated", "High precision welded seam", "Rust-inhibiting internal coating"]),
@@ -290,11 +312,11 @@ async function main() {
     {
       name: "Pharmaceutical Dropper & Eye Drop Bottle",
       slug: "pharmaceutical-dropper-eye-drop-bottle",
-      sku: "XC-PHARM-15ML",
+      sku: "NP-PHARM-15ML",
       categoryId: catMap["jar-dropper"],
       material: "PET_PLASTIC",
       capacityRange: "5ml - 30ml",
-      factory: "Xclusive Can Limited",
+      factory: "Noor Plastic Industries",
       description: "Produced in cleanroom Class 100,000 environment with precise drop volume tip and child-resistant cap.",
       applications: JSON.stringify(["Ophthalmic Solutions", "Nasal Sprays", "Herbal Drops"]),
       features: JSON.stringify(["Class 100k cleanroom sterile", "Calibrated drop tip", "DGDA compliant"]),
@@ -308,11 +330,11 @@ async function main() {
     {
       name: "Round Decorative & Food Grade Metal Can",
       slug: "round-decorative-food-grade-metal-can",
-      sku: "XC-FOOD-1KG",
+      sku: "NP-FOOD-1KG",
       categoryId: catMap["tin-can"],
       material: "TINPLATE",
       capacityRange: "250g - 5kg",
-      factory: "Xclusive Can Limited",
+      factory: "Noor Plastic Industries",
       description: "Airtight tinplate container featuring high-definition offset lithography and BPA-NI certified interior lacquer.",
       applications: JSON.stringify(["Edible Oils", "Milk Powder", "Biscuits & Confectionery", "Ghee & Butter"]),
       features: JSON.stringify(["BPA-NI certified internal lacquer", "Airtight seamed end", "Hermetic freshness preservation"]),
@@ -326,11 +348,11 @@ async function main() {
     {
       name: "Rectangular Metal Can for Solvents & Paint Thinners",
       slug: "rectangular-metal-can-solvents-thinners",
-      sku: "XC-RECT-4L",
+      sku: "NP-RECT-4L",
       categoryId: catMap["tin-can"],
       material: "TINPLATE",
       capacityRange: "500ml - 5 Liters",
-      factory: "Xclusive Can Limited",
+      factory: "Noor Plastic Industries",
       description: "Oblong rectangular tin container with bridge metal handle and screw cap with inner seal plug.",
       applications: JSON.stringify(["Paint Thinners", "Brake Fluids", "Wood Stains", "Industrial Solvents"]),
       features: JSON.stringify(["Heavy-gauge welded body", "Leak-tight screw cap", "Space-saving rectangular stacking"]),
@@ -355,9 +377,9 @@ async function main() {
   // 7. Pages & Visual Elementor-Style Sections
   const pagesData = [
     {
-      title: "Home - Beyond Packaging, We Craft Solutions",
+      title: "Home - Pure Water Bottles & Plastic Packaging",
       slug: "home",
-      description: "Official Homepage of Xclusive Can Limited & Q Pail Platform",
+      description: "Official Homepage of Noor Plastic Industries — Kaliakoir, Gazipur",
       status: "PUBLISHED",
       sections: [
         {
@@ -368,10 +390,10 @@ async function main() {
           content: JSON.stringify({
             slides: [
               {
-                badge: "100% Recyclable • USGBC Benchmark",
+                badge: "100% Virgin Food-Grade Polymer • Kaliakoir, Gazipur",
                 title: "Beyond Packaging We",
                 highlight: "Drive Innovation",
-                tagline: "Custom engineered tin cans, aerosol containers, and industrial plastic pails manufactured in Gazipur & Tongi.",
+                tagline: "Custom engineered PET/HDPE water bottles, dispenser jars, and industrial plastic pails manufactured in Kaliakoir, Gazipur.",
                 primaryBtnText: "Explore Product Range",
                 primaryBtnLink: "/products",
                 secondaryBtnText: "Request Quote (RFQ)",
@@ -386,8 +408,8 @@ async function main() {
           order: 2,
           settings: JSON.stringify({ background: "#ffffff", padding: "py-16" }),
           content: JSON.stringify({
-            title: "Custom Engineered Packaging for Fortune 500 & National Leaders",
-            subtitle: "Serving Berger, Asian Paints, Square, Radiant, Reckitt, and Unilever since 1992.",
+            title: "Precision Plastic & Water Packaging for Leading Enterprises",
+            subtitle: "Serving commercial beverage, paint, pharma, and industrial leaders from Kaliakoir, Gazipur.",
           }),
         },
         {
@@ -397,19 +419,19 @@ async function main() {
           settings: JSON.stringify({ background: "#0f172a", textTheme: "dark" }),
           content: JSON.stringify({
             metrics: [
-              { value: "32+", label: "Years of Excellence" },
-              { value: "50M+", label: "Monthly Units Capacity" },
-              { value: "850+", label: "Expert Workforce" },
-              { value: "100%", label: "LEED Platinum Audited" },
+              { value: "100%", label: "Trade & BIN Licensed" },
+              { value: "50M+", label: "Annual Production Capacity" },
+              { value: "24/7", label: "Quality & Cleanroom QC" },
+              { value: "100%", label: "Food-Grade Polymer Purity" },
             ],
           }),
         },
       ],
     },
     {
-      title: "Our Story - Since 1992",
+      title: "Our Story - Noor Plastic Industries",
       slug: "our-story",
-      description: "Company journey, humble beginnings in Chittagong to LEED Platinum campuses in Gazipur & Tongi.",
+      description: "Company journey under Proprietor Nurul Islam at Latifpur-B, Kaliakoir-1750, Gazipur.",
       status: "PUBLISHED",
       sections: [
         {
@@ -418,8 +440,8 @@ async function main() {
           order: 1,
           settings: JSON.stringify({ background: "/images/story-hero-buildings.jpg" }),
           content: JSON.stringify({
-            title: "Since 1992",
-            subtitle: "A Three-Decade Journey of Industrial Mastery and Sustainability",
+            title: "Our Story",
+            subtitle: "Precision Plastic Manufacturing, Importing & Pure Water Packaging in Kaliakoir, Gazipur",
           }),
         },
       ],
@@ -427,7 +449,7 @@ async function main() {
     {
       title: "Our Business - Industrial Packaging Pioneers",
       slug: "our-business",
-      description: "Detailed overview of Xclusive Can Limited & Q Pail manufacturing capabilities.",
+      description: "Detailed overview of Noor Plastic Industries manufacturing capabilities in Kaliakoir, Gazipur.",
       status: "PUBLISHED",
       sections: [
         {
@@ -461,9 +483,9 @@ async function main() {
       ],
     },
     {
-      title: "Careers at Xclusive Can Limited",
+      title: "Careers at Noor Plastic Industries",
       slug: "careers",
-      description: "Job openings, talent pool, and engineering opportunities at Gazipur and Tongi plants.",
+      description: "Job openings, talent pool, and engineering opportunities in Kaliakoir, Gazipur.",
       status: "PUBLISHED",
       sections: [
         {
@@ -527,7 +549,7 @@ async function main() {
           settings: JSON.stringify({ background: "#0f172a" }),
           content: JSON.stringify({
             title: "Press & Media Center",
-            subtitle: "Latest industrial milestones and news clippings featuring Xclusive Can & Q Pail.",
+            subtitle: "Latest industrial milestones and news clippings featuring Noor Plastic Industries.",
           }),
         },
       ],
@@ -617,25 +639,7 @@ async function main() {
           settings: JSON.stringify({ background: "#0f172a" }),
           content: JSON.stringify({
             title: "Engineering Insights & Articles",
-            subtitle: "Technical papers and industry trends in metal lithography and plastic polymers.",
-          }),
-        },
-      ],
-    },
-    {
-      title: "Q Pail - Industrial Packaging Division",
-      slug: "q-pail",
-      description: "Specialized HDPE and PP plastic injection-molded buckets, drums, and pails.",
-      status: "PUBLISHED",
-      sections: [
-        {
-          sectionType: "hero",
-          name: "Q Pail Hero",
-          order: 1,
-          settings: JSON.stringify({ background: "#0f172a" }),
-          content: JSON.stringify({
-            title: "Q Pail Limited",
-            subtitle: "Heavy-duty plastic pails and airtight containers for paints, chemicals, and food.",
+            subtitle: "Technical papers and industry trends in precision plastic molding and water packaging.",
           }),
         },
       ],
@@ -693,8 +697,8 @@ async function main() {
 
   // 8. Pre-index Media Assets
   const defaultAssets = [
-    { filename: "xclusive-logo.png", originalName: "xclusive-logo.png", mimeType: "image/png", size: 7689, url: "/cropped/xclusive-logo.png", altText: "Xclusive Can Limited Logo" },
-    { filename: "xclusive-logo-white.png", originalName: "xclusive-logo-white.png", mimeType: "image/png", size: 11111, url: "/cropped/xclusive-logo-white.png", altText: "Xclusive Can White Logo" },
+    { filename: "xclusive-logo.png", originalName: "xclusive-logo.png", mimeType: "image/png", size: 7689, url: "/cropped/xclusive-logo.png", altText: "Noor Plastic Industries Logo" },
+    { filename: "xclusive-logo-white.png", originalName: "xclusive-logo-white.png", mimeType: "image/png", size: 11111, url: "/cropped/xclusive-logo-white.png", altText: "Noor Plastic White Logo" },
     { filename: "business-hero-office.jpg", originalName: "business-hero-office.jpg", mimeType: "image/jpeg", size: 305977, url: "/images/business-hero-office.jpg", altText: "Office & Operations Team" },
     { filename: "story-hero-buildings.jpg", originalName: "story-hero-buildings.jpg", mimeType: "image/jpeg", size: 95539, url: "/images/story-hero-buildings.jpg", altText: "Factory Campuses at Sunset" },
     { filename: "certificates-hero.jpg", originalName: "certificates-hero.jpg", mimeType: "image/jpeg", size: 19263, url: "/images/certificates-hero.jpg", altText: "Awards & Trophies Spotlight" },
@@ -719,9 +723,181 @@ async function main() {
   }
   console.log("Initial Media Assets registered in Media Library.");
 
+  // 9. Homepage Hero Banner Slides
+  const bannerCount = await prisma.bannerSlide.count();
+  if (bannerCount === 0) {
+    const defaultBanners = [
+      {
+        num: "01",
+        line1: "Delivered Right",
+        line2: "To Your Home &",
+        line3: "Office Door.",
+        description: "Duty obligations of business will frequently occur pleasures be repudiated and annoyances accepted.",
+        readMoreLabel: "READ MORE",
+        readMoreHref: "/products",
+        watchVideoLabel: "WATCH VIDEO",
+        watchVideoSub: "Production to Delivery",
+        videoUrl: "",
+        showOfferBadge: true,
+        offerEyebrow1: "Limited",
+        offerEyebrow2: "Time Offer",
+        offerPrice: "$15.50",
+        offerUnit: "Per bottle",
+        visualLayout: "duo",
+        foregroundImage: "/images/hero/bottle-vertical.png",
+        secondaryImage: "/images/hero/bottle-horizontal.png",
+        platformImage: "/images/hero/hero-splash-platform.jpg",
+        backgroundImage: "/images/hero/hero-bubbles-bg.jpg",
+        sortOrder: 1,
+        isActive: true,
+      },
+      {
+        num: "02",
+        line1: "Noor Plastic",
+        line2: "Is Closer Than",
+        line3: "You Think",
+        description: "Direct factory plastic container supply, pure water dispenser jugs, and express delivery across Kaliakoir, Gazipur & Dhaka.",
+        readMoreLabel: "READ MORE",
+        readMoreHref: "/our-business",
+        watchVideoLabel: "WATCH VIDEO",
+        watchVideoSub: "Production to Delivery",
+        videoUrl: "",
+        showOfferBadge: true,
+        offerEyebrow1: "Limited",
+        offerEyebrow2: "Time Offer",
+        offerPrice: "$15.50",
+        offerUnit: "Per bottle",
+        visualLayout: "duo",
+        foregroundImage: "/images/hero/bottle-vertical.png",
+        secondaryImage: "/images/hero/bottle-horizontal.png",
+        platformImage: "/images/hero/hero-splash-platform.jpg",
+        backgroundImage: "/images/hero/hero-bubbles-bg.jpg",
+        sortOrder: 2,
+        isActive: true,
+      },
+      {
+        num: "03",
+        line1: "100% Pure Water",
+        line2: "Sealed Fresh For",
+        line3: "Every Occasion.",
+        description: "Precision multi-stage filtration and certified cleanroom bottling engineered for daily home and office hydration.",
+        readMoreLabel: "READ MORE",
+        readMoreHref: "/certificates",
+        watchVideoLabel: "WATCH VIDEO",
+        watchVideoSub: "Production to Delivery",
+        videoUrl: "",
+        showOfferBadge: true,
+        offerEyebrow1: "Special",
+        offerEyebrow2: "Bulk Offer",
+        offerPrice: "$14.00",
+        offerUnit: "Per bottle",
+        visualLayout: "duo",
+        foregroundImage: "/images/hero/bottle-vertical.png",
+        secondaryImage: "/images/hero/bottle-horizontal.png",
+        platformImage: "/images/hero/hero-splash-platform.jpg",
+        backgroundImage: "/images/hero/hero-bubbles-bg.jpg",
+        sortOrder: 3,
+        isActive: true,
+      },
+      {
+        num: "04",
+        line1: "Bulk 3-Bottle",
+        line2: "Family & Office",
+        line3: "Water Packs.",
+        description: "Triple-bottle 5-gallon purified mineral water bundles delivered straight to your home or workplace.",
+        readMoreLabel: "READ MORE",
+        readMoreHref: "/products",
+        watchVideoLabel: "WATCH VIDEO",
+        watchVideoSub: "Production to Delivery",
+        videoUrl: "",
+        showOfferBadge: true,
+        offerEyebrow1: "Special",
+        offerEyebrow2: "Bulk Offer",
+        offerPrice: "$39.00",
+        offerUnit: "3 Bottles",
+        visualLayout: "trio",
+        foregroundImage: "/images/hero/bottles-trio.png",
+        secondaryImage: "/images/hero/bottle-horizontal.png",
+        platformImage: "/images/hero/hero-splash-platform.jpg",
+        backgroundImage: "/images/hero/hero-bubbles-bg.jpg",
+        sortOrder: 4,
+        isActive: true,
+      },
+    ];
+    for (const banner of defaultBanners) {
+      await prisma.bannerSlide.create({ data: banner });
+    }
+    console.log("Homepage Hero Banners seeded:", defaultBanners.length);
+  }
+
+  // Dynamic CMS Collections (Press Stories, Blog, Case Studies, Certificates, Careers)
+  if ((await prisma.pressStory.count()) === 0) {
+    for (const story of DEFAULT_PRESS_STORIES) {
+      await prisma.pressStory.create({ data: story });
+    }
+    console.log("Press stories seeded:", DEFAULT_PRESS_STORIES.length);
+  }
+
+  if ((await prisma.blogPost.count()) === 0) {
+    for (const post of DEFAULT_BLOG_POSTS) {
+      await prisma.blogPost.create({ data: post });
+    }
+    console.log("Blog posts seeded:", DEFAULT_BLOG_POSTS.length);
+  }
+
+  if ((await prisma.caseStudy.count()) === 0) {
+    for (const item of DEFAULT_CASE_STUDIES) {
+      await prisma.caseStudy.create({ data: item });
+    }
+    console.log("Case studies seeded:", DEFAULT_CASE_STUDIES.length);
+  }
+
+  if ((await prisma.certificate.count()) === 0) {
+    for (const cert of DEFAULT_CERTIFICATES) {
+      await prisma.certificate.create({ data: cert });
+    }
+    console.log("Certificates seeded:", DEFAULT_CERTIFICATES.length);
+  }
+
+  if ((await prisma.careerJob.count()) === 0) {
+    for (const job of DEFAULT_CAREER_JOBS) {
+      await prisma.careerJob.create({ data: job });
+    }
+    console.log("Career job openings seeded:", DEFAULT_CAREER_JOBS.length);
+  }
+
+  if ((await prisma.careerApplication.count()) === 0) {
+    const firstJob = await prisma.careerJob.findFirst({ orderBy: { order: "asc" } });
+    await prisma.careerApplication.createMany({
+      data: [
+        {
+          jobId: firstJob?.id || null,
+          name: "Tanvir Ahmed",
+          position: firstJob?.title || "Senior Quality Assurance Engineer (Cleanroom & Water Jars)",
+          experience: "6 Years (Polymer Packaging)",
+          email: "tanvir.engr@gmail.com",
+          phone: "+880 1712-456789",
+          facility: "Kaliakoir Plant, Latifpur-B",
+          status: "New",
+        },
+        {
+          jobId: null,
+          name: "Mehedi Hasan",
+          position: "High-Speed Blow Molding Technician",
+          experience: "4 Years (PET Bottles & Water Jars)",
+          email: "mehedi.tech@yahoo.com",
+          phone: "+880 1819-334455",
+          facility: "Kaliakoir-1750, Gazipur",
+          status: "Shortlisted",
+        },
+      ],
+    });
+    console.log("Sample career applications seeded: 2");
+  }
+
   console.log("=================================================");
   console.log("  DATABASE SEEDING COMPLETED SUCCESSFULLY!        ");
-  console.log("  Admin login: admin@xclusivecan.com / admin123456 ");
+  console.log("  Admin login: admin@noorplastic.com / admin123456 ");
   console.log("=================================================");
 }
 

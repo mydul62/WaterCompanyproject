@@ -21,17 +21,17 @@ export default function FooterManagementPage() {
   const [notification, setNotification] = useState<string | null>(null);
 
   // Footer Fields
-  const [companyName, setCompanyName] = useState("Xclusive Can Limited");
-  const [plantGazipur, setPlantGazipur] = useState("Plot #55/1, Block #B, Kaliakoir Road, Mouchak, Gazipur, Dhaka, Bangladesh");
-  const [plantTongi, setPlantTongi] = useState("Plot # 196, BSCIC I/A, Tongi, Gazipur, Dhaka, Bangladesh");
-  const [phoneForeign, setPhoneForeign] = useState("+88 01841-084200");
-  const [phoneDomestic, setPhoneDomestic] = useState("+88 01713-000000");
-  const [emailSales, setEmailSales] = useState("marketing@qpail.com");
-  const [emailProcurement, setEmailProcurement] = useState("commercial@qpail.com");
-  const [linkedinUrl, setLinkedinUrl] = useState("https://www.linkedin.com/company/xclusive-can-limited");
-  const [youtubeUrl, setYoutubeUrl] = useState("https://www.youtube.com/@xclusivecan");
-  const [facebookUrl, setFacebookUrl] = useState("https://www.facebook.com/xclusivecan");
-  const [copyrightText, setCopyrightText] = useState("Copyright © 1992 - 2026 Xclusive Can Limited. All Rights Reserved.");
+  const [companyName, setCompanyName] = useState("Noor Plastic Industries");
+  const [plantGazipur, setPlantGazipur] = useState("Holding #5, Ward #02, Latifpur-B, Kaliakoir-1750, Gazipur, Dhaka, Bangladesh");
+  const [plantTongi, setPlantTongi] = useState("Ward #02, Kaliakoir Pourashava, Gazipur, Dhaka, Bangladesh");
+  const [phoneForeign, setPhoneForeign] = useState("+880 1711-987275");
+  const [phoneDomestic, setPhoneDomestic] = useState("+880 1711-987275");
+  const [emailSales, setEmailSales] = useState("info@noorplastic.com");
+  const [emailProcurement, setEmailProcurement] = useState("sales@noorplastic.com");
+  const [linkedinUrl, setLinkedinUrl] = useState("https://www.linkedin.com/company/noor-plastic-industries");
+  const [youtubeUrl, setYoutubeUrl] = useState("https://www.youtube.com/@noorplastic");
+  const [facebookUrl, setFacebookUrl] = useState("https://www.facebook.com/noorplastic");
+  const [copyrightText, setCopyrightText] = useState("Copyright © 2024 - 2026 Noor Plastic Industries. All Rights Reserved.");
 
   const showNotification = (msg: string) => {
     setNotification(msg);
@@ -153,7 +153,7 @@ export default function FooterManagementPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-slate-300 font-bold mb-1">
-                Gazipur Mega Plant (Metal Line HQ)
+                Main Manufacturing Facility (Kaliakoir, Gazipur)
               </label>
               <textarea
                 rows={3}
@@ -165,7 +165,7 @@ export default function FooterManagementPage() {
 
             <div>
               <label className="block text-slate-300 font-bold mb-1">
-                Tongi Plant (Plastic & Pail Injection Facility)
+                Plastic &amp; Water Container Dispatch Hub
               </label>
               <textarea
                 rows={3}

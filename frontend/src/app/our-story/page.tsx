@@ -19,57 +19,57 @@ interface Milestone {
 const MILESTONES: Milestone[] = [
   {
     year: "1992",
-    line1: "Humble",
-    line2: "Beginning.",
+    line1: "Industry",
+    line2: "Foundations.",
     image: "/images/story-1992-factory.jpg",
-    alt: "Xclusive Can Limited Factory Entrance in Chittagong, 1992",
+    alt: "Noor Plastic Industries Early Heritage",
     description:
-      "The company commenced its journey back in 1992 in a very limited scope with scarce resources. Its stride was initiated from the port city of Chittagong.",
+      "The craft and supply foundation began with small packaging workshops in Bangladesh, focusing on dependable local distribution and quality materials.",
   },
   {
     year: "1993",
     line1: "Early",
-    line2: "Struggles.",
+    line2: "Growth.",
     image: "/images/story-1993-can.jpg",
-    alt: "Handcrafted Small Tin Paint Containers on Wooden Bench, 1993",
+    alt: "Precision Packaging Containers on Production Bench",
     description:
-      "At the beginning, the name was different, primary focus was small Tin Containers for paint industry in the port city of Chittagong.",
+      "Growing steadily through customer trust, expanding container varieties for regional paints, food, and industrial distribution.",
   },
   {
     year: "2000",
     line1: "Industrial",
     line2: "Expansion.",
     image: "/cropped/product-card-1.png",
-    alt: "Industrial metal container production line",
+    alt: "Industrial container production line",
     description:
-      "Expanding our manufacturing footprint to meet surging domestic industrial demand, introducing heavy-duty aerosol cylinders and solvent cans.",
+      "Expanding our manufacturing footprint to meet surging domestic industrial demand, introducing durable heavy-duty containers and bottles.",
   },
   {
     year: "2007",
     line1: "High-Speed",
     line2: "Automation.",
     image: "/cropped/harbor-supply.png",
-    alt: "Port Logistics and Container Shipping Operations",
+    alt: "Import Logistics and Container Supply Operations",
     description:
-      "Transitioned to semi-automated European tooling and high-speed assembly lines, drastically increasing precision, hermetic sealing, and output.",
+      "Transitioned to modern automated blow-molding and precision assembly lines, drastically increasing output and leak-proof durability.",
   },
   {
     year: "2009",
-    line1: "Entry Into",
-    line2: "Polymers.",
+    line1: "Polymer",
+    line2: "Specialization.",
     image: "/cropped/product-card-2.png",
     alt: "Precision Engineered Plastic Jerry Cans and Containers",
     description:
-      "Inception of Q Pail Limited, branching into custom-engineered plastic blow molding, injection pails, and hermetically sealed food containers.",
+      "Advancing specialized plastic blow molding, injection pails, and hermetically sealed food-grade containers for commercial partners.",
   },
   {
     year: "2010",
-    line1: "Flagship",
-    line2: "Cleanroom Plant.",
+    line1: "Gazipur",
+    line2: "Hub Growth.",
     image: "/cropped/factory-building.png",
-    alt: "Xclusive Can Limited Majukhan Gazipur LEED Platinum Campus",
+    alt: "Noor Plastic Industries Manufacturing & Cleanroom Complex in Gazipur",
     description:
-      "Inauguration of the state-of-the-art Gazipur & Tongi industrial campuses, featuring Class 100,000 sterile cleanrooms for pharmaceutical packaging.",
+      "Scaling cleanroom plastic container production across Gazipur industrial corridors for pure drinking water, food, and pharmaceutical packaging.",
   },
   {
     year: "2014",
@@ -228,11 +228,11 @@ export default function OurStoryPage() {
           id="hero"
           className="relative w-full min-h-[540px] sm:min-h-[640px] lg:h-screen lg:min-h-[820px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
         >
-          {/* Authentic Dual Factory Buildings Background (Q Pail & XCL at Sunset) */}
+          {/* Factory Building Background */}
           <div className="absolute inset-0 w-full h-full">
             <Image
               src="/images/story-hero-buildings.jpg"
-              alt="Xclusive Can & Q Pail Manufacturing Campuses at Sunset - Since 1992"
+              alt="Noor Plastic Industries Manufacturing & Packaging Operations in Kaliakoir, Gazipur"
               fill
               className="object-cover object-center opacity-85 scale-102 transition-transform duration-1000 ease-out"
               priority
@@ -250,7 +250,7 @@ export default function OurStoryPage() {
           <div className="relative z-10 text-center px-4 max-w-4xl mx-auto space-y-4 sm:space-y-6">
             <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white text-xs sm:text-sm font-bold shadow-xl shadow-black/20">
               <History className="w-4 h-4 text-[#38bdf8] animate-pulse" />
-              <span>About Us &bull; Corporate Heritage &bull; Since 1992</span>
+              <span>About Us &bull; Noor Plastic Industries &bull; Est. Oct 2024</span>
             </div>
 
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white tracking-[0.2em] sm:tracking-[0.25em] drop-shadow-[0_4px_30px_rgba(0,0,0,0.85)] uppercase pl-[0.2em]">
@@ -258,7 +258,7 @@ export default function OurStoryPage() {
             </h1>
 
             <p className="text-xs sm:text-sm md:text-base uppercase tracking-[0.3em] font-bold text-[#38bdf8] drop-shadow-lg pl-[0.3em] max-w-2xl mx-auto">
-              Three Decades of Precision Packaging Excellence &bull; 1992 &ndash; 2026
+              Plastic Manufacturing, Importing &amp; Pure Water Supply &bull; Kaliakoir, Gazipur
             </p>
           </div>
 

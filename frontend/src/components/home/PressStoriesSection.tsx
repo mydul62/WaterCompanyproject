@@ -1,13 +1,32 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Newspaper, ArrowRight, Calendar, Clock, ZoomIn, X, ExternalLink, Sparkles } from "lucide-react";
-import { PRESS_STORIES, PressStory } from "@/data/mediaData";
+import { PRESS_STORIES, PressStory, normalizePressStory } from "@/data/mediaData";
+import { api } from "@/lib/api";
 
 export default function PressStoriesSection() {
+  const [stories, setStories] = useState<PressStory[]>(PRESS_STORIES);
   const [lightboxStory, setLightboxStory] = useState<PressStory | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    api.mediaStories
+      .getPublic()
+      .then((res) => {
+        if (active && Array.isArray(res.data) && res.data.length > 0) {
+          setStories(res.data.map(normalizePressStory));
+        }
+      })
+      .catch(() => {
+        // Keep clean fallback PRESS_STORIES
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const outlets = [
     { name: "প্রথম আলো", en: "Prothom Alo" },
@@ -35,7 +54,7 @@ export default function PressStoriesSection() {
           </h2>
 
           <p className="text-base sm:text-lg text-slate-500 font-medium max-w-2xl mx-auto">
-            দেশের শীর্ষস্থানীয় জাতীয় গণমাধ্যমে এক্সক্লুসিভ ক্যান ও কিউ পাইলের শিল্প রূপান্তর, উদ্ভাবন ও বাণিজ্যিক সাফল্যের বিশেষ প্রতিবেদন।
+            দেশের শীর্ষস্থানীয় জাতীয় গণমাধ্যমে নূর প্লাস্টিক ইন্ডাস্ট্রিজের আধুনিক উৎপাদন, উদ্ভাবন ও বাণিজ্যিক সাফল্যের বিশেষ প্রতিবেদন।
           </p>
 
           {/* Media Trust Logo / Name Strip */}
@@ -54,9 +73,9 @@ export default function PressStoriesSection() {
           </div>
         </div>
 
-        {/* 4 High-End Editorial Press Cards with Liquid Water Wave Hover */}
+        {/* High-End Editorial Press Cards with Liquid Water Wave Hover */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
-          {PRESS_STORIES.map((story, idx) => {
+          {stories.map((story, idx) => {
             const delays = ["delay-75", "delay-150", "delay-200", "delay-250"];
             return (
               <article
@@ -85,6 +104,7 @@ export default function PressStoriesSection() {
                     src={story.image}
                     alt={story.title}
                     fill
+                    unoptimized={Boolean(story.image?.startsWith("/uploads/") || story.image?.startsWith("http"))}
                     className="object-contain p-2 transform-gpu group-hover:scale-106 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] drop-shadow-sm"
                   />
 
@@ -152,7 +172,7 @@ export default function PressStoriesSection() {
             className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-2xl bg-white border border-slate-200 text-slate-800 font-bold text-sm sm:text-base shadow-xs hover:shadow-md hover:border-cyan-300 hover:text-cyan-700 transition-all active:scale-95"
           >
             <Newspaper className="w-4 h-4 text-cyan-600" />
-            <span>View All National Press Articles ({PRESS_STORIES.length})</span>
+            <span>View All National Press Articles ({stories.length})</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

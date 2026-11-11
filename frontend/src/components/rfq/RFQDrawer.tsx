@@ -64,7 +64,7 @@ export default function RFQDrawer({ isOpen, onClose, initialProduct }: RFQDrawer
                 Enterprise B2B Procurement
               </div>
               <h2 className="text-xl font-black tracking-tight">Request a Quote (RFQ)</h2>
-              <p className="text-slate-400 text-xs mt-0.5">Xclusive Can &amp; Q Pail Manufacturing Lines</p>
+              <p className="text-slate-400 text-xs mt-0.5">Noor Plastic Industries &bull; Kaliakoir, Gazipur</p>
             </div>
             <button
               onClick={onClose}
@@ -178,7 +178,7 @@ export default function RFQDrawer({ isOpen, onClose, initialProduct }: RFQDrawer
                     >
                       <option>Tin Cans &amp; Aerosols</option>
                       <option>Plastic Bottles (PET/HDPE)</option>
-                      <option>Q Pail Industrial Buckets</option>
+                      <option>Industrial Plastic Pails &amp; Buckets</option>
                       <option>Pharma Droppers &amp; Jars</option>
                       <option>Food Grade Trays</option>
                       <option>Custom Mold &amp; Tooling Project</option>

@@ -158,7 +158,7 @@ export default function BrandsWeWorkWithPage() {
           <div className="absolute inset-0 w-full h-full">
             <Image
               src="/images/brands-hero.jpg"
-              alt="Xclusive Can Limited - Brands We Work With Partnership Handshake"
+              alt="Noor Plastic Industries - Brands We Work With Partnership Handshake"
               fill
               className="object-cover object-center opacity-85 scale-102 transition-transform duration-1000 ease-out"
               priority
@@ -176,7 +176,7 @@ export default function BrandsWeWorkWithPage() {
           <div className="relative z-10 text-center px-4 max-w-5xl mx-auto space-y-4 sm:space-y-6">
             <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white text-xs sm:text-sm font-bold shadow-xl shadow-black/20">
               <Handshake className="w-4 h-4 text-[#38bdf8] animate-pulse" />
-              <span>Achievements &bull; Trusted Enterprise Partnerships &bull; Since 1992</span>
+              <span>Achievements &bull; Trusted Enterprise Partnerships &bull; Kaliakoir, Gazipur</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-white tracking-[0.14em] sm:tracking-[0.18em] drop-shadow-[0_4px_30px_rgba(0,0,0,0.85)] uppercase pl-[0.14em]">
@@ -266,7 +266,7 @@ export default function BrandsWeWorkWithPage() {
                 <div className="relative w-full max-w-[1200px] aspect-[557/380] sm:aspect-[1200/520]">
                   <Image
                     src="/images/brands-logos-only.png"
-                    alt="Xclusive Can Limited Client Brand Logos Grid"
+                    alt="Noor Plastic Industries Client Brand Logos Grid"
                     fill
                     className="object-contain"
                     priority
@@ -313,7 +313,7 @@ export default function BrandsWeWorkWithPage() {
             <div className="w-[91.6667%] max-w-[1920px] mx-auto">
               <div className="text-center mb-16">
                 <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-                  Why Industry Giants Choose Xclusive Can Limited
+                  Why Industry Giants Choose Noor Plastic Industries
                 </h3>
                 <div className="w-16 h-[2px] bg-slate-900 mx-auto mt-3 mb-5" />
                 <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">

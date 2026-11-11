@@ -37,8 +37,17 @@ import {
   Layout,
   Maximize2,
   FolderOpen,
+  Lock,
+  ArrowUpRight,
 } from "lucide-react";
 import { api } from "@/lib/api";
+import { normalizeRegisteredLink, type RegisteredLinkItem } from "@/lib/linkRegistry";
+import {
+  findLockedSectionRule,
+  getSectionLockInfo,
+  isElementInLockedSection,
+  type LockedSectionRule,
+} from "@/lib/editorLocks";
 import MediaPickerModal from "@/components/admin/MediaPickerModal";
 
 interface PageConfig {
@@ -57,8 +66,8 @@ const AVAILABLE_PAGES: PageConfig[] = [
       { id: "hero", name: "1. Hero Banner & 3D Interactive Canvas", selector: "#hero" },
       { id: "about", name: "2. Facility Showcase & LEED Green Campus", selector: "#curtain-reveal > div:nth-child(1)" },
       { id: "pillars", name: "3. Operational Pillars (9 Supply Chain Triangles)", selector: "#curtain-reveal > div:nth-child(2)" },
-      { id: "products", name: "4. Product Showcase (Plastic & Tin Portfolio)", selector: "#curtain-reveal > div:nth-child(3)" },
-      { id: "stories", name: "5. Latest Press & Newspaper Stories", selector: "#curtain-reveal > div:nth-child(4)" },
+      { id: "products", name: "4. Product Showcase (Plastic & Tin Portfolio)", selector: "#products" },
+      { id: "stories", name: "5. Latest Press & Newspaper Stories", selector: "#media" },
       { id: "b2b", name: "6. B2B Solutions Banner & RFQ CTA", selector: "#curtain-reveal > div:nth-child(5)" },
       { id: "explore", name: "7. Explore More Grid (13 Cards)", selector: "#curtain-reveal > div:nth-child(6)" },
       { id: "footer", name: "8. Global Footer & Contact", selector: "footer" },
@@ -70,7 +79,7 @@ const AVAILABLE_PAGES: PageConfig[] = [
     slug: "/our-story",
     sections: [
       { id: "story-hero", name: "1. Heritage & History Hero", selector: "main > section:nth-child(1)" },
-      { id: "story-timeline", name: "2. Milestone Timeline (1992-2026)", selector: "main > section:nth-child(2)" },
+      { id: "story-timeline", name: "2. Milestone Timeline", selector: "main > section:nth-child(2)" },
       { id: "story-leadership", name: "3. Leadership & Board", selector: "main > section:nth-child(3)" },
       { id: "footer", name: "4. Global Footer", selector: "footer" },
     ],
@@ -81,7 +90,7 @@ const AVAILABLE_PAGES: PageConfig[] = [
     slug: "/our-business",
     sections: [
       { id: "biz-hero", name: "1. Manufacturing Plants Hero", selector: "main > section:nth-child(1)" },
-      { id: "biz-plants", name: "2. Tongi & Gazipur Automated Cleanrooms", selector: "main > section:nth-child(2)" },
+      { id: "biz-plants", name: "2. Kaliakoir Automated Cleanrooms", selector: "main > section:nth-child(2)" },
       { id: "biz-tech", name: "3. Machinery & European Tooling", selector: "main > section:nth-child(3)" },
       { id: "footer", name: "4. Global Footer", selector: "footer" },
     ],
@@ -91,8 +100,8 @@ const AVAILABLE_PAGES: PageConfig[] = [
     title: "Product Catalog",
     slug: "/products",
     sections: [
-      { id: "prod-hero", name: "1. Product Catalog Hero", selector: "main > section:nth-child(1)" },
-      { id: "prod-grid", name: "2. Live Product Filter & Grid", selector: "main > section:nth-child(2)" },
+      { id: "prod-hero", name: "1. Product Catalog Hero", selector: "#hero" },
+      { id: "prod-grid", name: "2. Live Product Filter & Grid", selector: "#product-content" },
       { id: "footer", name: "3. Global Footer", selector: "footer" },
     ],
   },
@@ -101,8 +110,8 @@ const AVAILABLE_PAGES: PageConfig[] = [
     title: "Certificates & Accreditations",
     slug: "/certificates",
     sections: [
-      { id: "cert-hero", name: "1. Accreditations Hero", selector: "main > section:nth-child(1)" },
-      { id: "cert-list", name: "2. ISO, HACCP, GMP & LEED Credentials", selector: "main > section:nth-child(2)" },
+      { id: "cert-hero", name: "1. Accreditations Hero", selector: "#hero" },
+      { id: "cert-list", name: "2. ISO, HACCP, GMP & LEED Credentials", selector: "#certificates-grid" },
       { id: "footer", name: "3. Global Footer", selector: "footer" },
     ],
   },
@@ -111,8 +120,8 @@ const AVAILABLE_PAGES: PageConfig[] = [
     title: "Careers & Culture",
     slug: "/careers",
     sections: [
-      { id: "career-hero", name: "1. Careers Hero Banner", selector: "main > section:nth-child(1)" },
-      { id: "career-jobs", name: "2. Active Openings & Job List", selector: "main > section:nth-child(2)" },
+      { id: "career-hero", name: "1. Careers Hero Banner", selector: "#hero" },
+      { id: "career-jobs", name: "2. Active Openings & Job List", selector: "#open-positions" },
       { id: "footer", name: "3. Global Footer", selector: "footer" },
     ],
   },
@@ -131,9 +140,10 @@ const AVAILABLE_PAGES: PageConfig[] = [
     title: "Press & Media",
     slug: "/media",
     sections: [
-      { id: "media-hero", name: "1. Press Releases Hero", selector: "main > section:nth-child(1)" },
-      { id: "media-grid", name: "2. News Clippings & Video Gallery", selector: "main > section:nth-child(2)" },
-      { id: "footer", name: "3. Global Footer", selector: "footer" },
+      { id: "media-hero", name: "1. Press Releases Hero", selector: "#media-hero" },
+      { id: "media-grid", name: "2. National Press Stories Grid", selector: "#press-stories" },
+      { id: "media-highlights", name: "3. Press Highlights & Milestones", selector: "#press-highlights" },
+      { id: "footer", name: "4. Global Footer", selector: "footer" },
     ],
   },
   {
@@ -189,20 +199,8 @@ const AVAILABLE_PAGES: PageConfig[] = [
     sections: [
       { id: "blog-hero", name: "1. Blog Hero Banner", selector: "#blog-hero" },
       { id: "blog-featured", name: "2. Featured Whitepaper", selector: "#blog-content" },
-      { id: "blog-grid", name: "3. Whitepaper Articles Grid", selector: "main > section:nth-child(3)" },
+      { id: "blog-grid", name: "3. Whitepaper Articles Grid", selector: "#blog-articles" },
       { id: "footer", name: "4. Global Footer", selector: "footer" },
-    ],
-  },
-  {
-    key: "q-pail",
-    title: "Q Pail - Industrial Packaging",
-    slug: "/q-pail",
-    sections: [
-      { id: "qpail-hero", name: "1. Q Pail Hero Banner", selector: "#hero" },
-      { id: "qpail-specs", name: "2. Specs Table & Facility Photo Slider", selector: "main > div:nth-child(2)" },
-      { id: "qpail-history", name: "3. Company Journey & Brand Partners", selector: "main > div:nth-child(2) > div:nth-child(1) > div:nth-child(3)" },
-      { id: "qpail-print", name: "4. Printing Facilities (Screen, HTP, DOP)", selector: "main > div:nth-child(2) > div:nth-child(1) > div:nth-child(5)" },
-      { id: "footer", name: "5. Global Footer", selector: "footer" },
     ],
   },
   {
@@ -229,6 +227,7 @@ export interface SelectedElementState {
   elementType: "heading" | "text" | "image" | "button" | "section";
   label: string;
   selector: string;
+  locked?: LockedSectionRule | null;
   text: string;
   src?: string;
   alt?: string;
@@ -284,7 +283,7 @@ export default function ElementorVisualEditor({
   const [historyIndex, setHistoryIndex] = useState(-1);
 
   // Centralized Link Registry
-  const [registeredLinks, setRegisteredLinks] = useState<any[]>([]);
+  const [registeredLinks, setRegisteredLinks] = useState<RegisteredLinkItem[]>([]);
 
   // Imaple Media Picker Modal
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
@@ -366,7 +365,7 @@ export default function ElementorVisualEditor({
     }
   };
 
-  // 2. Intelligent Target Selector (Eliminates Empty <div> Mistakes)
+  // 2. Intelligent Target Selector (Eliminates Empty <div> Mistakes & Enforces Dashboard Section Locks)
   const resolveInteractiveTarget = (
     doc: Document,
     rawEl: HTMLElement | null,
@@ -376,8 +375,20 @@ export default function ElementorVisualEditor({
     target: HTMLElement;
     type: "heading" | "text" | "image" | "button" | "section";
     label: string;
+    locked?: LockedSectionRule | null;
   } | null => {
     if (!rawEl || rawEl === doc.body || rawEl === doc.documentElement) return null;
+
+    // 0. Lock Guard: Prevent direct editing inside Dashboard-managed dynamic sections
+    const lockedMatch = findLockedSectionRule(rawEl, currentPageKey);
+    if (lockedMatch) {
+      return {
+        target: lockedMatch.container,
+        type: "section",
+        label: `Locked: ${lockedMatch.rule.moduleName}`,
+        locked: lockedMatch.rule,
+      };
+    }
 
     // A. Check if clicked inside an interactive Button or Link
     const btn = rawEl.closest("button, a, [role='button'], .water-fill-btn") as HTMLElement | null;
@@ -531,6 +542,18 @@ export default function ElementorVisualEditor({
           outline-offset: 3px !important;
         }
 
+        /* Locked Dashboard-managed section outlines */
+        .elementor-locked-hover {
+          outline: 2px dashed #f59e0b !important;
+          outline-offset: 3px !important;
+          cursor: not-allowed !important;
+        }
+        .elementor-locked-active {
+          outline: 2px solid #f59e0b !important;
+          box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.28) !important;
+          outline-offset: 3px !important;
+        }
+
         /* Floating Elementor Badge */
         .elementor-floating-action-badge {
           position: absolute;
@@ -548,6 +571,10 @@ export default function ElementorVisualEditor({
           letter-spacing: 0.5px;
           white-space: nowrap;
           transition: transform 0.1s ease-out;
+        }
+        .elementor-floating-action-badge.is-locked {
+          background: #d97706 !important;
+          color: #ffffff !important;
         }
       `;
       doc.head.appendChild(styleTag);
@@ -569,11 +596,15 @@ export default function ElementorVisualEditor({
       const res = resolveInteractiveTarget(doc, e.target as HTMLElement, e.clientX, e.clientY);
       if (!res) return;
 
-      doc.querySelectorAll(".elementor-hover-target").forEach((el) => {
-        el.classList.remove("elementor-hover-target");
+      doc.querySelectorAll(".elementor-hover-target, .elementor-locked-hover").forEach((el) => {
+        el.classList.remove("elementor-hover-target", "elementor-locked-hover");
       });
 
-      if (!res.target.classList.contains("elementor-active-target")) {
+      if (res.locked) {
+        if (!res.target.classList.contains("elementor-locked-active")) {
+          res.target.classList.add("elementor-locked-hover");
+        }
+      } else if (!res.target.classList.contains("elementor-active-target")) {
         res.target.classList.add("elementor-hover-target");
       }
 
@@ -586,14 +617,20 @@ export default function ElementorVisualEditor({
         badge.style.display = "block";
         badge.style.top = `${Math.max(6, rect.top + scrollY - 26)}px`;
         badge.style.left = `${Math.max(6, rect.left + scrollX)}px`;
-        badge.innerText = res.label;
+        if (res.locked) {
+          badge.classList.add("is-locked");
+          badge.innerText = `LOCKED • MANAGE IN ${res.locked.moduleName.toUpperCase()}`;
+        } else {
+          badge.classList.remove("is-locked");
+          badge.innerText = res.label;
+        }
       }
     };
 
     const handleMouseOut = () => {
       if (badge) badge.style.display = "none";
-      doc.querySelectorAll(".elementor-hover-target").forEach((el) => {
-        el.classList.remove("elementor-hover-target");
+      doc.querySelectorAll(".elementor-hover-target, .elementor-locked-hover").forEach((el) => {
+        el.classList.remove("elementor-hover-target", "elementor-locked-hover");
       });
     };
 
@@ -608,7 +645,7 @@ export default function ElementorVisualEditor({
       const res = resolveInteractiveTarget(doc, e.target as HTMLElement, e.clientX, e.clientY);
       if (!res) return;
 
-      selectElementInEditor(res.target, res.type, res.label);
+      selectElementInEditor(res.target, res.type, res.label, res.locked);
     };
 
     // Attach listeners
@@ -624,29 +661,35 @@ export default function ElementorVisualEditor({
   const selectElementInEditor = (
     target: HTMLElement,
     type: "heading" | "text" | "image" | "button" | "section",
-    label?: string
+    label?: string,
+    lockedOverride?: LockedSectionRule | null
   ) => {
     const iframe = iframeRef.current;
     if (!iframe || !iframe.contentDocument) return;
     const doc = iframe.contentDocument;
 
+    const lockedMatch = findLockedSectionRule(target, currentPageKey);
+    const resolvedTarget = lockedMatch ? lockedMatch.container : target;
+    const resolvedLock = lockedOverride ?? lockedMatch?.rule ?? null;
+    const resolvedType = resolvedLock ? "section" : type;
+
     // Deselect previous
-    doc.querySelectorAll(".elementor-active-target").forEach((el) => {
-      el.classList.remove("elementor-active-target");
+    doc.querySelectorAll(".elementor-active-target, .elementor-locked-active").forEach((el) => {
+      el.classList.remove("elementor-active-target", "elementor-locked-active");
       (el as HTMLElement).contentEditable = "false";
     });
 
-    target.classList.add("elementor-active-target");
-    activeDomElementRef.current = target;
+    resolvedTarget.classList.add(resolvedLock ? "elementor-locked-active" : "elementor-active-target");
+    activeDomElementRef.current = resolvedTarget;
 
-    const tag = target.tagName.toUpperCase();
+    const tag = resolvedTarget.tagName.toUpperCase();
     const win = doc.defaultView || window;
-    const computed = win.getComputedStyle(target);
-    const selector = generateSelector(target);
+    const computed = win.getComputedStyle(resolvedTarget);
+    const selector = generateSelector(resolvedTarget);
 
     // Compute Breadcrumbs Path
     const breadcrumbs: BreadcrumbItem[] = [];
-    let curr: HTMLElement | null = target;
+    let curr: HTMLElement | null = resolvedTarget;
     while (curr && curr !== doc.body && curr !== doc.documentElement) {
       const curTag = curr.tagName.toUpperCase();
       let name = curTag;
@@ -662,14 +705,21 @@ export default function ElementorVisualEditor({
 
     const state: SelectedElementState = {
       tag,
-      elementType: type,
-      label: label || `${tag} Element`,
+      elementType: resolvedType,
+      label: resolvedLock ? `Locked: ${resolvedLock.moduleName}` : label || `${tag} Element`,
       selector,
-      text: target.innerText || target.textContent || "",
-      src: target.tagName === "IMG" ? (target as HTMLImageElement).src : undefined,
-      alt: target.tagName === "IMG" ? (target as HTMLImageElement).alt : undefined,
-      href: target.getAttribute("href") || undefined,
-      target: target.getAttribute("target") || "_self",
+      locked: resolvedLock,
+      text: resolvedLock ? "" : resolvedTarget.innerText || resolvedTarget.textContent || "",
+      src:
+        !resolvedLock && resolvedTarget.tagName === "IMG"
+          ? (resolvedTarget as HTMLImageElement).src
+          : undefined,
+      alt:
+        !resolvedLock && resolvedTarget.tagName === "IMG"
+          ? (resolvedTarget as HTMLImageElement).alt
+          : undefined,
+      href: !resolvedLock ? resolvedTarget.getAttribute("href") || undefined : undefined,
+      target: !resolvedLock ? resolvedTarget.getAttribute("target") || "_self" : undefined,
       styles: {
         color: computed.color,
         backgroundColor: computed.backgroundColor,
@@ -690,13 +740,13 @@ export default function ElementorVisualEditor({
     setSelectedElement(state);
     setSidebarTab("content");
 
-    // Enable direct inline typing if text or heading
-    if (type === "heading" || type === "text") {
-      target.contentEditable = "true";
-      target.focus();
+    // Enable direct inline typing only if unlocked text or heading
+    if (!resolvedLock && (resolvedType === "heading" || resolvedType === "text")) {
+      resolvedTarget.contentEditable = "true";
+      resolvedTarget.focus();
 
-      target.oninput = () => {
-        const newText = target.innerText;
+      resolvedTarget.oninput = () => {
+        const newText = resolvedTarget.innerText;
         handleInlineEdit(selector, newText);
       };
     }
@@ -724,7 +774,7 @@ export default function ElementorVisualEditor({
     Object.entries(pageDict).forEach(([selector, data]) => {
       try {
         const el = doc.querySelector(selector) as HTMLElement;
-        if (el) {
+        if (el && !isElementInLockedSection(el, currentPageKey)) {
           if (data.text !== undefined) el.innerText = data.text;
           if (data.src !== undefined && el.tagName === "IMG") (el as HTMLImageElement).src = data.src;
           if (data.alt !== undefined && el.tagName === "IMG") (el as HTMLImageElement).alt = data.alt;
@@ -745,6 +795,14 @@ export default function ElementorVisualEditor({
 
   // Save Override to State, Iframe, and Undo Stack
   const saveOverride = (selector: string, updates: any) => {
+    if (
+      activeDomElementRef.current &&
+      isElementInLockedSection(activeDomElementRef.current, currentPageKey)
+    ) {
+      showNotification("This section is locked in the Page Builder. Edit it from its Dashboard menu.");
+      return;
+    }
+
     setOverrides((prev) => {
       const pageDict = prev[currentPageKey] || {};
       const current = pageDict[selector] || {};
@@ -781,7 +839,7 @@ export default function ElementorVisualEditor({
 
     // Apply live to DOM element
     const domEl = activeDomElementRef.current;
-    if (domEl) {
+    if (domEl && !isElementInLockedSection(domEl, currentPageKey)) {
       if (updates.text !== undefined) domEl.innerText = updates.text;
       if (updates.src !== undefined && domEl.tagName === "IMG") {
         (domEl as HTMLImageElement).src = updates.src;
@@ -1014,7 +1072,7 @@ export default function ElementorVisualEditor({
                 ? "bg-blue-600/20 border-blue-500 text-blue-400"
                 : "bg-slate-800 border-slate-700 text-slate-400 hover:text-white"
             }`}
-            title="Toggle Elementor Structure Navigator"
+            title="Toggle Page Structure Navigator"
           >
             <Layers className="w-3.5 h-3.5" />
             <span className="hidden lg:inline">Navigator</span>
@@ -1189,10 +1247,17 @@ export default function ElementorVisualEditor({
             <div className="p-3 border-b border-slate-800 bg-slate-950/80 shrink-0 space-y-2">
               <div className="flex items-center justify-between">
                 {selectedElement ? (
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded-md bg-blue-600 text-white font-mono text-[10px] font-bold uppercase">
-                      {selectedElement.elementType}
-                    </span>
+                  <div className="flex items-center gap-2 min-w-0">
+                    {selectedElement.locked ? (
+                      <span className="px-2 py-0.5 rounded-md bg-amber-600 text-white font-mono text-[10px] font-bold uppercase inline-flex items-center gap-1 shrink-0">
+                        <Lock className="w-2.5 h-2.5" />
+                        Locked
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded-md bg-blue-600 text-white font-mono text-[10px] font-bold uppercase shrink-0">
+                        {selectedElement.elementType}
+                      </span>
+                    )}
                     <h3 className="text-xs font-bold text-white truncate max-w-[200px]">
                       {selectedElement.label}
                     </h3>
@@ -1209,7 +1274,10 @@ export default function ElementorVisualEditor({
                     onClick={() => {
                       setSelectedElement(null);
                       if (activeDomElementRef.current) {
-                        activeDomElementRef.current.classList.remove("elementor-active-target");
+                        activeDomElementRef.current.classList.remove(
+                          "elementor-active-target",
+                          "elementor-locked-active"
+                        );
                         activeDomElementRef.current = null;
                       }
                     }}
@@ -1234,7 +1302,9 @@ export default function ElementorVisualEditor({
                         }}
                         className={`hover:text-blue-400 underline-offset-2 hover:underline truncate max-w-[90px] ${
                           bc.element === activeDomElementRef.current
-                            ? "text-blue-400 font-bold"
+                            ? selectedElement.locked
+                              ? "text-amber-400 font-bold"
+                              : "text-blue-400 font-bold"
                             : "text-slate-400"
                         }`}
                         title={bc.name}
@@ -1247,46 +1317,105 @@ export default function ElementorVisualEditor({
               )}
             </div>
 
-            {/* Elementor Tabs: Content | Style | Advanced */}
-            <div className="grid grid-cols-3 border-b border-slate-800 bg-slate-950/40 p-1 shrink-0">
-              <button
-                onClick={() => setSidebarTab("content")}
-                className={`py-1.5 text-[11px] font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-                  sidebarTab === "content"
-                    ? "bg-blue-600 text-white shadow-sm"
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <Type className="w-3 h-3" />
-                Content
-              </button>
-              <button
-                onClick={() => setSidebarTab("style")}
-                className={`py-1.5 text-[11px] font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-                  sidebarTab === "style"
-                    ? "bg-blue-600 text-white shadow-sm"
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <Palette className="w-3 h-3" />
-                Style
-              </button>
-              <button
-                onClick={() => setSidebarTab("advanced")}
-                className={`py-1.5 text-[11px] font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-                  sidebarTab === "advanced"
-                    ? "bg-blue-600 text-white shadow-sm"
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <Sliders className="w-3 h-3" />
-                Advanced
-              </button>
-            </div>
+            {/* Elementor Tabs: Content | Style | Advanced (Hidden for Locked Dynamic Sections) */}
+            {!selectedElement?.locked && (
+              <div className="grid grid-cols-3 border-b border-slate-800 bg-slate-950/40 p-1 shrink-0">
+                <button
+                  onClick={() => setSidebarTab("content")}
+                  className={`py-1.5 text-[11px] font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+                    sidebarTab === "content"
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  <Type className="w-3 h-3" />
+                  Content
+                </button>
+                <button
+                  onClick={() => setSidebarTab("style")}
+                  className={`py-1.5 text-[11px] font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+                    sidebarTab === "style"
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  <Palette className="w-3 h-3" />
+                  Style
+                </button>
+                <button
+                  onClick={() => setSidebarTab("advanced")}
+                  className={`py-1.5 text-[11px] font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+                    sidebarTab === "advanced"
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  <Sliders className="w-3 h-3" />
+                  Advanced
+                </button>
+              </div>
+            )}
 
             {/* Sidebar Scrollable Body */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
               {selectedElement ? (
+                selectedElement.locked ? (
+                  <div className="space-y-4 pt-2">
+                    <div className="p-4 rounded-2xl bg-amber-950/35 border border-amber-600/40 space-y-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 flex items-center justify-center shrink-0">
+                          <Lock className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 block">
+                            Dashboard-Managed Section
+                          </span>
+                          <h4 className="text-sm font-black text-white">
+                            {selectedElement.locked.moduleName}
+                          </h4>
+                        </div>
+                      </div>
+
+                      <p className="text-xs text-slate-300 leading-relaxed">
+                        {selectedElement.locked.reason}
+                      </p>
+
+                      <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
+                        <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold block">
+                          Locked Region
+                        </span>
+                        <code className="text-[11px] font-mono text-amber-300 break-all block">
+                          {selectedElement.locked.selector}
+                        </code>
+                      </div>
+
+                      <div className="pt-1 space-y-2">
+                        <Link
+                          href={selectedElement.locked.dashboardHref}
+                          className="w-full py-2.5 px-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-900/30 transition-all"
+                        >
+                          <span>Manage {selectedElement.locked.moduleName}</span>
+                          <ArrowUpRight className="w-4 h-4" />
+                        </Link>
+
+                        {selectedElement.locked.secondaryHref &&
+                          selectedElement.locked.secondaryLabel && (
+                            <Link
+                              href={selectedElement.locked.secondaryHref}
+                              className="w-full py-2 px-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-all"
+                            >
+                              <span>{selectedElement.locked.secondaryLabel}</span>
+                              <ArrowUpRight className="w-3.5 h-3.5 text-cyan-400" />
+                            </Link>
+                          )}
+                      </div>
+                    </div>
+
+                    <p className="text-[11px] text-slate-500 leading-relaxed px-1">
+                      Static banners, intro copy, and custom layout sections outside dynamic modules remain freely editable right here in the Page Builder.
+                    </p>
+                  </div>
+                ) : (
                 <>
                   {/* TAB 1: CONTENT */}
                   {sidebarTab === "content" && (
@@ -1421,6 +1550,7 @@ export default function ElementorVisualEditor({
                                 Choose from Link Registry
                               </label>
                               <select
+                                defaultValue=""
                                 onChange={(e) => {
                                   if (e.target.value) {
                                     setSelectedElement({ ...selectedElement, href: e.target.value });
@@ -1430,11 +1560,14 @@ export default function ElementorVisualEditor({
                                 className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
                               >
                                 <option value="">-- Choose Registered Destination --</option>
-                                {registeredLinks.map((l) => (
-                                  <option key={l.key} value={l.url}>
-                                    {l.title} ({l.destinationUrl})
-                                  </option>
-                                ))}
+                                {registeredLinks.map((link, idx) => {
+                                  const item = normalizeRegisteredLink(link, idx);
+                                  return (
+                                    <option key={item.optionKey} value={item.url}>
+                                      {item.title} ({item.url})
+                                    </option>
+                                  );
+                                })}
                               </select>
                             </div>
                           )}
@@ -1738,7 +1871,8 @@ export default function ElementorVisualEditor({
                       </div>
                     </div>
                   )}
-                </>
+                  </>
+                )
               ) : (
                 /* Empty Selection Prompt */
                 <div className="py-24 text-center space-y-3">
@@ -1748,7 +1882,7 @@ export default function ElementorVisualEditor({
                   <div>
                     <h4 className="text-xs font-bold text-white">Direct Click-to-Edit Canvas</h4>
                     <p className="text-[11px] text-slate-400 mt-1 max-w-[220px] mx-auto leading-relaxed">
-                      Click directly on any heading, paragraph, button, image, or section in the live preview to edit.
+                      Click directly on any heading, paragraph, button, image, or editable section in the live preview. Dynamic sections with a Lock badge are managed from their Dashboard menu.
                     </p>
                   </div>
                 </div>
@@ -1782,16 +1916,35 @@ export default function ElementorVisualEditor({
               <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 px-2 py-1">
                 {activePage.title} Outline
               </div>
-              {activePage.sections.map((sec) => (
-                <button
-                  key={sec.id}
-                  onClick={() => handleScrollToSection(sec.selector)}
-                  className="w-full text-left px-2.5 py-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-all flex items-center justify-between group"
-                >
-                  <span className="truncate text-xs font-medium">{sec.name}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-blue-400 transition-colors shrink-0" />
-                </button>
-              ))}
+              {activePage.sections.map((sec) => {
+                const lockRule = getSectionLockInfo(sec.selector, currentPageKey);
+                return (
+                  <button
+                    key={sec.id}
+                    onClick={() => handleScrollToSection(sec.selector)}
+                    title={
+                      lockRule
+                        ? `Locked: Managed in Dashboard -> ${lockRule.moduleName}`
+                        : sec.name
+                    }
+                    className={`w-full text-left px-2.5 py-2 rounded-lg transition-all flex items-center justify-between gap-2 group ${
+                      lockRule
+                        ? "hover:bg-amber-950/40 text-amber-200/90 hover:text-amber-100"
+                        : "hover:bg-slate-800 text-slate-300 hover:text-white"
+                    }`}
+                  >
+                    <span className="truncate text-xs font-medium">{sec.name}</span>
+                    {lockRule ? (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-[9px] font-bold uppercase text-amber-300 shrink-0">
+                        <Lock className="w-2.5 h-2.5" />
+                        Locked
+                      </span>
+                    ) : (
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-blue-400 transition-colors shrink-0" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </aside>
         )}

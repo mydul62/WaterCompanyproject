@@ -68,8 +68,8 @@ export default function OurBusinessPage() {
     },
     {
       icon: Building2,
-      title: "LEED Platinum Green Facilities",
-      desc: "State-of-the-art eco-manufacturing complexes in Gazipur and Tongi, Dhaka, equipped with advanced automation and zero-carbon utilities.",
+      title: "Kaliakoir Industrial Operations",
+      desc: "Plastic manufacturing, importing & supplying facility at Holding #5, Ward #02, Latifpur-B, Kaliakoir-1750, Gazipur, Dhaka.",
     },
     {
       icon: FileCheck2,
@@ -113,7 +113,7 @@ export default function OurBusinessPage() {
           <div className="absolute inset-0 w-full h-full">
             <Image
               src="/images/business-hero-office.jpg"
-              alt="Xclusive Can Limited Corporate Office and Team Workstation"
+              alt="Noor Plastic Industries Office and Operations Team"
               fill
               className="object-cover object-center opacity-85 scale-102 transition-transform duration-1000 ease-out"
               priority
@@ -131,7 +131,7 @@ export default function OurBusinessPage() {
           <div className="relative z-10 text-center px-4 max-w-5xl mx-auto space-y-5 sm:space-y-6">
             <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white text-xs sm:text-sm font-bold shadow-xl shadow-black/20">
               <Building2 className="w-4 h-4 text-[#38bdf8] animate-pulse" />
-              <span>About Us &bull; Sustainable Industrial Operations &bull; Since 1992</span>
+              <span>About Us &bull; Noor Plastic Industries &bull; Kaliakoir, Gazipur</span>
             </div>
 
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white tracking-[0.18em] sm:tracking-[0.22em] drop-shadow-[0_4px_30px_rgba(0,0,0,0.85)] uppercase pl-[0.18em]">
@@ -238,8 +238,8 @@ export default function OurBusinessPage() {
 
                   {/* Description */}
                   <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
-                    The Xclusive Can Ltd. Majukhan factory is eco-friendly and green building compliant, architecturally modern,
-                    hygienic, neat and clean, offering a conducive working environment with centralized, automated utility services.
+                    The Noor Plastic Industries Kaliakoir facility in Latifpur-B is modern, hygienic, and compliant with
+                    Bangladesh industrial safety standards, built for clean polymer processing, pure water bottle packaging, and reliable nationwide supply.
                   </p>
 
                   {/* 3 Core Highlight Feature Cards */}
@@ -287,14 +287,14 @@ export default function OurBusinessPage() {
                   <div className="water-fill-card relative w-full sm:w-[280px] lg:w-full xl:w-[280px] aspect-[3/4] rounded-3xl overflow-hidden shadow-[0_15px_35px_rgba(0,0,0,0.08)] border border-slate-200/80 bg-slate-100 group cursor-pointer">
                     <Image
                       src="/images/business-plant-1.jpg"
-                      alt="Xclusive Can Limited Majukhan Eco-Friendly Campus"
+                      alt="Noor Plastic Industries Kaliakoir Eco-Friendly Campus"
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
                     <div className="absolute bottom-4 left-4 right-4 text-white">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-950/60 backdrop-blur-sm px-2.5 py-0.5 rounded-full">Eco Campus</span>
-                      <h4 className="text-sm font-bold mt-1 text-white">Majukhan Green Grounds</h4>
+                      <h4 className="text-sm font-bold mt-1 text-white">Kaliakoir Green Grounds</h4>
                     </div>
                   </div>
 
@@ -336,7 +336,7 @@ export default function OurBusinessPage() {
                 </h2>
                 <div className="w-20 h-1 rounded-full bg-gradient-to-r from-[#1f5f8b] to-[#18b2a0]" />
                 <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-normal pt-2">
-                  At Xclusive Can Ltd., value goes beyond the physical container. It lies in the trust we build,
+                  At Noor Plastic Industries, value goes beyond the physical container. It lies in the trust we build,
                   the relationships we nurture, and the operational reliability we deliver every day.
                 </p>
               </div>
@@ -405,7 +405,7 @@ export default function OurBusinessPage() {
                   <div className="mt-6 pt-6 border-t border-slate-100 text-sm sm:text-base text-slate-600 leading-relaxed space-y-4 animate-in fade-in duration-300">
                     <p>
                       Our core values shape our company culture — guiding every decision, action, and interaction.
-                      They unite our team around what Xclusive Can Ltd. stands for globally, inspiring a shared sense of
+                      They unite our team around what Noor Plastic Industries stands for globally, inspiring a shared sense of
                       purpose and pride. True to our heritage, these values also serve as an inspiration for the future,
                       ensuring our continued relevance in an increasingly dynamic and competitive world.
                     </p>
@@ -443,7 +443,7 @@ export default function OurBusinessPage() {
                   <div className="w-20 h-1 rounded-full bg-gradient-to-r from-[#1f5f8b] to-[#18b2a0]" />
 
                   <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
-                    Our culture at Xclusive Can Ltd. is built around a shared purpose: to shape the future of sustainable
+                    Our culture at Noor Plastic Industries is built around a shared purpose: to shape the future of sustainable
                     and intelligent packaging through innovation and collaboration. This purpose fuels every decision we
                     make and every challenge we embrace.
                   </p>
@@ -585,10 +585,10 @@ export default function OurBusinessPage() {
                     <div className="w-12 h-12 rounded-2xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-600 mb-4 group-hover:scale-105 transition-transform">
                       <Clock className="w-6 h-6 stroke-[2.2]" />
                     </div>
-                    <div className="text-4xl font-black text-slate-900 tracking-tight">32+</div>
-                    <div className="text-sm font-bold text-slate-700 mt-1">Years Heritage</div>
+                    <div className="text-4xl font-black text-slate-900 tracking-tight">100%</div>
+                    <div className="text-sm font-bold text-slate-700 mt-1">Licensed Operations</div>
                     <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
-                      Pioneering engineered containers since 1992 across domestic and global markets.
+                      Operating engineered plastic containers &amp; supply from Kaliakoir, Gazipur.
                     </p>
                   </div>
 
@@ -607,8 +607,8 @@ export default function OurBusinessPage() {
                     <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 mb-4 group-hover:scale-105 transition-transform">
                       <Award className="w-6 h-6 stroke-[2.2]" />
                     </div>
-                    <div className="text-4xl font-black text-slate-900 tracking-tight">2 Plants</div>
-                    <div className="text-sm font-bold text-slate-700 mt-1">Q Pail &amp; XCL</div>
+                    <div className="text-4xl font-black text-slate-900 tracking-tight">ISO Class</div>
+                    <div className="text-sm font-bold text-slate-700 mt-1">Kaliakoir Facility</div>
                     <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
                       Specialized metal container and high-density plastic polymer industrial campuses.
                     </p>
@@ -638,7 +638,7 @@ export default function OurBusinessPage() {
               <div data-reveal="up" className="max-w-3xl mx-auto text-center space-y-3 mb-16">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-800 text-xs font-bold uppercase tracking-wider">
                   <Award className="w-3.5 h-3.5 text-cyan-600" />
-                  <span>The Xclusive Advantage</span>
+                  <span>The Noor Plastic Advantage</span>
                 </div>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.12]">
                   Why Choose{" "}
@@ -648,7 +648,7 @@ export default function OurBusinessPage() {
                 </h2>
                 <div className="w-20 h-1 rounded-full bg-gradient-to-r from-[#1f5f8b] to-[#18b2a0] mx-auto" />
                 <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-normal pt-2">
-                  Six foundational pillars that make Xclusive Can Limited the preferred packaging manufacturing
+                  Six foundational pillars that make Noor Plastic Industries the preferred packaging manufacturing
                   partner for leading pharmaceutical, chemical, and food conglomerates.
                 </p>
               </div>

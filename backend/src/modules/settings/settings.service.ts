@@ -29,10 +29,25 @@ export class SettingsService {
     return publicMap;
   }
 
-  static async updateBatch(payload: Record<string, string>) {
-    const keys = Object.keys(payload);
+  static async updateBatch(
+    payload: Record<string, string> | { settings: { key: string; value: string }[] }
+  ) {
+    const normalizedMap: Record<string, string> = {};
+    if (Array.isArray((payload as any)?.settings)) {
+      for (const item of (payload as any).settings) {
+        if (item?.key) {
+          normalizedMap[item.key] = String(item.value ?? "");
+        }
+      }
+    } else {
+      for (const [k, v] of Object.entries(payload as Record<string, string>)) {
+        normalizedMap[k] = String(v ?? "");
+      }
+    }
+
+    const keys = Object.keys(normalizedMap);
     for (const key of keys) {
-      const val = payload[key];
+      const val = normalizedMap[key];
       let category = "GENERAL";
       if (key.includes("logo") || key.includes("name") || key.includes("tagline") || key.includes("brand")) {
         category = "BRANDING";
@@ -48,7 +63,7 @@ export class SettingsService {
 
       await prisma.siteSetting.upsert({
         where: { key },
-        update: { value: String(val), category },
+        update: { value: String(val), category, isPublic: true },
         create: { key, value: String(val), category, isPublic: true },
       });
     }

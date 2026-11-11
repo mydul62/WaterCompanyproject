@@ -23,18 +23,18 @@ export default function AdminSettingsPage() {
   const [notification, setNotification] = useState<string | null>(null);
 
   // Settings State
-  const [siteName, setSiteName] = useState("Xclusive Can Limited");
-  const [siteTagline, setSiteTagline] = useState("Pioneering Sustainable Metal & Rigid Packaging Since 1992");
+  const [siteName, setSiteName] = useState("Noor Plastic Industries");
+  const [siteTagline, setSiteTagline] = useState("Plastic Manufacturing, Import & Pure Water Packaging");
   const [logoDark, setLogoDark] = useState("/images/logo/logo-dark.png");
   const [logoLight, setLogoLight] = useState("/images/logo/logo-light.png");
   const [faviconUrl, setFaviconUrl] = useState("/favicon.ico");
-  const [businessHours, setBusinessHours] = useState("Saturday – Thursday: 8:30 AM – 5:30 PM");
-  const [factoryGazipur, setFactoryGazipur] = useState("Plot #55/1, Block #B, Kaliakoir Road, Mouchak, Gazipur, Dhaka");
-  const [factoryTongi, setFactoryTongi] = useState("Plot # 196, BSCIC I/A, Tongi, Gazipur, Dhaka");
-  const [phoneSales, setPhoneSales] = useState("+88 01841-084200");
-  const [phoneProcurement, setPhoneProcurement] = useState("+88 01841-084201");
-  const [emailSales, setEmailSales] = useState("marketing@qpail.com");
-  const [emailProcurement, setEmailProcurement] = useState("commercial@qpail.com");
+  const [businessHours, setBusinessHours] = useState("Sat - Thu: 08:00 AM - 08:00 PM");
+  const [factoryGazipur, setFactoryGazipur] = useState("Holding #5, Ward #02, Latifpur-B, Kaliakoir-1750, Gazipur, Dhaka");
+  const [factoryTongi, setFactoryTongi] = useState("Ward #02, Kaliakoir Pourashava, Gazipur, Dhaka");
+  const [phoneSales, setPhoneSales] = useState("+880 1711-987275");
+  const [phoneProcurement, setPhoneProcurement] = useState("+880 1711-987275");
+  const [emailSales, setEmailSales] = useState("info@noorplastic.com");
+  const [emailProcurement, setEmailProcurement] = useState("sales@noorplastic.com");
 
   // Media Picker Modal
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
@@ -255,7 +255,7 @@ export default function AdminSettingsPage() {
 
             <div>
               <label className="text-slate-300 font-bold block mb-1">
-                Gazipur Mega Plant (Metal Line HQ)
+                Main Manufacturing Facility (Kaliakoir, Gazipur)
               </label>
               <textarea
                 rows={2}
@@ -267,7 +267,7 @@ export default function AdminSettingsPage() {
 
             <div>
               <label className="text-slate-300 font-bold block mb-1">
-                Tongi Plant (Plastic &amp; Pail Injection Plant)
+                Plastic &amp; Pail Dispatch Facility
               </label>
               <textarea
                 rows={2}

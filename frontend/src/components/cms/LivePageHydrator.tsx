@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { api } from "@/lib/api";
+import { isElementInLockedSection } from "@/lib/editorLocks";
 
 // Pathname to Page Key Mapping
 const ROUTE_TO_PAGE_KEY: Record<string, string> = {
@@ -19,7 +20,6 @@ const ROUTE_TO_PAGE_KEY: Record<string, string> = {
   "/faqs": "faqs",
   "/case-studies": "case-studies",
   "/blog": "blog",
-  "/q-pail": "q-pail",
   "/request-quote": "request-quote",
 };
 
@@ -38,7 +38,6 @@ const ROUTE_TO_SLUG: Record<string, string> = {
   "/faqs": "faqs",
   "/case-studies": "case-studies",
   "/blog": "blog",
-  "/q-pail": "q-pail",
   "/request-quote": "request-quote",
 };
 
@@ -46,7 +45,7 @@ const ROUTE_TO_SLUG: Record<string, string> = {
  * Universal Visual Override Applier
  * Applies text, image src, links, and inline CSS overrides directly to DOM elements.
  */
-function applyOverridesToDom(pageOverrides: Record<string, any>) {
+function applyOverridesToDom(pageOverrides: Record<string, any>, pageKey: string) {
   if (!pageOverrides || typeof pageOverrides !== "object") return;
 
   for (const [selector, data] of Object.entries(pageOverrides)) {
@@ -54,7 +53,7 @@ function applyOverridesToDom(pageOverrides: Record<string, any>) {
 
     try {
       const el = document.querySelector(selector) as HTMLElement | null;
-      if (!el) continue;
+      if (!el || isElementInLockedSection(el, pageKey)) continue;
 
       // Text override
       if (typeof data.text === "string" && data.text.trim().length > 0) {
@@ -130,7 +129,7 @@ export default function LivePageHydrator() {
           const parsed = JSON.parse(raw);
           const pageData = parsed[pageKey] || (parsed.home && pageKey === "home" ? parsed.home : parsed);
           if (pageData && typeof pageData === "object") {
-            applyOverridesToDom(pageData);
+            applyOverridesToDom(pageData, pageKey);
           }
         }
       } catch (e) {
@@ -167,7 +166,7 @@ export default function LivePageHydrator() {
               (parsed.home && pageKey === "home" ? parsed.home : parsed);
 
             if (pageOverrides && typeof pageOverrides === "object") {
-              applyOverridesToDom(pageOverrides);
+              applyOverridesToDom(pageOverrides, pageKey);
 
               // Update local cache for instantaneous future visits
               try {
@@ -191,7 +190,7 @@ export default function LivePageHydrator() {
       if (data?.overrides) {
         const targetOverrides = data.overrides[pageKey] || data.overrides;
         if (targetOverrides) {
-          applyOverridesToDom(targetOverrides);
+          applyOverridesToDom(targetOverrides, pageKey);
         }
       }
     };
@@ -205,7 +204,7 @@ export default function LivePageHydrator() {
         if (msg.data?.type === "PAGE_PUBLISHED" && msg.data?.overrides) {
           const targetOverrides = msg.data.overrides[pageKey] || msg.data.overrides;
           if (targetOverrides) {
-            applyOverridesToDom(targetOverrides);
+            applyOverridesToDom(targetOverrides, pageKey);
           }
         }
       };
@@ -217,7 +216,7 @@ export default function LivePageHydrator() {
         try {
           const parsed = JSON.parse(event.newValue);
           const pageData = parsed[pageKey] || parsed;
-          if (pageData) applyOverridesToDom(pageData);
+          if (pageData) applyOverridesToDom(pageData, pageKey);
         } catch (e) {}
       }
     };

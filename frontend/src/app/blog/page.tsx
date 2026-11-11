@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { api } from "@/lib/api";
+import { BLOG_POSTS, BlogPost } from "@/data/blogData";
 import {
   BookOpen,
   Sparkles,
@@ -23,269 +25,35 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  category: "Sustainability & PCR" | "Tooling Engineering" | "Industry Standards" | "Company News";
-  author: {
-    name: string;
-    role: string;
-    avatar: string;
-  };
-  date: string;
-  readTime: string;
-  coverImage: string;
-  featured?: boolean;
-  content: {
-    intro: string;
-    sections: {
-      heading: string;
-      body: string;
-      bullets?: string[];
-    }[];
-    quote?: string;
-    conclusion: string;
-  };
-  tags: string[];
-}
-
-const BLOG_POSTS: BlogPost[] = [
-  {
-    id: "post-1",
-    slug: "post-consumer-resins-future",
-    title: "The Future of Post-Consumer Resins (PCR) in Rigid FMCG Packaging: Balancing Tensile Strength and Circular Goals",
-    excerpt:
-      "How advanced polymer compounding and finite element stress analysis allow enterprise brand owners to integrate 30%–50% recycled resins without compromising drop-impact durability.",
-    category: "Sustainability & PCR",
-    featured: true,
-    author: {
-      name: "Engr. Tanvir Ahmed",
-      role: "Lead Materials Scientist & Polymer R&D",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
-    },
-    date: "November 4, 2026",
-    readTime: "7 min read",
-    coverImage: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1600&q=80",
-    tags: ["PCR Resins", "Circular Economy", "Tensile Strength", "LEED Platinum"],
-    content: {
-      intro:
-        "As global brand owners face mounting statutory pressures to curb virgin plastic consumption, Post-Consumer Recycled (PCR) polymers have moved from a corporate CSR talking point to an urgent operational requirement. However, integrating recycled resins into high-speed blow molding lines introduces complex technical hurdles: inconsistent melt flow index (MFI), degraded molecular chains, and reduced environmental stress crack resistance (ESCR).",
-      sections: [
-        {
-          heading: "The Microscopic Reality of Recycled Polyolefins",
-          body: "Unlike virgin resins with uniform molecular weight distributions, post-consumer flakes typically contain varying thermal histories. When processed under conventional thermal profiles, these irregularities can cause uneven wall cooling, microscopic voiding, and micro-fractures under top-load compressive stress.",
-          bullets: [
-            "Melt Flow Index (MFI) variance across heterogeneous resin batches.",
-            "Lower impact resistance at cold warehouse storage temperatures (-5°C to 10°C).",
-            "Potential sensory and odor migration in food-contact applications.",
-          ],
-        },
-        {
-          heading: "Engineering Solutions: Multi-Layer Barrier Co-Extrusion",
-          body: "At Xclusive Can Limited, our R&D laboratory overcomes these hurdles through co-extrusion technology. We encapsulate the PCR core between virgin polymer barrier skins. The outer virgin layers preserve pristine aesthetic gloss and chemical seal, while the inner 40% core utilizes certified post-consumer resin.",
-          bullets: [
-            "Triple-layer ABA parison co-extrusion technology.",
-            "Reinforced structural micro-ribbing on bottle shoulder geometries.",
-            "100% compliance with FDA and EU food-contact migration thresholds.",
-          ],
-        },
-      ],
-      quote:
-        "True sustainability is not about sacrificing package performance; it is about engineering intelligent polymer structures that perform flawlessly across their entire lifecycle.",
-      conclusion:
-        "By pairing predictive Finite Element Analysis (FEA) with high-purity recycled feedstock compounding, Xclusive Can enables partners like Unilever and Berger to meet circular packaging milestones ahead of statutory schedules.",
-    },
-  },
-  {
-    id: "post-2",
-    slug: "conformal-cooling-cnc-molds",
-    title: "Why Conformal Cooling Channels in CNC Molds Reduce Plastic Injection Cycle Times by 28%",
-    excerpt:
-      "A deep dive into advanced Tool Room thermal management: how curved internal waterways eliminate hotspots and warp distortion in high-cavity molds.",
-    category: "Tooling Engineering",
-    author: {
-      name: "Md. Rafiqul Islam",
-      role: "Head of Tool Room & CNC Machining",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
-    },
-    date: "October 28, 2026",
-    readTime: "5 min read",
-    coverImage: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1600&q=80",
-    tags: ["CNC Tooling", "Conformal Cooling", "Cycle Time", "Moldflow"],
-    content: {
-      intro:
-        "In high-volume plastic injection molding, cooling time accounts for over 65% of the total cycle duration. Traditional straight-drilled cooling lines cannot follow the complex contoured geometries of modern packaging cores, creating uneven thermal gradients and cycle bottlenecks.",
-      sections: [
-        {
-          heading: "The Physics of Thermal Dissipation in Mold Cores",
-          body: "When molten polypropylene at 230°C enters a multi-cavity mold, heat must be evacuated uniformly. Straight gun-drilled channels leave deep core corners under-cooled, leading to differential shrinkage, thermal sink marks, and post-demolding part warpage.",
-        },
-        {
-          heading: "Conformal Waterways via 5-Axis Milling & Micro-EDM",
-          body: "Our in-house Tool Room designs curved conformal cooling circuits that follow the exact equidistant contours of the bottle cavity. Operating under 6-bar turbulent flow, these circuits extract calories at nearly double the rate of conventional mold bases.",
-          bullets: [
-            "28% average reduction in cycle duration (from 14.2s down to 10.2s).",
-            "Elimination of differential shrinkage on threaded bottle closures.",
-            "Extended mold tooling lifespan due to reduced thermal fatigue cycles.",
-          ],
-        },
-      ],
-      conclusion:
-        "Investing in precision tooling architecture yields exponential energy savings and throughput multipliers for enterprise packaging clients over multi-million production runs.",
-    },
-  },
-  {
-    id: "post-3",
-    slug: "un-certified-hazmat-tin-packaging",
-    title: "Understanding UN-Certified Hazmat Packaging: Drop Tests, Hydraulic Pressure & Chemical Seams",
-    excerpt:
-      "A comprehensive guide to regulatory testing requirements for industrial metal drums transporting solvent-borne paints and hazardous agrochemicals.",
-    category: "Industry Standards",
-    author: {
-      name: "Dr. K. M. Hossain",
-      role: "Director of Quality Assurance & Compliance",
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
-    },
-    date: "October 16, 2026",
-    readTime: "6 min read",
-    coverImage: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=1600&q=80",
-    tags: ["UN Hazmat", "Chemical Drums", "Hydraulic Pressure", "Drop Testing"],
-    content: {
-      intro:
-        "Transporting volatile chemicals, solvents, and agrochemical concentrates demands uncompromising containment. Under United Nations hazardous materials regulations, packaging must withstand extreme physical drops, internal hydrostatic pressure, and stacking loads without catastrophic rupture.",
-      sections: [
-        {
-          heading: "Key Tests Mandated by UN Packaging Codes",
-          body: "To receive official UN certification (e.g., 1A1/Y1.8/250), steel drums undergo rigorous multi-stage laboratory validation:",
-          bullets: [
-            "1.8-meter diagonal drop test onto hardened steel plate at -18°C.",
-            "250 kPa hydraulic internal pressure test held continuously for 30 minutes.",
-            "3-meter vertical stacking test under 40°C thermal conditions for 28 days.",
-            "Leakproof vacuum immersion test validating seam airtightness.",
-          ],
-        },
-        {
-          heading: "Electrical Resistance Seam Welding vs Traditional Soldering",
-          body: "Xclusive Can utilizes European automated continuous wire electrical resistance welding. By delivering continuous forged metal fusion along the container cylinder, our seams achieve 100% molecular bond strength with zero solder embrittlement.",
-        },
-      ],
-      conclusion:
-        "Ensuring complete regulatory compliance protects both the environment and corporate liability across hazardous logistics chains.",
-    },
-  },
-  {
-    id: "post-4",
-    slug: "leed-platinum-manufacturing-standards",
-    title: "LEED Platinum Green Manufacturing: Redefining Bangladesh's Industrial Packaging Landscape",
-    excerpt:
-      "How rooftop solar arrays, zero-liquid discharge effluent plants, and natural ventilation systems create a carbon-conscious packaging campus in Gazipur.",
-    category: "Sustainability & PCR",
-    author: {
-      name: "Nusrat Jahan",
-      role: "Sustainability & ESG Compliance Director",
-      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80",
-    },
-    date: "October 02, 2026",
-    readTime: "5 min read",
-    coverImage: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1600&q=80",
-    tags: ["LEED Platinum", "Green Campus", "Zero Waste", "Solar Energy"],
-    content: {
-      intro:
-        "Industrial packaging production is traditionally energy-intensive. Xclusive Can's Gazipur facility was engineered from the foundation to achieve the United States Green Building Council's (USGBC) highest honor: LEED Platinum Certification.",
-      sections: [
-        {
-          heading: "Pillars of Our LEED Platinum Campus",
-          body: "Our green manufacturing framework combines cutting-edge architecture with sustainable resource stewardship:",
-          bullets: [
-            "1.2 MW rooftop solar photovoltaic micro-grid supplying clean factory power.",
-            "Zero Liquid Discharge (ZLD) effluent treatment plant recycling 100% of process water.",
-            "Daylight harvesting architecture reducing artificial lighting energy consumption by 45%.",
-            "Zero landfill waste policy with closed-loop steel and polymer regrind recycling.",
-          ],
-        },
-      ],
-      conclusion:
-        "Partnering with a LEED Platinum packaging manufacturer directly reduces Scope 3 supply chain carbon emissions for multinational enterprise brands.",
-    },
-  },
-  {
-    id: "post-5",
-    slug: "aerosol-can-metallurgy-pressure-domes",
-    title: "The Metallurgy of Aerosol Cans: Tinplate Hardness, Seam Temperatures & Internal Lacquers",
-    excerpt:
-      "Technical analysis of high-pressure aerosol container engineering: selecting optimal temper classifications and compound seaming flanges for volatile gases.",
-    category: "Industry Standards",
-    author: {
-      name: "Engr. Tanvir Ahmed",
-      role: "Lead Materials Scientist & Polymer R&D",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
-    },
-    date: "September 18, 2026",
-    readTime: "6 min read",
-    coverImage: "https://images.unsplash.com/photo-1581091870621-1e9b2512f718?auto=format&fit=crop&w=1600&q=80",
-    tags: ["Aerosol Cans", "Tinplate", "Pressure Domes", "Barrier Lacquer"],
-    content: {
-      intro:
-        "Aerosol cans operate under continuous internal pressures exceeding 8 to 12 bar at elevated ambient temperatures. Engineered safety begins at the atomic level with precision selection of tinplate temper classifications.",
-      sections: [
-        {
-          heading: "Temper Selection: TH580 vs TH620",
-          body: "The can body requires ductile continuous rollability, whereas the top dome and bottom concave dish demand high-temper steel capable of resisting outward buckling force.",
-          bullets: [
-            "Continuous automated weld monitoring preventing micro-void porosity.",
-            "Food-contact organosol barrier lacquers preventing aerosol propellant corrosion.",
-            "Heated water-bath testing validating 100% leak-free integrity before packing.",
-          ],
-        },
-      ],
-      conclusion:
-        "Rigorous metallurgical control ensures consumer peace of mind across millions of aerosol units.",
-    },
-  },
-  {
-    id: "post-6",
-    slug: "cleanroom-automation-robotics",
-    title: "Automation in Class 100k Cleanrooms: Minimizing Particulate Contamination with Robotic Cells",
-    excerpt:
-      "How robotic pick-and-place arms and automated inline vision systems ensure zero-particulate pharmaceutical and food packaging safety.",
-    category: "Company News",
-    author: {
-      name: "Md. Rafiqul Islam",
-      role: "Head of Tool Room & CNC Machining",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
-    },
-    date: "September 05, 2026",
-    readTime: "4 min read",
-    coverImage: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1600&q=80",
-    tags: ["Automation", "Cleanroom", "Robotics", "Pharma Packaging"],
-    content: {
-      intro:
-        "In pharmaceutical primary packaging, the single greatest source of particulate and microbial contamination is human intervention. Our automated cleanroom lines eliminate human contact from resin melting to final box sealing.",
-      sections: [
-        {
-          heading: "High-Speed Robotic Demolding & Sealing",
-          body: "Within our positive-pressure ISO Class 8 cleanrooms, articulated robotic pick-and-place arms remove newly molded dropper bottles directly from the core pins, transferring them inside sealed laminar flow tunnels to automated visual inspection cameras.",
-        },
-      ],
-      conclusion:
-        "Automation guarantees consistent sterility, eliminates microbiological hazards, and enables 24/7 high-speed production reliability.",
-    },
-  },
-];
-
 export default function BlogPage() {
+  const [posts, setPosts] = useState<BlogPost[]>(BLOG_POSTS);
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
 
+  useEffect(() => {
+    let active = true;
+    api.blogs
+      .getPublic()
+      .then((res) => {
+        if (active && Array.isArray(res.data) && res.data.length > 0) {
+          setPosts(res.data);
+        }
+      })
+      .catch(() => {
+        // Keep clean fallback BLOG_POSTS
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   // Filtered Blog Posts
   const filteredPosts = useMemo(() => {
-    if (activeCategory === "ALL") return BLOG_POSTS;
-    return BLOG_POSTS.filter((p) => p.category === activeCategory);
-  }, [activeCategory]);
+    if (activeCategory === "ALL") return posts;
+    return posts.filter((p) => p.category === activeCategory);
+  }, [activeCategory, posts]);
 
-  const featuredPost = BLOG_POSTS.find((p) => p.featured) || BLOG_POSTS[0];
+  const featuredPost = posts.find((p) => p.featured) || posts[0];
 
   return (
     <div className="min-h-screen bg-[#f4f8fb] text-[#0a1f33] font-sans antialiased selection:bg-[#0b6e99] selection:text-white">
@@ -302,7 +70,7 @@ export default function BlogPage() {
           {/* Background Hero Image */}
           <div className="absolute inset-0 w-full h-full">
             <Image
-              src="https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1920&q=80"
+              src="/images/rnd/rnd-hero-banner.jpg"
               alt="Engineering Knowledge Hub & Industry Insights"
               fill
               priority
@@ -330,7 +98,7 @@ export default function BlogPage() {
             </h1>
 
             <p className="text-xs sm:text-sm md:text-base uppercase tracking-[0.3em] font-bold text-[#38bdf8] drop-shadow-lg pl-[0.3em] max-w-2xl mx-auto">
-              Circular Polymers &bull; High-Speed Tin Welding &bull; LEED Platinum Standards
+              Circular Polymers &bull; Food-Grade Plastics &bull; Noor Plastic Standards
             </p>
           </div>
 
@@ -386,6 +154,7 @@ export default function BlogPage() {
                   alt={featuredPost.title}
                   fill
                   priority
+                  unoptimized={Boolean(featuredPost.coverImage?.startsWith("/uploads/") || featuredPost.coverImage?.startsWith("http"))}
                   sizes="(min-width: 1024px) 60vw, 100vw"
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 />
@@ -430,6 +199,7 @@ export default function BlogPage() {
                         src={featuredPost.author.avatar}
                         alt={featuredPost.author.name}
                         fill
+                        unoptimized={Boolean(featuredPost.author.avatar?.startsWith("/uploads/") || featuredPost.author.avatar?.startsWith("http"))}
                         className="object-cover"
                       />
                     </div>
@@ -451,16 +221,16 @@ export default function BlogPage() {
         {/* ============================================================ */}
         {/* 3. CATEGORY FILTER & ARTICLES GRID                           */}
         {/* ============================================================ */}
-        <section className="bg-[#f4f8fb] pb-16 sm:pb-20 lg:pb-24">
+        <section id="blog-articles" className="bg-[#f4f8fb] pb-16 sm:pb-20 lg:pb-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Filter Tabs */}
             <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-3 mb-10">
               {[
-                { id: "ALL", label: "All Insights", count: BLOG_POSTS.length },
-                { id: "Sustainability & PCR", label: "Sustainability & PCR", count: 2 },
-                { id: "Tooling Engineering", label: "Tooling Engineering", count: 1 },
-                { id: "Industry Standards", label: "Industry Standards", count: 2 },
-                { id: "Company News", label: "Company News & Tech", count: 1 },
+                { id: "ALL", label: "All Insights", count: posts.length },
+                { id: "Sustainability & PCR", label: "Sustainability & PCR", count: posts.filter((p) => p.category === "Sustainability & PCR").length },
+                { id: "Tooling Engineering", label: "Tooling Engineering", count: posts.filter((p) => p.category === "Tooling Engineering").length },
+                { id: "Industry Standards", label: "Industry Standards", count: posts.filter((p) => p.category === "Industry Standards").length },
+                { id: "Company News", label: "Company News & Tech", count: posts.filter((p) => p.category === "Company News").length },
               ].map((tab) => {
                 const isActive = activeCategory === tab.id;
                 return (
@@ -502,6 +272,7 @@ export default function BlogPage() {
                         src={post.coverImage}
                         alt={post.title}
                         fill
+                        unoptimized={Boolean(post.coverImage?.startsWith("/uploads/") || post.coverImage?.startsWith("http"))}
                         sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                         className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                       />
@@ -537,6 +308,7 @@ export default function BlogPage() {
                           src={post.author.avatar}
                           alt={post.author.name}
                           fill
+                          unoptimized={Boolean(post.author.avatar?.startsWith("/uploads/") || post.author.avatar?.startsWith("http"))}
                           className="object-cover"
                         />
                       </div>
@@ -576,6 +348,7 @@ export default function BlogPage() {
                 alt={selectedPost.title}
                 fill
                 priority
+                unoptimized={Boolean(selectedPost.coverImage?.startsWith("/uploads/") || selectedPost.coverImage?.startsWith("http"))}
                 className="object-cover opacity-85"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
@@ -612,6 +385,7 @@ export default function BlogPage() {
                     src={selectedPost.author.avatar}
                     alt={selectedPost.author.name}
                     fill
+                    unoptimized={Boolean(selectedPost.author.avatar?.startsWith("/uploads/") || selectedPost.author.avatar?.startsWith("http"))}
                     className="object-cover"
                   />
                 </div>

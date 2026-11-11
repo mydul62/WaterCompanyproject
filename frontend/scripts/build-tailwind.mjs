@@ -1558,6 +1558,29 @@ header ul li a span,
   background: #a8a8a8;
 }
 
+/* Dark sleek scrollbar for Admin Dashboard navigation sidebar */
+.admin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #475569 #0f172a;
+}
+
+.admin-scrollbar::-webkit-scrollbar {
+  width: 7px;
+}
+
+.admin-scrollbar::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+.admin-scrollbar::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 9999px;
+}
+
+.admin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8;
+}
+
 /* ══════════════════════════════════════════════════════════════
    Hero & Header Exact Reference Typography + 4-Stage Choreography
    ══════════════════════════════════════════════════════════════ */

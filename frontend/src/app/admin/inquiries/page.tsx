@@ -1,109 +1,30 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import Link from "next/link";
 import {
   FileText,
   Search,
-  Filter,
-  CheckCircle2,
-  Clock,
-  Send,
-  Building,
-  Mail,
-  Phone,
   Calendar,
-  X,
   Download,
-  AlertCircle,
 } from "lucide-react";
-
-interface RFQItem {
-  id: string;
-  company: string;
-  contact: string;
-  email: string;
-  phone: string;
-  category: string;
-  volume: string;
-  capacity: string;
-  date: string;
-  status: "New Inquiry" | "Technical Review" | "Sample Dispatched" | "Quotation Sent" | "Closed Won";
-  notes?: string;
-}
-
-const INITIAL_RFQS: RFQItem[] = [
-  {
-    id: "RFQ-2026-XCL-8841",
-    company: "Berger Paints Bangladesh Ltd.",
-    contact: "Engr. Shamimur Rahman",
-    email: "shamim.rahman@bergerbd.com",
-    phone: "+880 1711-234567",
-    category: "Q Pail Industrial Buckets",
-    volume: "120,000 units/year",
-    capacity: "20 Liters & 4 Liters",
-    date: "2026-11-04 14:30",
-    status: "New Inquiry",
-    notes: "Requires UN certification for export-grade solvent-based emulsion paint.",
-  },
-  {
-    id: "RFQ-2026-XCL-8839",
-    company: "Square Pharmaceuticals Ltd.",
-    contact: "Dr. Farhana Yasmin",
-    email: "f.yasmin@squarepharma.com.bd",
-    phone: "+880 1819-876543",
-    category: "Pharma Droppers & Jars",
-    volume: "250,000 units/year",
-    capacity: "10ml Calibrated Dropper",
-    date: "2026-11-04 11:15",
-    status: "Technical Review",
-    notes: "Cleanroom Class 100,000 protocol required. Gamma radiation test certificate requested.",
-  },
-  {
-    id: "RFQ-2026-XCL-8835",
-    company: "Akij Food & Beverage Ltd.",
-    contact: "Zahid Hasan",
-    email: "zahid.hasan@akij.net",
-    phone: "+880 1912-345678",
-    category: "PET Beverage Bottles",
-    volume: "500,000 units/year",
-    capacity: "500ml Crystal PET",
-    date: "2026-11-03 16:45",
-    status: "Sample Dispatched",
-    notes: "Sample batch of 50 preforms sent via Gazipur express courier.",
-  },
-  {
-    id: "RFQ-2026-XCL-8828",
-    company: "Dulux / AkzoNobel Bangladesh",
-    contact: "Kamrul Islam",
-    email: "kamrul.islam@akzonobel.com",
-    phone: "+880 1680-112233",
-    category: "Tin Cans & Aerosols",
-    volume: "80,000 units/year",
-    capacity: "1 Liter Paint Tin",
-    date: "2026-11-02 10:20",
-    status: "Quotation Sent",
-    notes: "Official price breakdown per thousand units provided. Awaiting commercial sign-off.",
-  },
-  {
-    id: "RFQ-2026-XCL-8819",
-    company: "Marico Bangladesh Limited",
-    contact: "Nusrat Jahan",
-    email: "nusrat.jahan@marico.com",
-    phone: "+880 1714-998877",
-    category: "Plastic Bottles",
-    volume: "350,000 units/year",
-    capacity: "200ml Hair Oil Bottle",
-    date: "2026-10-31 09:00",
-    status: "Closed Won",
-    notes: "Annual master contract executed for Tongi plant supply line.",
-  },
-];
+import { api } from "@/lib/api";
+import {
+  RFQItem,
+  INITIAL_RFQS,
+  getLocalRfqs,
+  saveLocalRfqs,
+  getStatusBadge,
+} from "./_components/rfqStore";
 
 export default function AdminInquiriesPage() {
   const [rfqs, setRfqs] = useState<RFQItem[]>(INITIAL_RFQS);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [selectedRfq, setSelectedRfq] = useState<RFQItem | null>(null);
+
+  useEffect(() => {
+    setRfqs(getLocalRfqs());
+  }, []);
 
   const filteredRfqs = useMemo(() => {
     return rfqs.filter((item) => {
@@ -119,32 +40,21 @@ export default function AdminInquiriesPage() {
     });
   }, [rfqs, search, statusFilter]);
 
-  const handleUpdateStatus = (id: string, newStatus: RFQItem["status"]) => {
-    setRfqs((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
+  const handleUpdateStatus = async (id: string, newStatus: RFQItem["status"]) => {
+    const updated = rfqs.map((r) =>
+      r.id === id ? { ...r, status: newStatus } : r
     );
-    if (selectedRfq && selectedRfq.id === id) {
-      setSelectedRfq({ ...selectedRfq, status: newStatus });
-    }
-  };
-
-  const getStatusBadge = (status: RFQItem["status"]) => {
-    switch (status) {
-      case "New Inquiry":
-        return "bg-blue-950 text-cyan-400 border border-cyan-800/60";
-      case "Technical Review":
-        return "bg-amber-950 text-amber-400 border border-amber-800/60";
-      case "Sample Dispatched":
-        return "bg-emerald-950 text-emerald-400 border border-emerald-800/60";
-      case "Quotation Sent":
-        return "bg-purple-950 text-purple-400 border border-purple-800/60";
-      case "Closed Won":
-        return "bg-green-950 text-green-300 border border-green-700/80 font-black";
+    setRfqs(updated);
+    saveLocalRfqs(updated);
+    try {
+      await api.inquiries.updateStatus(id, newStatus);
+    } catch {
+      // Saved locally when backend is unavailable
     }
   };
 
   return (
-    <div className="space-y-8 max-w-[1643px] mx-auto">
+    <div className="space-y-8 w-full">
       {/* Page Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -290,12 +200,12 @@ export default function AdminInquiriesPage() {
                     </select>
                   </td>
                   <td className="py-3.5 px-4 text-right">
-                    <button
-                      onClick={() => setSelectedRfq(rfq)}
-                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition-colors"
+                    <Link
+                      href={`/admin/inquiries/${rfq.id}`}
+                      className="inline-block px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition-colors"
                     >
                       Inspect
-                    </button>
+                    </Link>
                   </td>
                 </tr>
               ))}
@@ -303,79 +213,6 @@ export default function AdminInquiriesPage() {
           </table>
         </div>
       </div>
-
-      {/* RFQ Detail Modal */}
-      {selectedRfq && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-2xl bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-800 p-6 space-y-6">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <div>
-                <span className="text-xs font-mono text-cyan-400 font-bold">{selectedRfq.id}</span>
-                <h2 className="text-lg font-black text-white">{selectedRfq.company}</h2>
-              </div>
-              <button
-                onClick={() => setSelectedRfq(null)}
-                className="p-1 rounded text-slate-400 hover:text-white"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 text-xs">
-              <div className="space-y-1">
-                <span className="text-slate-400 block font-semibold">Contact Person</span>
-                <span className="text-white font-bold">{selectedRfq.contact}</span>
-              </div>
-              <div className="space-y-1">
-                <span className="text-slate-400 block font-semibold">Phone Number</span>
-                <span className="text-white font-mono">{selectedRfq.phone}</span>
-              </div>
-              <div className="space-y-1">
-                <span className="text-slate-400 block font-semibold">Email Address</span>
-                <span className="text-cyan-400 font-mono">{selectedRfq.email}</span>
-              </div>
-              <div className="space-y-1">
-                <span className="text-slate-400 block font-semibold">Timestamp</span>
-                <span className="text-slate-300 font-mono">{selectedRfq.date}</span>
-              </div>
-              <div className="space-y-1">
-                <span className="text-slate-400 block font-semibold">Category &amp; Size</span>
-                <span className="text-white">{selectedRfq.category} ({selectedRfq.capacity})</span>
-              </div>
-              <div className="space-y-1">
-                <span className="text-slate-400 block font-semibold">Production Volume</span>
-                <span className="text-emerald-400 font-mono font-bold">{selectedRfq.volume}</span>
-              </div>
-            </div>
-
-            {selectedRfq.notes && (
-              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs">
-                <span className="text-slate-400 block font-bold mb-1">Buyer Notes &amp; Specifications</span>
-                <p className="text-slate-300 leading-relaxed">{selectedRfq.notes}</p>
-              </div>
-            )}
-
-            <div className="pt-2 flex items-center justify-between border-t border-slate-800">
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-400">Current Status:</span>
-                <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${getStatusBadge(selectedRfq.status)}`}>
-                  {selectedRfq.status}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <a
-                  href={`mailto:${selectedRfq.email}?subject=Xclusive Can Limited - Quotation for ${selectedRfq.category}`}
-                  className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-blue-600/30"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  Email Quotation
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

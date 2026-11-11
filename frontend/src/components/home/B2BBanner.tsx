@@ -82,15 +82,42 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
           data-reveal="scale"
           className="w-full rounded-3xl bg-gradient-to-r from-white/90 via-[#eef7fd]/90 to-[#d8eefc]/90 backdrop-blur-2xl border border-white/90 p-7 sm:p-10 shadow-[0_15px_45px_rgba(0,194,232,0.1)] flex flex-col md:flex-row items-center justify-between gap-6 mb-16 sm:mb-24 transition-all duration-300 hover:shadow-[0_20px_55px_rgba(0,194,232,0.18)]"
         >
-          {/* Left: Authentic Xclusive Logo */}
-          <div className="relative h-12 sm:h-14 w-36 sm:w-44 shrink-0 drop-shadow-sm">
-            <Image
-              src="/cropped/xclusive-logo.png"
-              alt="Xclusive Can Limited"
-              fill
-              className="object-contain object-left"
-              priority
-            />
+          {/* Left: Noor Plastic Official Brand Mark */}
+          <div className="flex items-center gap-3 shrink-0">
+            <svg
+              viewBox="0 0 40 40"
+              className="w-10 h-10 shrink-0 drop-shadow-xs"
+              aria-hidden="true"
+            >
+              <path
+                d="M20 2.5C22.4 7 24.4 10.6 24.4 13.6C24.4 16 22.4 17.8 20 17.8C17.6 17.8 15.6 16 15.6 13.6C15.6 10.6 17.6 7 20 2.5Z"
+                fill="#5EC5F2"
+              />
+              <path
+                d="M20 37.5C17.6 33 15.6 29.4 15.6 26.4C15.6 24 17.6 22.2 20 22.2C22.4 22.2 24.4 24 24.4 26.4C24.4 29.4 22.4 33 20 37.5Z"
+                fill="#094E9B"
+              />
+              <path
+                d="M2.5 20C7 17.6 10.6 15.6 13.6 15.6C16 15.6 17.8 17.6 17.8 20C17.8 22.4 16 24.4 13.6 24.4C10.6 24.4 7 22.4 2.5 20Z"
+                fill="#1D8FE1"
+              />
+              <path
+                d="M37.5 20C33 22.4 29.4 24.4 26.4 24.4C24 24.4 22.2 22.4 22.2 20C22.2 17.6 24 15.6 26.4 15.6C29.4 15.6 33 17.6 37.5 20Z"
+                fill="#35A7E8"
+              />
+              <circle cx="14" cy="14" r="1.4" fill="#1D8FE1" />
+              <circle cx="26" cy="14" r="1.4" fill="#5EC5F2" />
+              <circle cx="14" cy="26" r="1.4" fill="#094E9B" />
+              <circle cx="26" cy="26" r="1.4" fill="#1D8FE1" />
+            </svg>
+            <div className="leading-tight">
+              <span className="font-hero-display text-[28px] text-[#0D1E3A] tracking-[-0.01em] block">
+                Noor Plastic
+              </span>
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#094E9B] block">
+                Noor Plastic Industries
+              </span>
+            </div>
           </div>
 
           {/* Center: Title & Description */}
@@ -116,16 +143,16 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
           </div>
         </div>
 
-        {/* Section Header: About AquaPure */}
+        {/* Section Header: About Noor Plastic */}
         <div data-reveal="up" className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-14 sm:mb-18">
           <div className="max-w-2xl space-y-3.5">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200/90 text-cyan-800 text-xs sm:text-sm font-bold uppercase tracking-wider shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-cyan-500 animate-pulse" />
-              <span>About AquaPure &bull; Pure Water Division</span>
+              <span>About Noor Plastic &bull; Trade License #242501300583</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl lg:text-[54px] font-black text-slate-900 tracking-tight leading-[1.12]">
-              Leading Drinking Water Company in{" "}
+              Trusted Plastic &amp; Water Packaging in{" "}
               <span className="bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 Bangladesh
               </span>
@@ -134,9 +161,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
 
           <div className="max-w-xl space-y-4">
             <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-medium">
-              AquaPure is a trusted manufacturer of packaged drinking water since 2014. From our state-of-the-art plant
-              in Gazipur, we purify and bottle safe water for homes, offices, leading hotels and retail networks, backed
-              by ISO 22000, GMP and HACCP certified quality systems.
+              Noor Plastic Industries (Proprietor: Nurul Islam) is a licensed manufacturer, importer, and supplier at Holding #5, Ward #02, Latifpur-B, Kaliakoir-1750, Gazipur (BIN: 007122199-1205, TIN: 636404586599), serving homes and commercial clients across Bangladesh.
             </p>
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <a
@@ -226,27 +251,26 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
             <div className="relative z-10 space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-400/15 border border-cyan-400/30 text-cyan-300 text-xs sm:text-sm font-bold uppercase tracking-wider">
                 <Award className="w-3.5 h-3.5 text-cyan-300" />
-                <span>Established 2014</span>
+                <span>Est. Oct 2024 &bull; Kaliakoir, Gazipur</span>
               </div>
 
               <div className="pt-4">
                 <span className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-tight bg-gradient-to-r from-white via-cyan-100 to-cyan-300 bg-clip-text text-transparent">
-                  10+
+                  100%
                 </span>
                 <h3 className="text-2xl sm:text-3xl font-bold text-white mt-1">
-                  Years of Trusted Purity
+                  Licensed Quality Assurance
                 </h3>
                 <p className="text-cyan-100/80 text-base sm:text-lg leading-relaxed mt-2 max-w-sm">
-                  Delivering crisp, mineral-balanced hydration across homes, institutions, and businesses throughout
-                  Bangladesh.
+                  Certified plastic manufacturing, import &amp; supply delivering crisp, mineral-balanced hydration for homes and businesses.
                 </p>
               </div>
             </div>
 
             <div className="relative z-10 pt-6 mt-6 border-t border-white/10 flex items-center justify-between text-xs sm:text-sm text-cyan-200/90 font-medium">
-              <span>50M+ Liters Bottled</span>
+              <span>Trade License #242501300583</span>
               <span>&bull;</span>
-              <span>10,000+ Corporate Clients</span>
+              <span>BIN 007122199-1205</span>
             </div>
           </article>
 
@@ -262,7 +286,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
             </div>
 
             <h3 className="text-2xl sm:text-[28px] font-extrabold text-slate-900 tracking-tight">
-              Why Choose AquaPure
+              Why Choose Noor Plastic
             </h3>
             <p className="text-sm sm:text-base text-slate-600 mt-1 mb-6">
               Reliable supply and dedicated service you can build a long-term partnership on.
@@ -303,10 +327,10 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
               </div>
 
               <h3 className="text-2xl sm:text-[32px] font-extrabold text-slate-900 tracking-tight">
-                Automated Gazipur Bottling Facility
+                Kaliakoir Automated Plastic &amp; Bottling Plant
               </h3>
               <p className="text-base sm:text-lg text-slate-600 mt-1">
-                Precision European blow-molding and non-contact filling lines ensure each bottle meets strict pharmaceutical-grade purity.
+                Precision molding, import logistics, and non-contact bottling at Latifpur-B, Kaliakoir-1750, Gazipur ensure food-grade strength and purity.
               </p>
             </div>
 
@@ -314,7 +338,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
             <div className="relative w-full h-48 sm:h-56 rounded-2xl bg-gradient-to-r from-sky-50 via-cyan-50 to-blue-50 border border-cyan-100/60 overflow-hidden my-6 flex items-center justify-center group">
               <Image
                 src="/acuasafe/mineral-bottle-splash.jpg"
-                alt="AquaPure Bottled Mineral Water"
+                alt="Noor Plastic Purified Water Containers"
                 fill
                 className="object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-90"
               />

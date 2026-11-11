@@ -7,6 +7,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import RFQDrawer from "@/components/rfq/RFQDrawer";
 import { api } from "@/lib/api";
+import { JOB_OPENINGS, JobOpening } from "@/data/careersData";
 import {
   Briefcase,
   MapPin,
@@ -35,219 +36,21 @@ import {
   Zap,
 } from "lucide-react";
 
-interface JobOpening {
-  id: string;
-  title: string;
-  department: string;
-  facility: string;
-  location: string;
-  type: string;
-  experience: string;
-  summary: string;
-  responsibilities: string[];
-  requirements: string[];
-  benefits: string[];
-  badgeColor: string;
-}
-
-const JOB_OPENINGS: JobOpening[] = [
-  {
-    id: "JOB-QA-01",
-    title: "Senior Quality Assurance Engineer (Cleanroom)",
-    department: "Quality Assurance",
-    facility: "Gazipur LEED Platinum Campus",
-    location: "Majukhan, Gazipur",
-    type: "Full-Time",
-    experience: "4 - 7 Years",
-    summary:
-      "Lead cleanroom Class 100,000 quality verification, statistical process control (SPC), and DGDA / HACCP regulatory audits for pharmaceutical and food-grade packaging lines.",
-    responsibilities: [
-      "Oversee positive-pressure Class 100k cleanroom environmental monitoring and particulate surveillance.",
-      "Conduct batch-level barrier migration, ultrasonic wall thickness, and drop-impact stress testing.",
-      "Manage audit preparation and documentation for multinational pharmaceutical clients and DGDA inspectors.",
-      "Implement corrective and preventive action (CAPA) frameworks across high-speed blow and injection molding operations.",
-    ],
-    requirements: [
-      "B.Sc. in Chemical Engineering, Materials Science, Applied Chemistry, or related discipline.",
-      "Minimum 4+ years of hands-on QA/QC leadership in pharmaceutical or sterile food packaging manufacturing.",
-      "In-depth working knowledge of ISO 9001:2015, ISO 22000, HACCP, and cGMP guidelines.",
-      "Strong command of statistical quality control software and metrology equipment.",
-    ],
-    benefits: [
-      "Competitive executive remuneration package",
-      "Annual performance incentive bonuses & provident fund",
-      "Company subsidized executive transport to Gazipur campus",
-      "Full family medical coverage and health insurance",
-    ],
-    badgeColor: "bg-blue-50 text-blue-700 border-blue-200",
-  },
-  {
-    id: "JOB-TECH-02",
-    title: "High-Speed Blow Molding Technician",
-    department: "Production & Tooling",
-    facility: "Tongi Plant",
-    location: "BSCIC I/A, Tongi, Gazipur",
-    type: "Full-Time",
-    experience: "3 - 5 Years",
-    summary:
-      "Operate and maintain Japanese and European high-speed stretch blow molding (ISBM) lines for custom PET, HDPE, and PP bottles and industrial pails.",
-    responsibilities: [
-      "Setup, calibrate, and run multi-cavity automated blow molding machinery to exact micron specifications.",
-      "Perform rapid tooling changeovers, mold maintenance, and preform temperature profile optimization.",
-      "Diagnose hydraulic, pneumatic, and thermal anomalies to maximize overall equipment effectiveness (OEE).",
-      "Maintain strict adherence to plant safety protocols and zero-waste scrap recycling procedures.",
-    ],
-    requirements: [
-      "Diploma or Vocational Certification in Mechanical, Electrical, or Plastics Engineering.",
-      "3+ years operating automated blow molding or injection molding machines in high-volume industrial plants.",
-      "Familiarity with Nissei ASB, Aoki, or similar international stretch blow molding machinery.",
-      "Ability to work in rotational shifts with a safety-first mindset.",
-    ],
-    benefits: [
-      "Attractive monthly compensation with shift allowances",
-      "Overtime pay and attendance performance incentives",
-      "Subsidized meals at plant cafeteria",
-      "Comprehensive technician life & accident insurance",
-    ],
-    badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  },
-  {
-    id: "JOB-TOOL-03",
-    title: "CNC Tool & Die Maintenance Specialist",
-    department: "Engineering & Maintenance",
-    facility: "Gazipur Precision Tool Room",
-    location: "Majukhan, Gazipur",
-    type: "Full-Time",
-    experience: "5 - 8 Years",
-    summary:
-      "Execute high-precision mold manufacturing, CNC milling, wire EDM, and preventive maintenance on high-tonnage progressive metal stamping dies and injection molds.",
-    responsibilities: [
-      "Program and operate 3-axis and 5-axis CNC machining centers using Mastercam/SolidWorks.",
-      "Perform precision grinding, polishing, and refurbishing of double-seam metal can tooling and aerosol dome dies.",
-      "Inspect finished tooling utilizing optical comparators, height gauges, and coordinate measuring machines (CMM).",
-      "Collaborate with the R&D team to prototype custom container molds with rapid turnaround times.",
-    ],
-    requirements: [
-      "Diploma / B.Sc. in Mechanical Engineering or Advanced Tool & Die Making certification.",
-      "5+ years of verified mastery in tool and die fabrication for metal stamping or plastic molds.",
-      "Proficiency in G-code, CNC programming, and tight-tolerance (±0.005mm) machining.",
-      "Demonstrated problem-solving agility in die troubleshooting and tool life extension.",
-    ],
-    benefits: [
-      "Top-tier technical specialist compensation structure",
-      "Annual loyalty bonus and skill certification sponsorship",
-      "Modern climate-controlled precision tool room environment",
-      "Dedicated company transport routes across Dhaka & Gazipur",
-    ],
-    badgeColor: "bg-purple-50 text-purple-700 border-purple-200",
-  },
-  {
-    id: "JOB-SALES-04",
-    title: "B2B Key Account Manager (Paint & Chemicals)",
-    department: "Sales & Commercial",
-    facility: "Corporate HQ",
-    location: "Dhaka Central",
-    type: "Full-Time",
-    experience: "4 - 6 Years",
-    summary:
-      "Drive institutional growth, demand forecasting, and client partnerships for industrial tin containers, plastic pails, and closures across paint, lubricants, and chemical giants.",
-    responsibilities: [
-      "Cultivate and expand key executive relationships with multinational paint manufacturers and chemical conglomerates.",
-      "Analyze client packaging specifications, run trials with plant engineers, and structure volume contracts.",
-      "Coordinate with factory supply chain teams to ensure 100% on-time dockside delivery for scheduled production runs.",
-      "Conduct market intelligence on emerging sustainable packaging trends and competitor benchmarks.",
-    ],
-    requirements: [
-      "BBA / MBA in Marketing, Supply Chain, or B.Sc. in Engineering with strong commercial acumen.",
-      "4+ years of proven track record in B2B corporate sales, preferably in industrial packaging, plastics, or coatings.",
-      "Excellent communication, pitch presentation, and contract negotiation skills.",
-      "Strong corporate network in Bangladesh’s FMCG and industrial manufacturing sectors.",
-    ],
-    benefits: [
-      "Competitive executive salary with high-performance quarterly sales incentives",
-      "Company vehicle allowance / transport facility",
-      "Executive health coverage and corporate mobile allowance",
-      "Direct visibility with executive leadership and rapid career escalation",
-    ],
-    badgeColor: "bg-amber-50 text-amber-700 border-amber-200",
-  },
-  {
-    id: "JOB-AUTO-05",
-    title: "Automation & PLC Electrical Engineer",
-    department: "Engineering & Maintenance",
-    facility: "Gazipur LEED Platinum Campus",
-    location: "Majukhan, Gazipur",
-    type: "Full-Time",
-    experience: "3 - 6 Years",
-    summary:
-      "Lead automation programming, sensor integration, robotic pick-and-place systems, and SCADA maintenance across our high-speed canning and cleanroom bottle lines.",
-    responsibilities: [
-      "Develop and troubleshoot PLC ladder logic and HMI interfaces (Siemens S7-1200/1500, Mitsubishi, Omron).",
-      "Integrate automated machine-vision inspection cameras for high-speed can print alignment and defect rejection.",
-      "Perform preventive electrical maintenance on VFD drives, servo motors, and automated warehouse conveyors.",
-      "Design energy-efficiency optimization routines for factory air compressors and cleanroom HVAC chilling units.",
-    ],
-    requirements: [
-      "B.Sc. in Electrical & Electronic Engineering (EEE) or Mechatronics.",
-      "3+ years experience with industrial automation, PLC programming, and SCADA systems in high-speed manufacturing.",
-      "Hands-on expertise with sensor calibration, industrial Ethernet protocols, and electrical safety standards.",
-      "Proactive analytical diagnostic skills for real-time equipment troubleshooting.",
-    ],
-    benefits: [
-      "Competitive engineering salary package with milestone bonuses",
-      "Hands-on exposure to cutting-edge Industry 4.0 automation systems",
-      "Subsidized company transport and meals",
-      "Medical insurance and continuous professional development allowance",
-    ],
-    badgeColor: "bg-cyan-50 text-cyan-700 border-cyan-200",
-  },
-  {
-    id: "JOB-PROC-06",
-    title: "Raw Material Procurement & Supply Chain Executive",
-    department: "Supply Chain & Logistics",
-    facility: "Corporate HQ / Kaligonj Plant",
-    location: "Dhaka / Gazipur",
-    type: "Full-Time",
-    experience: "2 - 4 Years",
-    summary:
-      "Manage domestic and international procurement of electrolytic tinplate coils, virgin polymers (PET/HDPE/PP), lacquers, and port logistics clearance.",
-    responsibilities: [
-      "Coordinate with overseas steel mills and petrochemical suppliers across Japan, Korea, Europe, and the Middle East.",
-      "Prepare letters of credit (LC), customs documentation, and coordinate bonded warehouse port clearance.",
-      "Monitor raw resin and tinplate global commodity price indices to lock in competitive procurement cycles.",
-      "Audit supplier quality compliance alongside our QA engineering team to maintain raw material purity.",
-    ],
-    requirements: [
-      "Graduation in Supply Chain Management, Business, Economics, or Mechanical/Materials Engineering.",
-      "2-4 years of experience in import procurement, customs clearing, and raw material logistics in manufacturing.",
-      "Proficiency in ERP inventory systems and import-export statutory regulations in Bangladesh.",
-      "Strong vendor negotiation skills and meticulous documentation discipline.",
-    ],
-    benefits: [
-      "Competitive compensation package with annual increments",
-      "Provident fund and festive bonuses",
-      "Professional growth opportunities in a large-scale industrial enterprise",
-      "Corporate transport and health insurance benefits",
-    ],
-    badgeColor: "bg-indigo-50 text-indigo-700 border-indigo-200",
-  },
-];
-
 const CULTURE_PILLARS = [
   {
     icon: Cpu,
     title: "Cutting-Edge Automation",
-    desc: "Operate high-speed European and Japanese automated canning lines, robotic injection molding, and computerized metrology systems that push industrial engineering boundaries.",
+    desc: "Operate high-speed European and Japanese automated molding lines, robotic cells, and precision inspection systems that push industrial engineering boundaries.",
   },
   {
     icon: Leaf,
-    title: "LEED Platinum Green Campus",
-    desc: "Work inside a sustainable, solar-powered, zero-carbon manufacturing facility featuring sterile cleanroom air filtration, natural daylighting, and zero-landfill protocols.",
+    title: "Eco-Conscious Campus",
+    desc: "Work inside a sustainable, energy-efficient manufacturing facility featuring hygienic food-grade zones, closed-loop cooling, and zero-landfill recycling protocols.",
   },
   {
     icon: Award,
     title: "Continuous Upskilling",
-    desc: "We invest in your professional growth through structured apprenticeships, international certification sponsorship (ISO, GMP, Six Sigma), and leadership development programs.",
+    desc: "We invest in your professional growth through structured apprenticeships, international certification sponsorship (ISO, HACCP, Six Sigma), and leadership development programs.",
   },
   {
     icon: ShieldCheck,
@@ -257,9 +60,30 @@ const CULTURE_PILLARS = [
 ];
 
 export default function CareerPage() {
+  const [jobs, setJobs] = useState<JobOpening[]>(JOB_OPENINGS);
   const [selectedDept, setSelectedDept] = useState<string>("all");
-  const [expandedJobId, setExpandedJobId] = useState<string | null>("JOB-QA-01");
+  const [expandedJobId, setExpandedJobId] = useState<string | null>(JOB_OPENINGS[0]?.id || null);
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  useEffect(() => {
+    let active = true;
+    api.careerJobs
+      .getPublic()
+      .then((res) => {
+        if (active && Array.isArray(res.data) && res.data.length > 0) {
+          setJobs(res.data);
+          setExpandedJobId((prev) =>
+            res.data.some((j: JobOpening) => j.id === prev) ? prev : res.data[0].id
+          );
+        }
+      })
+      .catch(() => {
+        // Keep clean fallback JOB_OPENINGS
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Application Modal State
   const [activeApplyJob, setActiveApplyJob] = useState<JobOpening | null>(null);
@@ -291,7 +115,7 @@ export default function CareerPage() {
     { id: "Supply Chain & Logistics", label: "Supply Chain" },
   ];
 
-  const filteredJobs = JOB_OPENINGS.filter((job) => {
+  const filteredJobs = jobs.filter((job) => {
     const matchesDept = selectedDept === "all" || job.department === selectedDept;
     const matchesSearch =
       searchQuery === "" ||
@@ -307,8 +131,8 @@ export default function CareerPage() {
       ...prev,
       facility: job.facility.includes("Gazipur")
         ? "Gazipur Facility"
-        : job.facility.includes("Tongi")
-        ? "Tongi Plant"
+        : job.facility.includes("Kaliakoir")
+        ? "Kaliakoir Plant"
         : "Corporate HQ",
     }));
     setSubmitSuccess(false);
@@ -328,6 +152,7 @@ export default function CareerPage() {
       : "General Talent Pool Candidate";
 
     const payload = {
+      jobId: activeApplyJob?.id,
       name: formData.name,
       email: formData.email,
       phone: formData.phone,
@@ -367,7 +192,7 @@ export default function CareerPage() {
       setSubmitSuccess(true);
     } catch (err) {
       console.error(err);
-      alert("Submission error. Please try again or email careers@qpail.com directly.");
+      alert("Submission error. Please try again or email sales@noorplastic.com directly.");
     } finally {
       setIsSubmitting(false);
     }
@@ -394,7 +219,7 @@ export default function CareerPage() {
           <div className="absolute inset-0 w-full h-full">
             <Image
               src="/images/business-hero-office.jpg"
-              alt="Xclusive Can Limited Corporate Engineering & Operations Team"
+              alt="Noor Plastic Industries Corporate Engineering & Operations Team"
               fill
               className="object-cover object-center opacity-85 scale-102 transition-transform duration-1000 ease-out"
               priority
@@ -412,7 +237,7 @@ export default function CareerPage() {
           <div className="relative z-10 text-center px-4 max-w-5xl mx-auto space-y-5 sm:space-y-6">
             <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white text-xs sm:text-sm font-bold shadow-xl shadow-black/20">
               <Briefcase className="w-4 h-4 text-[#38bdf8] animate-pulse" />
-              <span>Careers at Xclusive Can Limited &bull; Since 1992</span>
+              <span>Careers at Noor Plastic Industries &bull; Kaliakoir, Gazipur</span>
             </div>
 
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black text-white tracking-[0.2em] sm:tracking-[0.25em] drop-shadow-[0_4px_30px_rgba(0,0,0,0.85)] uppercase pl-[0.2em]">
@@ -420,7 +245,7 @@ export default function CareerPage() {
             </h1>
 
             <p className="text-xs sm:text-sm md:text-base uppercase tracking-[0.28em] font-bold text-[#38bdf8] drop-shadow-lg pl-[0.28em] max-w-3xl mx-auto">
-              Shape The Future Of Packaging &bull; 850+ Experts &bull; 2 Mega Plants
+              Shape The Future Of Packaging &amp; Hydration &bull; Kaliakoir, Gazipur
             </p>
 
             <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
@@ -446,16 +271,16 @@ export default function CareerPage() {
           <div className="relative z-10 w-full max-w-5xl mx-auto px-4 pb-6 sm:pb-8 flex flex-col items-center gap-6">
             <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-center">
-                <div className="text-xl sm:text-2xl font-black text-white">32+ Years</div>
-                <div className="text-[11px] text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Manufacturing Stability</div>
+                <div className="text-xl sm:text-2xl font-black text-white">ISO Ready</div>
+                <div className="text-[11px] text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Licensed Manufacturing</div>
               </div>
               <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-center">
-                <div className="text-xl sm:text-2xl font-black text-white">850+ Experts</div>
+                <div className="text-xl sm:text-2xl font-black text-white">Dedicated Team</div>
                 <div className="text-[11px] text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Engineers &amp; Technicians</div>
               </div>
               <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-center">
-                <div className="text-xl sm:text-2xl font-black text-white">2 Mega Plants</div>
-                <div className="text-[11px] text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Gazipur &amp; Tongi Campuses</div>
+                <div className="text-xl sm:text-2xl font-black text-white">Kaliakoir HQ</div>
+                <div className="text-[11px] text-cyan-200/90 font-medium uppercase tracking-wider mt-0.5">Latifpur-B, Gazipur</div>
               </div>
               <div className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/15 text-center">
                 <div className="text-xl sm:text-2xl font-black text-white">Zero Incident</div>
@@ -781,7 +606,7 @@ export default function CareerPage() {
                   {
                     step: "03",
                     title: "Campus Walkthrough",
-                    desc: "Visit our Gazipur or Tongi plant to tour our automated lines, cleanrooms, and meet future teammates.",
+                    desc: "Visit our Kaliakoir, Gazipur plant to tour our automated lines, cleanrooms, and meet future teammates.",
                   },
                   {
                     step: "04",
@@ -965,9 +790,9 @@ export default function CareerPage() {
                         onChange={(e) => setFormData({ ...formData, facility: e.target.value })}
                         className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-slate-800"
                       >
-                        <option value="Gazipur Facility">Gazipur LEED Platinum Campus</option>
-                        <option value="Tongi Plant">Tongi Manufacturing Plant</option>
-                        <option value="Corporate HQ">Corporate HQ, Dhaka</option>
+                        <option value="Gazipur Facility">Gazipur Manufacturing Campus</option>
+                        <option value="Kaliakoir Plant">Kaliakoir Production Plant</option>
+                        <option value="Corporate HQ">Latifpur-B, Kaliakoir HQ</option>
                       </select>
                     </div>
                   </div>

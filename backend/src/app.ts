@@ -42,11 +42,11 @@ app.use("/uploads", express.static(path.join(process.cwd(), "public", "uploads")
 app.get("/", (_req: Request, res: Response) => {
   res.status(200).json({
     success: true,
-    service: "Xclusive Can Limited & Q Pail Platform REST API",
+    service: "Noor Plastic Industries Platform REST API",
     status: "online",
     version: "1.0.0",
-    headquarters: "Gazipur, Dhaka, Bangladesh",
-    certifications: ["LEED Platinum", "ISO 9001:2015", "FSSC 22000", "GMP"],
+    headquarters: "Latifpur-B, Kaliakoir-1750, Gazipur, Dhaka, Bangladesh",
+    certifications: ["Trade License #242501300583", "BIN 007122199-1205", "ISO 9001:2015", "BSTI Food Grade"],
     timestamp: new Date().toISOString(),
   });
 });

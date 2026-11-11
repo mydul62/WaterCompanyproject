@@ -1,4 +1,4 @@
- // Centralized API Client for Xclusive Can Limited & Q Pail Platform
+// Centralized API Client for Noor Plastic Industries Platform
 // Connects frontend to Express + Prisma Backend REST API
 
 const API_BASE_URL =
@@ -289,6 +289,36 @@ class ApiClient {
     },
   };
 
+  // Shared helper for ordered CRUD modules
+  private createCrudClient(basePath: string) {
+    return {
+      getPublic: async () => this.request<any[]>(basePath),
+      getAll: async (includeAll = true) =>
+        this.request<any[]>(`${basePath}${includeAll ? "?all=true" : ""}`),
+      getById: async (id: string) => this.request<any>(`${basePath}/${id}`),
+      getBySlug: async (slug: string) =>
+        this.request<any>(`${basePath}/slug/${encodeURIComponent(slug)}`),
+      create: async (data: any) =>
+        this.request<any>(basePath, {
+          method: "POST",
+          body: JSON.stringify(data),
+        }),
+      update: async (id: string, data: any) =>
+        this.request<any>(`${basePath}/${id}`, {
+          method: "PUT",
+          body: JSON.stringify(data),
+        }),
+      delete: async (id: string) =>
+        this.request<any>(`${basePath}/${id}`, {
+          method: "DELETE",
+        }),
+      reset: async () =>
+        this.request<any[]>(`${basePath}/reset`, {
+          method: "POST",
+        }),
+    };
+  }
+
   // Media Library & Imaple Uploader
   media = {
     getAll: async (params: { category?: string; search?: string } = {}) => {
@@ -296,7 +326,7 @@ class ApiClient {
       if (params.category) query.set("category", params.category);
       if (params.search) query.set("search", params.search);
       const qs = query.toString();
-      return this.request<any[]>(`/media${qs ? `?${qs}` : ""}`);
+      return this.request<any[]>(`/media/assets${qs ? `?${qs}` : ""}`);
     },
     upload: async (file: File, meta: { altText?: string; category?: string } = {}) => {
       const formData = new FormData();
@@ -310,19 +340,26 @@ class ApiClient {
       });
     },
     delete: async (id: string) => {
-      return this.request<any>(`/media/${id}`, {
+      return this.request<any>(`/media/assets/${id}`, {
         method: "DELETE",
       });
     },
     replace: async (id: string, file: File) => {
       const formData = new FormData();
       formData.append("file", file);
-      return this.request<any>(`/media/${id}/replace`, {
+      return this.request<any>(`/media/assets/${id}`, {
         method: "PUT",
         body: formData,
       });
     },
   };
+
+  // Dynamic CMS Collections
+  mediaStories = this.createCrudClient("/media/stories");
+  blogs = this.createCrudClient("/blogs");
+  caseStudies = this.createCrudClient("/case-studies");
+  certificates = this.createCrudClient("/certificates");
+  careerJobs = this.createCrudClient("/careers/jobs");
 
   // Navigation Menus
   navigation = {
@@ -452,6 +489,47 @@ class ApiClient {
       return this.request<any>(`/inquiries/${id}/status`, {
         method: "PATCH",
         body: JSON.stringify({ status }),
+      });
+    },
+  };
+
+  // Homepage Hero Banners
+  banners = {
+    getPublic: async () => {
+      return this.request<any[]>("/banners");
+    },
+    getAll: async () => {
+      return this.request<any[]>("/banners?all=true");
+    },
+    getById: async (id: string) => {
+      return this.request<any>(`/banners/${id}`);
+    },
+    create: async (data: any) => {
+      return this.request<any>("/banners", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    },
+    update: async (id: string, data: any) => {
+      return this.request<any>(`/banners/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+    },
+    reorder: async (orderedIds: string[]) => {
+      return this.request<any[]>("/banners/reorder", {
+        method: "PUT",
+        body: JSON.stringify({ orderedIds }),
+      });
+    },
+    reset: async () => {
+      return this.request<any[]>("/banners/reset", {
+        method: "POST",
+      });
+    },
+    delete: async (id: string) => {
+      return this.request<any>(`/banners/${id}`, {
+        method: "DELETE",
       });
     },
   };

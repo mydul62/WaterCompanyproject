@@ -22,7 +22,7 @@ interface ProductItem {
   spec?: string;
 }
 
-const FACTORIES = ["Q Pail Limited", "Xclusive Can Limited"];
+const FACTORIES = ["Noor Plastic Industries"];
 const PLASTIC_CATS = [
   "Food",
   "Home Care",
@@ -42,7 +42,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "tp1",
     n: "Pharmaceutical Bottle",
     d: "100 ml HDPE pharmaceuticals bottle made with food grade virgin material.",
-    f: "Q Pail Limited",
+    f: "Noor Plastic Industries",
     m: "Plastic",
     c: "Pharmaceutical",
     s: "bottle",
@@ -54,7 +54,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "tp2",
     n: "Liquid Washing Container",
     d: "HDPE washing powder container for home care usage.",
-    f: "Q Pail Limited",
+    f: "Noor Plastic Industries",
     m: "Plastic",
     c: "Home Care",
     s: "detergent",
@@ -66,7 +66,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "tp3",
     n: "Vitamin Container",
     d: "26 gm container (Menacal-D) with cap for pharmaceutical uses. Used for Radiant Pharma.",
-    f: "Q Pail Limited",
+    f: "Noor Plastic Industries",
     m: "Plastic",
     c: "Pharmaceutical",
     s: "jar",
@@ -78,7 +78,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "tp4",
     n: "Paint Pail",
     d: "Round pail with metal handle for decorative and industrial paints.",
-    f: "Q Pail Limited",
+    f: "Noor Plastic Industries",
     m: "Plastic",
     c: "Paint",
     s: "pail",
@@ -90,7 +90,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "tp5",
     n: "Bitumen Paint Can",
     d: "Heavy-gauge tin can for bituminous paint with tight-seal lid.",
-    f: "Xclusive Can Limited",
+    f: "Noor Plastic Industries",
     m: "Metal",
     c: "Paint",
     s: "can",
@@ -102,7 +102,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "tp6",
     n: "Lubricant Container",
     d: "Leak-proof lubricant bottle with tamper-evident closure.",
-    f: "Q Pail Limited",
+    f: "Noor Plastic Industries",
     m: "Plastic",
     c: "Lubricant",
     s: "bottle",
@@ -115,7 +115,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "p5",
     n: "Oral Syringe & Dropper",
     d: "High precision measured dosing syringe and dropper for pediatric medications.",
-    f: "Xclusive Can Limited",
+    f: "Noor Plastic Industries",
     m: "Plastic",
     c: "Pharmaceutical",
     s: "bottle",
@@ -127,7 +127,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "p6",
     n: "Agro Vet Bottle",
     d: "500 ML White color HDPE Agro Vet Bottle with Inner Seal and Cap.",
-    f: "Xclusive Can Limited",
+    f: "Noor Plastic Industries",
     m: "Plastic",
     c: "Agro Vet",
     s: "bottle",
@@ -139,7 +139,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "p7",
     n: "Chemical Reagent Bottle",
     d: "500 ML Chemical Bottle used for Samuda Chemical Industries.",
-    f: "Xclusive Can Limited",
+    f: "Noor Plastic Industries",
     m: "Plastic",
     c: "Chemical",
     s: "bottle",
@@ -151,7 +151,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "p8",
     n: "Double Handle Jerry Can",
     d: "4.8 Ltr Double Handle HDPE Jerry Can for bulk fluids and heavy chemicals.",
-    f: "Q Pail Limited",
+    f: "Noor Plastic Industries",
     m: "Plastic",
     c: "Chemical",
     s: "detergent",
@@ -163,7 +163,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "p9",
     n: "1 Ltr Calibrated Bottle",
     d: "1 Ltr industrial chemical bottle with graduated measurement markings.",
-    f: "Xclusive Can Limited",
+    f: "Noor Plastic Industries",
     m: "Plastic",
     c: "Chemical",
     s: "bottle",
@@ -175,7 +175,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "p10",
     n: "Personal Care Body Wash Bottle",
     d: "Crystal-clear PET body-wash bottle with ergonomic dispenser finish.",
-    f: "Xclusive Can Limited",
+    f: "Noor Plastic Industries",
     m: "Plastic",
     c: "Personal Care",
     s: "bottle",
@@ -187,7 +187,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "p11",
     n: "Industrial Metal Paint Can",
     d: "Welded electrolytic tinplate metal can for decorative paint & industrial coatings.",
-    f: "Xclusive Can Limited",
+    f: "Noor Plastic Industries",
     m: "Metal",
     c: "Paint",
     s: "can",
@@ -199,7 +199,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "p12",
     n: "High-Pressure Aerosol Spray Can",
     d: "Tested up to 18 bar burst pressure with specialized interior protective lacquer.",
-    f: "Xclusive Can Limited",
+    f: "Noor Plastic Industries",
     m: "Metal",
     c: "Group Products",
     s: "can",
@@ -211,7 +211,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "p13",
     n: "Food Grade Conical Cup / Tub",
     d: "Injection-molded white food tub suitable for dairy, yogurt, and butter.",
-    f: "Q Pail Limited",
+    f: "Noor Plastic Industries",
     m: "Plastic",
     c: "Food",
     s: "jar",
@@ -223,7 +223,7 @@ const ALL_PRODUCTS: ProductItem[] = [
     id: "p14",
     n: "Tamper-Evident Food Container",
     d: "Rectangular translucent food box with snap-tight hermetic seal lid.",
-    f: "Q Pail Limited",
+    f: "Noor Plastic Industries",
     m: "Plastic",
     c: "Food",
     s: "jar",
@@ -248,7 +248,7 @@ export default function ProductsPage() {
             id: p.id,
             n: p.name,
             d: p.description || "",
-            f: p.factory || "Xclusive Can Limited",
+            f: p.factory || "Noor Plastic Industries",
             m:
               p.material?.toLowerCase().includes("tin") ||
                 p.material?.toLowerCase().includes("steel")
@@ -960,7 +960,7 @@ export default function ProductsPage() {
         <div className="absolute inset-0 w-full h-full">
           <Image
             src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1920&q=80"
-            alt="Products Catalogue - Xclusive Can Limited"
+            alt="Products Catalogue - Noor Plastic Industries"
             fill
             className="object-cover object-center opacity-85 scale-102 transition-transform duration-1000 ease-out"
             priority

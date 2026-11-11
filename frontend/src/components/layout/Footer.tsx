@@ -38,48 +38,73 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
           {/* Column 1: Brand Info & Contacts */}
           <div data-reveal="up" className="space-y-5">
-            {/* Logo */}
-            <div className="relative h-12 w-36">
-              <Image
-                src="/cropped/xclusive-logo.png"
-                alt="Xclusive Can Limited"
-                fill
-                className="object-contain object-left"
-              />
-            </div>
+            {/* Noor Plastic Brand Logo */}
+            <Link href="/" className="inline-flex items-center gap-2.5 group focus:outline-none">
+              <svg
+                viewBox="0 0 40 40"
+                className="w-9 h-9 shrink-0 transition-transform duration-300 group-hover:scale-105"
+                aria-hidden="true"
+              >
+                <path
+                  d="M20 2.5C22.4 7 24.4 10.6 24.4 13.6C24.4 16 22.4 17.8 20 17.8C17.6 17.8 15.6 16 15.6 13.6C15.6 10.6 17.6 7 20 2.5Z"
+                  fill="#5EC5F2"
+                />
+                <path
+                  d="M20 37.5C17.6 33 15.6 29.4 15.6 26.4C15.6 24 17.6 22.2 20 22.2C22.4 22.2 24.4 24 24.4 26.4C24.4 29.4 22.4 33 20 37.5Z"
+                  fill="#094E9B"
+                />
+                <path
+                  d="M2.5 20C7 17.6 10.6 15.6 13.6 15.6C16 15.6 17.8 17.6 17.8 20C17.8 22.4 16 24.4 13.6 24.4C10.6 24.4 7 22.4 2.5 20Z"
+                  fill="#1D8FE1"
+                />
+                <path
+                  d="M37.5 20C33 22.4 29.4 24.4 26.4 24.4C24 24.4 22.2 22.4 22.2 20C22.2 17.6 24 15.6 26.4 15.6C29.4 15.6 33 17.6 37.5 20Z"
+                  fill="#35A7E8"
+                />
+                <circle cx="14" cy="14" r="1.4" fill="#1D8FE1" />
+                <circle cx="26" cy="14" r="1.4" fill="#5EC5F2" />
+                <circle cx="14" cy="26" r="1.4" fill="#094E9B" />
+                <circle cx="26" cy="26" r="1.4" fill="#1D8FE1" />
+              </svg>
+              <span className="font-hero-display text-[28px] leading-none text-[#0D1E3A] tracking-[-0.01em]">
+                {settings["header_brand_name"] || "Noor Plastic"}
+              </span>
+            </Link>
 
             <h3 className="font-bold text-lg text-slate-900">
-              Xclusive Can Limited
+              {settings["site_name"] || "Noor Plastic Industries"}
             </h3>
 
             <div className="space-y-3 text-sm sm:text-base text-slate-700 leading-relaxed">
               <p>
                 {settings["factory_gazipur"] ||
-                  "Plot#53/1, Block#B, Kaligonj Road, Majukhan, Gazipur, Dhaka, Bangladesh."}
+                  settings["headquarters"] ||
+                  "Holding #5, Ward #02, Latifpur-B, Kaliakoir-1750, Gazipur, Dhaka, Bangladesh."}
               </p>
-              <p>
-                {settings["factory_tongi"] ||
-                  "Plot#B 196, BSCIC I/A, Tongi, Gazipur, Dhaka, Bangladesh"}
+              <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                <span className="font-semibold text-slate-800 block">
+                  Proprietor: {settings["proprietor_name"] || "Nurul Islam"} &bull; Est. 2024
+                </span>
+                Trade License: {settings["trade_license_no"] || "242501300583"} (Kaliakoir Pourashava)
+                <br />
+                BIN: {settings["bin_number"] || "007122199-1205"} &bull; TIN: {settings["tin_number"] || "636404586599"}
               </p>
             </div>
 
             <div className="space-y-1.5 text-sm sm:text-base text-slate-700">
               <p className="font-bold text-slate-900">Phone:</p>
               <p>
-                Sales: {settings["phone_sales"] || "+8801819343635, +8801680240524"}
-              </p>
-              <p>
-                Procurement: {settings["phone_domestic"] || "+8801818950946"}
+                Sales &amp; Office: {settings["phone_sales"] || settings["phone_sales_1"] || "+880 1711-987275"}
               </p>
             </div>
 
             <div className="space-y-1.5 text-sm sm:text-base text-slate-700">
               <p className="font-bold text-slate-900">Email:</p>
               <p>
-                Sales &amp; Marketing: {settings["email_sales"] || "marketing@qpail.com"}
+                Sales &amp; Inquiry: {settings["email_sales"] || "info@noorplastic.com"}
               </p>
               <p>
-                Procurement: {settings["email_procurement"] || "commercial@qpail.com"}
+                Commercial: {settings["email_procurement"] || "sales@noorplastic.com"}
               </p>
             </div>
 
@@ -240,7 +265,9 @@ export default function Footer() {
       <div className="w-full bg-[#161a22] py-4 text-slate-400 text-sm sm:text-base">
         <div className="w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8 flex flex-col sm:flex-row justify-between items-center gap-3">
           <p>
-            Copyright &copy; 1992 - 2026 Xclusive Can Limited.
+            {settings["footer_copyright"] ||
+              settings["copyright_text"] ||
+              "Copyright © 2024 - 2026 Noor Plastic Industries. All rights reserved."}
           </p>
           <div className="flex items-center gap-6">
             <Link href="#overview" className="hover:text-white transition-colors">

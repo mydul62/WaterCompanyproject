@@ -136,7 +136,7 @@ model Product {
   material       String       @default("TINPLATE")
   capacityRange  String
   neckSize       String?
-  factory        String       @default("Xclusive Can Limited")
+  factory        String       @default("Noor Plastic Industries")
   applications   String       @default("[]") // JSON string of applications
   features       String       @default("[]") // JSON string of features
   specifications String       @default("{}") // JSON string of technical specs (weight, height, diameter, etc.)
@@ -248,18 +248,91 @@ model CareerApplication {
 }
 
 model PressStory {
-  id             String   @id @default(uuid())
-  title          String
-  banglaTitle    String
-  slug           String   @unique
-  newspaper      String
-  publishDate    DateTime @default(now())
-  clippingUrl    String
-  summary        String
-  highlightQuote String?
-  tag            String   @default("Industrial Milestone")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                String   @id @default(uuid())
+  title             String
+  banglaTitle       String
+  slug              String   @unique
+  newspaper         String
+  outletColor       String   @default("#0284c7")
+  publishDate       DateTime @default(now())
+  dateLabel         String   @default("")
+  category          String   @default("শিল্প ও বাণিজ্য")
+  readTime          String   @default("৩ মিনিট পাঠ")
+  clippingUrl       String
+  summary           String
+  fullArticle       String   @default("[]") // JSON array of paragraphs
+  keyHighlights     String   @default("[]") // JSON array of highlight bullets
+  highlightQuote    String?
+  quoteAuthor       String?
+  quoteRole         String?
+  originalSourceUrl String   @default("")
+  tag               String   @default("Industrial Milestone")
+  sortOrder         Int      @default(0)
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model BlogPost {
+  id           String   @id @default(uuid())
+  slug         String   @unique
+  title        String
+  excerpt      String
+  category     String   @default("Sustainability & PCR")
+  authorName   String   @default("Engr. Tanvir Ahmed")
+  authorRole   String   @default("Lead Materials Scientist & Polymer R&D")
+  authorAvatar String   @default("/images/rnd/rnd-cad-design.jpg")
+  dateLabel    String   @default("")
+  readTime     String   @default("5 min read")
+  coverImage   String   @default("/images/rnd/rnd-hero-banner.jpg")
+  featured     Boolean  @default(false)
+  intro        String   @default("")
+  sections     String   @default("[]") // JSON array of { heading, body, bullets? }
+  quote        String?
+  conclusion   String   @default("")
+  tags         String   @default("[]") // JSON array of strings
+  sortOrder    Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model CaseStudy {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  client      String
+  industry    String   @default("Paints & Coatings")
+  title       String
+  subtitle    String   @default("")
+  coverImage  String   @default("/images/business-hero-office.jpg")
+  stats       String   @default("[]") // JSON array of { label, value }
+  challenge   String   @default("")
+  solution    String   @default("")
+  results     String   @default("[]") // JSON array of strings
+  specs       String   @default("[]") // JSON array of { key, value }
+  quoteText   String   @default("")
+  quoteAuthor String   @default("")
+  quoteRole   String   @default("")
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Certificate {
+  id            String   @id @default(uuid())
+  slug          String   @unique
+  title         String
+  code          String   @default("")
+  category      String   @default("Quality Management")
+  image         String   @default("/images/cert-iso-9001.jpg")
+  aspect        String   @default("portrait") // portrait | landscape | square
+  bullets       String   @default("[]") // JSON array of strings
+  accreditation String   @default("")
+  sortOrder     Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Inquiry {
@@ -271,4 +344,32 @@ model Inquiry {
   message   String
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model BannerSlide {
+  id              String   @id @default(uuid())
+  num             String   @default("01")
+  line1           String
+  line2           String   @default("")
+  line3           String   @default("")
+  description     String
+  readMoreLabel   String   @default("READ MORE")
+  readMoreHref    String   @default("/products")
+  watchVideoLabel String   @default("WATCH VIDEO")
+  watchVideoSub   String   @default("Production to Delivery")
+  videoUrl        String   @default("")
+  showOfferBadge  Boolean  @default(true)
+  offerEyebrow1   String   @default("Limited")
+  offerEyebrow2   String   @default("Time Offer")
+  offerPrice      String   @default("$15.50")
+  offerUnit       String   @default("Per bottle")
+  visualLayout    String   @default("duo") // duo | trio | custom
+  foregroundImage String   @default("/images/hero/bottle-vertical.png")
+  secondaryImage  String   @default("/images/hero/bottle-horizontal.png")
+  platformImage   String   @default("/images/hero/hero-splash-platform.jpg")
+  backgroundImage String   @default("/images/hero/hero-bubbles-bg.jpg")
+  sortOrder       Int      @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

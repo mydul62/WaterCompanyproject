@@ -1,7 +1,132 @@
 import { prisma } from "../../config/prisma";
 import { ApiError } from "../../utils/apiError";
+import { DEFAULT_PRESS_STORIES } from "../../data/cmsDefaults";
+import {
+  ensureUniqueSlug,
+  parseJsonValue,
+  serializeJsonValue,
+  toBoolean,
+  toInt,
+} from "../../utils/contentHelpers";
 import fs from "fs";
 import path from "path";
+
+let storiesSeededOnce = false;
+
+function serializeStory(row: any) {
+  const fullArticle = parseJsonValue<string[]>(row.fullArticle, []);
+  const keyHighlights = parseJsonValue<string[]>(row.keyHighlights, []);
+  const dateLabel =
+    row.dateLabel ||
+    (row.publishDate
+      ? new Date(row.publishDate).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })
+      : "");
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    englishTitle: row.banglaTitle || row.title,
+    banglaTitle: row.banglaTitle || row.title,
+    outlet: row.newspaper,
+    newspaper: row.newspaper,
+    outletColor: row.outletColor || "#0284c7",
+    date: dateLabel,
+    dateLabel,
+    publishDate: row.publishDate,
+    category: row.category || "শিল্প ও বাণিজ্য",
+    readTime: row.readTime || "৩ মিনিট পাঠ",
+    image: row.clippingUrl,
+    clippingUrl: row.clippingUrl,
+    summary: row.summary,
+    fullArticle: fullArticle.length > 0 ? fullArticle : row.summary ? [row.summary] : [],
+    keyHighlights,
+    quote: {
+      text: row.highlightQuote || "",
+      author: row.quoteAuthor || "নূরুল ইসলাম",
+      role: row.quoteRole || "স্বত্বাধিকারী, নূর প্লাস্টিক ইন্ডাস্ট্রিজ",
+    },
+    highlightQuote: row.highlightQuote || "",
+    quoteAuthor: row.quoteAuthor || "",
+    quoteRole: row.quoteRole || "",
+    originalSourceUrl: row.originalSourceUrl || "",
+    tag: row.tag || "Industrial Milestone",
+    sortOrder: row.sortOrder ?? 0,
+    isActive: row.isActive ?? true,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+  };
+}
+
+function normalizeStoryPayload(payload: any, existing?: any) {
+  const newspaper =
+    payload.newspaper ?? payload.outlet ?? existing?.newspaper ?? "Prothom Alo";
+  const clippingUrl =
+    payload.clippingUrl ??
+    payload.image ??
+    existing?.clippingUrl ??
+    "/cropped/news-card-1.png";
+  const banglaTitle =
+    payload.banglaTitle ??
+    payload.englishTitle ??
+    payload.title ??
+    existing?.banglaTitle ??
+    "";
+  const quoteText =
+    payload.quote?.text ??
+    payload.highlightQuote ??
+    existing?.highlightQuote ??
+    null;
+  const quoteAuthor =
+    payload.quote?.author ??
+    payload.quoteAuthor ??
+    existing?.quoteAuthor ??
+    "নূরুল ইসলাম";
+  const quoteRole =
+    payload.quote?.role ??
+    payload.quoteRole ??
+    existing?.quoteRole ??
+    "স্বত্বাধিকারী, নূর প্লাস্টিক ইন্ডাস্ট্রিজ";
+
+  return {
+    title: String(payload.title ?? existing?.title ?? "").trim(),
+    banglaTitle: String(banglaTitle).trim(),
+    newspaper: String(newspaper).trim(),
+    outletColor: String(payload.outletColor ?? existing?.outletColor ?? "#0284c7").trim(),
+    dateLabel: String(payload.dateLabel ?? payload.date ?? existing?.dateLabel ?? "").trim(),
+    category: String(payload.category ?? existing?.category ?? "শিল্প ও বাণিজ্য").trim(),
+    readTime: String(payload.readTime ?? existing?.readTime ?? "৩ মিনিট পাঠ").trim(),
+    clippingUrl: String(clippingUrl).trim(),
+    summary: String(payload.summary ?? existing?.summary ?? "").trim(),
+    fullArticle:
+      payload.fullArticle !== undefined
+        ? serializeJsonValue(payload.fullArticle, [])
+        : existing?.fullArticle ?? "[]",
+    keyHighlights:
+      payload.keyHighlights !== undefined
+        ? serializeJsonValue(payload.keyHighlights, [])
+        : existing?.keyHighlights ?? "[]",
+    highlightQuote: quoteText ? String(quoteText).trim() : null,
+    quoteAuthor: quoteAuthor ? String(quoteAuthor).trim() : null,
+    quoteRole: quoteRole ? String(quoteRole).trim() : null,
+    originalSourceUrl: String(
+      payload.originalSourceUrl ?? existing?.originalSourceUrl ?? ""
+    ).trim(),
+    tag: String(payload.tag ?? existing?.tag ?? "Industrial Milestone").trim(),
+    sortOrder:
+      payload.sortOrder !== undefined
+        ? toInt(payload.sortOrder, 0)
+        : existing?.sortOrder ?? 0,
+    isActive:
+      payload.isActive !== undefined
+        ? toBoolean(payload.isActive, true)
+        : existing?.isActive ?? true,
+  };
+}
 
 export interface UploadedFilePayload {
   filename: string;
@@ -89,49 +214,92 @@ export class MediaService {
   // ══════════════════════════════════════════════════════════════
   // PRESS & MEDIA STORIES
   // ══════════════════════════════════════════════════════════════
-  static async getAllStories() {
-    return prisma.pressStory.findMany({
-      orderBy: { publishDate: "desc" },
+  private static async ensureStoriesSeededIfEmpty() {
+    if (storiesSeededOnce) return;
+    storiesSeededOnce = true;
+    const count = await prisma.pressStory.count();
+    if (count === 0) {
+      for (const story of DEFAULT_PRESS_STORIES) {
+        await prisma.pressStory.create({ data: story });
+      }
+    }
+  }
+
+  static async getAllStories(includeInactive = false) {
+    await this.ensureStoriesSeededIfEmpty();
+    const stories = await prisma.pressStory.findMany({
+      where: includeInactive ? undefined : { isActive: true },
+      orderBy: [{ sortOrder: "asc" }, { publishDate: "desc" }],
     });
+    return stories.map(serializeStory);
+  }
+
+  static async getStoryById(id: string) {
+    const story = await prisma.pressStory.findUnique({ where: { id } });
+    if (!story) throw new ApiError(404, "Press story not found.");
+    return serializeStory(story);
   }
 
   static async getStoryBySlug(slug: string) {
     const story = await prisma.pressStory.findUnique({ where: { slug } });
     if (!story) throw new ApiError(404, "Press story not found.");
-    return story;
+    return serializeStory(story);
   }
 
   static async createStory(payload: any) {
-    if (!payload.title || !payload.newspaper) {
-      throw new ApiError(400, "Title and Newspaper are required.");
+    if (!payload.title || !(payload.newspaper || payload.outlet)) {
+      throw new ApiError(400, "Title and Newspaper/Outlet are required.");
     }
 
-    const slug =
-      payload.slug?.toLowerCase().trim().replace(/[^a-z0-9-]/g, "-") ||
-      payload.title.toLowerCase().trim().replace(/[^a-z0-9-]/g, "-");
-
-    return prisma.pressStory.create({
-      data: {
-        title: payload.title,
-        banglaTitle: payload.banglaTitle || payload.title,
-        slug,
-        newspaper: payload.newspaper,
-        summary: payload.summary || "",
-        highlightQuote: payload.highlightQuote || null,
-        clippingUrl: payload.clippingUrl || payload.image || "/Infoimages/Screenshot 2026-11-04 130333.png",
-        tag: payload.tag || "Industrial Milestone",
-      },
+    const slug = await ensureUniqueSlug(
+      payload.slug || payload.englishTitle || payload.title,
+      (s) => prisma.pressStory.findUnique({ where: { slug: s }, select: { id: true } })
+    );
+    const total = await prisma.pressStory.count();
+    const data = normalizeStoryPayload({
+      ...payload,
+      sortOrder: payload.sortOrder ?? total + 1,
     });
+
+    const created = await prisma.pressStory.create({
+      data: { ...data, slug },
+    });
+    return serializeStory(created);
   }
 
   static async updateStory(id: string, payload: any) {
-    return prisma.pressStory.update({
+    const existing = await prisma.pressStory.findUnique({ where: { id } });
+    if (!existing) throw new ApiError(404, "Press story not found.");
+
+    const slug = payload.slug
+      ? await ensureUniqueSlug(
+          payload.slug,
+          (s) => prisma.pressStory.findUnique({ where: { slug: s }, select: { id: true } }),
+          id
+        )
+      : existing.slug;
+
+    const data = normalizeStoryPayload(payload, existing);
+    const updated = await prisma.pressStory.update({
       where: { id },
-      data: payload,
+      data: { ...data, slug },
     });
+    return serializeStory(updated);
   }
 
   static async deleteStory(id: string) {
+    const existing = await prisma.pressStory.findUnique({ where: { id } });
+    if (!existing) throw new ApiError(404, "Press story not found.");
     return prisma.pressStory.delete({ where: { id } });
+  }
+
+  static async resetStories() {
+    await prisma.$transaction([
+      prisma.pressStory.deleteMany({}),
+      ...DEFAULT_PRESS_STORIES.map((story) =>
+        prisma.pressStory.create({ data: story })
+      ),
+    ]);
+    return this.getAllStories(true);
   }
 }

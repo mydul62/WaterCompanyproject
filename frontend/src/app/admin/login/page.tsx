@@ -8,7 +8,7 @@ import { api } from "@/lib/api";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@xclusivecan.com");
+  const [email, setEmail] = useState("admin@noorplastic.com");
   const [password, setPassword] = useState("admin123456");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,13 +23,16 @@ export default function AdminLoginPage() {
       router.push("/admin");
     } catch (err: any) {
       // If backend is offline or returned an error, check if default credentials match
-      if (email === "admin@xclusivecan.com" && password === "admin123456") {
+      if (
+        (email === "admin@noorplastic.com" || email === "admin@xclusivecan.com") &&
+        password === "admin123456"
+      ) {
         if (typeof window !== "undefined") {
           localStorage.setItem("waterweb_admin_token", "demo_jwt_token_super_admin");
           localStorage.setItem(
             "waterweb_admin_user",
             JSON.stringify({
-              email: "admin@xclusivecan.com",
+              email: "admin@noorplastic.com",
               name: "Super Administrator",
               role: "SUPER_ADMIN",
             })
@@ -56,11 +59,11 @@ export default function AdminLoginPage() {
         <div className="text-center space-y-2">
           <Link href="/" className="inline-flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-blue-600 text-white font-black text-xl flex items-center justify-center shadow-lg shadow-blue-600/40">
-              <span className="text-cyan-300">X</span>C
+              <span className="text-cyan-300">N</span>P
             </div>
             <div className="text-left">
               <span className="text-lg font-black text-white tracking-tight block">
-                XCLUSIVE CAN
+                NOOR PLASTIC
               </span>
               <span className="text-[10px] text-cyan-400 font-mono tracking-widest uppercase block">
                 Enterprise CMS Suite
@@ -98,7 +101,7 @@ export default function AdminLoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@xclusivecan.com"
+                  placeholder="admin@noorplastic.com"
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 font-medium"
                 />
               </div>
@@ -127,7 +130,7 @@ export default function AdminLoginPage() {
                 Default Seeded Super Admin Credentials:
               </div>
               <p className="font-mono text-[10px] text-slate-300">
-                Email: admin@xclusivecan.com • Pass: admin123456
+                Email: admin@noorplastic.com • Pass: admin123456
               </p>
             </div>
 
@@ -150,7 +153,7 @@ export default function AdminLoginPage() {
 
         {/* Footer info */}
         <div className="text-center text-[11px] text-slate-500 font-mono">
-          <span>Xclusive Can Limited • LEED Platinum Manufacturing Facility</span>
+          <span>Noor Plastic Industries • Kaliakoir, Gazipur</span>
         </div>
       </div>
     </div>

@@ -33,7 +33,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
       if (navigator.share) {
         try {
           await navigator.share({
-            title: `${product.name} | Xclusive Can Limited`,
+            title: `${product.name} | Noor Plastic Industries`,
             text: product.description,
             url: shareUrl,
           });
