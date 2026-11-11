@@ -22,6 +22,7 @@ import {
   AdminConfirmDeleteModal,
   useAdminToast,
 } from "@/components/admin/AdminCrudShell";
+import { AdminCardSkeletonItems } from "@/components/common/Skeletons";
 
 export default function AdminCaseStudiesPage() {
   const [cases, setCases] = useState<CaseStudy[]>(CASE_STUDIES_DATA);
@@ -127,7 +128,7 @@ export default function AdminCaseStudiesPage() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filtered.map((item) => (
+        {loading ? <AdminCardSkeletonItems count={6} /> : filtered.map((item) => (
           <div
             key={item.id}
             className={`bg-slate-900 border rounded-2xl overflow-hidden flex flex-col justify-between transition-all ${

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { siteButtonClass } from "@/components/common/SiteButton";
 import {
   Phone,
   Clock,
@@ -24,6 +25,8 @@ import {
   Handshake,
   Newspaper,
   ArrowRight,
+  Leaf,
+  Tv,
 } from "lucide-react";
 import { api } from "@/lib/api";
 
@@ -115,6 +118,12 @@ const NAV_ITEMS: TopNavItem[] = [
         icon: <BookOpen className="w-4 h-4 text-[#094E9B]" />,
       },
       {
+        label: "TV News",
+        href: "/tv-news",
+        description: "Broadcast coverage & factory YouTube features",
+        icon: <Tv className="w-4 h-4 text-[#094E9B]" />,
+      },
+      {
         label: "FAQs",
         href: "/faqs",
         description: "Delivery schedules, bulk orders & quality",
@@ -132,6 +141,12 @@ const NAV_ITEMS: TopNavItem[] = [
         href: "/our-story",
         description: "Noor Plastic Industries heritage in Kaliakoir, Gazipur",
         icon: <BookOpen className="w-4 h-4 text-[#094E9B]" />,
+      },
+      {
+        label: "Sustainability",
+        href: "/sustainability",
+        description: "LEED Platinum green factory & eco-responsible manufacturing",
+        icon: <Leaf className="w-4 h-4 text-[#094E9B]" />,
       },
       {
         label: "Awards & Certificates",
@@ -152,6 +167,11 @@ const NAV_ITEMS: TopNavItem[] = [
         icon: <Briefcase className="w-4 h-4 text-[#094E9B]" />,
       },
     ],
+  },
+  {
+    label: "TV NEWS",
+    href: "/tv-news",
+    hasPlus: false,
   },
   {
     label: "CONTACT",
@@ -380,8 +400,8 @@ export default function Navbar() {
               </Link>
 
               {/* Desktop Right Side: Navigation Links + Search + ORDER NOW */}
-              <div className="hidden lg:flex items-center gap-4 lg:gap-5 xl:gap-8">
-                <nav className="flex items-center gap-3.5 lg:gap-5 xl:gap-7" aria-label="Primary">
+              <div className="hidden lg:flex items-center gap-3.5 lg:gap-4 xl:gap-7">
+                <nav className="flex items-center gap-3 lg:gap-4 xl:gap-6" aria-label="Primary">
                   {NAV_ITEMS.map((item) => {
                     const active = isNavItemActive(item);
                     const isOpen = openDropdown === item.label;
@@ -396,7 +416,7 @@ export default function Navbar() {
                       >
                         <Link
                           href={item.href}
-                          className={`inline-flex items-center gap-0.5 py-2 text-[13px] xl:text-[14.5px] font-bold uppercase tracking-[0.05em] transition-colors ${active
+                          className={`inline-flex items-center gap-0.5 py-2 whitespace-nowrap text-[12.5px] xl:text-[14px] font-bold uppercase tracking-[0.05em] transition-colors ${active
                             ? "text-[#094E9B]"
                             : "text-[#162336] hover:text-[#094E9B]"
                             }`}
@@ -682,7 +702,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={handleOrderNow}
-              className="w-full py-3 rounded-full bg-[#094E9B] hover:bg-[#073E7E] text-white text-sm font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md"
+              className={siteButtonClass({ variant: "primary", fullWidth: true })}
             >
               <span>ORDER NOW</span>
               <ArrowRight className="w-4 h-4" />

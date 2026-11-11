@@ -16,10 +16,11 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { PageRecord, DEFAULT_PAGES } from "./_components/PageForm";
+import { AdminTableSkeletonRows } from "@/components/common/Skeletons";
 
 export default function PageManagementPage() {
   const [pages, setPages] = useState<PageRecord[]>(DEFAULT_PAGES);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const [notification, setNotification] = useState<string | null>(null);
@@ -160,7 +161,7 @@ export default function PageManagementPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 font-medium">
-              {filteredPages.map((page) => {
+              {loading ? <AdminTableSkeletonRows rows={6} columns={6} /> : filteredPages.map((page) => {
                 const sectionCount = page._count?.sections ?? page.sections?.length ?? 4;
                 const isHome = page.slug === "/" || page.slug === "";
 

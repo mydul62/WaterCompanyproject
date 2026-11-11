@@ -223,6 +223,173 @@ header ul li a span,
 }
 
 /* ══════════════════════════════════════════════════════════════
+   Unified Header-Matched Website Button System (.site-btn)
+   Matches Header "ORDER NOW" royal-blue pill + corner accent
+   ══════════════════════════════════════════════════════════════ */
+@layer components {
+  .site-btn {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 0.75rem 1.75rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    line-height: 1.25;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .site-btn::after {
+    content: "";
+    position: absolute;
+    top: -0.625rem;
+    right: -0.625rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 9999px;
+    background-color: #75B5F5;
+    pointer-events: none;
+    z-index: -1;
+    transition: transform 0.25s ease, background-color 0.2s ease, opacity 0.2s ease;
+  }
+
+  .site-btn:hover:not(:disabled) {
+    transform: scale(1.02);
+  }
+
+  .site-btn:hover:not(:disabled)::after {
+    transform: scale(1.12);
+  }
+
+  .site-btn:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .site-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  .site-btn-xs {
+    padding: 0.4375rem 1rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+  }
+  .site-btn-xs::after {
+    top: -0.5rem;
+    right: -0.5rem;
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  .site-btn-sm {
+    padding: 0.625rem 1.375rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.07em;
+  }
+  .site-btn-sm::after {
+    top: -0.55rem;
+    right: -0.55rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .site-btn-lg {
+    padding: 0.9375rem 2.25rem;
+    font-size: 0.875rem;
+    letter-spacing: 0.08em;
+  }
+  .site-btn-lg::after {
+    top: -0.625rem;
+    right: -0.625rem;
+    width: 1.95rem;
+    height: 1.95rem;
+  }
+
+  .site-btn-primary {
+    background-color: #094E9B;
+    border: 1.5px solid #094E9B;
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(9, 78, 155, 0.3);
+  }
+  .site-btn-primary:hover:not(:disabled) {
+    background-color: #073E7E;
+    border-color: #073E7E;
+    color: #ffffff;
+    box-shadow: 0 10px 24px rgba(9, 78, 155, 0.38);
+  }
+
+  .site-btn-outline {
+    background-color: #ffffff;
+    border: 1.5px solid #094E9B;
+    color: #094E9B;
+    box-shadow: 0 4px 14px rgba(9, 78, 155, 0.08);
+  }
+  .site-btn-outline::after {
+    background-color: rgba(117, 181, 245, 0.42);
+  }
+  .site-btn-outline:hover:not(:disabled) {
+    background-color: #094E9B;
+    border-color: #094E9B;
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(9, 78, 155, 0.28);
+  }
+  .site-btn-outline:hover:not(:disabled)::after {
+    background-color: #75B5F5;
+  }
+
+  .site-btn-light {
+    background-color: #ffffff;
+    border: 1.5px solid #ffffff;
+    color: #094E9B;
+    box-shadow: 0 10px 24px rgba(3, 28, 70, 0.24);
+  }
+  .site-btn-light::after {
+    background-color: rgba(117, 181, 245, 0.52);
+  }
+  .site-btn-light:hover:not(:disabled) {
+    background-color: #eef6ff;
+    border-color: #eef6ff;
+    color: #073E7E;
+    box-shadow: 0 12px 26px rgba(3, 28, 70, 0.3);
+  }
+
+  .site-btn-ghost {
+    background-color: rgba(255, 255, 255, 0.12);
+    border: 1.5px solid rgba(255, 255, 255, 0.38);
+    color: #ffffff;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 6px 18px rgba(3, 28, 70, 0.18);
+  }
+  .site-btn-ghost::after {
+    background-color: rgba(117, 181, 245, 0.45);
+  }
+  .site-btn-ghost:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.65);
+    color: #ffffff;
+  }
+
+  .site-btn-success {
+    background-color: #059669;
+    border: 1.5px solid #059669;
+    color: #ffffff;
+    box-shadow: 0 8px 18px rgba(5, 150, 105, 0.28);
+  }
+  .site-btn-success::after {
+    background-color: #34d399;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
    Cards: Extra Slow, Serene & Luxurious Liquid Water Surge
    ══════════════════════════════════════════════════════════════ */
 .water-fill-card {

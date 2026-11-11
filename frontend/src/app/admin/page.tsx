@@ -23,6 +23,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { api } from "@/lib/api";
+import { AdminKpiSkeletonGrid } from "@/components/common/Skeletons";
 
 export default function AdminOverviewPage() {
   const [stats, setStats] = useState({
@@ -32,7 +33,7 @@ export default function AdminOverviewPage() {
     links: 11,
     rfqs: 4,
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadOverview();
@@ -66,8 +67,10 @@ export default function AdminOverviewPage() {
     { title: "Home Page", slug: "/", id: "page-home", status: "PUBLISHED", blocks: 6 },
     { title: "Our Story", slug: "/our-story", id: "page-story", status: "PUBLISHED", blocks: 5 },
     { title: "Our Business & Plants", slug: "/our-business", id: "page-business", status: "PUBLISHED", blocks: 4 },
+    { title: "Sustainability & Green Campus", slug: "/sustainability", id: "page-sustainability", status: "PUBLISHED", blocks: 5 },
     { title: "Product Catalog", slug: "/products", id: "page-products", status: "PUBLISHED", blocks: 4 },
     { title: "Certificates & Quality", slug: "/certificates", id: "page-certificates", status: "PUBLISHED", blocks: 4 },
+    { title: "TV News & YouTube Features", slug: "/tv-news", id: "page-tv-news", status: "PUBLISHED", blocks: 2 },
     { title: "Careers Portal", slug: "/careers", id: "page-careers", status: "PUBLISHED", blocks: 4 },
     { title: "Brands We Work With", slug: "/brands-we-work-with", id: "page-brands", status: "PUBLISHED", blocks: 3 },
   ];
@@ -117,6 +120,9 @@ export default function AdminOverviewPage() {
       </div>
 
       {/* KPI Statistic Cards */}
+      {loading ? (
+        <AdminKpiSkeletonGrid count={5} />
+      ) : (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {/* Dynamic Pages */}
         <Link
@@ -180,6 +186,7 @@ export default function AdminOverviewPage() {
           <p className="text-[11px] text-slate-400">Zero-Waste Certified</p>
         </div>
       </div>
+      )}
 
       {/* Pages Publishing Status & Visual Editor Quick Launch */}
       <div className="rounded-2xl bg-slate-900 border border-slate-800 p-6 shadow-xl space-y-4">

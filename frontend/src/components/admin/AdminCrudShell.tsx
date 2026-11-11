@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   Loader2,
 } from "lucide-react";
+import { AdminFormSkeleton } from "@/components/common/Skeletons";
 
 export function linesToArray(text: string): string[] {
   return String(text || "")
@@ -242,9 +243,8 @@ export function AdminFormHeader({
 
 export function AdminEditLoadingState({ label = "Loading record..." }: { label?: string }) {
   return (
-    <div className="w-full py-20 flex flex-col items-center justify-center gap-3 bg-slate-900/50 border border-slate-800 rounded-2xl">
-      <Loader2 className="w-6 h-6 text-cyan-400 animate-spin" />
-      <p className="text-xs font-semibold text-slate-400">{label}</p>
+    <div className="w-full space-y-4" aria-label={label}>
+      <AdminFormSkeleton />
     </div>
   );
 }

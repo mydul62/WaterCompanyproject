@@ -7,6 +7,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { getProductById, CATALOG_PRODUCTS } from "@/data/catalogData";
 import { Share2, Check } from "lucide-react";
+import { siteButtonClass } from "@/components/common/SiteButton";
 
 interface ProductDetailsPageProps {
   params: Promise<{
@@ -211,12 +212,12 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
                   </p>
                 </div>
 
-                {/* 4. Action Buttons Row matching Screenshot be6f6ac5 */}
+                {/* 4. Action Buttons Row matching Unified Header Button Style */}
                 <div className="pt-4 flex flex-wrap items-center gap-3.5 sm:gap-4">
                   {/* Request For Sample Button -> Direct Dedicated Page */}
                   <Link
                     href={`/request-quote?product=${product.slug}&type=sample`}
-                    className="px-8 py-3.5 rounded-xl bg-[#5f686d] hover:bg-[#4b5358] text-white font-bold text-sm sm:text-base transition-all shadow-sm active:scale-95 cursor-pointer inline-flex items-center justify-center"
+                    className={siteButtonClass({ variant: "outline" })}
                   >
                     Request For Sample
                   </Link>
@@ -224,7 +225,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
                   {/* Request A Quote Button -> Direct Dedicated Page */}
                   <Link
                     href={`/request-quote?product=${product.slug}&type=quote`}
-                    className="px-8 py-3.5 rounded-xl bg-[#6ba3be] hover:bg-[#5890ab] text-white font-bold text-sm sm:text-base transition-all shadow-sm active:scale-95 cursor-pointer inline-flex items-center justify-center"
+                    className={siteButtonClass({ variant: "primary" })}
                   >
                     Request A Quote
                   </Link>
@@ -232,11 +233,11 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
                   {/* Share Button */}
                   <button
                     onClick={handleShare}
-                    className="px-8 py-3.5 rounded-xl bg-[#1a1a1a] hover:bg-black text-white font-bold text-sm sm:text-base transition-all flex items-center gap-2 shadow-sm active:scale-95 cursor-pointer"
+                    className={siteButtonClass({ variant: copied ? "success" : "outline" })}
                   >
                     {copied ? (
                       <>
-                        <Check className="w-4 h-4 text-emerald-400" />
+                        <Check className="w-4 h-4 text-white" />
                         <span>Copied!</span>
                       </>
                     ) : (

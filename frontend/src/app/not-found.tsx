@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { siteButtonClass } from "@/components/common/SiteButton";
 
 export default function NotFound() {
   return (
@@ -7,7 +8,7 @@ export default function NotFound() {
       <p className="text-slate-600 mb-6">The page you are looking for does not exist.</p>
       <Link
         href="/"
-        className="px-6 py-2.5 rounded-lg border-2 border-black bg-white text-black font-bold text-sm hover:bg-black hover:text-white transition-all"
+        className={siteButtonClass({ variant: "primary" })}
       >
         Return to Home
       </Link>

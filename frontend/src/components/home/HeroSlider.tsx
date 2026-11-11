@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Play, X, Droplets } from "lucide-react";
+import { siteButtonClass } from "@/components/common/SiteButton";
+import { HeroSliderSkeleton } from "@/components/common/Skeletons";
 import { api } from "@/lib/api";
 import {
   HeroSlide,
@@ -87,6 +89,7 @@ const AMBIENT_BUBBLES = [
 
 export default function HeroSlider() {
   const [slides, setSlides] = useState<HeroSlide[]>(DEFAULT_HERO_BANNERS);
+  const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [globalVideoUrl, setGlobalVideoUrl] = useState("");
@@ -107,6 +110,8 @@ export default function HeroSlider() {
         const active = local.filter((s) => s.isActive);
         setSlides(active.length > 0 ? active : DEFAULT_HERO_BANNERS);
       }
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -181,6 +186,11 @@ export default function HeroSlider() {
       id="hero"
       className="relative w-full min-h-[100svh] lg:min-h-0 lg:h-full overflow-hidden bg-[#064B9D] select-none"
     >
+      {loading && (
+        <div className="absolute inset-0 z-40">
+          <HeroSliderSkeleton />
+        </div>
+      )}
       {/* Stage 0 (0.0s): Full-Bleed Underwater Bubbles Background + Oceanic Depth */}
       <div className="hero-anim-bg absolute inset-0 z-0 pointer-events-none">
         <img
@@ -275,18 +285,12 @@ export default function HeroSlider() {
 
             {/* Stage 3 (1.20s): Action Buttons Row */}
             <div className="hero-anim-actions flex flex-wrap items-center gap-7 sm:gap-10">
-              {/* READ MORE with Pale-Cyan Tilted Leaf Accent */}
+              {/* READ MORE matching unified Header pill style */}
               <Link
                 href={currentSlide.readMoreHref || "/products"}
-                className="relative inline-flex items-center group py-1.5 cursor-pointer"
+                className={siteButtonClass({ variant: "light" })}
               >
-                <span className="relative z-10 text-[13.5px] sm:text-[14px] font-bold uppercase tracking-[0.08em] text-white group-hover:text-[#CBEFFF] transition-colors pr-1.5">
-                  {currentSlide.readMoreLabel || "READ MORE"}
-                </span>
-                <span
-                  aria-hidden="true"
-                  className="w-8 h-8 -ml-3.5 rounded-tr-[18px] rounded-bl-[18px] rounded-tl-[4px] rounded-br-[4px] bg-[#66C0EA]/55 group-hover:bg-[#66C0EA]/85 -rotate-12 transition-all duration-300 group-hover:scale-110"
-                />
+                <span>{currentSlide.readMoreLabel || "READ MORE"}</span>
               </Link>
 
               {/* WATCH VIDEO with Circular White Play Button */}

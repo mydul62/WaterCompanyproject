@@ -70,7 +70,8 @@ export const DEFAULT_HEADER_TREE: NavItem[] = [
     sortOrder: 4,
     children: [
       { id: "nav-4-1", label: "Press & News", url: "/media", sortOrder: 1 },
-      { id: "nav-4-2", label: "Technical Guides", url: "/media", sortOrder: 2 },
+      { id: "nav-4-2", label: "TV News Videos", url: "/tv-news", sortOrder: 2 },
+      { id: "nav-4-3", label: "Technical Guides", url: "/media", sortOrder: 3 },
     ],
   },
   {
@@ -85,12 +86,19 @@ export const DEFAULT_HEADER_TREE: NavItem[] = [
   },
   {
     id: "nav-6",
-    label: "MEDIA AND CONTACTS",
-    url: "/careers",
+    label: "TV NEWS",
+    url: "/tv-news",
     sortOrder: 6,
+  },
+  {
+    id: "nav-7",
+    label: "MEDIA AND CONTACTS",
+    url: "/media",
+    sortOrder: 7,
     children: [
-      { id: "nav-6-1", label: "Careers", url: "/careers", sortOrder: 1 },
-      { id: "nav-6-2", label: "Request a Quote", url: "/request-quote", sortOrder: 2 },
+      { id: "nav-7-1", label: "Press & Media Coverage", url: "/media", sortOrder: 1 },
+      { id: "nav-7-2", label: "Careers", url: "/careers", sortOrder: 2 },
+      { id: "nav-7-3", label: "Request a Quote", url: "/request-quote", sortOrder: 3 },
     ],
   },
 ];

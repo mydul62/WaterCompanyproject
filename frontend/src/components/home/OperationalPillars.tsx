@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { siteButtonClass } from "@/components/common/SiteButton";
 
 export default function OperationalPillars() {
   return (
@@ -51,11 +52,11 @@ export default function OperationalPillars() {
             </div>
           </div>
 
-          {/* Clean Rounded Read More Button with Liquid Water Hover Fill */}
+          {/* Unified Header-Matched Read More Button */}
           <div data-reveal="up" className="delay-200 pt-2">
             <a
               href="/products"
-              className="water-fill-btn inline-block px-7 py-2.5 rounded-lg border border-slate-900 text-slate-900 bg-white font-semibold text-sm sm:text-base tracking-wide shadow-xs active:scale-95"
+              className={siteButtonClass({ variant: "outline" })}
             >
               <span>Read More..</span>
             </a>

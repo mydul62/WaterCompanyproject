@@ -14,6 +14,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { api } from "@/lib/api";
+import { AdminMediaGridSkeleton } from "@/components/common/Skeletons";
 
 export interface MediaAssetItem {
   id: string;
@@ -308,10 +309,7 @@ export default function MediaPickerModal({
 
                 {/* Assets Grid */}
                 {loading ? (
-                  <div className="h-64 flex flex-col items-center justify-center gap-3 text-slate-400">
-                    <RefreshCw className="w-6 h-6 animate-spin text-blue-500" />
-                    <p className="text-xs">Loading media assets...</p>
-                  </div>
+                  <AdminMediaGridSkeleton count={8} />
                 ) : filteredAssets.length === 0 ? (
                   <div className="h-64 flex flex-col items-center justify-center gap-3 text-slate-500 border border-dashed border-slate-800 rounded-xl">
                     <ImageIcon className="w-8 h-8 text-slate-600" />

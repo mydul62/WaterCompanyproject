@@ -15,10 +15,11 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { ProductItem, DEFAULT_PRODUCTS, normalizeProduct } from "./_components/ProductForm";
+import { AdminTableSkeletonRows } from "@/components/common/Skeletons";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<ProductItem[]>(DEFAULT_PRODUCTS);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
   const [factoryFilter, setFactoryFilter] = useState("ALL");
@@ -193,7 +194,7 @@ export default function AdminProductsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 font-medium">
-              {filteredProducts.map((product) => (
+              {loading ? <AdminTableSkeletonRows rows={6} columns={6} /> : filteredProducts.map((product) => (
                 <tr key={product.id} className="hover:bg-slate-800/40 transition-colors group">
                   <td className="py-4 px-5">
                     <div className="flex items-center gap-3">

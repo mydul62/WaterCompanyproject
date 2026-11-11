@@ -18,6 +18,7 @@ import {
   Filter,
 } from "lucide-react";
 import { api } from "@/lib/api";
+import { AdminMediaSkeletonItems } from "@/components/common/Skeletons";
 
 interface MediaAsset {
   id: string;
@@ -109,7 +110,7 @@ const DEFAULT_ASSETS: MediaAsset[] = [
 
 export default function MediaLibraryPage() {
   const [assets, setAssets] = useState<MediaAsset[]>(DEFAULT_ASSETS);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedAsset, setSelectedAsset] = useState<MediaAsset | null>(null);
@@ -337,7 +338,7 @@ export default function MediaLibraryPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
         {/* Media Grid */}
         <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {filteredAssets.map((asset) => {
+          {loading ? <AdminMediaSkeletonItems count={8} /> : filteredAssets.map((asset) => {
             const isSelected = selectedAsset?.id === asset.id;
             return (
               <div

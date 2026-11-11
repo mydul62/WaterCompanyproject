@@ -7,6 +7,8 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import RFQDrawer from "@/components/rfq/RFQDrawer";
 import { api } from "@/lib/api";
+import { siteButtonClass, siteFilterTabClass } from "@/components/common/SiteButton";
+import { CertificatesSkeletonItems } from "@/components/common/Skeletons";
 import {
   CERTIFICATES_LIST,
   CERTIFICATE_CATEGORIES,
@@ -74,6 +76,7 @@ const QUALITY_STANDARDS_DETAILS = [
 
 export default function CertificatesPage() {
   const [certificates, setCertificates] = useState<CertificateItem[]>(CERTIFICATES_LIST);
+  const [loading, setLoading] = useState(true);
   const [selectedCert, setSelectedCert] = useState<CertificateItem | null>(null);
   const [isRFQOpen, setIsRFQOpen] = useState<boolean>(false);
   const [activeCategory, setActiveCategory] = useState<Category>("All Accreditations");
@@ -89,6 +92,9 @@ export default function CertificatesPage() {
       })
       .catch(() => {
         // Keep clean fallback CERTIFICATES_LIST
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
     return () => {
       active = false;
@@ -272,11 +278,7 @@ export default function CertificatesPage() {
                       key={cat}
                       type="button"
                       onClick={() => setActiveCategory(cat)}
-                      className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer ${
-                        isActive
-                          ? "bg-[#0a1f33] text-white shadow-lg shadow-black/15 scale-102"
-                          : "bg-slate-100 hover:bg-slate-200/90 text-slate-700 hover:text-slate-900 border border-slate-200"
-                      }`}
+                      className={siteFilterTabClass(isActive)}
                     >
                       <span>{cat}</span>
                       <span
@@ -295,7 +297,7 @@ export default function CertificatesPage() {
 
               {/* Certificates Executive 2-Column Wide Grid */}
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-10">
-                {filteredCerts.map((cert) => (
+                {loading ? <CertificatesSkeletonItems count={6} /> : filteredCerts.map((cert) => (
                   <article
                     key={cert.id}
                     className="group bg-white rounded-3xl border border-slate-200/80 hover:border-slate-300 shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_45px_rgba(10,31,51,0.09)] transition-all duration-300 p-6 sm:p-8 flex flex-col md:flex-row gap-6 sm:gap-8 items-start relative overflow-hidden"
@@ -328,8 +330,8 @@ export default function CertificatesPage() {
 
                       {/* Zoom Indicator Badge */}
                       <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-2xl flex items-center justify-center">
-                        <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white text-slate-900 text-xs font-bold shadow-lg">
-                          <ZoomIn className="w-3.5 h-3.5 text-[#0284c7]" />
+                        <span className={siteButtonClass({ variant: "light", size: "xs" })}>
+                          <ZoomIn className="w-3.5 h-3.5 text-[#094E9B]" />
                           <span>Inspect Full Certificate</span>
                         </span>
                       </div>
@@ -374,7 +376,11 @@ export default function CertificatesPage() {
                         <button
                           type="button"
                           onClick={() => setSelectedCert(cert)}
-                          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0284c7] hover:text-[#002B49] transition-colors shrink-0 cursor-pointer self-start sm:self-auto"
+                          className={siteButtonClass({
+                            variant: "outline",
+                            size: "xs",
+                            className: "shrink-0 self-start sm:self-auto",
+                          })}
                         >
                           <span>Enlarge Document</span>
                           <ZoomIn className="w-3.5 h-3.5" />
@@ -461,7 +467,7 @@ export default function CertificatesPage() {
                 <button
                   type="button"
                   onClick={() => setIsRFQOpen(true)}
-                  className="px-8 py-4 rounded-2xl bg-[#0284c7] hover:bg-[#0369a1] text-white font-bold text-sm tracking-wide shadow-lg shadow-black/25 transition-all active:scale-95 shrink-0 cursor-pointer flex items-center gap-2.5"
+                  className={siteButtonClass({ variant: "light", size: "lg", className: "shrink-0" })}
                 >
                   <span>Request Full Quality Audit Dossier</span>
                   <ArrowRight className="w-4 h-4" />
@@ -548,15 +554,15 @@ export default function CertificatesPage() {
                   <button
                     type="button"
                     onClick={() => setIsRFQOpen(true)}
-                    className="px-7 py-3.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-bold text-sm tracking-wide shadow-md transition-all active:scale-95 cursor-pointer flex items-center gap-2"
+                    className={siteButtonClass({ variant: "light" })}
                   >
                     <span>Request Quality Dossier</span>
-                    <ChevronRight className="w-4 h-4 text-slate-900" />
+                    <ChevronRight className="w-4 h-4" />
                   </button>
 
                   <Link
                     href="/media"
-                    className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm tracking-wide border border-white/20 transition-all cursor-pointer flex items-center gap-2"
+                    className={siteButtonClass({ variant: "ghost" })}
                   >
                     <span>Contact Compliance Desk</span>
                   </Link>
@@ -625,7 +631,7 @@ export default function CertificatesPage() {
                   setSelectedCert(null);
                   setIsRFQOpen(true);
                 }}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-900 text-white font-bold hover:bg-slate-800 transition-colors cursor-pointer self-end sm:self-auto"
+                className={siteButtonClass({ variant: "primary", size: "sm", className: "self-end sm:self-auto" })}
               >
                 <span>Request Certified Copy</span>
                 <ChevronRight className="w-3.5 h-3.5" />

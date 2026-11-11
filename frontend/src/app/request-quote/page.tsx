@@ -10,6 +10,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { CATALOG_PRODUCTS, getProductById, CatalogProduct } from "@/data/catalogData";
 import { api } from "@/lib/api";
+import { siteButtonClass } from "@/components/common/SiteButton";
 import {
   CheckCircle2,
   Clock,
@@ -184,13 +185,13 @@ function RequestQuoteContent() {
                 <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
                   <Link
                     href="/products"
-                    className="px-8 py-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-[#1f5f8b] transition-all shadow-md"
+                    className={siteButtonClass({ variant: "primary" })}
                   >
                     Explore More Products
                   </Link>
                   <button
                     onClick={() => setSubmitted(false)}
-                    className="px-8 py-3.5 rounded-xl border border-slate-300 text-slate-700 font-bold text-sm hover:bg-slate-50 transition-colors"
+                    className={siteButtonClass({ variant: "outline" })}
                   >
                     Submit Another Inquiry
                   </button>
@@ -339,16 +340,16 @@ function RequestQuoteContent() {
                 {/* RIGHT COLUMN: Spacious Luxury Form - NO INTERNAL SCROLLBAR (7 cols) */}
                 <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-slate-200/90 shadow-sm">
                   {/* Mode Selector Toggle: Price Quote vs Lab Sample */}
-                  <div className="flex p-1.5 rounded-2xl bg-slate-100 mb-8 max-w-md">
+                  <div className="flex p-1.5 rounded-full bg-slate-100 border border-slate-200 mb-8 max-w-md">
                     <button
                       type="button"
                       onClick={() => {
                         setActiveType("quote");
                         setFormData((prev) => ({ ...prev, needPhysicalSample: false }));
                       }}
-                      className={`flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${activeType === "quote"
-                        ? "bg-white text-slate-900 shadow-sm"
-                        : "text-slate-600 hover:text-slate-900"
+                      className={`flex-1 py-2.5 px-4 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${activeType === "quote"
+                        ? "bg-[#094E9B] text-white shadow-[0_4px_12px_rgba(9,78,155,0.28)]"
+                        : "text-slate-600 hover:text-[#094E9B]"
                         }`}
                     >
                       Request Quotation
@@ -359,9 +360,9 @@ function RequestQuoteContent() {
                         setActiveType("sample");
                         setFormData((prev) => ({ ...prev, needPhysicalSample: true }));
                       }}
-                      className={`flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${activeType === "sample"
-                        ? "bg-white text-slate-900 shadow-sm"
-                        : "text-slate-600 hover:text-slate-900"
+                      className={`flex-1 py-2.5 px-4 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${activeType === "sample"
+                        ? "bg-[#094E9B] text-white shadow-[0_4px_12px_rgba(9,78,155,0.28)]"
+                        : "text-slate-600 hover:text-[#094E9B]"
                         }`}
                     >
                       Request Physical Samples
@@ -567,7 +568,7 @@ function RequestQuoteContent() {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full py-4 sm:py-4.5 px-8 rounded-2xl bg-[#1f5f8b] hover:bg-[#2778ad] active:scale-[0.99] text-white font-bold text-base sm:text-lg transition-all shadow-xl hover:shadow-[0_15px_30px_rgba(31,95,139,0.35)] flex items-center justify-center gap-3 cursor-pointer disabled:opacity-70"
+                        className={siteButtonClass({ variant: "primary", size: "lg", fullWidth: true })}
                       >
                         {isSubmitting ? (
                           <span>Processing Inquiry...</span>

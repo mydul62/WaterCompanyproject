@@ -7,6 +7,8 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { api } from "@/lib/api";
 import { CASE_STUDIES_DATA, CaseStudy } from "@/data/caseStudiesData";
+import { siteButtonClass, siteFilterTabClass } from "@/components/common/SiteButton";
+import { CaseStudiesSkeletonItems } from "@/components/common/Skeletons";
 import {
   FileText,
   Sparkles,
@@ -26,6 +28,7 @@ import {
 
 export default function CaseStudiesPage() {
   const [cases, setCases] = useState<CaseStudy[]>(CASE_STUDIES_DATA);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
   const [selectedCase, setSelectedCase] = useState<CaseStudy | null>(null);
 
@@ -40,6 +43,9 @@ export default function CaseStudiesPage() {
       })
       .catch(() => {
         // Keep clean fallback CASE_STUDIES_DATA
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
     return () => {
       active = false;
@@ -128,152 +134,148 @@ export default function CaseStudiesPage() {
           {/* 2. PROVEN METRICS STATS BAR                                  */}
           {/* ============================================================ */}
           <section className="bg-white border-b border-slate-200/90 py-10 sm:py-12 shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center">
-              <div className="space-y-1">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0b6e99]">99.98%</div>
-                <div className="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider">Seam Leakproof Rate</div>
-                <p className="text-xs text-slate-400">Validated across 50M+ containers</p>
-              </div>
-              <div className="space-y-1">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0b6e99]">40%</div>
-                <div className="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider">Faster Tooling Turnaround</div>
-                <p className="text-xs text-slate-400">In-house CNC &amp; EDM Tool Room</p>
-              </div>
-              <div className="space-y-1">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0b6e99]">49+</div>
-                <div className="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider">Enterprise Brands</div>
-                <p className="text-xs text-slate-400">Paints, Pharma, FMCG, Oils</p>
-              </div>
-              <div className="space-y-1">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0b6e99]">0</div>
-                <div className="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider">Filling Line Downtime</div>
-                <p className="text-xs text-slate-400">JIT safety buffer stock logistics</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ============================================================ */}
-        {/* 3. CASE STUDY GRID & FILTERS                                 */}
-        {/* ============================================================ */}
-        <section id="case-content" className="bg-[#f4f8fb] py-14 sm:py-16 lg:py-20 scroll-mt-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Section Header */}
-            <div className="text-center max-w-3xl mx-auto mb-10">
-              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0b6e99]/10 text-[#0b6e99] text-xs font-bold uppercase tracking-wider mb-3">
-                <Award className="w-3.5 h-3.5" />
-                Industry Deployments
-              </span>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0a1f33] tracking-tight">
-                Engineering Solutions for Industry Leaders
-              </h2>
-              <p className="text-sm sm:text-base text-[#4a5f73] mt-3">
-                Discover how our in-house Tool Room, Class 100k cleanrooms, and automated seam welders solve complex packaging challenges.
-              </p>
-            </div>
-
-            {/* Category Filter Tabs */}
-            <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-3 mb-10">
-              {[
-                { id: "ALL", label: "All Industries" },
-                { id: "Paints & Coatings", label: "Paints & Coatings" },
-                { id: "Pharmaceuticals", label: "Pharmaceuticals" },
-                { id: "Chemicals & Lubricants", label: "Chemicals & Lubricants" },
-                { id: "FMCG & Food", label: "FMCG & Food" },
-              ].map((tab) => {
-                const isActive = activeCategory === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActiveCategory(tab.id)}
-                    className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 shadow-sm ${
-                      isActive
-                        ? "bg-[#0b6e99] text-white shadow-md shadow-[#0b6e99]/25 scale-102"
-                        : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200/80 hover:border-slate-300"
-                    }`}
-                  >
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* 6 Cards Grid (2 cols on tablet, 3 cols on desktop) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredCases.map((study) => (
-                <div
-                  key={study.id}
-                  className="bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between group"
-                >
-                  <div>
-                    {/* Cover Image Frame */}
-                    <div className="relative w-full aspect-[16/10] overflow-hidden bg-slate-900">
-                      <Image
-                        src={study.coverImage}
-                        alt={study.title}
-                        fill
-                        unoptimized={Boolean(study.coverImage?.startsWith("/uploads/") || study.coverImage?.startsWith("http"))}
-                        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-                      {/* Industry Pill */}
-                      <span className="absolute top-3.5 left-3.5 px-3 py-1 rounded-full bg-[#0b6e99]/90 backdrop-blur-md text-white text-xs font-semibold tracking-wide shadow-md">
-                        {study.industry}
-                      </span>
-
-                      {/* Client Name at bottom of photo */}
-                      <div className="absolute bottom-3.5 left-3.5 right-3.5">
-                        <span className="text-xs font-bold text-cyan-300 uppercase tracking-wider block">
-                          Client Partnership
-                        </span>
-                        <h4 className="text-white font-bold text-base drop-shadow-sm line-clamp-1">
-                          {study.client}
-                        </h4>
-                      </div>
-                    </div>
-
-                    {/* Card Content Body */}
-                    <div className="p-6 space-y-4">
-                      <h3 className="text-lg font-bold text-[#0a1f33] leading-snug group-hover:text-[#0b6e99] transition-colors">
-                        {study.title}
-                      </h3>
-
-                      <p className="text-xs sm:text-sm text-[#4a5f73] line-clamp-2 leading-relaxed">
-                        {study.subtitle}
-                      </p>
-
-                      {/* Stats Pills Bar */}
-                      <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 text-center">
-                        {study.stats.map((s, idx) => (
-                          <div key={idx} className="bg-slate-50 p-2 rounded-xl">
-                            <div className="text-xs sm:text-sm font-bold text-[#0b6e99]">{s.value}</div>
-                            <div className="text-[10px] text-slate-500 font-medium truncate">{s.label}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Card Footer Button */}
-                  <div className="p-6 pt-0">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedCase(study)}
-                      className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-[#0b6e99] text-[#0a1f33] hover:text-white font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 group-hover:bg-[#0b6e99] group-hover:text-white"
-                    >
-                      <span>Read Case Study</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center">
+                <div className="space-y-1">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0b6e99]">99.98%</div>
+                  <div className="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider">Seam Leakproof Rate</div>
+                  <p className="text-xs text-slate-400">Validated across 50M+ containers</p>
                 </div>
-              ))}
+                <div className="space-y-1">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0b6e99]">40%</div>
+                  <div className="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider">Faster Tooling Turnaround</div>
+                  <p className="text-xs text-slate-400">In-house CNC &amp; EDM Tool Room</p>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0b6e99]">49+</div>
+                  <div className="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider">Enterprise Brands</div>
+                  <p className="text-xs text-slate-400">Paints, Pharma, FMCG, Oils</p>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0b6e99]">0</div>
+                  <div className="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider">Filling Line Downtime</div>
+                  <p className="text-xs text-slate-400">JIT safety buffer stock logistics</p>
+                </div>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+
+          {/* ============================================================ */}
+          {/* 3. CASE STUDY GRID & FILTERS                                 */}
+          {/* ============================================================ */}
+          <section id="case-content" className="bg-[#f4f8fb] py-14 sm:py-16 lg:py-20 scroll-mt-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              {/* Section Header */}
+              <div className="text-center max-w-3xl mx-auto mb-10">
+                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0b6e99]/10 text-[#0b6e99] text-xs font-bold uppercase tracking-wider mb-3">
+                  <Award className="w-3.5 h-3.5" />
+                  Industry Deployments
+                </span>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0a1f33] tracking-tight">
+                  Engineering Solutions for Industry Leaders
+                </h2>
+                <p className="text-sm sm:text-base text-[#4a5f73] mt-3">
+                  Discover how our in-house Tool Room, Class 100k cleanrooms, and automated seam welders solve complex packaging challenges.
+                </p>
+              </div>
+
+              {/* Category Filter Tabs */}
+              <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-3 mb-10">
+                {[
+                  { id: "ALL", label: "All Industries" },
+                  { id: "Paints & Coatings", label: "Paints & Coatings" },
+                  { id: "Pharmaceuticals", label: "Pharmaceuticals" },
+                  { id: "Chemicals & Lubricants", label: "Chemicals & Lubricants" },
+                  { id: "FMCG & Food", label: "FMCG & Food" },
+                ].map((tab) => {
+                  const isActive = activeCategory === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setActiveCategory(tab.id)}
+                      className={siteFilterTabClass(isActive)}
+                    >
+                      <span>{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* 6 Cards Grid (2 cols on tablet, 3 cols on desktop) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {loading ? <CaseStudiesSkeletonItems count={6} /> : filteredCases.map((study) => (
+                  <div
+                    key={study.id}
+                    className="bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between group"
+                  >
+                    <div>
+                      {/* Cover Image Frame */}
+                      <div className="relative w-full aspect-[16/10] overflow-hidden bg-slate-900">
+                        <Image
+                          src={study.coverImage}
+                          alt={study.title}
+                          fill
+                          unoptimized={Boolean(study.coverImage?.startsWith("/uploads/") || study.coverImage?.startsWith("http"))}
+                          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                          className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                        {/* Industry Pill */}
+                        <span className="absolute top-3.5 left-3.5 px-3 py-1 rounded-full bg-[#0b6e99]/90 backdrop-blur-md text-white text-xs font-semibold tracking-wide shadow-md">
+                          {study.industry}
+                        </span>
+
+                        {/* Client Name at bottom of photo */}
+                        <div className="absolute bottom-3.5 left-3.5 right-3.5">
+                          <span className="text-xs font-bold text-cyan-300 uppercase tracking-wider block">
+                            Client Partnership
+                          </span>
+                          <h4 className="text-white font-bold text-base drop-shadow-sm line-clamp-1">
+                            {study.client}
+                          </h4>
+                        </div>
+                      </div>
+
+                      {/* Card Content Body */}
+                      <div className="p-6 space-y-4">
+                        <h3 className="text-lg font-bold text-[#0a1f33] leading-snug group-hover:text-[#0b6e99] transition-colors">
+                          {study.title}
+                        </h3>
+
+                        <p className="text-xs sm:text-sm text-[#4a5f73] line-clamp-2 leading-relaxed">
+                          {study.subtitle}
+                        </p>
+
+                        {/* Stats Pills Bar */}
+                        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 text-center">
+                          {study.stats.map((s, idx) => (
+                            <div key={idx} className="bg-slate-50 p-2 rounded-xl">
+                              <div className="text-xs sm:text-sm font-bold text-[#0b6e99]">{s.value}</div>
+                              <div className="text-[10px] text-slate-500 font-medium truncate">{s.label}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Card Footer Button */}
+                    <div className="p-6 pt-0">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedCase(study)}
+                        className={siteButtonClass({ variant: "primary", size: "sm", fullWidth: true })}
+                      >
+                        <span>Read Case Study</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
         </div>
       </main>
 
@@ -409,14 +411,14 @@ export default function CaseStudiesPage() {
               <div className="flex items-center gap-3">
                 <Link
                   href="/request-quote"
-                  className="px-5 py-2.5 rounded-xl bg-[#0b6e99] hover:bg-[#09577a] text-white text-xs sm:text-sm font-semibold transition-all shadow-md shadow-[#0b6e99]/20"
+                  className={siteButtonClass({ variant: "primary", size: "sm" })}
                 >
                   Request Feasibility Review
                 </Link>
                 <button
                   type="button"
                   onClick={() => setSelectedCase(null)}
-                  className="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs sm:text-sm font-semibold hover:bg-slate-100 transition-colors"
+                  className={siteButtonClass({ variant: "outline", size: "sm" })}
                 >
                   Close
                 </button>

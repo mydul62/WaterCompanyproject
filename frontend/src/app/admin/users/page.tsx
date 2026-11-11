@@ -13,10 +13,11 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { UserRecord, DEFAULT_USERS } from "./_components/UserForm";
+import { AdminTableSkeletonRows } from "@/components/common/Skeletons";
 
 export default function UserRoleManagementPage() {
   const [users, setUsers] = useState<UserRecord[]>(DEFAULT_USERS);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("ALL");
   const [notification, setNotification] = useState<string | null>(null);
@@ -164,7 +165,7 @@ export default function UserRoleManagementPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 font-medium">
-              {filteredUsers.map((user) => (
+              {loading ? <AdminTableSkeletonRows rows={5} columns={5} /> : filteredUsers.map((user) => (
                 <tr key={user.id} className="hover:bg-slate-800/40 transition-colors group">
                   <td className="py-4 px-5">
                     <div className="flex items-center gap-3">

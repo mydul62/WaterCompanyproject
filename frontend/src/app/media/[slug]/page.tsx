@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { siteButtonClass } from "@/components/common/SiteButton";
 import {
   PRESS_STORIES,
   PressStory,
@@ -288,7 +289,12 @@ export default async function MediaStoryPage({ params }: PageProps) {
                 <div className="pt-2">
                   <Link
                     href="/products"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow-md transition-all"
+                    className={siteButtonClass({
+                      variant: "light",
+                      size: "sm",
+                      fullWidth: true,
+                      className: "tracking-normal normal-case",
+                    })}
                   >
                     <span>প্রোডাক্ট ক্যাটালগ এক্সপ্লোর করুন</span>
                     <ArrowRight className="w-3.5 h-3.5" />

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Award, Zap, Factory, ShieldCheck, ArrowRight, Play, X } from "lucide-react";
+import { siteButtonClass } from "@/components/common/SiteButton";
 
 export default function FacilityShowcase() {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
@@ -121,11 +122,11 @@ export default function FacilityShowcase() {
             })}
           </div>
 
-          {/* Action Buttons with Liquid Water Wave Hover Fill */}
+          {/* Action Buttons matching Header Button Style */}
           <div data-reveal="up" className="delay-200 flex flex-wrap items-center gap-3.5 pt-2">
             <Link
               href="/products"
-              className="water-fill-btn inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm sm:text-base tracking-wide shadow-md hover:shadow-lg transition-all active:scale-95 group"
+              className={siteButtonClass({ variant: "primary", className: "group" })}
             >
               <span>Explore Products</span>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -133,9 +134,9 @@ export default function FacilityShowcase() {
 
             <button
               onClick={() => setIsVideoOpen(true)}
-              className="water-fill-btn inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-slate-200 bg-white/90 text-slate-700 font-bold text-sm sm:text-base shadow-xs hover:shadow transition-all cursor-pointer group"
+              className={siteButtonClass({ variant: "outline", className: "group" })}
             >
-              <Play className="w-4 h-4 text-cyan-600 fill-cyan-600 transition-colors group-hover:text-white group-hover:fill-white" />
+              <Play className="w-4 h-4 text-current fill-current transition-colors" />
               <span>Plant Video Tour</span>
             </button>
           </div>

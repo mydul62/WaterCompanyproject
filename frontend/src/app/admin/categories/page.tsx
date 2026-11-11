@@ -13,10 +13,11 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { CategoryItem, DEFAULT_CATEGORIES } from "./_components/CategoryForm";
+import { AdminCardSkeletonItems } from "@/components/common/Skeletons";
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<CategoryItem[]>(DEFAULT_CATEGORIES);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [notification, setNotification] = useState<string | null>(null);
 
@@ -119,7 +120,7 @@ export default function AdminCategoriesPage() {
 
       {/* Categories Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredCategories.map((cat) => (
+        {loading ? <AdminCardSkeletonItems count={6} /> : filteredCategories.map((cat) => (
           <div
             key={cat.id}
             className="p-5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all space-y-4 flex flex-col justify-between"

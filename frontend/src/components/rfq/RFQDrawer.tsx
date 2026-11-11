@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { X, Send, CheckCircle2, ShieldCheck, Upload, FileText, ArrowRight } from "lucide-react";
 import { ProductItem } from "@/data/companyData";
 import { api } from "@/lib/api";
+import { siteButtonClass } from "@/components/common/SiteButton";
 
 interface RFQDrawerProps {
   isOpen: boolean;
@@ -94,7 +95,7 @@ export default function RFQDrawer({ isOpen, onClose, initialProduct }: RFQDrawer
                 <div className="pt-4">
                   <button
                     onClick={handleReset}
-                    className="px-6 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider"
+                    className={siteButtonClass({ variant: "primary", size: "sm" })}
                   >
                     Close Window
                   </button>
@@ -240,7 +241,7 @@ export default function RFQDrawer({ isOpen, onClose, initialProduct }: RFQDrawer
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-700 to-indigo-800 hover:from-blue-600 hover:to-indigo-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-blue-900/30 transition-all"
+                    className={siteButtonClass({ variant: "primary", fullWidth: true })}
                   >
                     <Send className="w-4 h-4" />
                     <span>Submit Request for Quotation (RFQ)</span>

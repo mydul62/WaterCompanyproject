@@ -6,6 +6,7 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import RFQDrawer from "@/components/rfq/RFQDrawer";
+import { siteButtonClass } from "@/components/common/SiteButton";
 import {
   ShieldCheck,
   Award,
@@ -146,14 +147,14 @@ export default function OurBusinessPage() {
               <button
                 type="button"
                 onClick={() => setIsRFQOpen(true)}
-                className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-white hover:bg-slate-100 text-[#0a1f33] font-bold text-xs sm:text-sm shadow-xl transition-all hover:-translate-y-0.5 cursor-pointer"
+                className={siteButtonClass({ variant: "light" })}
               >
                 <span>Request Consultation</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
               <a
                 href="#curtain-reveal"
-                className="inline-flex items-center gap-2 px-7 py-3 rounded-xl border border-white/30 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-bold text-xs sm:text-sm transition-all hover:-translate-y-0.5 cursor-pointer"
+                className={siteButtonClass({ variant: "ghost" })}
               >
                 <span>Explore Capabilities</span>
                 <ArrowRight className="w-4 h-4" />
@@ -273,7 +274,7 @@ export default function OurBusinessPage() {
                   <div className="pt-2">
                     <button
                       onClick={() => setIsRFQOpen(true)}
-                      className="water-fill-btn inline-flex items-center gap-2.5 px-8 py-3 rounded-xl border-2 border-slate-900 bg-white text-slate-900 font-bold text-sm hover:shadow-lg transition-all active:scale-95 cursor-pointer"
+                      className={siteButtonClass({ variant: "outline" })}
                     >
                       <span>Points of Excellence</span>
                       <ArrowRight className="w-4 h-4" />
@@ -395,7 +396,7 @@ export default function OurBusinessPage() {
                   </div>
                   <button
                     onClick={() => setExpandedValue(!expandedValue)}
-                    className="water-fill-btn px-6 py-2.5 rounded-xl border border-slate-900 bg-white text-slate-900 font-bold text-xs uppercase tracking-wider hover:shadow transition-all shrink-0 cursor-pointer"
+                    className={siteButtonClass({ variant: "outline", size: "sm", className: "shrink-0" })}
                   >
                     <span>{expandedValue ? "Hide Details" : "Read Full Philosophy"}</span>
                   </button>
@@ -724,14 +725,14 @@ export default function OurBusinessPage() {
                 <div className="relative z-10 flex flex-col sm:flex-row items-center gap-4 shrink-0 w-full sm:w-auto">
                   <button
                     onClick={() => setIsRFQOpen(true)}
-                    className="water-fill-btn w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-white text-slate-900 font-extrabold text-sm tracking-wide shadow-xl hover:shadow-2xl transition-all cursor-pointer active:scale-95"
+                    className={siteButtonClass({ variant: "light", size: "lg", className: "w-full sm:w-auto" })}
                   >
                     <span>Request A Quote</span>
                     <ChevronRight className="w-4 h-4" />
                   </button>
                   <Link
                     href="/products"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl border border-white/40 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-bold text-sm transition-all active:scale-95 text-center"
+                    className={siteButtonClass({ variant: "ghost", size: "lg", className: "w-full sm:w-auto" })}
                   >
                     <span>View Product Catalog</span>
                     <ArrowRight className="w-4 h-4" />

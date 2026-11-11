@@ -14,9 +14,10 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import MediaPickerModal from "@/components/admin/MediaPickerModal";
+import { AdminFormSkeleton } from "@/components/common/Skeletons";
 
 export default function SeoManagementPage() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
 
@@ -160,7 +161,10 @@ export default function SeoManagementPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+      {loading ? (
+        <AdminFormSkeleton />
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* Form Inputs */}
         <form onSubmit={handleSaveGlobalSeo} className="space-y-6 text-xs">
           {/* Global Meta */}
@@ -359,6 +363,7 @@ export default function SeoManagementPage() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Media Picker */}
       <MediaPickerModal

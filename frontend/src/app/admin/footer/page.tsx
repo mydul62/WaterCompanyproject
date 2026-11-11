@@ -14,9 +14,10 @@ import {
   Copy,
 } from "lucide-react";
 import { api } from "@/lib/api";
+import { AdminFormSkeleton } from "@/components/common/Skeletons";
 
 export default function FooterManagementPage() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
 
@@ -31,7 +32,9 @@ export default function FooterManagementPage() {
   const [linkedinUrl, setLinkedinUrl] = useState("https://www.linkedin.com/company/noor-plastic-industries");
   const [youtubeUrl, setYoutubeUrl] = useState("https://www.youtube.com/@noorplastic");
   const [facebookUrl, setFacebookUrl] = useState("https://www.facebook.com/noorplastic");
-  const [copyrightText, setCopyrightText] = useState("Copyright © 2024 - 2026 Noor Plastic Industries. All Rights Reserved.");
+  const [copyrightText, setCopyrightText] = useState("Copyright © 2026 Noor Plastic Industries. All rights reserved.");
+  const [developerName, setDeveloperName] = useState("BrainForce");
+  const [developerUrl, setDeveloperUrl] = useState("https://brainforge26.tech/");
 
   const showNotification = (msg: string) => {
     setNotification(msg);
@@ -56,7 +59,11 @@ export default function FooterManagementPage() {
         if (res.data["social_linkedin"]) setLinkedinUrl(res.data["social_linkedin"]);
         if (res.data["social_youtube"]) setYoutubeUrl(res.data["social_youtube"]);
         if (res.data["social_facebook"]) setFacebookUrl(res.data["social_facebook"]);
-        if (res.data["copyright_text"]) setCopyrightText(res.data["copyright_text"]);
+        if (res.data["footer_copyright"] || res.data["copyright_text"]) {
+          setCopyrightText(res.data["footer_copyright"] || res.data["copyright_text"]);
+        }
+        if (res.data["developer_name"]) setDeveloperName(res.data["developer_name"]);
+        if (res.data["developer_url"]) setDeveloperUrl(res.data["developer_url"]);
       }
     } catch (err) {
       console.warn("Using default settings fallback:", err);
@@ -81,6 +88,9 @@ export default function FooterManagementPage() {
       { key: "social_youtube", value: youtubeUrl },
       { key: "social_facebook", value: facebookUrl },
       { key: "copyright_text", value: copyrightText },
+      { key: "footer_copyright", value: copyrightText },
+      { key: "developer_name", value: developerName },
+      { key: "developer_url", value: developerUrl },
     ];
 
     try {
@@ -140,7 +150,10 @@ export default function FooterManagementPage() {
       </div>
 
       {/* Form Grid */}
-      <form onSubmit={handleSaveFooter} className="space-y-6 text-xs">
+      {loading ? (
+        <AdminFormSkeleton />
+      ) : (
+        <form onSubmit={handleSaveFooter} className="space-y-6 text-xs">
         {/* Plant Locations */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
           <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
@@ -289,8 +302,35 @@ export default function FooterManagementPage() {
               className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500"
             />
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+            <div>
+              <label className="block text-slate-300 font-bold mb-1">
+                Developer Company Name
+              </label>
+              <input
+                type="text"
+                value={developerName}
+                onChange={(e) => setDeveloperName(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-slate-300 font-bold mb-1">
+                Developer Website URL
+              </label>
+              <input
+                type="url"
+                value={developerUrl}
+                onChange={(e) => setDeveloperUrl(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-cyan-400 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+          </div>
         </div>
       </form>
+      )}
     </div>
   );
 }

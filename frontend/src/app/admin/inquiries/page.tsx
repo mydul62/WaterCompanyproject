@@ -16,14 +16,17 @@ import {
   saveLocalRfqs,
   getStatusBadge,
 } from "./_components/rfqStore";
+import { AdminTableSkeletonRows } from "@/components/common/Skeletons";
 
 export default function AdminInquiriesPage() {
   const [rfqs, setRfqs] = useState<RFQItem[]>(INITIAL_RFQS);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
     setRfqs(getLocalRfqs());
+    setLoading(false);
   }, []);
 
   const filteredRfqs = useMemo(() => {
@@ -162,7 +165,7 @@ export default function AdminInquiriesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 font-medium">
-              {filteredRfqs.map((rfq) => (
+              {loading ? <AdminTableSkeletonRows rows={4} columns={6} /> : filteredRfqs.map((rfq) => (
                 <tr key={rfq.id} className="hover:bg-slate-800/40 transition-colors">
                   <td className="py-3.5 px-4">
                     <span className="font-mono font-bold text-cyan-400 block">{rfq.id}</span>

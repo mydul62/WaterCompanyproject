@@ -19,6 +19,7 @@ import {
   AdminConfirmDeleteModal,
   useAdminToast,
 } from "@/components/admin/AdminCrudShell";
+import { AdminCardSkeletonItems } from "@/components/common/Skeletons";
 
 export default function AdminBlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>(BLOG_POSTS);
@@ -124,7 +125,7 @@ export default function AdminBlogPage() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {filtered.map((post) => (
+        {loading ? <AdminCardSkeletonItems count={6} /> : filtered.map((post) => (
           <div
             key={post.id}
             className={`bg-slate-900 border rounded-2xl overflow-hidden flex flex-col justify-between transition-all ${

@@ -33,12 +33,30 @@ class ApiClient {
     return headers;
   }
 
+  private static inflightGets = new Map<string, Promise<ApiResponse<any>>>();
+  private static getCache = new Map<string, { data: ApiResponse<any>; expiresAt: number }>();
+  private static readonly GET_CACHE_TTL_MS = 15_000;
+
+  public invalidateCache(prefix?: string) {
+    if (!prefix) {
+      ApiClient.getCache.clear();
+      return;
+    }
+    for (const key of ApiClient.getCache.keys()) {
+      if (key.includes(prefix)) {
+        ApiClient.getCache.delete(key);
+      }
+    }
+  }
+
   private async request<T = any>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
-    const url = `${API_BASE_URL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+    const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+    const url = `${API_BASE_URL}${cleanEndpoint}`;
     const headers = this.getHeaders((options.headers as Record<string, string>) || {});
+    const method = (options.method || "GET").toUpperCase();
 
     // If body is FormData, do not set Content-Type header (browser sets boundary automatically)
     if (options.body instanceof FormData) {
@@ -47,25 +65,86 @@ class ApiClient {
       headers["Content-Type"] = "application/json";
     }
 
-    try {
-      const response = await fetch(url, {
-        ...options,
-        headers,
-      });
+    if (method !== "GET") {
+      ApiClient.getCache.clear();
+    }
 
-      const json = await response.json().catch(() => null);
+    const canUseGetCache = method === "GET" && options.cache !== "no-store" && !options.signal;
+    const cacheKey = `${url}::${headers["Authorization"] || ""}`;
 
-      if (!response.ok) {
-        throw new Error(
-          json?.message || `HTTP ${response.status}: ${response.statusText}`
-        );
+    if (canUseGetCache) {
+      const cached = ApiClient.getCache.get(cacheKey);
+      if (cached && cached.expiresAt > Date.now()) {
+        return cached.data as ApiResponse<T>;
+      }
+      const inflight = ApiClient.inflightGets.get(cacheKey);
+      if (inflight) {
+        return inflight as Promise<ApiResponse<T>>;
+      }
+    }
+
+    const executeFetch = async (): Promise<ApiResponse<T>> => {
+      const controller = new AbortController();
+      const timeoutMs =
+        options.body instanceof FormData ? 30_000 : method === "GET" ? 8_000 : 15_000;
+
+      const onExternalAbort = () => controller.abort();
+      if (options.signal) {
+        if (options.signal.aborted) {
+          controller.abort();
+        } else {
+          options.signal.addEventListener("abort", onExternalAbort, { once: true });
+        }
       }
 
-      return json;
-    } catch (error: any) {
-      console.warn(`[ApiClient] Request to ${endpoint} failed:`, error.message);
-      throw error;
+      const timeoutId = globalThis.setTimeout(() => controller.abort(), timeoutMs);
+
+      try {
+        const response = await fetch(url, {
+          ...options,
+          method,
+          headers,
+          signal: controller.signal,
+        });
+
+        const json = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          throw new Error(
+            json?.message || `HTTP ${response.status}: ${response.statusText}`
+          );
+        }
+
+        if (canUseGetCache) {
+          ApiClient.getCache.set(cacheKey, {
+            data: json,
+            expiresAt: Date.now() + ApiClient.GET_CACHE_TTL_MS,
+          });
+        }
+
+        return json;
+      } catch (error: any) {
+        const message =
+          error?.name === "AbortError" ? `Request timed out after ${timeoutMs}ms` : error?.message;
+        console.warn(`[ApiClient] Request to ${endpoint} failed:`, message);
+        throw error?.name === "AbortError" ? new Error(message) : error;
+      } finally {
+        globalThis.clearTimeout(timeoutId);
+        if (options.signal) {
+          options.signal.removeEventListener("abort", onExternalAbort);
+        }
+      }
+    };
+
+    if (canUseGetCache) {
+      const promise = executeFetch().finally(() => {
+        ApiClient.inflightGets.delete(cacheKey);
+      });
+      ApiClient.inflightGets.set(cacheKey, promise);
+      return promise;
     }
+
+    return executeFetch();
   }
 
   // Auth Endpoints
@@ -356,6 +435,7 @@ class ApiClient {
 
   // Dynamic CMS Collections
   mediaStories = this.createCrudClient("/media/stories");
+  tvNews = this.createCrudClient("/tv-news");
   blogs = this.createCrudClient("/blogs");
   caseStudies = this.createCrudClient("/case-studies");
   certificates = this.createCrudClient("/certificates");

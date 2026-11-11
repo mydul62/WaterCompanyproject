@@ -31,6 +31,8 @@ import {
   BookOpen,
   FolderKanban,
   Award,
+  Leaf,
+  Tv,
 } from "lucide-react";
 
 const SIDEBAR_STORAGE_KEY = "waterweb_admin_sidebar_collapsed";
@@ -60,9 +62,11 @@ const NAVIGATION_GROUPS: NavGroup[] = [
       { name: "Product Catalog", href: "/admin/products", icon: Package },
       { name: "Product Categories", href: "/admin/categories", icon: Tags },
       { name: "Press & Media", href: "/admin/media", icon: Newspaper },
+      { name: "TV News Videos", href: "/admin/tv-news", icon: Tv, badge: "YouTube", badgeColor: "bg-red-600/80 text-red-100" },
       { name: "Blog & Insights", href: "/admin/blog", icon: BookOpen },
       { name: "Case Studies", href: "/admin/case-studies", icon: FolderKanban },
       { name: "Certificates", href: "/admin/certificates", icon: Award },
+      { name: "Sustainability Page", href: "/admin/sustainability", icon: Leaf, badge: "LEED", badgeColor: "bg-emerald-600/80 text-emerald-100" },
       { name: "Media Library (Imaple)", href: "/admin/media-library", icon: ImageIcon },
     ],
   },

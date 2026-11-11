@@ -69,7 +69,7 @@ const AVAILABLE_PAGES: PageConfig[] = [
       { id: "products", name: "4. Product Showcase (Plastic & Tin Portfolio)", selector: "#products" },
       { id: "stories", name: "5. Latest Press & Newspaper Stories", selector: "#media" },
       { id: "b2b", name: "6. B2B Solutions Banner & RFQ CTA", selector: "#curtain-reveal > div:nth-child(5)" },
-      { id: "explore", name: "7. Explore More Grid (13 Cards)", selector: "#curtain-reveal > div:nth-child(6)" },
+      { id: "explore", name: "7. Explore More Bento Grid (7 Cards)", selector: "#curtain-reveal > div:nth-child(6)" },
       { id: "footer", name: "8. Global Footer & Contact", selector: "footer" },
     ],
   },
@@ -93,6 +93,19 @@ const AVAILABLE_PAGES: PageConfig[] = [
       { id: "biz-plants", name: "2. Kaliakoir Automated Cleanrooms", selector: "main > section:nth-child(2)" },
       { id: "biz-tech", name: "3. Machinery & European Tooling", selector: "main > section:nth-child(3)" },
       { id: "footer", name: "4. Global Footer", selector: "footer" },
+    ],
+  },
+  {
+    key: "sustainability",
+    title: "Sustainability & LEED Green Campus",
+    slug: "/sustainability",
+    sections: [
+      { id: "sust-hero", name: "1. Sustainability Hero Banner", selector: "#hero" },
+      { id: "sust-intro", name: "2. LEED Intro & USGBC Seal", selector: "#sustainability-intro" },
+      { id: "sust-highlights", name: "3. 6 Highlights Metric Grid", selector: "#sustainability-highlights" },
+      { id: "sust-practices", name: "4. Environmental Practices Circles", selector: "#environmental-practices-section" },
+      { id: "sust-pillars", name: "5. Natural Resources & Vision Pillars", selector: "#sustainability-pillars" },
+      { id: "footer", name: "6. Global Footer", selector: "footer" },
     ],
   },
   {

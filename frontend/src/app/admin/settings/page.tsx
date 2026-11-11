@@ -16,9 +16,10 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import MediaPickerModal from "@/components/admin/MediaPickerModal";
+import { AdminFormSkeleton } from "@/components/common/Skeletons";
 
 export default function AdminSettingsPage() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
 
@@ -162,7 +163,10 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* Settings Grid */}
-      <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start text-xs">
+      {loading ? (
+        <AdminFormSkeleton />
+      ) : (
+        <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start text-xs">
         {/* Left Column: Branding & Identity */}
         <div className="space-y-6">
           <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
@@ -348,6 +352,7 @@ export default function AdminSettingsPage() {
           </div>
         </div>
       </form>
+      )}
 
       {/* Media Picker */}
       <MediaPickerModal

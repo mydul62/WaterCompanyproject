@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { siteButtonClass } from "@/components/common/SiteButton";
 import {
   Droplets,
   ShieldCheck,
@@ -131,11 +132,11 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
             </p>
           </div>
 
-          {/* Right: Contact Us Button with Liquid Water Hover */}
+          {/* Right: Contact Us Button matching Header Button Style */}
           <div className="shrink-0">
             <button
               onClick={onOpenRFQ}
-              className="water-fill-btn px-8 py-3.5 rounded-2xl bg-slate-900 text-white font-bold text-base sm:text-lg shadow-lg hover:shadow-[0_10px_25px_rgba(0,194,232,0.3)] active:scale-95 cursor-pointer inline-flex items-center gap-2"
+              className={siteButtonClass({ variant: "primary", size: "lg" })}
             >
               <span>Contact Us</span>
               <ArrowRight className="w-4 h-4" />
@@ -166,14 +167,14 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <a
                 href="#products"
-                className="water-fill-btn inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-cyan-600 text-white font-bold text-sm sm:text-base shadow-md hover:shadow-cyan-500/25 transition-all"
+                className={siteButtonClass({ variant: "primary", size: "sm" })}
               >
                 <span>Explore Products</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
               <button
                 onClick={onOpenRFQ}
-                className="water-fill-btn inline-flex items-center gap-2 px-6 py-2.5 rounded-xl border border-slate-300 bg-white/80 text-slate-800 font-bold text-sm sm:text-base shadow-sm hover:shadow transition-all"
+                className={siteButtonClass({ variant: "outline", size: "sm" })}
               >
                 <span>Partner With Us</span>
               </button>

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { siteButtonClass } from "@/components/common/SiteButton";
 import {
   Sparkles,
   ArrowRight,
@@ -500,7 +501,7 @@ export default function RndPage() {
                   <div className="pt-4 flex flex-wrap justify-center gap-4">
                     <Link
                       href="/request-quote"
-                      className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-sm shadow-xl shadow-cyan-500/30 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                      className={siteButtonClass({ variant: "light", size: "lg" })}
                     >
                       <span>Request Rapid Prototype</span>
                       <ArrowRight className="w-4 h-4" />
@@ -508,7 +509,7 @@ export default function RndPage() {
 
                     <Link
                       href="/products"
-                      className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm transition-all hover:scale-105 active:scale-95"
+                      className={siteButtonClass({ variant: "ghost", size: "lg" })}
                     >
                       <span>Explore Products Catalog</span>
                     </Link>

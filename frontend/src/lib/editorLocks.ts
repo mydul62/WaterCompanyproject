@@ -93,6 +93,25 @@ export const LOCKED_SECTION_RULES: LockedSectionRule[] = [
       "ISO, HACCP, GMP, LEED, and regulatory accreditations are dynamically managed in Dashboard -> Certificates.",
   },
   {
+    id: "sustainability-cms",
+    pages: ["sustainability"],
+    selector:
+      "#hero, #sustainability-intro, #sustainability-highlights, #environmental-practices-section, #sustainability-pillars",
+    moduleName: "Sustainability Page",
+    dashboardHref: "/admin/sustainability",
+    reason:
+      "All Sustainability sections (Hero, Intro, Highlights, Environmental Practices, Natural Resources & Vision Pillars) are dynamically managed in Dashboard -> Sustainability Page.",
+  },
+  {
+    id: "tv-news-cms",
+    pages: ["tv-news"],
+    selector: "#tv-news-hero, #tv-news-grid",
+    moduleName: "TV News Videos",
+    dashboardHref: "/admin/tv-news",
+    reason:
+      "All YouTube broadcast embeds, video titles, channels & TV News hero banner are dynamically managed in Dashboard -> TV News Videos.",
+  },
+  {
     id: "careers-job-board",
     pages: ["careers"],
     selector: "#open-positions",

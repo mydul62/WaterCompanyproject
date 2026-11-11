@@ -15,6 +15,7 @@ import { sliderRoutes } from "./modules/slider/slider.route";
 import { blogRoutes } from "./modules/blog/blog.route";
 import { caseStudyRoutes } from "./modules/case-study/caseStudy.route";
 import { certificateRoutes } from "./modules/certificate/certificate.route";
+import { tvNewsRoutes } from "./modules/tv-news/tvNews.route";
 
 const router = Router();
 
@@ -37,6 +38,7 @@ router.use("/banners", sliderRoutes);
 router.use("/blogs", blogRoutes);
 router.use("/case-studies", caseStudyRoutes);
 router.use("/certificates", certificateRoutes);
+router.use("/tv-news", tvNewsRoutes);
 
 export const appRouter = router;
 export default router;

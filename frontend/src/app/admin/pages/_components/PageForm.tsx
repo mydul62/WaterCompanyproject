@@ -60,6 +60,16 @@ export const DEFAULT_PAGES: PageRecord[] = [
     _count: { sections: 4, revisions: 2 },
   },
   {
+    id: "page-sustainability",
+    title: "Sustainability & Green Campus",
+    slug: "/sustainability",
+    status: "PUBLISHED",
+    metaTitle: "Sustainability & LEED Platinum Standards - Noor Plastic Industries",
+    metaDescription: "Net-positive green manufacturing, energy savings, and circular polymer practices at Kaliakoir.",
+    updatedAt: new Date().toISOString(),
+    _count: { sections: 5, revisions: 1 },
+  },
+  {
     id: "page-products",
     title: "Product Catalog",
     slug: "/products",

@@ -8,6 +8,7 @@ import Footer from "@/components/layout/Footer";
 import { CATALOG_PRODUCTS, CatalogProduct } from "@/data/catalogData";
 import { X, Search, ChevronDown, ArrowRight, Sparkles, Layers } from "lucide-react";
 import { api } from "@/lib/api";
+import { ProductsCatalogSkeletonItems } from "@/components/common/Skeletons";
 
 interface ProductItem {
   id: string;
@@ -235,15 +236,17 @@ const ALL_PRODUCTS: ProductItem[] = [
 
 export default function ProductsPage() {
   const [productsList, setProductsList] = useState<ProductItem[]>(ALL_PRODUCTS);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [selectedFac, setSelectedFac] = useState<string[]>([]);
   const [selectedCat, setSelectedCat] = useState<string[]>([]);
 
   useEffect(() => {
+    let active = true;
     api.products
       .getAll()
       .then((res) => {
-        if (res?.data && res.data.length > 0) {
+        if (active && res?.data && res.data.length > 0) {
           const backendItems: ProductItem[] = res.data.map((p: any) => ({
             id: p.id,
             n: p.name,
@@ -271,7 +274,13 @@ export default function ProductsPage() {
           setProductsList(backendItems);
         }
       })
-      .catch(() => { });
+      .catch(() => { })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
   // Accordion toggle states
@@ -679,14 +688,21 @@ export default function ProductsPage() {
         .prd-fbtn {
           display: none;
           height: 50px;
-          padding: 0 18px;
-          border-radius: 14px;
-          border: 1.5px solid var(--line);
-          background: #fff;
+          padding: 0 22px;
+          border-radius: 9999px;
+          border: 1.5px solid #094E9B;
+          background: #ffffff;
           font-weight: 700;
-          font-size: 14px;
+          font-size: 13px;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
           cursor: pointer;
-          color: var(--ink);
+          color: #094E9B;
+          transition: all 0.2s ease;
+        }
+        .prd-fbtn:hover {
+          background: #094E9B;
+          color: #ffffff;
         }
         .prd-meta {
           display: flex;
@@ -1156,7 +1172,9 @@ export default function ProductsPage() {
 
             {/* Product Cards Grid */}
             <div className="prd-grid">
-              {filteredProducts.length > 0 ? (
+              {loading ? (
+                <ProductsCatalogSkeletonItems count={6} />
+              ) : filteredProducts.length > 0 ? (
                 filteredProducts.map((p, idx) => (
                   <Link
                     key={p.id}

@@ -28,6 +28,7 @@ import {
   AdminConfirmDeleteModal,
   useAdminToast,
 } from "@/components/admin/AdminCrudShell";
+import { AdminCardSkeletonItems, AdminTableSkeletonRows } from "@/components/common/Skeletons";
 
 interface Application {
   id: string;
@@ -240,7 +241,7 @@ export default function AdminCareersPage() {
           />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {filteredJobs.map((job) => (
+            {loading ? <AdminCardSkeletonItems count={4} /> : filteredJobs.map((job) => (
               <div
                 key={job.id}
                 className={`bg-slate-900 border rounded-2xl p-5 flex flex-col justify-between gap-4 transition-all ${
@@ -366,7 +367,7 @@ export default function AdminCareersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/60 font-medium">
-                  {filteredApps.map((item) => (
+                  {loading ? <AdminTableSkeletonRows rows={5} columns={6} /> : filteredApps.map((item) => (
                     <tr key={item.id} className="hover:bg-slate-800/40 transition-colors">
                       <td className="py-3.5 px-4">
                         <div className="font-bold text-white">{item.name}</div>

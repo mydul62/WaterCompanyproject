@@ -6,6 +6,7 @@ import {
   DEFAULT_CASE_STUDIES,
   DEFAULT_CERTIFICATES,
   DEFAULT_CAREER_JOBS,
+  DEFAULT_TV_NEWS_VIDEOS,
 } from "../src/data/cmsDefaults";
 
 const prisma = new PrismaClient();
@@ -63,8 +64,10 @@ async function main() {
     { key: "seo_meta_title", value: "Noor Plastic | Noor Plastic Industries — Pure Water & Plastic Packaging", category: "SEO" },
     { key: "seo_meta_description", value: "Noor Plastic Industries (Proprietor: Nurul Islam) — Authorized plastic manufacturing, importing & supplying company in Latifpur-B, Kaliakoir-1750, Gazipur. Trade License #242501300583.", category: "SEO" },
     { key: "seo_meta_keywords", value: "Noor Plastic, Noor Plastic Industries, Pure Water Bottle, PET Dispenser Bottle, Plastic Packaging Bangladesh, Kaliakoir Gazipur", category: "SEO" },
-    { key: "copyright_text", value: "Copyright © 2024 - 2026 Noor Plastic Industries. All rights reserved.", category: "FOOTER" },
-    { key: "footer_copyright", value: "Copyright © 2024 - 2026 Noor Plastic Industries. All rights reserved.", category: "FOOTER" },
+    { key: "copyright_text", value: "Copyright © 2026 Noor Plastic Industries. All rights reserved.", category: "FOOTER" },
+    { key: "footer_copyright", value: "Copyright © 2026 Noor Plastic Industries. All rights reserved.", category: "FOOTER" },
+    { key: "developer_name", value: "BrainForce", category: "FOOTER" },
+    { key: "developer_url", value: "https://brainforge26.tech/", category: "FOOTER" },
   ];
 
   for (const item of settingsData) {
@@ -87,7 +90,7 @@ async function main() {
     { title: "Brands We Work With", slug: "link-brands", destinationUrl: "/brands-we-work-with", category: "NAV" },
     { title: "Media and News", slug: "link-media", destinationUrl: "/media", category: "NAV" },
     { title: "Factory Location", slug: "link-factory", destinationUrl: "/#about", category: "NAV" },
-    { title: "Sustainability", slug: "link-sustainability", destinationUrl: "/#overview", category: "NAV" },
+    { title: "Sustainability", slug: "link-sustainability", destinationUrl: "/sustainability", category: "NAV" },
     { title: "Request Quote (RFQ)", slug: "link-rfq", destinationUrl: "/request-quote", category: "BUTTON" },
   ];
 
@@ -160,7 +163,7 @@ async function main() {
     data: {
       menuId: primaryMenu.id,
       label: "Sustainability",
-      url: "/#overview",
+      url: "/sustainability",
       order: 2,
     },
   });
@@ -243,9 +246,18 @@ async function main() {
   await prisma.navigationItem.create({
     data: {
       menuId: primaryMenu.id,
+      label: "TV News",
+      url: "/tv-news",
+      order: 6,
+    },
+  });
+
+  await prisma.navigationItem.create({
+    data: {
+      menuId: primaryMenu.id,
       label: "Media and Contacts",
       url: "/media",
-      order: 6,
+      order: 7,
     },
   });
 
@@ -857,6 +869,13 @@ async function main() {
       await prisma.certificate.create({ data: cert });
     }
     console.log("Certificates seeded:", DEFAULT_CERTIFICATES.length);
+  }
+
+  if ((await prisma.tvNewsVideo.count()) === 0) {
+    for (const video of DEFAULT_TV_NEWS_VIDEOS) {
+      await prisma.tvNewsVideo.create({ data: video });
+    }
+    console.log("TV News videos seeded:", DEFAULT_TV_NEWS_VIDEOS.length);
   }
 
   if ((await prisma.careerJob.count()) === 0) {

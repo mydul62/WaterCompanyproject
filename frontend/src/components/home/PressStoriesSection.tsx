@@ -6,9 +6,12 @@ import Link from "next/link";
 import { Newspaper, ArrowRight, Calendar, Clock, ZoomIn, X, ExternalLink, Sparkles } from "lucide-react";
 import { PRESS_STORIES, PressStory, normalizePressStory } from "@/data/mediaData";
 import { api } from "@/lib/api";
+import { siteButtonClass } from "@/components/common/SiteButton";
+import { PressCardsSkeletonItems } from "@/components/common/Skeletons";
 
 export default function PressStoriesSection() {
   const [stories, setStories] = useState<PressStory[]>(PRESS_STORIES);
+  const [loading, setLoading] = useState(true);
   const [lightboxStory, setLightboxStory] = useState<PressStory | null>(null);
 
   useEffect(() => {
@@ -22,6 +25,9 @@ export default function PressStoriesSection() {
       })
       .catch(() => {
         // Keep clean fallback PRESS_STORIES
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
     return () => {
       active = false;
@@ -75,12 +81,11 @@ export default function PressStoriesSection() {
 
         {/* High-End Editorial Press Cards with Liquid Water Wave Hover */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
-          {stories.map((story, idx) => {
+          {loading ? <PressCardsSkeletonItems count={4} /> : stories.map((story, idx) => {
             const delays = ["delay-75", "delay-150", "delay-200", "delay-250"];
             return (
               <article
                 key={story.id}
-                data-reveal="scale"
                 className={`water-fill-card group rounded-3xl bg-white border border-slate-200/80 p-4 shadow-[0_10px_35px_rgba(0,0,0,0.04)] flex flex-col justify-between overflow-hidden cursor-pointer ${delays[idx % delays.length]}`}
               >
               <div className="space-y-3.5">
@@ -112,15 +117,15 @@ export default function PressStoriesSection() {
                   <div className="absolute inset-0 bg-slate-900/35 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                     <button
                       onClick={() => setLightboxStory(story)}
-                      className="px-3 py-1.5 rounded-full bg-white text-slate-900 text-xs font-bold shadow-lg inline-flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                      className={siteButtonClass({ variant: "light", size: "xs" })}
                       title="কাটিং বড় করে দেখুন"
                     >
-                      <ZoomIn className="w-3.5 h-3.5 text-cyan-600" />
+                      <ZoomIn className="w-3.5 h-3.5 text-[#094E9B]" />
                       <span>Zoom Scan</span>
                     </button>
                     <Link
                       href={`/media/${story.slug}`}
-                      className="px-3 py-1.5 rounded-full bg-slate-900 text-white text-xs font-bold shadow-lg inline-flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-all"
+                      className={siteButtonClass({ variant: "primary", size: "xs" })}
                       title="পূর্ণাঙ্গ প্রতিবেদন পড়ুন"
                     >
                       <span>Read Story</span>
@@ -154,7 +159,7 @@ export default function PressStoriesSection() {
 
                 <Link
                   href={`/media/${story.slug}`}
-                  className="inline-flex items-center gap-1 text-sm font-bold text-cyan-700 hover:text-cyan-800 transition-colors group-hover:translate-x-0.5 transition-transform"
+                  className="inline-flex items-center gap-1 text-sm font-bold text-[#094E9B] hover:text-[#073E7E] transition-colors group-hover:translate-x-0.5 transition-transform"
                 >
                   <span>প্রতিবেদন পড়ুন</span>
                   <ArrowRight className="w-4 h-4" />
@@ -169,11 +174,11 @@ export default function PressStoriesSection() {
         <div className="mt-12 sm:mt-16 text-center">
           <Link
             href="/media"
-            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-2xl bg-white border border-slate-200 text-slate-800 font-bold text-sm sm:text-base shadow-xs hover:shadow-md hover:border-cyan-300 hover:text-cyan-700 transition-all active:scale-95"
+            className={siteButtonClass({ variant: "outline", className: "max-w-full" })}
           >
-            <Newspaper className="w-4 h-4 text-cyan-600" />
+            <Newspaper className="w-4 h-4 text-current shrink-0" />
             <span>View All National Press Articles ({stories.length})</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 shrink-0" />
           </Link>
         </div>
       </div>
@@ -227,14 +232,14 @@ export default function PressStoriesSection() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setLightboxStory(null)}
-                  className="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition-colors"
+                  className={siteButtonClass({ variant: "outline", size: "sm", className: "tracking-normal normal-case" })}
                 >
                   বন্ধ করুন
                 </button>
                 <Link
                   href={`/media/${lightboxStory.slug}`}
                   onClick={() => setLightboxStory(null)}
-                  className="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold shadow-md transition-colors inline-flex items-center gap-1.5"
+                  className={siteButtonClass({ variant: "primary", size: "sm", className: "tracking-normal normal-case" })}
                 >
                   <span>পূর্ণাঙ্গ প্রতিবেদন পেজে পড়ুন</span>
                   <ExternalLink className="w-3.5 h-3.5" />

@@ -49,7 +49,9 @@ export class SettingsService {
     for (const key of keys) {
       const val = normalizedMap[key];
       let category = "GENERAL";
-      if (key.includes("logo") || key.includes("name") || key.includes("tagline") || key.includes("brand")) {
+      if (key.includes("footer") || key.includes("copyright") || key.includes("developer")) {
+        category = "FOOTER";
+      } else if (key.includes("logo") || key.includes("name") || key.includes("tagline") || key.includes("brand")) {
         category = "BRANDING";
       } else if (key.includes("phone") || key.includes("email") || key.includes("headquarter") || key.includes("plant")) {
         category = "CONTACT";
@@ -57,8 +59,6 @@ export class SettingsService {
         category = "SOCIAL";
       } else if (key.includes("seo") || key.includes("meta")) {
         category = "SEO";
-      } else if (key.includes("footer") || key.includes("copyright")) {
-        category = "FOOTER";
       }
 
       await prisma.siteSetting.upsert({

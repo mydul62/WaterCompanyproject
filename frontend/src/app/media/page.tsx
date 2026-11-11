@@ -7,6 +7,8 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { PRESS_STORIES, PressStory, normalizePressStory } from "@/data/mediaData";
 import { api } from "@/lib/api";
+import { siteButtonClass, siteFilterTabClass } from "@/components/common/SiteButton";
+import { PressCardsSkeletonItems } from "@/components/common/Skeletons";
 import {
   Newspaper,
   Calendar,
@@ -28,6 +30,7 @@ import {
 
 export default function MediaAndContactsPage() {
   const [stories, setStories] = useState<PressStory[]>(PRESS_STORIES);
+  const [loading, setLoading] = useState(true);
   const [selectedOutlet, setSelectedOutlet] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -51,6 +54,9 @@ export default function MediaAndContactsPage() {
       })
       .catch(() => {
         // Keep static defaults
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
     return () => {
       active = false;
@@ -205,6 +211,15 @@ export default function MediaAndContactsPage() {
                 <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-medium">
                   জাতীয় ও আন্তর্জাতিক গণমাধ্যমে এক্সক্লুসিভ ক্যান লিমিটেড এবং কিউ পাইল লিমিটেডের শিল্প বিকাশ, উদ্ভাবনী প্যাকেজিং প্রযুক্তি ও সাফল্যগাথার সম্পূর্ণ আর্কাইভ।
                 </p>
+                <div className="pt-1">
+                  <Link
+                    href="/tv-news"
+                    className={siteButtonClass({ variant: "primary", size: "sm" })}
+                  >
+                    <span>Watch TV News &amp; YouTube Features</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
               </div>
 
               {/* Filter Bar & Search Box */}
@@ -216,11 +231,7 @@ export default function MediaAndContactsPage() {
                       key={outlet}
                       type="button"
                       onClick={() => setSelectedOutlet(outlet)}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                        selectedOutlet === outlet
-                          ? "bg-slate-900 text-white shadow-xs"
-                          : "bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-100"
-                      }`}
+                      className={siteFilterTabClass(selectedOutlet === outlet)}
                     >
                       {outlet === "All" ? "সকল সংবাদপত্র" : outlet}
                     </button>
@@ -242,7 +253,7 @@ export default function MediaAndContactsPage() {
 
               {/* Stories Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {filteredStories.map((story) => (
+                {loading ? <PressCardsSkeletonItems count={4} /> : filteredStories.map((story) => (
                   <article
                     key={story.id}
                     className="bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-xl hover:border-slate-300 transition-all duration-300 flex flex-col group"
@@ -609,7 +620,7 @@ export default function MediaAndContactsPage() {
                       <div className="text-center pt-2">
                         <button
                           type="submit"
-                          className="inline-flex items-center gap-2.5 px-9 py-3.5 rounded-xl bg-[#0b6e99] hover:bg-[#09577a] text-white font-extrabold text-sm tracking-wide shadow-lg hover:shadow-xl transition-all cursor-pointer hover:-translate-y-0.5 active:scale-95"
+                          className={siteButtonClass({ variant: "primary", size: "lg" })}
                         >
                           <Send className="w-4 h-4" />
                           <span>Submit Corporate Inquiry</span>

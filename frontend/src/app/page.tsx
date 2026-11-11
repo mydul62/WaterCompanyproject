@@ -66,7 +66,7 @@ export default function HomePage() {
           {/* Section 6: Packaging Solutions Always Made Right & Company Overview */}
           <B2BBanner onOpenRFQ={() => handleOpenRFQ()} />
 
-          {/* Section 7: Explore More 13 Cards Grid */}
+          {/* Section 7: Explore More Bento Grid */}
           <ExploreGrid />
         </div>
       </main>

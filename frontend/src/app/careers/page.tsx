@@ -7,6 +7,8 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import RFQDrawer from "@/components/rfq/RFQDrawer";
 import { api } from "@/lib/api";
+import { siteButtonClass, siteFilterTabClass } from "@/components/common/SiteButton";
+import { CareersListSkeleton } from "@/components/common/Skeletons";
 import { JOB_OPENINGS, JobOpening } from "@/data/careersData";
 import {
   Briefcase,
@@ -61,6 +63,7 @@ const CULTURE_PILLARS = [
 
 export default function CareerPage() {
   const [jobs, setJobs] = useState<JobOpening[]>(JOB_OPENINGS);
+  const [loading, setLoading] = useState(true);
   const [selectedDept, setSelectedDept] = useState<string>("all");
   const [expandedJobId, setExpandedJobId] = useState<string | null>(JOB_OPENINGS[0]?.id || null);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -79,6 +82,9 @@ export default function CareerPage() {
       })
       .catch(() => {
         // Keep clean fallback JOB_OPENINGS
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
     return () => {
       active = false;
@@ -251,7 +257,7 @@ export default function CareerPage() {
             <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
               <a
                 href="#open-positions"
-                className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-white hover:bg-slate-100 text-[#0a1f33] font-bold text-xs sm:text-sm shadow-xl transition-all hover:-translate-y-0.5 cursor-pointer"
+                className={siteButtonClass({ variant: "light" })}
               >
                 <span>Explore Open Positions</span>
                 <ChevronRight className="w-4 h-4" />
@@ -259,7 +265,7 @@ export default function CareerPage() {
               <button
                 type="button"
                 onClick={() => setIsGeneralApplyOpen(true)}
-                className="inline-flex items-center gap-2 px-7 py-3 rounded-xl border border-white/30 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-bold text-xs sm:text-sm transition-all hover:-translate-y-0.5 cursor-pointer"
+                className={siteButtonClass({ variant: "ghost" })}
               >
                 <span>Submit Spontaneous CV</span>
                 <ArrowRight className="w-4 h-4" />
@@ -395,11 +401,7 @@ export default function CareerPage() {
                     <button
                       key={dept.id}
                       onClick={() => setSelectedDept(dept.id)}
-                      className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                        selectedDept === dept.id
-                          ? "bg-slate-900 text-white shadow-md shadow-slate-900/15"
-                          : "bg-white hover:bg-slate-100 text-slate-700 border border-slate-200"
-                      }`}
+                      className={siteFilterTabClass(selectedDept === dept.id)}
                     >
                       {dept.label}
                     </button>
@@ -409,7 +411,9 @@ export default function CareerPage() {
 
               {/* Job Cards List */}
               <div className="space-y-6">
-                {filteredJobs.length === 0 ? (
+                {loading ? (
+                  <CareersListSkeleton count={4} />
+                ) : filteredJobs.length === 0 ? (
                   <div className="p-12 text-center rounded-2xl bg-white border border-slate-200 text-slate-500">
                     <p className="font-semibold text-base">No open positions matched your search criteria.</p>
                     <p className="text-xs sm:text-sm mt-1">Try selecting another department or submit your resume directly to our talent pool below.</p>
@@ -463,7 +467,7 @@ export default function CareerPage() {
                             <div className="flex items-center gap-3 shrink-0 pt-2 md:pt-0">
                               <button
                                 onClick={() => handleOpenApply(job)}
-                                className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm tracking-wide shadow-md transition-all active:scale-95 cursor-pointer flex items-center gap-2"
+                                className={siteButtonClass({ variant: "primary", size: "sm" })}
                               >
                                 <span>Apply Now</span>
                                 <ChevronRight className="w-4 h-4" />
@@ -541,7 +545,7 @@ export default function CareerPage() {
                               </span>
                               <button
                                 onClick={() => handleOpenApply(job)}
-                                className="px-5 py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs tracking-wide shadow-sm hover:bg-slate-800 transition-all flex items-center gap-1.5 cursor-pointer"
+                                className={siteButtonClass({ variant: "primary", size: "sm" })}
                               >
                                 <span>Submit Application for {job.title}</span>
                                 <ArrowRight className="w-3.5 h-3.5" />
@@ -567,7 +571,7 @@ export default function CareerPage() {
                 </div>
                 <button
                   onClick={() => setIsGeneralApplyOpen(true)}
-                  className="px-6 py-3 rounded-xl border border-slate-900 hover:bg-slate-900 hover:text-white text-slate-900 font-bold text-xs sm:text-sm tracking-wide transition-all shrink-0 cursor-pointer flex items-center gap-2"
+                  className={siteButtonClass({ variant: "outline", className: "shrink-0" })}
                 >
                   <span>Submit General Application</span>
                   <Send className="w-4 h-4" />
@@ -830,14 +834,14 @@ export default function CareerPage() {
                         setActiveApplyJob(null);
                         setIsGeneralApplyOpen(false);
                       }}
-                      className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold text-xs cursor-pointer"
+                      className={siteButtonClass({ variant: "outline", size: "sm" })}
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm tracking-wide shadow-md transition-all active:scale-95 cursor-pointer flex items-center gap-2"
+                      className={siteButtonClass({ variant: "primary", size: "sm" })}
                     >
                       {isSubmitting ? (
                         <span>Submitting Application...</span>

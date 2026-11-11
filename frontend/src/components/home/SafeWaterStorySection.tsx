@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Sparkles, CheckCircle2 } from "lucide-react";
+import { siteButtonClass } from "@/components/common/SiteButton";
 
 export default function SafeWaterStorySection() {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -78,7 +79,7 @@ export default function SafeWaterStorySection() {
             <div className="mt-8">
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#00c2e8] hover:bg-[#00acc1] text-white font-bold text-sm tracking-wide shadow-[0_8px_22px_rgba(0,194,232,0.35)] transition-all duration-200 hover:scale-105 active:scale-95 group"
+                className={siteButtonClass({ variant: "primary", className: "group" })}
               >
                 <span>{isExpanded ? "Show Less" : "Read More"}</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

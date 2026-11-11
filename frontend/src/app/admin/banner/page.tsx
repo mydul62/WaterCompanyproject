@@ -31,6 +31,7 @@ import {
   clearLocalBanners,
   emitBannersUpdated,
 } from "@/data/heroBanners";
+import { AdminCardGridSkeleton } from "@/components/common/Skeletons";
 
 export default function AdminBannerPage() {
   const [slides, setSlides] = useState<HeroSlide[]>(DEFAULT_HERO_BANNERS);
@@ -408,7 +409,7 @@ export default function AdminBannerPage() {
 
       {/* Banner Slides List */}
       <div className="space-y-4">
-        {slides.map((slide, idx) => {
+        {loading ? <AdminCardGridSkeleton count={4} columns={2} /> : slides.map((slide, idx) => {
           const isDeleting = confirmDeleteId === slide.id;
           return (
             <div

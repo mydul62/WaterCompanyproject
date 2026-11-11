@@ -21,13 +21,14 @@ import {
   getFallbackMenuTree,
 } from "./_components/NavigationItemForm";
 import { AdminEditLoadingState } from "@/components/admin/AdminCrudShell";
+import { AdminFormSkeleton } from "@/components/common/Skeletons";
 
 function HeaderNavigationContent() {
   const searchParams = useSearchParams();
   const initialMenu = searchParams.get("menu") || "HEADER_PRIMARY";
   const [selectedMenuCode, setSelectedMenuCode] = useState(initialMenu);
   const [navItems, setNavItems] = useState<NavItem[]>(() => getFallbackMenuTree(initialMenu));
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
 
@@ -174,7 +175,7 @@ function HeaderNavigationContent() {
         </div>
 
         <div className="space-y-3">
-          {navItems.map((item, index) => (
+          {loading ? <AdminFormSkeleton /> : navItems.map((item, index) => (
             <div
               key={item.id}
               className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3"

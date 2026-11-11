@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Check, ShoppingCart } from "lucide-react";
+import { siteButtonClass } from "@/components/common/SiteButton";
 
 interface BottlePack {
   id: string;
@@ -120,11 +121,11 @@ export default function QualityBottlePacksSection() {
               {/* Add to Cart Button */}
               <button
                 onClick={() => handleAddToCart(pack.id)}
-                className={`mt-auto px-8 py-3 rounded-full text-sm font-bold tracking-wide transition-all duration-200 flex items-center gap-2 ${
-                  addedId === pack.id
-                    ? "bg-emerald-600 text-white shadow-md"
-                    : "bg-white border border-slate-200 text-slate-700 hover:bg-[#00c2e8] hover:text-white hover:border-[#00c2e8] shadow-sm hover:shadow-[0_8px_20px_rgba(0,194,232,0.35)]"
-                }`}
+                className={siteButtonClass({
+                  variant: addedId === pack.id ? "success" : "outline",
+                  size: "sm",
+                  className: "mt-auto",
+                })}
               >
                 {addedId === pack.id ? (
                   <>

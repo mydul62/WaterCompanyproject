@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Sparkles, ArrowRight } from "lucide-react";
+import { siteButtonClass } from "@/components/common/SiteButton";
 
 interface ProductCardData {
   id: string;
@@ -219,10 +220,10 @@ export default function ProductShowcase() {
         <div data-reveal="up" className="delay-150 mt-14 sm:mt-16 text-center">
           <Link
             href="/products"
-            className="water-fill-btn inline-flex items-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 rounded-2xl bg-slate-900 text-white font-bold text-base sm:text-lg shadow-xl hover:shadow-[0_15px_35px_rgba(0,194,232,0.35)] active:scale-95 group cursor-pointer"
+            className={siteButtonClass({ variant: "primary", size: "lg", className: "group max-w-full" })}
           >
             <span>View Full Products Catalog (300+ Items)</span>
-            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="w-5 h-5 shrink-0 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
       </div>

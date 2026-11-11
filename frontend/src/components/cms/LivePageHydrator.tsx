@@ -10,6 +10,7 @@ const ROUTE_TO_PAGE_KEY: Record<string, string> = {
   "/": "home",
   "/our-story": "story",
   "/our-business": "business",
+  "/sustainability": "sustainability",
   "/products": "products",
   "/certificates": "certificates",
   "/careers": "careers",
@@ -20,6 +21,7 @@ const ROUTE_TO_PAGE_KEY: Record<string, string> = {
   "/faqs": "faqs",
   "/case-studies": "case-studies",
   "/blog": "blog",
+  "/tv-news": "tv-news",
   "/request-quote": "request-quote",
 };
 
@@ -28,6 +30,7 @@ const ROUTE_TO_SLUG: Record<string, string> = {
   "/": "home",
   "/our-story": "our-story",
   "/our-business": "our-business",
+  "/sustainability": "sustainability",
   "/products": "products",
   "/certificates": "certificates",
   "/careers": "careers",
@@ -38,6 +41,7 @@ const ROUTE_TO_SLUG: Record<string, string> = {
   "/faqs": "faqs",
   "/case-studies": "case-studies",
   "/blog": "blog",
+  "/tv-news": "tv-news",
   "/request-quote": "request-quote",
 };
 

@@ -15,10 +15,11 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { LinkRecord, DEFAULT_LINKS } from "./_components/LinkForm";
+import { AdminTableSkeletonRows } from "@/components/common/Skeletons";
 
 export default function CentralizedLinkManagementPage() {
   const [links, setLinks] = useState<LinkRecord[]>(DEFAULT_LINKS);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
   const [notification, setNotification] = useState<string | null>(null);
@@ -129,11 +130,10 @@ export default function CentralizedLinkManagementPage() {
             <button
               key={cat}
               onClick={() => setCategoryFilter(cat)}
-              className={`text-xs font-bold px-3 py-2 rounded-xl transition-all ${
-                categoryFilter === cat
+              className={`text-xs font-bold px-3 py-2 rounded-xl transition-all ${categoryFilter === cat
                   ? "bg-blue-600 text-white shadow-md shadow-blue-600/20"
                   : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
-              }`}
+                }`}
             >
               {cat.replace("_", " ")}
             </button>
@@ -156,7 +156,7 @@ export default function CentralizedLinkManagementPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 font-medium">
-              {filteredLinks.map((link) => (
+              {loading ? <AdminTableSkeletonRows rows={6} columns={6} /> : filteredLinks.map((link) => (
                 <tr key={link.id} className="hover:bg-slate-800/40 transition-colors group">
                   <td className="py-4 px-5">
                     <span className="font-mono font-bold text-cyan-400 text-xs px-2.5 py-1 rounded-md bg-slate-950 border border-slate-800">

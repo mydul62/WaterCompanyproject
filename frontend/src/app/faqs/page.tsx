@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { siteButtonClass, siteFilterTabClass } from "@/components/common/SiteButton";
 import {
   HelpCircle,
   Search,
@@ -268,11 +269,7 @@ export default function FaqsPage() {
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveCategory(tab.id)}
-                    className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${
-                      isActive
-                        ? "bg-[#0b6e99] text-white shadow-md shadow-[#0b6e99]/25 scale-102"
-                        : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200/80 hover:border-slate-300"
-                    }`}
+                    className={siteFilterTabClass(isActive)}
                   >
                     <span>{tab.label}</span>
                     <span
@@ -307,7 +304,7 @@ export default function FaqsPage() {
                     setSearchQuery("");
                     setActiveCategory("ALL");
                   }}
-                  className="mt-4 px-5 py-2 rounded-lg bg-[#0b6e99] text-white text-sm font-semibold hover:bg-[#09577a] transition-colors"
+                  className={siteButtonClass({ variant: "primary", size: "sm", className: "mt-4" })}
                 >
                   Reset Filters
                 </button>
@@ -395,15 +392,15 @@ export default function FaqsPage() {
               <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
                 <Link
                   href="/request-quote"
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-sm tracking-wide text-center transition-all shadow-lg hover:shadow-cyan-400/20"
+                  className={siteButtonClass({ variant: "light", className: "w-full sm:w-auto" })}
                 >
                   Request a Quote
                 </Link>
                 <a
                   href="tel:+8801711987275"
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm border border-white/20 text-center transition-all flex items-center justify-center gap-2"
+                  className={siteButtonClass({ variant: "ghost", className: "w-full sm:w-auto" })}
                 >
-                  <Phone className="w-4 h-4 text-cyan-300" />
+                  <Phone className="w-4 h-4 text-[#75B5F5]" />
                   <span>Call Hotline</span>
                 </a>
               </div>
