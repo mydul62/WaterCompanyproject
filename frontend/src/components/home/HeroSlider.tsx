@@ -1,194 +1,461 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import { Play, X, Sparkles } from "lucide-react";
-import GlassyHeroCanvas from "./GlassyHeroCanvas";
+import Link from "next/link";
+import { Play, X, Droplets } from "lucide-react";
+import { api } from "@/lib/api";
 
-const HERO_DATA = [
+const DEFAULT_HERO_YOUTUBE_EMBED =
+  "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0";
+
+function resolveHeroVideoSource(rawUrl: string): {
+  type: "youtube" | "video";
+  src: string;
+} {
+  const trimmed = rawUrl.trim();
+  if (!trimmed) {
+    return { type: "youtube", src: DEFAULT_HERO_YOUTUBE_EMBED };
+  }
+
+  const cleanPath = trimmed.split("?")[0].toLowerCase();
+  if (
+    cleanPath.endsWith(".mp4") ||
+    cleanPath.endsWith(".webm") ||
+    cleanPath.endsWith(".ogg") ||
+    cleanPath.endsWith(".mov")
+  ) {
+    return { type: "video", src: trimmed };
+  }
+
+  try {
+    const parsed = new URL(trimmed);
+    const host = parsed.hostname.replace(/^www\./, "").toLowerCase();
+    let youtubeId = "";
+
+    if (host === "youtu.be") {
+      youtubeId = parsed.pathname.split("/").filter(Boolean)[0] || "";
+    } else if (
+      host === "youtube.com" ||
+      host === "m.youtube.com" ||
+      host === "youtube-nocookie.com"
+    ) {
+      if (parsed.pathname.startsWith("/watch")) {
+        youtubeId = parsed.searchParams.get("v") || "";
+      } else if (
+        parsed.pathname.startsWith("/embed/") ||
+        parsed.pathname.startsWith("/shorts/")
+      ) {
+        youtubeId = parsed.pathname.split("/").filter(Boolean)[1] || "";
+      }
+    }
+
+    if (youtubeId && /^[a-zA-Z0-9_-]{6,}$/.test(youtubeId)) {
+      return {
+        type: "youtube",
+        src: `https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&rel=0`,
+      };
+    }
+
+    return { type: "youtube", src: trimmed };
+  } catch {
+    return { type: "youtube", src: DEFAULT_HERO_YOUTUBE_EMBED };
+  }
+}
+
+interface HeroSlide {
+  id: string;
+  num: string;
+  lines: [string, string, string];
+  description: string;
+  readMoreHref: string;
+  offerEyebrow1: string;
+  offerEyebrow2: string;
+  offerPrice: string;
+  offerUnit: string;
+  visualLayout: "duo" | "trio";
+}
+
+const SLIDES: HeroSlide[] = [
   {
     id: "slide-1",
-    image: "/images/hero-bottle-sky.jpg",
-    badge: "Sustainable Packaging & Industrial Solutions",
-    line1Bold: "Beyond",
-    line1Light: "packaging",
-    line2We: "we",
-    line2Outline: "Drive Innovation",
+    num: "01",
+    lines: ["Delivered Right", "To Your Home &", "Office Door."],
+    description:
+      "Duty obligations of business will frequently occur pleasures be repudiated and annoyances accepted.",
+    readMoreHref: "/products",
+    offerEyebrow1: "Limited",
+    offerEyebrow2: "Time Offer",
+    offerPrice: "$15.50",
+    offerUnit: "Per bottle",
+    visualLayout: "duo",
   },
   {
     id: "slide-2",
-    image: "/images/hero-bottle-splash.jpg",
-    badge: "Precision Engineered Bottles & Canisters",
-    line1Bold: "Beyond",
-    line1Light: "packaging",
-    line2We: "we",
-    line2Outline: "Craft Solution",
+    num: "02",
+    lines: ["Aguapure Dealer", "Is Closer Than", "You Think"],
+    description:
+      "Quisque semper nulla sit amet dignissim efficitur. Fusce ac enim quis purus volutpat finibus.",
+    readMoreHref: "/our-business",
+    offerEyebrow1: "Limited",
+    offerEyebrow2: "Time Offer",
+    offerPrice: "$15.50",
+    offerUnit: "Per bottle",
+    visualLayout: "duo",
   },
   {
     id: "slide-3",
-    image: "/images/hero-water-glass.jpg",
-    badge: "Eco-Friendly High Performance Polymers",
-    line1Bold: "Beyond",
-    line1Light: "packaging",
-    line2We: "we",
-    line2Outline: "Shape the Future",
+    num: "03",
+    lines: ["100% Pure Water", "Sealed Fresh For", "Every Occasion."],
+    description:
+      "Precision multi-stage filtration and certified cleanroom bottling engineered for daily home and office hydration.",
+    readMoreHref: "/certificates",
+    offerEyebrow1: "Special",
+    offerEyebrow2: "Bulk Offer",
+    offerPrice: "$14.00",
+    offerUnit: "Per bottle",
+    visualLayout: "duo",
+  },
+  {
+    id: "slide-4",
+    num: "04",
+    lines: ["Bulk 3-Bottle", "Family & Office", "Water Packs."],
+    description:
+      "Triple-bottle 5-gallon purified mineral water bundles delivered straight to your home or workplace.",
+    readMoreHref: "/products",
+    offerEyebrow1: "Special",
+    offerEyebrow2: "Bulk Offer",
+    offerPrice: "$39.00",
+    offerUnit: "3 Bottles",
+    visualLayout: "trio",
   },
 ];
 
+// Deterministic ambient bubble parameters so SSR and CSR hydrate identically
+const AMBIENT_BUBBLES = [
+  { left: "16%", bottom: "12%", size: 10, dur: "10.5s", delay: "0.4s" },
+  { left: "24%", bottom: "26%", size: 7, dur: "13s", delay: "1.8s" },
+  { left: "34%", bottom: "8%", size: 12, dur: "11.5s", delay: "3.1s" },
+  { left: "43%", bottom: "20%", size: 8, dur: "9.8s", delay: "0.9s" },
+  { left: "51%", bottom: "14%", size: 14, dur: "14s", delay: "2.4s" },
+  { left: "60%", bottom: "45%", size: 9, dur: "12s", delay: "4.0s" },
+  { left: "72%", bottom: "56%", size: 11, dur: "11s", delay: "1.3s" },
+  { left: "86%", bottom: "62%", size: 8, dur: "13.5s", delay: "2.9s" },
+  { left: "28%", bottom: "58%", size: 6, dur: "15s", delay: "5.2s" },
+  { left: "47%", bottom: "65%", size: 9, dur: "12.5s", delay: "0.2s" },
+];
+
 export default function HeroSlider() {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [videoUrl, setVideoUrl] = useState("");
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % HERO_DATA.length);
-    }, 6000);
-    return () => clearInterval(timer);
+    api.settings
+      .getMap()
+      .then((res) => {
+        if (res?.data?.["hero_video_url"]) {
+          setVideoUrl(res.data["hero_video_url"]);
+        }
+      })
+      .catch(() => {});
   }, []);
 
-  const slide = HERO_DATA[currentSlide];
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsVideoOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  // Auto-advance slides every 7.5s (pauses only while video modal is open)
+  useEffect(() => {
+    if (isVideoOpen) return;
+    const timer = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % SLIDES.length);
+    }, 7500);
+    return () => clearInterval(timer);
+  }, [activeIndex, isVideoOpen]);
+
+  const currentSlide = SLIDES[activeIndex];
 
   return (
     <section
       id="hero"
-      className="relative w-full h-screen min-h-[700px] bg-[#0c1626] overflow-hidden select-none"
+      className="relative w-full min-h-[100svh] lg:min-h-0 lg:h-full overflow-hidden bg-[#064B9D] select-none"
     >
-      {/* Background Image Layer with Crossfade */}
-      <div className="absolute inset-0 w-full h-full">
-        {HERO_DATA.map((item, index) => (
-          <div
-            key={item.id}
-            className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
-              currentSlide === index ? "opacity-100 z-0 scale-100" : "opacity-0 -z-10 scale-105"
-            }`}
-            style={{ transition: "opacity 1.2s ease-in-out, transform 8s ease-out" }}
-          >
-            <Image
-              src={item.image}
-              alt={item.line2Outline}
-              fill
-              className="object-cover object-center"
-              priority={index === 0}
+      {/* Stage 0 (0.0s): Full-Bleed Underwater Bubbles Background + Oceanic Depth */}
+      <div className="hero-anim-bg absolute inset-0 z-0 pointer-events-none">
+        <img
+          src="/images/hero/hero-bubbles-bg.jpg"
+          alt="Underwater blue ripples and rising bubbles"
+          className="w-full h-full object-cover object-center"
+        />
+        {/* Gentle left vignette so white typography remains sharp at all widths */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-r from-[#043F8E]/65 via-[#0752AC]/20 to-transparent"
+        />
+        {/* Ambient Rising Water Bubbles */}
+        <div className="absolute inset-0 overflow-hidden">
+          {AMBIENT_BUBBLES.map((b, idx) => (
+            <span
+              key={idx}
+              style={
+                {
+                  left: b.left,
+                  bottom: b.bottom,
+                  width: `${b.size}px`,
+                  height: `${b.size}px`,
+                  "--bubble-dur": b.dur,
+                  "--bubble-delay": b.delay,
+                } as React.CSSProperties
+              }
+              className="hero-ambient-bubble absolute rounded-full border border-white/35 bg-white/10 shadow-[inset_0_1px_2px_rgba(255,255,255,0.45)]"
             />
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Subtle Radial Glass Gradient Accents */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-black/25 pointer-events-none z-[5]" />
-      <div className="absolute top-1/4 left-10 w-[420px] h-[420px] bg-cyan-400/10 rounded-full blur-[100px] pointer-events-none z-[5]" />
-      <div className="absolute bottom-1/4 right-10 w-[480px] h-[480px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none z-[5]" />
+      {/* Far-Left Vertical Slide Strip (Desktop & Tablet) */}
+      <aside
+        aria-label="Hero slides navigation"
+        className="hidden md:flex flex-col items-center justify-center gap-8 absolute left-0 top-0 bottom-0 w-[74px] lg:w-[82px] xl:w-[92px] bg-[#2163B5]/35 backdrop-blur-[2px] border-r border-white/10 z-30 pt-24"
+      >
+        {SLIDES.map((slide, idx) => {
+          const isActive = idx === activeIndex;
+          return (
+            <button
+              key={slide.id}
+              type="button"
+              onClick={() => setActiveIndex(idx)}
+              aria-label={`View slide ${slide.num}`}
+              aria-current={isActive ? "true" : undefined}
+              className={`text-[15px] xl:text-[16px] tracking-[0.06em] transition-all duration-300 cursor-pointer px-3 py-1.5 ${
+                isActive
+                  ? "text-[#062346] font-bold scale-110"
+                  : "text-white/85 hover:text-white font-medium"
+              }`}
+            >
+              {slide.num}
+            </button>
+          );
+        })}
+      </aside>
 
-      {/* Three.js Interactive 3D Glass Orbs & Botanical Leaves Canvas */}
-      <GlassyHeroCanvas />
+      {/* Main Slide Foreground Composition */}
+      <div
+        key={currentSlide.id}
+        className="relative z-20 w-full min-h-[100svh] lg:min-h-0 lg:h-full flex flex-col justify-between lg:block"
+      >
+        {/* Left Content Column (matches site-wide w-[98%] max-w-[1920px] grid) */}
+        <div className="w-[98%] max-w-[1920px] mx-auto flex-1 lg:flex-none lg:h-full px-4 sm:px-8 lg:px-12 pt-36 sm:pt-40 lg:pt-32 pb-6 lg:pb-12 flex items-center">
+          <div className="w-full lg:w-[50%] pl-1 md:pl-16 lg:pl-14 xl:pl-16 z-20">
+            {/* Stage 1 (0.35s+): Slow Staggered Headline Drop from Top */}
+            <h1 className="font-hero-display text-white font-normal text-[38px] sm:text-[50px] lg:text-[60px] xl:text-[68px] leading-[1.12] tracking-[-0.01em] mb-6">
+              <span className="hero-anim-line-1 block">
+                {currentSlide.lines[0]}
+              </span>
+              <span className="hero-anim-line-2 block">
+                {currentSlide.lines[1]}
+              </span>
+              <span className="hero-anim-line-3 block">
+                {currentSlide.lines[2]}
+              </span>
+            </h1>
 
-      {/* Hero Content Overlay strictly constrained to fluid grand canvas */}
-      <div className="relative z-20 w-[98%] h-full max-w-[1920px] mx-auto px-4 sm:px-8 flex flex-col justify-between pt-36 sm:pt-44 pb-12 pointer-events-none">
-        {/* Left Side: Exact Typography with Frosted Glass Backdrop */}
-        <div className="flex-1 flex items-center">
-          <div className="space-y-4 pointer-events-auto max-w-2xl pl-2 sm:pl-8">
-            {/* Glassy Tag Badge */}
-            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/40 bg-white/20 backdrop-blur-md text-white text-sm sm:text-base font-bold shadow-lg shadow-black/10">
-              <Sparkles className="w-4 h-4 text-cyan-300 animate-pulse" />
-              <span>{slide.badge}</span>
-            </div>
+            {/* Stage 2 (0.95s): Supporting Description */}
+            <p className="hero-anim-desc text-white/85 text-[15.5px] sm:text-[17px] xl:text-[18.5px] leading-[1.68] max-w-[500px] mb-9 font-normal">
+              {currentSlide.description}
+            </p>
 
-            {/* Typography */}
-            <div className="space-y-1 sm:space-y-2">
-              {/* Line 1 */}
-              <div className="flex flex-wrap items-baseline gap-2 sm:gap-3">
-                <span className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]">
-                  {slide.line1Bold}
-                </span>
-                <span className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-medium text-white/95 tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]">
-                  {slide.line1Light}
-                </span>
-              </div>
-
-              {/* Line 2 with Hollow Stroke Outline Text */}
-              <div className="flex flex-wrap items-baseline gap-2 sm:gap-3">
-                <span className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]">
-                  {slide.line2We}
+            {/* Stage 3 (1.20s): Action Buttons Row */}
+            <div className="hero-anim-actions flex flex-wrap items-center gap-7 sm:gap-10">
+              {/* READ MORE with Pale-Cyan Tilted Leaf Accent */}
+              <Link
+                href={currentSlide.readMoreHref}
+                className="relative inline-flex items-center group py-1.5 cursor-pointer"
+              >
+                <span className="relative z-10 text-[13.5px] sm:text-[14px] font-bold uppercase tracking-[0.08em] text-white group-hover:text-[#CBEFFF] transition-colors pr-1.5">
+                  READ MORE
                 </span>
                 <span
-                  className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)] transition-all duration-300"
-                  style={{
-                    color: "transparent",
-                    WebkitTextStroke: "2px #ffffff",
-                  }}
-                >
-                  {slide.line2Outline}
+                  aria-hidden="true"
+                  className="w-8 h-8 -ml-3.5 rounded-tr-[18px] rounded-bl-[18px] rounded-tl-[4px] rounded-br-[4px] bg-[#66C0EA]/55 group-hover:bg-[#66C0EA]/85 -rotate-12 transition-all duration-300 group-hover:scale-110"
+                />
+              </Link>
+
+              {/* WATCH VIDEO with Circular White Play Button */}
+              <button
+                type="button"
+                onClick={() => setIsVideoOpen(true)}
+                className="inline-flex items-center gap-4 group cursor-pointer text-left focus:outline-none"
+              >
+                <span className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white text-[#094E9B] flex items-center justify-center shadow-[0_10px_25px_rgba(3,28,70,0.28)] group-hover:scale-105 transition-transform duration-300 shrink-0">
+                  <Play className="w-5 h-5 fill-[#094E9B] ml-0.5" />
+                </span>
+                <span className="flex flex-col leading-tight">
+                  <span className="text-[13px] sm:text-[14px] font-bold uppercase tracking-[0.07em] text-white group-hover:text-[#CBEFFF] transition-colors">
+                    WATCH VIDEO
+                  </span>
+                  <span className="text-[13.5px] sm:text-[14.5px] text-white/80 font-normal mt-0.5">
+                    Production to Delivery
+                  </span>
+                </span>
+              </button>
+            </div>
+
+            {/* Mobile Slide Controls (< md) */}
+            <div className="flex md:hidden items-center gap-3 mt-7">
+              {SLIDES.map((slide, idx) => {
+                const isActive = idx === activeIndex;
+                return (
+                  <button
+                    key={slide.id}
+                    type="button"
+                    onClick={() => setActiveIndex(idx)}
+                    className={`px-3.5 py-1.5 rounded-full text-sm font-bold tracking-wider transition-all ${
+                      isActive
+                        ? "bg-white text-[#094E9B] shadow-sm"
+                        : "bg-white/15 text-white/85"
+                    }`}
+                  >
+                    {slide.num}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Visual Composition (Splash Platform + Bottles + Offer Badge) */}
+        {/* Desktop: Anchored Bottom-Right exactly matching reference proportions */}
+        <div className="relative mt-6 lg:mt-0 ml-auto w-[94%] sm:w-[82%] lg:w-[46.5%] xl:w-[45%] h-[280px] sm:h-[340px] lg:h-[58%] lg:max-h-[640px] lg:absolute lg:right-0 lg:bottom-0 z-20 pointer-events-none">
+          {/* Stage 4 (1.35s): Water Splash Platform Sliding in Smoothly from RIGHT */}
+          <div className="hero-anim-platform absolute inset-0 rounded-tl-[26px] lg:rounded-tl-[32px] overflow-hidden shadow-[-16px_-10px_42px_rgba(3,30,74,0.28)] bg-[#CFE7FA]">
+            <img
+              src="/images/hero/hero-splash-platform.jpg"
+              alt="Crystal clear water splash platform"
+              className="w-full h-full object-cover object-center"
+            />
+          </div>
+
+          {currentSlide.visualLayout === "trio" ? (
+            /* Stage 5 (1.85s): Three Standing 5-Gallon Bottles Trio Rising from Bottom */
+            <div className="hero-anim-bottle-vertical absolute inset-x-0 mx-auto bottom-[6%] h-[112%] sm:h-[114%] lg:h-[118%] w-[88%] z-30 flex items-end justify-center">
+              <img
+                src="/images/hero/bottles-trio.png"
+                alt="3-Pack 5-Gallon 100% Pure Water bottles"
+                className="max-h-full w-auto max-w-full object-contain drop-shadow-[0_18px_28px_rgba(3,38,94,0.34)]"
+              />
+            </div>
+          ) : (
+            <>
+              {/* Stage 6 (2.05s): Horizontal Lying 5-Gallon Bottle Behind Standing Jug */}
+              <div className="hero-anim-bottle-horizontal absolute right-[1%] bottom-[12%] w-[57%] z-20">
+                <img
+                  src="/images/hero/bottle-horizontal.png"
+                  alt="5-Gallon horizontal water dispenser bottle"
+                  className="w-full h-auto object-contain drop-shadow-[0_14px_22px_rgba(4,48,108,0.28)]"
+                />
+              </div>
+
+              {/* Stage 5 (1.85s): Standing Vertical 5-Gallon Bottle Rising from Bottom */}
+              <div className="hero-anim-bottle-vertical absolute left-[12%] sm:left-[13%] bottom-[6.5%] h-[116%] lg:h-[122%] z-30 flex items-end">
+                <img
+                  src="/images/hero/bottle-vertical.png"
+                  alt="5-Gallon 100% Pure Water bottle"
+                  className="h-full w-auto object-contain drop-shadow-[0_18px_28px_rgba(3,38,94,0.34)]"
+                />
+              </div>
+            </>
+          )}
+
+          {/* Stage 7 (2.75s): Circular Promotional Offer Badge Overlapping Standing Shoulder */}
+          <div
+            className={`hero-anim-badge absolute z-40 ${
+              currentSlide.visualLayout === "trio"
+                ? "left-[57%] sm:left-[58%] -top-[10%] lg:-top-[9%] xl:-top-[10%]"
+                : "left-[34%] -top-[11%] lg:-top-[10%] xl:-top-[11%]"
+            }`}
+          >
+            <div className="relative flex items-center justify-center">
+              {/* Thin Offset Concentric Outer Circle Ring (Reference Detail) */}
+              <div
+                aria-hidden="true"
+                className="w-[104px] h-[104px] sm:w-[126px] sm:h-[126px] lg:w-[138px] lg:h-[138px] xl:w-[152px] xl:h-[152px] rounded-full border border-[#094E9B]/85 absolute translate-x-[5px] -translate-y-[4px] pointer-events-none"
+              />
+              {/* Main Deep Royal-Blue Offer Badge Disc */}
+              <div className="relative w-[100px] h-[100px] sm:w-[122px] sm:h-[122px] lg:w-[134px] lg:h-[134px] xl:w-[148px] xl:h-[148px] rounded-full bg-gradient-to-br from-[#0657AF] via-[#04499A] to-[#013B82] shadow-[0_14px_34px_rgba(2,28,72,0.38)] flex flex-col items-center justify-center text-center text-white px-2">
+                <span className="text-[11px] sm:text-[12.5px] xl:text-[14px] font-medium leading-[1.2] text-[#E4FFFF]">
+                  {currentSlide.offerEyebrow1}
+                </span>
+                <span className="text-[11px] sm:text-[12.5px] xl:text-[14px] font-medium leading-[1.2] text-[#E4FFFF]">
+                  {currentSlide.offerEyebrow2}
+                </span>
+                <span className="text-[22px] sm:text-[26px] xl:text-[31px] font-bold leading-none my-1 tracking-tight text-white">
+                  {currentSlide.offerPrice}
+                </span>
+                <span className="text-[11px] sm:text-[12px] xl:text-[13px] font-normal text-white/90 leading-none">
+                  {currentSlide.offerUnit}
                 </span>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Center Circular Glass Video Play Button */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-auto">
-          <div className="relative group">
-            {/* Concentric Ambient Ripples */}
-            <div className="absolute inset-0 rounded-full bg-cyan-400/25 blur-md animate-ping" style={{ animationDuration: "3s" }} />
-            <div className="absolute -inset-3 rounded-full border border-white/35 backdrop-blur-sm group-hover:scale-125 transition-transform duration-500" />
-
-            <button
-              onClick={() => setIsVideoOpen(true)}
-              className="relative w-18 h-18 sm:w-22 sm:h-22 rounded-full bg-black/60 hover:bg-black/85 backdrop-blur-xl border-2 border-white/80 text-white flex items-center justify-center shadow-[0_0_40px_rgba(0,229,255,0.45)] transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer"
-              aria-label="Play Facility Video Tour"
-            >
-              <Play className="w-8 h-8 sm:w-9 sm:h-9 fill-white text-white ml-1 drop-shadow-md group-hover:text-cyan-300 transition-colors" />
-            </button>
-          </div>
-        </div>
-
-        {/* Bottom Slide Indicators (Glass Capsule) */}
-        <div className="flex items-center justify-center gap-2.5 pointer-events-auto">
-          <div className="px-4 py-2 rounded-full bg-black/30 backdrop-blur-xl border border-white/20 flex items-center gap-2 shadow-lg">
-            {HERO_DATA.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentSlide(idx)}
-                className={`h-2 transition-all rounded-full cursor-pointer ${
-                  currentSlide === idx
-                    ? "w-8 bg-cyan-400 shadow-[0_0_12px_rgba(0,229,255,0.8)]"
-                    : "w-2.5 bg-white/40 hover:bg-white/80"
-                }`}
-                aria-label={`Slide ${idx + 1}`}
-              />
-            ))}
-          </div>
-        </div>
       </div>
 
-      {/* Glass Video Modal */}
-      {isVideoOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl animate-in fade-in duration-300">
-          <div className="relative w-full max-w-4xl bg-neutral-900/90 backdrop-blur-2xl rounded-3xl overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.8)] border border-white/25">
-            <div className="flex items-center justify-between px-6 py-4 bg-black/40 border-b border-white/10 text-white">
-              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-cyan-300 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                Xclusive Can Limited &bull; Cleanroom &amp; Packaging Facility
-              </span>
-              <button
-                onClick={() => setIsVideoOpen(false)}
-                className="p-1.5 rounded-full hover:bg-white/15 text-neutral-300 hover:text-white transition-colors cursor-pointer"
-                aria-label="Close video"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="relative aspect-video w-full bg-black">
-              <iframe
-                className="w-full h-full"
-                src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1"
-                title="Xclusive Can Limited Tour"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+      {/* Video / Production-to-Delivery Modal */}
+      {isVideoOpen && (() => {
+        const media = resolveHeroVideoSource(videoUrl);
+        return (
+          <div
+            className="fixed inset-0 z-[100] bg-[#041836]/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
+            onClick={() => setIsVideoOpen(false)}
+          >
+            <div
+              className="relative w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl border border-white/20"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="bg-[#0E489C] text-white px-6 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <Droplets className="w-5 h-5 text-[#75B5F5]" />
+                  <h3 className="font-hero-display text-xl sm:text-2xl tracking-wide">
+                    Production to Delivery
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsVideoOpen(false)}
+                  aria-label="Close modal"
+                  className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center cursor-pointer transition-colors"
+                >
+                  <X className="w-4.5 h-4.5" />
+                </button>
+              </div>
+
+              <div className="aspect-video w-full bg-black">
+                {media.type === "video" ? (
+                  <video
+                    src={media.src}
+                    controls
+                    autoPlay
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <iframe
+                    src={media.src}
+                    title="Production to Delivery Video"
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                    allowFullScreen
+                  />
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </section>
   );
 }

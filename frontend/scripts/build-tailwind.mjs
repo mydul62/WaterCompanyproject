@@ -1557,6 +1557,181 @@ header ul li a span,
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   Hero & Header Exact Reference Typography + 4-Stage Choreography
+   ══════════════════════════════════════════════════════════════ */
+.font-hero-display {
+  font-family: 'Bree Serif', Georgia, serif !important;
+}
+
+@keyframes heroBgFade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes heroTextDropTop {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -42vh, 0);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes heroSoftReveal {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -24px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes heroPlatformSlideRight {
+  0% {
+    opacity: 0;
+    transform: translate3d(105%, 0, 0);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes heroBottleRiseBottom {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 110%, 0);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes heroHorizBottleEnter {
+  0% {
+    opacity: 0;
+    transform: translate3d(24px, 95%, 0);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes heroOfferBadgePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.76);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes heroFloatBubble {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.85);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.55;
+  }
+  80% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate3d(14px, -220px, 0) scale(1.1);
+    opacity: 0;
+  }
+}
+
+.hero-anim-bg {
+  animation: heroBgFade 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0s both;
+}
+
+.hero-anim-line-1 {
+  animation: heroTextDropTop 1.15s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+}
+
+.hero-anim-line-2 {
+  animation: heroTextDropTop 1.15s cubic-bezier(0.16, 1, 0.3, 1) 0.52s both;
+}
+
+.hero-anim-line-3 {
+  animation: heroTextDropTop 1.15s cubic-bezier(0.16, 1, 0.3, 1) 0.69s both;
+}
+
+.hero-anim-desc {
+  animation: heroSoftReveal 0.95s cubic-bezier(0.16, 1, 0.3, 1) 0.95s both;
+}
+
+.hero-anim-actions {
+  animation: heroSoftReveal 0.95s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both;
+}
+
+.hero-anim-platform {
+  animation: heroPlatformSlideRight 1.25s cubic-bezier(0.16, 1, 0.3, 1) 1.35s both;
+}
+
+.hero-anim-bottle-vertical {
+  animation: heroBottleRiseBottom 1.1s cubic-bezier(0.16, 1, 0.3, 1) 1.85s both;
+}
+
+.hero-anim-bottle-horizontal {
+  animation: heroHorizBottleEnter 0.9s cubic-bezier(0.16, 1, 0.3, 1) 2.05s both;
+}
+
+.hero-anim-badge {
+  animation: heroOfferBadgePop 0.8s cubic-bezier(0.16, 1, 0.3, 1) 2.75s both;
+}
+
+.hero-ambient-bubble {
+  animation: heroFloatBubble var(--bubble-dur, 11s) ease-in-out var(--bubble-delay, 0s) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-anim-bg,
+  .hero-anim-line-1,
+  .hero-anim-line-2,
+  .hero-anim-line-3,
+  .hero-anim-desc,
+  .hero-anim-actions,
+  .hero-anim-platform,
+  .hero-anim-bottle-vertical,
+  .hero-anim-bottle-horizontal,
+  .hero-anim-badge {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .hero-ambient-bubble {
+    animation: none !important;
+  }
+}
 `;
 
   const finalCss = compiled + '\n' + customOverrides;

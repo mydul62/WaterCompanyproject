@@ -101,14 +101,14 @@ export default function ExploreGrid() {
 
       <div className="w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8 relative z-10">
         <div data-reveal="up" className="text-center space-y-3 mb-14 sm:mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-800 text-xs font-bold uppercase tracking-wider shadow-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-800 text-xs sm:text-sm font-bold uppercase tracking-wider shadow-sm">
             <span>Corporate Knowledge Base</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-[54px] font-black text-slate-900 tracking-tight">
             Explore More
           </h2>
-          <p className="text-slate-500 font-semibold text-base sm:text-lg max-w-2xl mx-auto">
+          <p className="text-slate-500 font-semibold text-base sm:text-xl max-w-2xl mx-auto">
             Deep dive into our engineering capabilities, sustainability metrics, and corporate divisions.
           </p>
         </div>
@@ -130,11 +130,11 @@ export default function ExploreGrid() {
                     </div>
 
                     <div className="space-y-1 sm:space-y-2">
-                      <h3 className="text-xs sm:text-base lg:text-lg font-bold text-slate-900 group-hover:text-cyan-600 transition-colors flex items-center justify-between leading-snug">
+                      <h3 className="text-sm sm:text-lg lg:text-xl font-bold text-slate-900 group-hover:text-cyan-600 transition-colors flex items-center justify-between leading-snug">
                         <span>{item.title}</span>
                         <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 opacity-0 -translate-x-1.5 sm:-translate-x-2 translate-y-1.5 sm:translate-y-2 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all text-cyan-600 shrink-0" />
                       </h3>
-                      <p className="text-[10.5px] sm:text-xs lg:text-sm text-slate-500 leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-none">
+                      <p className="text-xs sm:text-sm lg:text-[15px] text-slate-500 leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-none">
                         {item.description}
                       </p>
                     </div>

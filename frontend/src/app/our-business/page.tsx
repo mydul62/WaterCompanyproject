@@ -107,7 +107,7 @@ export default function OurBusinessPage() {
         {/* ============================================================ */}
         <section
           id="hero"
-          className="relative lg:sticky lg:top-0 z-0 w-full min-h-[540px] sm:min-h-[640px] lg:h-screen lg:min-h-[820px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
+          className="relative w-full min-h-[540px] sm:min-h-[640px] lg:h-screen lg:min-h-[820px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
         >
           {/* Authentic Corporate Office Team & Workstation Background */}
           <div className="absolute inset-0 w-full h-full">
@@ -205,7 +205,7 @@ export default function OurBusinessPage() {
            ══════════════════════════════════════════════════════════════ */}
         <div
           id="curtain-reveal"
-          className="relative z-10 bg-white rounded-t-[28px] sm:rounded-t-[36px] lg:rounded-t-[48px] shadow-sm lg:shadow-[0_-25px_60px_rgba(0,0,0,0.22)] border-t border-white/60 overflow-hidden"
+          className="relative bg-white overflow-hidden"
         >
           {/* Subtle Ambient Radial Glow Orbs */}
           <div className="absolute top-40 -left-20 w-[500px] h-[500px] bg-cyan-400/6 rounded-full blur-[140px] pointer-events-none" />

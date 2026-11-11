@@ -95,10 +95,10 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
 
           {/* Center: Title & Description */}
           <div className="flex-1 text-center md:text-left space-y-1.5 sm:space-y-2">
-            <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 tracking-tight">
+            <h3 className="text-2xl sm:text-3xl lg:text-[34px] font-black text-slate-900 tracking-tight">
               Packaging Solutions Always Made Right&reg;
             </h3>
-            <p className="text-xs sm:text-sm lg:text-[15px] text-slate-600 leading-relaxed max-w-3xl">
+            <p className="text-sm sm:text-base lg:text-[17px] text-slate-600 leading-relaxed max-w-3xl">
               With a diverse stock bottle portfolio and an innovative engineering team producing custom packaging
               solutions, we provide the highest quality containers for leading brands.
             </p>
@@ -108,7 +108,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
           <div className="shrink-0">
             <button
               onClick={onOpenRFQ}
-              className="water-fill-btn px-8 py-3.5 rounded-2xl bg-slate-900 text-white font-bold text-sm sm:text-base shadow-lg hover:shadow-[0_10px_25px_rgba(0,194,232,0.3)] active:scale-95 cursor-pointer inline-flex items-center gap-2"
+              className="water-fill-btn px-8 py-3.5 rounded-2xl bg-slate-900 text-white font-bold text-base sm:text-lg shadow-lg hover:shadow-[0_10px_25px_rgba(0,194,232,0.3)] active:scale-95 cursor-pointer inline-flex items-center gap-2"
             >
               <span>Contact Us</span>
               <ArrowRight className="w-4 h-4" />
@@ -119,12 +119,12 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
         {/* Section Header: About AquaPure */}
         <div data-reveal="up" className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-14 sm:mb-18">
           <div className="max-w-2xl space-y-3.5">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200/90 text-cyan-800 text-xs font-bold uppercase tracking-wider shadow-sm">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200/90 text-cyan-800 text-xs sm:text-sm font-bold uppercase tracking-wider shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-cyan-500 animate-pulse" />
               <span>About AquaPure &bull; Pure Water Division</span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.12]">
+            <h2 className="text-3xl sm:text-4xl lg:text-[54px] font-black text-slate-900 tracking-tight leading-[1.12]">
               Leading Drinking Water Company in{" "}
               <span className="bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 Bangladesh
@@ -133,7 +133,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
           </div>
 
           <div className="max-w-xl space-y-4">
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-medium">
+            <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-medium">
               AquaPure is a trusted manufacturer of packaged drinking water since 2014. From our state-of-the-art plant
               in Gazipur, we purify and bottle safe water for homes, offices, leading hotels and retail networks, backed
               by ISO 22000, GMP and HACCP certified quality systems.
@@ -141,14 +141,14 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <a
                 href="#products"
-                className="water-fill-btn inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-cyan-600 text-white font-bold text-sm shadow-md hover:shadow-cyan-500/25 transition-all"
+                className="water-fill-btn inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-cyan-600 text-white font-bold text-sm sm:text-base shadow-md hover:shadow-cyan-500/25 transition-all"
               >
                 <span>Explore Products</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
               <button
                 onClick={onOpenRFQ}
-                className="water-fill-btn inline-flex items-center gap-2 px-6 py-2.5 rounded-xl border border-slate-300 bg-white/80 text-slate-800 font-bold text-sm shadow-sm hover:shadow transition-all"
+                className="water-fill-btn inline-flex items-center gap-2 px-6 py-2.5 rounded-xl border border-slate-300 bg-white/80 text-slate-800 font-bold text-sm sm:text-base shadow-sm hover:shadow transition-all"
               >
                 <span>Partner With Us</span>
               </button>
@@ -165,16 +165,16 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
                 <div className="w-12 h-12 rounded-2xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-600 shadow-sm">
                   <Droplets className="w-6 h-6 stroke-[2.2]" />
                 </div>
-                <span className="text-xs font-bold uppercase tracking-wider text-cyan-700 bg-cyan-50 px-3 py-1 rounded-full">
+                <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-cyan-700 bg-cyan-50 px-3 py-1 rounded-full">
                   Full Bottle Range
                 </span>
               </div>
 
               <div>
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                <h3 className="text-2xl sm:text-[32px] font-extrabold text-slate-900 tracking-tight">
                   Our Products
                 </h3>
-                <p className="text-sm sm:text-base text-slate-600 mt-1">
+                <p className="text-base sm:text-lg text-slate-600 mt-1">
                   A complete range of packaged drinking water, crafted to the highest international standards of safety,
                   mineral balance, and pure crisp taste.
                 </p>
@@ -182,7 +182,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
 
               {/* Modern Glass Size Badges with Liquid Water Rise */}
               <div className="pt-2">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">
+                <span className="text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-wider block mb-3">
                   Available Formats &amp; Capacities
                 </span>
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
@@ -191,10 +191,10 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
                       key={idx}
                       className="water-fill-card p-3 rounded-2xl bg-slate-50 border border-slate-100 text-center group cursor-pointer"
                     >
-                      <b className="block text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-cyan-700">
+                      <b className="block text-base sm:text-lg font-extrabold text-slate-900 group-hover:text-cyan-700">
                         {item.size}
                       </b>
-                      <small className="text-[11px] text-slate-500 font-medium line-clamp-1">
+                      <small className="text-xs sm:text-[13px] text-slate-500 font-medium line-clamp-1">
                         {item.use}
                       </small>
                     </div>
@@ -207,7 +207,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
             <div className="pt-6 mt-6 border-t border-slate-100">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {qualityChecks.map((check, idx) => (
-                  <div key={idx} className="flex items-center gap-2.5 text-xs sm:text-sm font-semibold text-slate-700">
+                  <div key={idx} className="flex items-center gap-2.5 text-sm sm:text-base font-semibold text-slate-700">
                     <CheckCircle2 className="w-4 h-4 text-cyan-500 shrink-0 stroke-[2.5]" />
                     <span>{check}</span>
                   </div>
@@ -224,7 +224,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
             <div className="absolute top-4 right-4 w-32 h-32 rounded-full border border-cyan-400/40 pointer-events-none" />
 
             <div className="relative z-10 space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-400/15 border border-cyan-400/30 text-cyan-300 text-xs font-bold uppercase tracking-wider">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-400/15 border border-cyan-400/30 text-cyan-300 text-xs sm:text-sm font-bold uppercase tracking-wider">
                 <Award className="w-3.5 h-3.5 text-cyan-300" />
                 <span>Established 2014</span>
               </div>
@@ -233,17 +233,17 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
                 <span className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-tight bg-gradient-to-r from-white via-cyan-100 to-cyan-300 bg-clip-text text-transparent">
                   10+
                 </span>
-                <h3 className="text-2xl font-bold text-white mt-1">
+                <h3 className="text-2xl sm:text-3xl font-bold text-white mt-1">
                   Years of Trusted Purity
                 </h3>
-                <p className="text-cyan-100/80 text-sm sm:text-base leading-relaxed mt-2 max-w-sm">
+                <p className="text-cyan-100/80 text-base sm:text-lg leading-relaxed mt-2 max-w-sm">
                   Delivering crisp, mineral-balanced hydration across homes, institutions, and businesses throughout
                   Bangladesh.
                 </p>
               </div>
             </div>
 
-            <div className="relative z-10 pt-6 mt-6 border-t border-white/10 flex items-center justify-between text-xs text-cyan-200/90 font-medium">
+            <div className="relative z-10 pt-6 mt-6 border-t border-white/10 flex items-center justify-between text-xs sm:text-sm text-cyan-200/90 font-medium">
               <span>50M+ Liters Bottled</span>
               <span>&bull;</span>
               <span>10,000+ Corporate Clients</span>
@@ -256,15 +256,15 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
               <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-sm">
                 <ShieldCheck className="w-6 h-6 stroke-[2.2]" />
               </div>
-              <span className="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full">
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full">
                 Core Advantages
               </span>
             </div>
 
-            <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            <h3 className="text-2xl sm:text-[28px] font-extrabold text-slate-900 tracking-tight">
               Why Choose AquaPure
             </h3>
-            <p className="text-sm text-slate-600 mt-1 mb-6">
+            <p className="text-sm sm:text-base text-slate-600 mt-1 mb-6">
               Reliable supply and dedicated service you can build a long-term partnership on.
             </p>
 
@@ -274,14 +274,14 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
                   key={idx}
                   className="water-fill-card flex items-start gap-3.5 p-3.5 rounded-2xl bg-slate-50/70 border border-slate-100 transition-all cursor-pointer"
                 >
-                  <span className="w-8 h-8 rounded-xl bg-white border border-slate-200 text-cyan-700 font-extrabold text-xs flex items-center justify-center shrink-0 shadow-xs">
+                  <span className="w-8 h-8 rounded-xl bg-white border border-slate-200 text-cyan-700 font-extrabold text-sm flex items-center justify-center shrink-0 shadow-xs">
                     {item.num}
                   </span>
                   <div>
-                    <h4 className="text-sm font-bold text-slate-900">
+                    <h4 className="text-sm sm:text-base font-bold text-slate-900">
                       {item.title}
                     </h4>
-                    <p className="text-xs text-slate-500 leading-relaxed mt-0.5">
+                    <p className="text-xs sm:text-sm text-slate-500 leading-relaxed mt-0.5">
                       {item.desc}
                     </p>
                   </div>
@@ -297,15 +297,15 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
                 <div className="w-12 h-12 rounded-2xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-600 shadow-sm">
                   <Factory className="w-6 h-6 stroke-[2.2]" />
                 </div>
-                <span className="text-xs font-bold uppercase tracking-wider text-cyan-700 bg-cyan-50 px-3 py-1 rounded-full">
+                <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-cyan-700 bg-cyan-50 px-3 py-1 rounded-full">
                   Cleanroom Facility
                 </span>
               </div>
 
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              <h3 className="text-2xl sm:text-[32px] font-extrabold text-slate-900 tracking-tight">
                 Automated Gazipur Bottling Facility
               </h3>
-              <p className="text-sm sm:text-base text-slate-600 mt-1">
+              <p className="text-base sm:text-lg text-slate-600 mt-1">
                 Precision European blow-molding and non-contact filling lines ensure each bottle meets strict pharmaceutical-grade purity.
               </p>
             </div>
@@ -320,10 +320,10 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent flex items-end p-5">
                 <div>
-                  <span className="text-white font-extrabold text-lg sm:text-xl drop-shadow">
+                  <span className="text-white font-extrabold text-xl sm:text-2xl drop-shadow">
                     Pure Hydration. Naturally Balanced.
                   </span>
-                  <p className="text-cyan-200 text-xs sm:text-sm drop-shadow">
+                  <p className="text-cyan-200 text-sm sm:text-base drop-shadow">
                     Enriched with essential minerals &bull; pH 7.2 - 7.5
                   </p>
                 </div>
@@ -333,20 +333,20 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
             {/* 3 Real-Time Stats */}
             <div className="grid grid-cols-3 gap-3 pt-2">
               <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-                <b className="block text-xl sm:text-2xl font-black text-cyan-600">24/7</b>
-                <span className="text-[11px] text-slate-500 font-semibold leading-tight block mt-0.5">
+                <b className="block text-2xl sm:text-3xl font-black text-cyan-600">24/7</b>
+                <span className="text-xs sm:text-sm text-slate-500 font-semibold leading-tight block mt-0.5">
                   Automated QC Lab
                 </span>
               </div>
               <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-                <b className="block text-xl sm:text-2xl font-black text-cyan-600">100%</b>
-                <span className="text-[11px] text-slate-500 font-semibold leading-tight block mt-0.5">
+                <b className="block text-2xl sm:text-3xl font-black text-cyan-600">100%</b>
+                <span className="text-xs sm:text-sm text-slate-500 font-semibold leading-tight block mt-0.5">
                   Virgin Food-Grade PET
                 </span>
               </div>
               <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-                <b className="block text-xl sm:text-2xl font-black text-cyan-600">9-Stage</b>
-                <span className="text-[11px] text-slate-500 font-semibold leading-tight block mt-0.5">
+                <b className="block text-2xl sm:text-3xl font-black text-cyan-600">9-Stage</b>
+                <span className="text-xs sm:text-sm text-slate-500 font-semibold leading-tight block mt-0.5">
                   RO &amp; UV Filtration
                 </span>
               </div>
@@ -362,23 +362,23 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
             {/* Left Column: Description & Accreditations */}
             <div className="lg:col-span-7 space-y-5">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-400/15 border border-cyan-400/30 text-cyan-300 text-xs font-bold uppercase tracking-wider">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-400/15 border border-cyan-400/30 text-cyan-300 text-xs sm:text-sm font-bold uppercase tracking-wider">
                 <Recycle className="w-3.5 h-3.5" />
                 <span>Quality &amp; Sustainability</span>
               </div>
 
-              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight">
+              <h3 className="text-2xl sm:text-3xl lg:text-[40px] font-extrabold text-white tracking-tight leading-tight">
                 Our Commitment to Quality and Sustainability
               </h3>
 
-              <p className="text-sm sm:text-base text-cyan-100/80 leading-relaxed max-w-xl">
+              <p className="text-base sm:text-lg text-cyan-100/80 leading-relaxed max-w-xl">
                 Quality is our uncompromising culture. We follow internationally recognized safety systems, minimize
                 process waste, and engineer all bottles from 100% recyclable, circular-economy materials.
               </p>
 
               {/* Accreditations Badges */}
               <div className="pt-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-cyan-300/80 block mb-3">
+                <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-cyan-300/80 block mb-3">
                   Recognized Accreditations
                 </span>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -387,10 +387,10 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
                       key={idx}
                       className="p-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 hover:border-cyan-400/50 transition-all text-center"
                     >
-                      <b className="block text-sm font-extrabold text-white">
+                      <b className="block text-sm sm:text-base font-extrabold text-white">
                         {cert.label}
                       </b>
-                      <small className="text-[10px] text-cyan-200/70 font-medium block mt-0.5 line-clamp-1">
+                      <small className="text-xs text-cyan-200/70 font-medium block mt-0.5 line-clamp-1">
                         {cert.sub}
                       </small>
                     </div>
@@ -402,33 +402,33 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
             {/* Right Column: 4 Core Environmental & Purity Pillars */}
             <div className="lg:col-span-5 grid grid-cols-2 gap-3.5">
               <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 space-y-1">
-                <span className="text-xs font-extrabold text-cyan-300">01</span>
-                <b className="block text-sm sm:text-base font-bold text-white">Certified</b>
-                <small className="text-xs text-cyan-100/70 block">
+                <span className="text-sm font-extrabold text-cyan-300">01</span>
+                <b className="block text-base sm:text-lg font-bold text-white">Certified</b>
+                <small className="text-xs sm:text-sm text-cyan-100/70 block">
                   Internationally audited food safety
                 </small>
               </div>
 
               <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 space-y-1">
-                <span className="text-xs font-extrabold text-cyan-300">02</span>
-                <b className="block text-sm sm:text-base font-bold text-white">Recyclable</b>
-                <small className="text-xs text-cyan-100/70 block">
+                <span className="text-sm font-extrabold text-cyan-300">02</span>
+                <b className="block text-base sm:text-lg font-bold text-white">Recyclable</b>
+                <small className="text-xs sm:text-sm text-cyan-100/70 block">
                   100% circular PET packaging
                 </small>
               </div>
 
               <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 space-y-1">
-                <span className="text-xs font-extrabold text-cyan-300">03</span>
-                <b className="block text-sm sm:text-base font-bold text-white">Low Waste</b>
-                <small className="text-xs text-cyan-100/70 block">
+                <span className="text-sm font-extrabold text-cyan-300">03</span>
+                <b className="block text-base sm:text-lg font-bold text-white">Low Waste</b>
+                <small className="text-xs sm:text-sm text-cyan-100/70 block">
                   Optimized energy &amp; water cycles
                 </small>
               </div>
 
               <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 space-y-1">
-                <span className="text-xs font-extrabold text-cyan-300">04</span>
-                <b className="block text-sm sm:text-base font-bold text-white">Lab Tested</b>
-                <small className="text-xs text-cyan-100/70 block">
+                <span className="text-sm font-extrabold text-cyan-300">04</span>
+                <b className="block text-base sm:text-lg font-bold text-white">Lab Tested</b>
+                <small className="text-xs sm:text-sm text-cyan-100/70 block">
                   Continuous batch traceability
                 </small>
               </div>

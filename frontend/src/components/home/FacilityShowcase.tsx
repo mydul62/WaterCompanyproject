@@ -65,7 +65,7 @@ export default function FacilityShowcase() {
           {/* Eyebrow Badge */}
           <div
             data-reveal="up"
-            className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-cyan-50/90 border border-cyan-200/70 text-cyan-800 text-xs font-bold uppercase tracking-wider shadow-xs"
+            className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-cyan-50/90 border border-cyan-200/70 text-cyan-800 text-xs sm:text-sm font-bold uppercase tracking-wider shadow-xs"
           >
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span>World-Class Packaging Plant &bull; Since 2010</span>
@@ -73,7 +73,7 @@ export default function FacilityShowcase() {
 
           {/* Heading */}
           <div data-reveal="up" className="delay-100 space-y-1">
-            <h2 className="text-4xl sm:text-5xl lg:text-[52px] font-black text-slate-900 tracking-tight leading-[1.08]">
+            <h2 className="text-4xl sm:text-5xl lg:text-[58px] font-black text-slate-900 tracking-tight leading-[1.08]">
               About{" "}
               <span className="bg-gradient-to-r from-slate-900 via-[#1f5f8b] to-[#18b2a0] bg-clip-text text-transparent">
                 Us
@@ -85,7 +85,7 @@ export default function FacilityShowcase() {
           {/* Core Message in Slate-Blue */}
           <p
             data-reveal="up"
-            className="delay-150 text-lg sm:text-xl lg:text-[21px] font-semibold text-[#3b667e] leading-[1.48] tracking-normal"
+            className="delay-150 text-lg sm:text-xl lg:text-[23px] font-semibold text-[#3b667e] leading-[1.48] tracking-normal"
           >
             We empower your brand with custom engineered tin and plastic packaging solutions that give you a
             competitive edge in domestic and global markets.
@@ -106,15 +106,15 @@ export default function FacilityShowcase() {
                       {item.icon}
                     </div>
                     <div>
-                      <b className="block text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-cyan-700 transition-colors">
+                      <b className="block text-base sm:text-lg font-extrabold text-slate-900 group-hover:text-cyan-700 transition-colors">
                         {item.metric}
                       </b>
-                      <small className="text-[11px] text-slate-500 font-medium block">
+                      <small className="text-xs sm:text-[13px] text-slate-500 font-medium block">
                         {item.label}
                       </small>
                     </div>
                   </div>
-                  <p className="text-[11px] sm:text-xs text-slate-500 font-medium pl-0.5 line-clamp-1">
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium pl-0.5 line-clamp-1">
                     {item.desc}
                   </p>
                 </div>
@@ -126,7 +126,7 @@ export default function FacilityShowcase() {
           <div data-reveal="up" className="delay-200 flex flex-wrap items-center gap-3.5 pt-2">
             <Link
               href="/products"
-              className="water-fill-btn inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm tracking-wide shadow-md hover:shadow-lg transition-all active:scale-95 group"
+              className="water-fill-btn inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm sm:text-base tracking-wide shadow-md hover:shadow-lg transition-all active:scale-95 group"
             >
               <span>Explore Products</span>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -134,7 +134,7 @@ export default function FacilityShowcase() {
 
             <button
               onClick={() => setIsVideoOpen(true)}
-              className="water-fill-btn inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-slate-200 bg-white/90 text-slate-700 font-bold text-sm shadow-xs hover:shadow transition-all cursor-pointer group"
+              className="water-fill-btn inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-slate-200 bg-white/90 text-slate-700 font-bold text-sm sm:text-base shadow-xs hover:shadow transition-all cursor-pointer group"
             >
               <Play className="w-4 h-4 text-cyan-600 fill-cyan-600 transition-colors group-hover:text-white group-hover:fill-white" />
               <span>Plant Video Tour</span>

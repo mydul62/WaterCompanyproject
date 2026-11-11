@@ -108,15 +108,15 @@ export default function ProductShowcase() {
       <div className="w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8 relative z-10">
         {/* Section Header */}
         <div data-reveal="up" className="text-center space-y-3 mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-slate-200/80 text-cyan-700 text-xs font-bold uppercase tracking-wider shadow-xs">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-slate-200/80 text-cyan-700 text-xs sm:text-sm font-bold uppercase tracking-wider shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-cyan-500 animate-pulse" />
             <span>Packaging Portfolio</span>
           </div>
 
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight">
+          <h2 className="text-4xl sm:text-5xl lg:text-[62px] font-black text-slate-900 tracking-tight">
             Discover Our Product
           </h2>
-          <p className="text-slate-500 font-bold text-lg sm:text-xl">
+          <p className="text-slate-500 font-bold text-lg sm:text-2xl">
             Plastic &amp; Tin Container
           </p>
         </div>
@@ -161,11 +161,11 @@ export default function ProductShowcase() {
                 {/* 2. Top Minimal Bar: Category Capsule & Capacity */}
                 <div className="flex items-center justify-between mb-4 relative z-10">
                   <span
-                    className={`inline-flex items-center px-3.5 py-1 rounded-full text-xs font-bold border backdrop-blur-md transition-colors ${card.accent.badge}`}
+                    className={`inline-flex items-center px-3.5 py-1 rounded-full text-xs sm:text-sm font-bold border backdrop-blur-md transition-colors ${card.accent.badge}`}
                   >
                     {card.badge}
                   </span>
-                  <span className="text-xs font-mono font-bold text-slate-400 group-hover:text-slate-700 transition-colors">
+                  <span className="text-xs sm:text-sm font-mono font-bold text-slate-400 group-hover:text-slate-700 transition-colors">
                     {card.capacity}
                   </span>
                 </div>
@@ -195,10 +195,10 @@ export default function ProductShowcase() {
                 {/* 4. Bottom Info: Clean Title & Animated Circle Arrow Button */}
                 <div className="pt-4 mt-2 border-t border-slate-100 flex items-center justify-between gap-3 relative z-10">
                   <div className="space-y-0.5">
-                    <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight group-hover:text-cyan-700 transition-colors">
+                    <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight group-hover:text-cyan-700 transition-colors">
                       {card.title}
                     </h3>
-                    <p className="text-xs text-slate-400 font-medium">
+                    <p className="text-xs sm:text-sm text-slate-400 font-medium">
                       {card.subtitle}
                     </p>
                   </div>
@@ -219,7 +219,7 @@ export default function ProductShowcase() {
         <div data-reveal="up" className="delay-150 mt-14 sm:mt-16 text-center">
           <Link
             href="/products"
-            className="water-fill-btn inline-flex items-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 rounded-2xl bg-slate-900 text-white font-bold text-sm sm:text-base shadow-xl hover:shadow-[0_15px_35px_rgba(0,194,232,0.35)] active:scale-95 group cursor-pointer"
+            className="water-fill-btn inline-flex items-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 rounded-2xl bg-slate-900 text-white font-bold text-base sm:text-lg shadow-xl hover:shadow-[0_15px_35px_rgba(0,194,232,0.35)] active:scale-95 group cursor-pointer"
           >
             <span>View Full Products Catalog (300+ Items)</span>
             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />

@@ -29,7 +29,7 @@ export default function OperationalPillars() {
         <div className="w-full lg:w-[52%] xl:w-[48%] space-y-7">
           {/* Heading with Solid Underline */}
           <div data-reveal="up">
-            <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-black text-slate-900 tracking-tight leading-[1.2]">
+            <h2 className="text-3xl sm:text-4xl lg:text-[50px] font-black text-slate-900 tracking-tight leading-[1.2]">
               <span className="pb-2 border-b-[3px] border-slate-900 inline-block">
                 Managing Supply Chain &amp;
               </span>
@@ -55,7 +55,7 @@ export default function OperationalPillars() {
           <div data-reveal="up" className="delay-200 pt-2">
             <a
               href="/products"
-              className="water-fill-btn inline-block px-7 py-2.5 rounded-lg border border-slate-900 text-slate-900 bg-white font-semibold text-xs sm:text-sm tracking-wide shadow-xs active:scale-95"
+              className="water-fill-btn inline-block px-7 py-2.5 rounded-lg border border-slate-900 text-slate-900 bg-white font-semibold text-sm sm:text-base tracking-wide shadow-xs active:scale-95"
             >
               <span>Read More..</span>
             </a>

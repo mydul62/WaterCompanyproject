@@ -180,7 +180,7 @@ export default function RndPage() {
            ──────────────────────────────────────────────────────────── */}
         <section
           id="rnd-hero"
-          className="relative lg:sticky lg:top-0 z-0 w-full min-h-[520px] sm:min-h-[620px] lg:h-screen lg:min-h-[700px] bg-[#0b1320] overflow-hidden flex flex-col justify-between items-center select-none"
+          className="relative w-full min-h-[520px] sm:min-h-[620px] lg:h-screen lg:min-h-[700px] bg-[#0b1320] overflow-hidden flex flex-col justify-between items-center select-none"
         >
           {/* Background Hero Image with Crossfade / Cinematic Depth */}
           <div className="absolute inset-0 w-full h-full">
@@ -248,7 +248,7 @@ export default function RndPage() {
            ──────────────────────────────────────────────────────────── */}
         <div
           id="curtain-reveal"
-          className="relative z-10 bg-white rounded-t-[28px] sm:rounded-t-[36px] lg:rounded-t-[48px] shadow-sm lg:shadow-[0_-25px_60px_rgba(0,0,0,0.22)] border-t border-white/60 overflow-hidden"
+          className="relative bg-white overflow-hidden"
         >
           {/* ────────────────────────────────────────────────────────────
               2. INTRODUCTORY SECTION: ELEVATED LUXURY WITH 3 PILLARS

@@ -48,11 +48,11 @@ export default function Footer() {
               />
             </div>
 
-            <h3 className="font-bold text-base text-slate-900">
+            <h3 className="font-bold text-lg text-slate-900">
               Xclusive Can Limited
             </h3>
 
-            <div className="space-y-3 text-xs sm:text-sm text-slate-700 leading-relaxed">
+            <div className="space-y-3 text-sm sm:text-base text-slate-700 leading-relaxed">
               <p>
                 {settings["factory_gazipur"] ||
                   "Plot#53/1, Block#B, Kaligonj Road, Majukhan, Gazipur, Dhaka, Bangladesh."}
@@ -63,7 +63,7 @@ export default function Footer() {
               </p>
             </div>
 
-            <div className="space-y-1.5 text-xs sm:text-sm text-slate-700">
+            <div className="space-y-1.5 text-sm sm:text-base text-slate-700">
               <p className="font-bold text-slate-900">Phone:</p>
               <p>
                 Sales: {settings["phone_sales"] || "+8801819343635, +8801680240524"}
@@ -73,7 +73,7 @@ export default function Footer() {
               </p>
             </div>
 
-            <div className="space-y-1.5 text-xs sm:text-sm text-slate-700">
+            <div className="space-y-1.5 text-sm sm:text-base text-slate-700">
               <p className="font-bold text-slate-900">Email:</p>
               <p>
                 Sales &amp; Marketing: {settings["email_sales"] || "marketing@qpail.com"}
@@ -123,10 +123,10 @@ export default function Footer() {
 
           {/* Column 2: Quick Links matching Screenshot */}
           <div data-reveal="up" className="delay-100 space-y-4">
-            <h3 className="font-bold text-lg text-black">
+            <h3 className="font-bold text-xl text-black">
               Quick Links
             </h3>
-            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-700">
+            <ul className="space-y-2.5 text-sm sm:text-base text-slate-700">
               <li>
                 <Link href="/faqs" className="hover:text-black">
                   FAQs
@@ -176,7 +176,7 @@ export default function Footer() {
               <li>
                 <Link href="/careers" className="hover:text-[#0284c7] font-medium flex items-center justify-between group">
                   <span>Careers</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-50 text-[#0284c7] font-bold">Hiring</span>
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-50 text-[#0284c7] font-bold">Hiring</span>
                 </Link>
               </li>
             </ul>
@@ -184,10 +184,10 @@ export default function Footer() {
 
           {/* Column 3: Our Products matching Screenshot */}
           <div data-reveal="up" className="delay-150 space-y-4">
-            <h3 className="font-bold text-lg text-black">
+            <h3 className="font-bold text-xl text-black">
               Our Products
             </h3>
-            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-700">
+            <ul className="space-y-2.5 text-sm sm:text-base text-slate-700">
               <li>
                 <Link href="#about" className="hover:text-black">
                   Factory
@@ -221,7 +221,7 @@ export default function Footer() {
 
           {/* Column 4: Official Certificates Seal Image matching Screenshot */}
           <div data-reveal="up" className="delay-200 space-y-4">
-            <h3 className="font-bold text-lg text-black">
+            <h3 className="font-bold text-xl text-black">
               Certificates
             </h3>
             <div className="relative w-full max-w-[280px] h-48 sm:h-52">
@@ -237,7 +237,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Full-Width Dark Bar */}
-      <div className="w-full bg-[#161a22] py-4 text-slate-400 text-xs sm:text-sm">
+      <div className="w-full bg-[#161a22] py-4 text-slate-400 text-sm sm:text-base">
         <div className="w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8 flex flex-col sm:flex-row justify-between items-center gap-3">
           <p>
             Copyright &copy; 1992 - 2026 Xclusive Can Limited.

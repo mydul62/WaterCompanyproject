@@ -954,7 +954,7 @@ export default function ProductsPage() {
       {/* ============================================================ */}
       <section
         id="hero"
-        className="relative lg:sticky lg:top-0 z-0 w-full min-h-[540px] sm:min-h-[640px] lg:h-screen lg:min-h-[800px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
+        className="relative w-full min-h-[540px] sm:min-h-[640px] lg:h-screen lg:min-h-[800px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
       >
         {/* Background Image */}
         <div className="absolute inset-0 w-full h-full">
@@ -1013,7 +1013,7 @@ export default function ProductsPage() {
       {/* ============================================================ */}
       <div
         id="product-content"
-        className="relative z-10 bg-[#f5f8fb] rounded-t-[28px] sm:rounded-t-[36px] lg:rounded-t-[48px] shadow-sm lg:shadow-[0_-25px_60px_rgba(0,0,0,0.22)] border-t border-white/60 pt-12 sm:pt-16 pb-16"
+        className="relative bg-[#f5f8fb] pt-12 sm:pt-16 pb-16"
       >
         <main className="prd-wrap">
           {/* SIDEBAR FILTER PANEL */}

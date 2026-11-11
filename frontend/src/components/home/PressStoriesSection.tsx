@@ -25,28 +25,28 @@ export default function PressStoriesSection() {
       <div className="relative z-10 w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8">
         {/* Section Header */}
         <div data-reveal="up" className="text-center space-y-4 mb-14 sm:mb-18">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200/80 text-cyan-800 text-xs font-bold uppercase tracking-wider shadow-xs">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200/80 text-cyan-800 text-xs sm:text-sm font-bold uppercase tracking-wider shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-cyan-500 animate-pulse" />
             <span>Media Coverage &amp; Press Highlights</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.12]">
+          <h2 className="text-3xl sm:text-4xl lg:text-[54px] font-black text-slate-900 tracking-tight leading-[1.12]">
             Latest Stories in National Media
           </h2>
 
-          <p className="text-sm sm:text-base text-slate-500 font-medium max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-slate-500 font-medium max-w-2xl mx-auto">
             দেশের শীর্ষস্থানীয় জাতীয় গণমাধ্যমে এক্সক্লুসিভ ক্যান ও কিউ পাইলের শিল্প রূপান্তর, উদ্ভাবন ও বাণিজ্যিক সাফল্যের বিশেষ প্রতিবেদন।
           </p>
 
           {/* Media Trust Logo / Name Strip */}
           <div className="pt-2 flex flex-wrap items-center justify-center gap-2.5 sm:gap-4">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">
+            <span className="text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-wider mr-1">
               Featured In:
             </span>
             {outlets.map((item, idx) => (
               <span
                 key={idx}
-                className="px-3.5 py-1 rounded-full bg-white/80 border border-slate-200/70 text-slate-700 text-xs font-bold shadow-xs hover:border-cyan-300 transition-colors"
+                className="px-3.5 py-1 rounded-full bg-white/80 border border-slate-200/70 text-slate-700 text-xs sm:text-sm font-bold shadow-xs hover:border-cyan-300 transition-colors"
               >
                 {item.name}
               </span>
@@ -68,12 +68,12 @@ export default function PressStoriesSection() {
                 {/* Card Top Metadata Strip */}
                 <div className="flex items-center justify-between gap-2 px-1 pt-1">
                   <span
-                    className="px-3 py-1 rounded-full text-xs font-bold text-white shadow-xs"
+                    className="px-3 py-1 rounded-full text-xs sm:text-[13px] font-bold text-white shadow-xs"
                     style={{ backgroundColor: story.outletColor }}
                   >
                     {story.outlet}
                   </span>
-                  <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-400">
+                  <div className="flex items-center gap-1.5 text-xs sm:text-[13px] font-medium text-slate-400">
                     <Calendar className="w-3.5 h-3.5" />
                     <span>{story.date}</span>
                   </div>
@@ -111,15 +111,15 @@ export default function PressStoriesSection() {
 
                 {/* Title & Category */}
                 <div className="px-1 space-y-1.5">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-700 bg-cyan-50 px-2 py-0.5 rounded-md inline-block">
+                  <span className="text-xs font-bold uppercase tracking-wider text-cyan-700 bg-cyan-50 px-2.5 py-0.5 rounded-md inline-block">
                     {story.category}
                   </span>
                   <Link href={`/media/${story.slug}`}>
-                    <h3 className="text-base sm:text-[17px] font-bold text-slate-900 group-hover:text-cyan-700 transition-colors line-clamp-2 leading-snug">
+                    <h3 className="text-[17px] sm:text-lg font-bold text-slate-900 group-hover:text-cyan-700 transition-colors line-clamp-2 leading-snug">
                       {story.title}
                     </h3>
                   </Link>
-                  <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
+                  <p className="text-sm text-slate-500 leading-relaxed line-clamp-2">
                     {story.summary}
                   </p>
                 </div>
@@ -127,17 +127,17 @@ export default function PressStoriesSection() {
 
               {/* Card Footer: Read More Link */}
               <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between px-1">
-                <span className="text-[11px] font-medium text-slate-400 flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
+                <span className="text-xs font-medium text-slate-400 flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5" />
                   {story.readTime}
                 </span>
 
                 <Link
                   href={`/media/${story.slug}`}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-cyan-700 hover:text-cyan-800 transition-colors group-hover:translate-x-0.5 transition-transform"
+                  className="inline-flex items-center gap-1 text-sm font-bold text-cyan-700 hover:text-cyan-800 transition-colors group-hover:translate-x-0.5 transition-transform"
                 >
                   <span>প্রতিবেদন পড়ুন</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </article>
@@ -149,7 +149,7 @@ export default function PressStoriesSection() {
         <div className="mt-12 sm:mt-16 text-center">
           <Link
             href="/media"
-            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-2xl bg-white border border-slate-200 text-slate-800 font-bold text-sm shadow-xs hover:shadow-md hover:border-cyan-300 hover:text-cyan-700 transition-all active:scale-95"
+            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-2xl bg-white border border-slate-200 text-slate-800 font-bold text-sm sm:text-base shadow-xs hover:shadow-md hover:border-cyan-300 hover:text-cyan-700 transition-all active:scale-95"
           >
             <Newspaper className="w-4 h-4 text-cyan-600" />
             <span>View All National Press Articles ({PRESS_STORIES.length})</span>

@@ -226,7 +226,7 @@ export default function OurStoryPage() {
         {/* ============================================================ */}
         <section
           id="hero"
-          className="relative lg:sticky lg:top-0 z-0 w-full min-h-[540px] sm:min-h-[640px] lg:h-screen lg:min-h-[820px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
+          className="relative w-full min-h-[540px] sm:min-h-[640px] lg:h-screen lg:min-h-[820px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
         >
           {/* Authentic Dual Factory Buildings Background (Q Pail & XCL at Sunset) */}
           <div className="absolute inset-0 w-full h-full">
@@ -281,9 +281,9 @@ export default function OurStoryPage() {
         </section>
 
         {/* ══════════════════════════════════════════════════════════════
-            STACKING CURTAIN DECK: Each year rises & stacks over the previous
+            MILESTONE TIMELINE SECTIONS (Normal Sequential Scroll Flow)
            ══════════════════════════════════════════════════════════════ */}
-        {MILESTONES.map((item, idx) => {
+        {MILESTONES.map((item) => {
           return (
             <section
               key={item.year}
@@ -291,8 +291,7 @@ export default function OurStoryPage() {
               ref={(el) => {
                 milestoneRefs.current[item.year] = el;
               }}
-              style={{ zIndex: 10 + idx }}
-              className="relative lg:sticky lg:top-0 w-full min-h-[600px] lg:min-h-screen flex items-center bg-[#ded7cd] rounded-t-[28px] sm:rounded-t-[36px] lg:rounded-t-[48px] shadow-sm lg:shadow-[0_-25px_60px_rgba(0,0,0,0.22)] border-t border-black/8 overflow-hidden select-none transition-shadow"
+              className="relative w-full min-h-[600px] lg:min-h-screen flex items-center bg-[#ded7cd] border-t border-black/10 overflow-hidden select-none"
             >
               <div className="w-[91.6667%] max-w-[1720px] mx-auto px-4 sm:px-8 py-16 sm:py-24 flex items-center min-h-screen pl-14 sm:pl-24 lg:pl-32">
                 <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">

@@ -78,7 +78,7 @@ export default function MediaAndContactsPage() {
         {/* ============================================================ */}
         <section
           id="media-hero"
-          className="relative lg:sticky lg:top-0 z-0 w-full min-h-[540px] sm:min-h-[640px] lg:h-screen lg:min-h-[820px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
+          className="relative w-full min-h-[540px] sm:min-h-[640px] lg:h-screen lg:min-h-[820px] bg-[#0a1f33] overflow-hidden flex flex-col justify-between items-center select-none"
         >
           {/* Background Hero Image */}
           <div className="absolute inset-0 w-full h-full">
@@ -163,7 +163,7 @@ export default function MediaAndContactsPage() {
         {/* ============================================================ */}
         <div
           id="curtain-reveal"
-          className="relative z-10 bg-[#f8fafc] rounded-t-[28px] sm:rounded-t-[36px] lg:rounded-t-[48px] shadow-sm lg:shadow-[0_-25px_60px_rgba(0,0,0,0.22)] border-t border-white/60 pt-12 sm:pt-16 pb-20 sm:pb-28"
+          className="relative bg-[#f8fafc] pt-12 sm:pt-16 pb-20 sm:pb-28"
         >
           <div className="w-full max-w-[1643px] mx-auto px-4 sm:px-8 lg:px-12 space-y-20 sm:space-y-28">
 

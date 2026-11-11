@@ -41,15 +41,15 @@ export default function HomePage() {
       <Navbar />
 
       <main className="flex-1 relative">
-        {/* Sticky Hero Slider */}
-        <div className="sticky top-0 z-0 w-full h-screen min-h-[700px]">
+        {/* Full-screen Hero Slider Section */}
+        <div className="relative w-full min-h-[100svh] lg:h-screen lg:min-h-[660px]">
           <HeroSlider />
         </div>
 
-        {/* Curtain Body: Smoothly rises over the hero with physical 3D elevation */}
+        {/* Main Page Sections */}
         <div
           id="curtain-reveal"
-          className="relative z-10 bg-white rounded-t-[32px] sm:rounded-t-[48px] shadow-[0_-25px_60px_rgba(0,0,0,0.22)] border-t border-white/60"
+          className="relative bg-white"
         >
           {/* Section 2: About Us & Green Factory Campus */}
           <FacilityShowcase />
