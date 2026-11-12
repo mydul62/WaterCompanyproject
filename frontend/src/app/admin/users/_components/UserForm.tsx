@@ -7,6 +7,7 @@ import { Users, Save } from "lucide-react";
 import { api } from "@/lib/api";
 import {
   AdminFormHeader,
+  AdminErrorBanner,
   AdminEditLoadingState,
   AdminEditNotFoundState,
   AdminToast,
@@ -78,6 +79,7 @@ export default function UserForm({
 
   const [loading, setLoading] = useState(mode === "edit");
   const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
   const { toast, showToast, clearToast } = useAdminToast();
@@ -94,31 +96,25 @@ export default function UserForm({
 
     async function load() {
       setLoading(true);
+      setLoadError(null);
       try {
         const res = await api.users.getAll();
         if (!active) return;
         const list: UserRecord[] = Array.isArray(res?.data) ? res.data : [];
-        const found = list.find((u) => u.id === userId) || DEFAULT_USERS.find((u) => u.id === userId);
+        const found = list.find((u) => u.id === userId);
         if (found) {
           setFormName(found.name);
           setFormEmail(found.email);
           setFormRole(found.role);
           setFormIsActive(found.isActive ?? true);
-          setStorageMode(list.some((u) => u.id === userId) ? "database" : "fallback");
+          setStorageMode("database");
         } else {
           setNotFound(true);
         }
-      } catch {
-        const fallback = DEFAULT_USERS.find((u) => u.id === userId);
-        if (fallback && active) {
-          setFormName(fallback.name);
-          setFormEmail(fallback.email);
-          setFormRole(fallback.role);
-          setFormIsActive(fallback.isActive);
-          setStorageMode("fallback");
-        } else if (active) {
-          setNotFound(true);
-        }
+      } catch (err: any) {
+        if (!active) return;
+        setStorageMode("fallback");
+        setLoadError(err?.message || "Failed to load user account from PostgreSQL.");
       } finally {
         if (active) setLoading(false);
       }
@@ -182,6 +178,8 @@ export default function UserForm({
 
       {loading ? (
         <AdminEditLoadingState label="Loading user account..." />
+      ) : loadError ? (
+        <AdminErrorBanner error={loadError} />
       ) : notFound ? (
         <AdminEditNotFoundState
           title="User Account Not Found"

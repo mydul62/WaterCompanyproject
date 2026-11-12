@@ -8,6 +8,7 @@ import { api } from "@/lib/api";
 import MediaPickerModal from "@/components/admin/MediaPickerModal";
 import {
   AdminFormHeader,
+  AdminErrorBanner,
   AdminEditLoadingState,
   AdminEditNotFoundState,
   AdminToast,
@@ -88,6 +89,7 @@ export default function CategoryForm({
 
   const [loading, setLoading] = useState(mode === "edit");
   const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
@@ -106,7 +108,6 @@ export default function CategoryForm({
           }
         } catch {
           if (active) {
-            setFormSortOrder(DEFAULT_CATEGORIES.length + 1);
             setStorageMode("fallback");
           }
         }
@@ -120,6 +121,7 @@ export default function CategoryForm({
       }
 
       setLoading(true);
+      setLoadError(null);
       try {
         const res = await api.categories.getById(categoryId);
         if (!active) return;
@@ -134,17 +136,13 @@ export default function CategoryForm({
         } else {
           setNotFound(true);
         }
-      } catch {
-        const fallback = DEFAULT_CATEGORIES.find((c) => c.id === categoryId || c.slug === categoryId);
-        if (fallback && active) {
-          setFormName(fallback.name);
-          setFormSlug(fallback.slug);
-          setFormDesc(fallback.description || "");
-          setFormImage(fallback.image || "/images/catalog/cat-prod-1.png");
-          setFormSortOrder(fallback.sortOrder ?? 1);
-          setStorageMode("fallback");
-        } else if (active) {
+      } catch (err: any) {
+        if (!active) return;
+        setStorageMode("fallback");
+        if (err?.status === 404 || err?.message?.toLowerCase().includes("not found")) {
           setNotFound(true);
+        } else {
+          setLoadError(err?.message || "Failed to load category details from PostgreSQL.");
         }
       } finally {
         if (active) setLoading(false);
@@ -206,6 +204,8 @@ export default function CategoryForm({
 
       {loading ? (
         <AdminEditLoadingState label="Loading category details..." />
+      ) : loadError ? (
+        <AdminErrorBanner error={loadError} />
       ) : notFound ? (
         <AdminEditNotFoundState
           title="Category Not Found"

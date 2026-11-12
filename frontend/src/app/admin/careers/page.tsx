@@ -17,11 +17,11 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import {
-  JOB_OPENINGS,
   JOB_DEPARTMENTS,
-  JobOpening,
+  type JobOpening,
 } from "@/data/careersData";
 import {
+  AdminErrorBanner,
   AdminToast,
   AdminPageHeader,
   AdminSearchToolbar,
@@ -46,11 +46,12 @@ interface Application {
 
 export default function AdminCareersPage() {
   const [activeTab, setActiveTab] = useState<"jobs" | "applications">("jobs");
-  const [jobs, setJobs] = useState<JobOpening[]>(JOB_OPENINGS);
+  const [jobs, setJobs] = useState<JobOpening[]>([]);
   const [apps, setApps] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // Search & filters
   const [jobSearch, setJobSearch] = useState("");
@@ -67,17 +68,22 @@ export default function AdminCareersPage() {
 
   const loadAll = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const [jobsRes, appsRes] = await Promise.all([
         api.careerJobs.getAll(true),
         api.careers.getAll(),
       ]);
-      if (Array.isArray(jobsRes.data)) setJobs(jobsRes.data);
-      if (Array.isArray(appsRes.data)) setApps(appsRes.data);
+      setJobs(Array.isArray(jobsRes.data) ? jobsRes.data : []);
+      setApps(Array.isArray(appsRes.data) ? appsRes.data : []);
       setStorageMode("database");
-    } catch {
-      setJobs(JOB_OPENINGS);
+    } catch (err: any) {
+      setJobs([]);
+      setApps([]);
       setStorageMode("fallback");
+      setLoadError(
+        err?.message || "Unable to connect to PostgreSQL to load careers data."
+      );
     } finally {
       setLoading(false);
     }
@@ -184,7 +190,7 @@ export default function AdminCareersPage() {
       <AdminPageHeader
         icon={<Briefcase className="w-6 h-6 text-amber-400" />}
         title="Careers, Job Openings & Applicants"
-        subtitle="Create, edit & toggle open positions shown on /careers and review candidate applications stored in SQLite."
+        subtitle="Create, edit & toggle open positions shown on /careers and review candidate applications stored in PostgreSQL."
         addLabel={activeTab === "jobs" ? "Post Job Opening" : undefined}
         addHref={activeTab === "jobs" ? "/admin/careers/jobs/new" : undefined}
         onRefresh={loadAll}
@@ -192,6 +198,8 @@ export default function AdminCareersPage() {
         loading={loading}
         storageMode={storageMode}
       />
+
+      <AdminErrorBanner error={loadError} onRetry={loadAll} />
 
       {/* Tab Switcher */}
       <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-4">
@@ -435,7 +443,7 @@ export default function AdminCareersPage() {
             ? "Delete Job Opening?"
             : "Delete Candidate Application?"
         }
-        description="This action permanently deletes the record from SQLite."
+        description="This action permanently deletes the record from PostgreSQL."
         onCancel={() => setConfirmDelete(null)}
         onConfirm={handleConfirmDelete}
         loading={saving}

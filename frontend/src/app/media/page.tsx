@@ -5,8 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { PRESS_STORIES, PressStory, normalizePressStory } from "@/data/mediaData";
+import type { PressStory } from "@/data/mediaData";
+import { normalizePressStory } from "@/data/mediaData";
 import { api } from "@/lib/api";
+import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import { siteButtonClass, siteFilterTabClass } from "@/components/common/SiteButton";
 import { PressCardsSkeletonItems } from "@/components/common/Skeletons";
 import {
@@ -26,14 +28,19 @@ import {
   Award,
   Factory,
   ChevronDown,
+  AlertTriangle as FormAlertIcon,
 } from "lucide-react";
 
 export default function MediaAndContactsPage() {
-  const [stories, setStories] = useState<PressStory[]>(PRESS_STORIES);
+  const [stories, setStories] = useState<PressStory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [selectedOutlet, setSelectedOutlet] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isSubmittingForm, setIsSubmittingForm] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     company: "",
@@ -45,15 +52,25 @@ export default function MediaAndContactsPage() {
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setLoadError(null);
     api.mediaStories
       .getPublic()
       .then((res) => {
-        if (active && Array.isArray(res.data) && res.data.length > 0) {
-          setStories(res.data.map(normalizePressStory));
-        }
+        if (!active) return;
+        const items = Array.isArray(res.data)
+          ? res.data.map(normalizePressStory)
+          : [];
+        setStories(items);
       })
-      .catch(() => {
-        // Keep static defaults
+      .catch((err) => {
+        if (!active) return;
+        setStories([]);
+        setLoadError(
+          err instanceof Error && err.message
+            ? err.message
+            : "Unable to load press stories from server."
+        );
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -61,7 +78,7 @@ export default function MediaAndContactsPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [reloadKey]);
 
   const outlets = useMemo(
     () => ["All", ...Array.from(new Set(stories.map((s) => s.outlet).filter(Boolean)))],
@@ -80,10 +97,20 @@ export default function MediaAndContactsPage() {
     });
   }, [stories, selectedOutlet, searchQuery]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormSubmitted(true);
-    setTimeout(() => {
+    setFormError(null);
+    setIsSubmittingForm(true);
+    try {
+      await api.inquiries.submit({
+        companyName: formData.company.trim() || formData.name.trim(),
+        contactPerson: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        category: formData.department || "Media & Corporate Relations",
+        notes: `[Media/Contact Form | Dept: ${formData.department}] ${formData.message}`.trim(),
+      });
+      setFormSubmitted(true);
       setFormData({
         name: "",
         company: "",
@@ -92,7 +119,15 @@ export default function MediaAndContactsPage() {
         department: "Sales & New Orders",
         message: "",
       });
-    }, 1000);
+    } catch (err) {
+      setFormError(
+        err instanceof Error && err.message
+          ? err.message
+          : "Unable to submit your inquiry right now. Please try again or reach out by phone/email."
+      );
+    } finally {
+      setIsSubmittingForm(false);
+    }
   };
 
   return (
@@ -253,7 +288,32 @@ export default function MediaAndContactsPage() {
 
               {/* Stories Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {loading ? <PressCardsSkeletonItems count={4} /> : filteredStories.map((story) => (
+                {loading ? (
+                  <PressCardsSkeletonItems count={4} />
+                ) : loadError ? (
+                  <PublicStateMessage
+                    variant="error"
+                    title="Unable to load media stories"
+                    description={loadError}
+                    onRetry={() => setReloadKey((k) => k + 1)}
+                    className="col-span-full"
+                  />
+                ) : stories.length === 0 ? (
+                  <PublicStateMessage
+                    variant="empty"
+                    title="No press stories published yet"
+                    description="Check back soon for official company announcements and press coverage."
+                    className="col-span-full"
+                  />
+                ) : filteredStories.length === 0 ? (
+                  <PublicStateMessage
+                    variant="empty"
+                    title="No matching stories"
+                    description="Try clearing your search filter or choosing another media outlet."
+                    className="col-span-full"
+                  />
+                ) : (
+                  filteredStories.map((story) => (
                   <article
                     key={story.id}
                     className="bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-xl hover:border-slate-300 transition-all duration-300 flex flex-col group"
@@ -308,7 +368,8 @@ export default function MediaAndContactsPage() {
                       </div>
                     </div>
                   </article>
-                ))}
+                  ))
+                )}
               </div>
             </section>
 
@@ -617,13 +678,25 @@ export default function MediaAndContactsPage() {
                         />
                       </div>
 
+                      {formError && (
+                        <div
+                          role="alert"
+                          className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-left text-xs text-red-700"
+                        >
+                          <FormAlertIcon className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                          <span>{formError}</span>
+                        </div>
+                      )}
                       <div className="text-center pt-2">
                         <button
                           type="submit"
+                          disabled={isSubmittingForm}
                           className={siteButtonClass({ variant: "primary", size: "lg" })}
                         >
                           <Send className="w-4 h-4" />
-                          <span>Submit Corporate Inquiry</span>
+                          <span>
+                            {isSubmittingForm ? "Submitting Inquiry..." : "Submit Corporate Inquiry"}
+                          </span>
                         </button>
                       </div>
                     </form>

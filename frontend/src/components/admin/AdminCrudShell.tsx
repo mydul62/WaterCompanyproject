@@ -58,11 +58,10 @@ export function AdminToast({
   const isErr = toast.type === "error";
   return (
     <div
-      className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl border shadow-2xl text-sm font-semibold transition-all ${
-        isErr
-          ? "bg-red-950/95 border-red-800 text-red-200"
-          : "bg-emerald-950/95 border-emerald-800 text-emerald-200"
-      }`}
+      className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl border shadow-2xl text-sm font-semibold transition-all ${isErr
+        ? "bg-red-950/95 border-red-800 text-red-200"
+        : "bg-emerald-950/95 border-emerald-800 text-emerald-200"
+        }`}
     >
       {isErr ? (
         <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
@@ -117,16 +116,16 @@ export function AdminPageHeader({
               className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
                 storageMode === "database"
                   ? "bg-emerald-950/70 text-emerald-300 border-emerald-800/70"
-                  : "bg-amber-950/70 text-amber-300 border-amber-800/70"
+                  : "bg-red-950/70 text-red-300 border-red-800/70"
               }`}
             >
               {storageMode === "database" ? (
                 <>
-                  <Database className="w-3 h-3" /> SQLite Synced
+                  <Database className="w-3 h-3" /> PostgreSQL Synced
                 </>
               ) : (
                 <>
-                  <HardDrive className="w-3 h-3" /> Offline Preview
+                  <HardDrive className="w-3 h-3" /> Database Offline
                 </>
               )}
             </span>
@@ -219,16 +218,16 @@ export function AdminFormHeader({
                 className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
                   storageMode === "database"
                     ? "bg-emerald-950/70 text-emerald-300 border-emerald-800/70"
-                    : "bg-amber-950/70 text-amber-300 border-amber-800/70"
+                    : "bg-red-950/70 text-red-300 border-red-800/70"
                 }`}
               >
                 {storageMode === "database" ? (
                   <>
-                    <Database className="w-3 h-3" /> SQLite Synced
+                    <Database className="w-3 h-3" /> PostgreSQL Synced
                   </>
                 ) : (
                   <>
-                    <HardDrive className="w-3 h-3" /> Offline Preview
+                    <HardDrive className="w-3 h-3" /> Database Offline
                   </>
                 )}
               </span>
@@ -237,6 +236,37 @@ export function AdminFormHeader({
           <p className="text-slate-400 text-xs mt-1">{subtitle}</p>
         </div>
       </div>
+    </div>
+  );
+}
+
+export function AdminErrorBanner({
+  error,
+  onRetry,
+}: {
+  error: string | null;
+  onRetry?: () => void;
+}) {
+  if (!error) return null;
+  return (
+    <div
+      role="alert"
+      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 rounded-xl bg-red-950/70 border border-red-800/80 text-red-200 text-xs"
+    >
+      <div className="flex items-center gap-2.5 font-semibold">
+        <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+        <span>{error}</span>
+      </div>
+      {onRetry && (
+        <button
+          type="button"
+          onClick={onRetry}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-900/70 hover:bg-red-800 text-white font-bold text-xs transition-colors shrink-0 cursor-pointer"
+        >
+          <RefreshCw className="w-3 h-3" />
+          <span>Retry</span>
+        </button>
+      )}
     </div>
   );
 }
@@ -314,11 +344,10 @@ export function AdminSearchToolbar({
                 key={cat}
                 type="button"
                 onClick={() => onCategoryChange(cat)}
-                className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-colors cursor-pointer ${
-                  activeCategory === cat
-                    ? "bg-cyan-600 text-white"
-                    : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-colors cursor-pointer ${activeCategory === cat
+                  ? "bg-cyan-600 text-white"
+                  : "bg-slate-950 text-slate-400 hover:text-white border border-slate-800"
+                  }`}
               >
                 {cat === "ALL" ? "All" : cat}
               </button>

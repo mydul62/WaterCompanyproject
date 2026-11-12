@@ -1,8 +1,9 @@
 import { ProductService } from "../product/product.service";
 import { RFQService } from "../rfq/rfq.service";
+import { AnalyticsOverviewResponse } from "./analytics.interface";
 
 export class AnalyticsService {
-  static async getOverview() {
+  static async getOverview(): Promise<AnalyticsOverviewResponse> {
     const products = await ProductService.getAll();
     const { rfqs } = await RFQService.getAll();
 

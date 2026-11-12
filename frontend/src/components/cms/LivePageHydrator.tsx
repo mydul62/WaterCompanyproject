@@ -138,28 +138,14 @@ export default function LivePageHydrator() {
     const pageKey = ROUTE_TO_PAGE_KEY[pathname] || pathname.replace(/^\//, "");
     const slug = mappedSlug;
 
-    // 1. Instant Cache Hydration: Apply locally cached published overrides immediately
-    const hydrateFromStorage = () => {
-      try {
-        const liveCached = localStorage.getItem("waterweb_live_published_overrides");
-        const visualCached = localStorage.getItem("waterweb_visual_overrides");
-        const raw = liveCached || visualCached;
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          const pageData = parsed[pageKey] || (parsed.home && pageKey === "home" ? parsed.home : parsed);
-          if (pageData && typeof pageData === "object") {
-            applyOverridesToDom(pageData, pageKey);
-          }
-        }
-      } catch (e) {
-        // ignore
+    let currentOverrides: Record<string, any> | null = null;
+    const applyLatestOverrides = () => {
+      if (currentOverrides && typeof currentOverrides === "object") {
+        applyOverridesToDom(currentOverrides, pageKey);
       }
     };
 
-    // Apply immediate local cache
-    hydrateFromStorage();
-
-    // 2. Database Synchronization: Fetch latest published overrides from backend API
+    // Database Synchronization: Fetch latest published overrides from backend PostgreSQL API
     let isCancelled = false;
     api.pages
       .getBySlug(slug)
@@ -185,22 +171,16 @@ export default function LivePageHydrator() {
               (parsed.home && pageKey === "home" ? parsed.home : parsed);
 
             if (pageOverrides && typeof pageOverrides === "object") {
+              currentOverrides = pageOverrides;
               applyOverridesToDom(pageOverrides, pageKey);
-
-              // Update local cache for instantaneous future visits
-              try {
-                const existingCache = localStorage.getItem("waterweb_live_published_overrides");
-                const allCache = existingCache ? JSON.parse(existingCache) : {};
-                allCache[pageKey] = pageOverrides;
-                localStorage.setItem("waterweb_live_published_overrides", JSON.stringify(allCache));
-              } catch (e) {}
             }
-          } catch (e) {}
+          } catch {
+            // ignore malformed JSON
+          }
         }
       })
       .catch(() => {
-        // Fallback to local storage if API is unreachable
-        hydrateFromStorage();
+        // Keep base React DOM when offline instead of stale localStorage overrides
       });
 
     // 3. Real-Time Broadcast Sync: Instant reflection when Editor clicks 'Publish'
@@ -208,7 +188,8 @@ export default function LivePageHydrator() {
       const data = e.detail || e;
       if (data?.overrides) {
         const targetOverrides = data.overrides[pageKey] || data.overrides;
-        if (targetOverrides) {
+        if (targetOverrides && typeof targetOverrides === "object") {
+          currentOverrides = targetOverrides;
           applyOverridesToDom(targetOverrides, pageKey);
         }
       }
@@ -222,28 +203,19 @@ export default function LivePageHydrator() {
       bc.onmessage = (msg) => {
         if (msg.data?.type === "PAGE_PUBLISHED" && msg.data?.overrides) {
           const targetOverrides = msg.data.overrides[pageKey] || msg.data.overrides;
-          if (targetOverrides) {
+          if (targetOverrides && typeof targetOverrides === "object") {
+            currentOverrides = targetOverrides;
             applyOverridesToDom(targetOverrides, pageKey);
           }
         }
       };
-    } catch (e) {}
+    } catch {
+      // BroadcastChannel unsupported
+    }
 
-    // Storage event sync across other browser windows/tabs
-    const handleStorageEvent = (event: StorageEvent) => {
-      if (event.key === "waterweb_live_published_overrides" && event.newValue) {
-        try {
-          const parsed = JSON.parse(event.newValue);
-          const pageData = parsed[pageKey] || parsed;
-          if (pageData) applyOverridesToDom(pageData, pageKey);
-        } catch (e) {}
-      }
-    };
-    window.addEventListener("storage", handleStorageEvent);
-
-    // 4. Mutation Observer: Ensure overrides persist through React client re-renders
+    // 4. Mutation Observer: Ensure database overrides persist through React client re-renders
     const observer = new MutationObserver(() => {
-      hydrateFromStorage();
+      applyLatestOverrides();
     });
 
     observer.observe(document.body, {
@@ -254,7 +226,6 @@ export default function LivePageHydrator() {
     return () => {
       isCancelled = true;
       window.removeEventListener("cms-page-published", handlePublishedBroadcast);
-      window.removeEventListener("storage", handleStorageEvent);
       observer.disconnect();
       if (bc) bc.close();
     };

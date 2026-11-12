@@ -11,31 +11,30 @@ import {
   ChevronDown,
   Edit,
   Save,
-  CheckCircle,
   CornerDownRight,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import {
   NavItem,
   MENU_TABS,
-  getFallbackMenuTree,
 } from "./_components/NavigationItemForm";
-import { AdminEditLoadingState } from "@/components/admin/AdminCrudShell";
+import {
+  AdminEditLoadingState,
+  AdminErrorBanner,
+  AdminToast,
+  useAdminToast,
+} from "@/components/admin/AdminCrudShell";
 import { AdminFormSkeleton } from "@/components/common/Skeletons";
 
 function HeaderNavigationContent() {
   const searchParams = useSearchParams();
   const initialMenu = searchParams.get("menu") || "HEADER_PRIMARY";
   const [selectedMenuCode, setSelectedMenuCode] = useState(initialMenu);
-  const [navItems, setNavItems] = useState<NavItem[]>(() => getFallbackMenuTree(initialMenu));
+  const [navItems, setNavItems] = useState<NavItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [notification, setNotification] = useState<string | null>(null);
-
-  const showNotification = (msg: string) => {
-    setNotification(msg);
-    setTimeout(() => setNotification(null), 3500);
-  };
+  const { toast, showToast, clearToast } = useAdminToast();
 
   useEffect(() => {
     loadMenuTree(selectedMenuCode);
@@ -43,16 +42,13 @@ function HeaderNavigationContent() {
 
   const loadMenuTree = async (code: string) => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await api.navigation.getTree(code);
-      if (res.data && res.data.length > 0) {
-        setNavItems(res.data);
-      } else {
-        setNavItems(getFallbackMenuTree(code));
-      }
-    } catch (err) {
-      console.warn("Using default navigation tree:", err);
-      setNavItems(getFallbackMenuTree(code));
+      setNavItems(Array.isArray(res.data) ? res.data : []);
+    } catch (err: any) {
+      setNavItems([]);
+      setLoadError(err?.message || "Failed to load navigation menu from PostgreSQL.");
     } finally {
       setLoading(false);
     }
@@ -74,7 +70,7 @@ function HeaderNavigationContent() {
     } else {
       setNavItems(navItems.filter((i) => i.id !== id));
     }
-    showNotification("Item removed (click Save Navigation to persist changes)");
+    showToast("Item removed (click Save Navigation to persist changes)");
   };
 
   const handleMoveTopItem = (index: number, direction: "up" | "down") => {
@@ -94,9 +90,9 @@ function HeaderNavigationContent() {
     setIsSaving(true);
     try {
       await api.navigation.saveTree(selectedMenuCode, navItems);
-      showNotification("Navigation menu tree saved to database successfully!");
-    } catch {
-      showNotification("Navigation structure saved!");
+      showToast("Navigation menu tree saved to PostgreSQL successfully!");
+    } catch (err: any) {
+      showToast(err?.message || "Failed to save navigation menu tree to PostgreSQL.", "error");
     } finally {
       setIsSaving(false);
     }
@@ -104,12 +100,7 @@ function HeaderNavigationContent() {
 
   return (
     <div className="space-y-6">
-      {notification && (
-        <div className="fixed top-5 right-5 z-50 bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top">
-          <CheckCircle className="w-4 h-4" />
-          {notification}
-        </div>
-      )}
+      <AdminToast toast={toast} onClose={clearToast} />
 
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
@@ -146,6 +137,8 @@ function HeaderNavigationContent() {
         </div>
       </div>
 
+      <AdminErrorBanner error={loadError} onRetry={() => loadMenuTree(selectedMenuCode)} />
+
       {/* Menu Switcher Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
         {MENU_TABS.map((tab) => (
@@ -175,7 +168,14 @@ function HeaderNavigationContent() {
         </div>
 
         <div className="space-y-3">
-          {loading ? <AdminFormSkeleton /> : navItems.map((item, index) => (
+          {loading ? (
+            <AdminFormSkeleton />
+          ) : navItems.length === 0 ? (
+            <div className="p-8 text-center text-xs text-slate-400">
+              No navigation items configured for this menu in PostgreSQL yet.
+            </div>
+          ) : (
+            navItems.map((item, index) => (
             <div
               key={item.id}
               className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3"
@@ -276,7 +276,8 @@ function HeaderNavigationContent() {
                 </div>
               )}
             </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

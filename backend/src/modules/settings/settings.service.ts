@@ -1,4 +1,5 @@
 import { prisma } from "../../config/prisma";
+import { UpdateSettingsBatchPayload } from "./settings.interface";
 
 export class SettingsService {
   static async getAll() {
@@ -29,9 +30,7 @@ export class SettingsService {
     return publicMap;
   }
 
-  static async updateBatch(
-    payload: Record<string, string> | { settings: { key: string; value: string }[] }
-  ) {
+  static async updateBatch(payload: UpdateSettingsBatchPayload) {
     const normalizedMap: Record<string, string> = {};
     if (Array.isArray((payload as any)?.settings)) {
       for (const item of (payload as any).settings) {

@@ -1,5 +1,6 @@
 import { prisma } from "../../config/prisma";
 import { ApiError } from "../../utils/apiError";
+import { LinkCreatePayload, LinkUpdatePayload } from "./link.interface";
 
 export class LinkService {
   static async getAll(category?: string, search?: string) {
@@ -18,14 +19,7 @@ export class LinkService {
     });
   }
 
-  static async createLink(payload: {
-    title: string;
-    slug?: string;
-    destinationUrl: string;
-    target?: string;
-    category?: string;
-    notes?: string;
-  }) {
+  static async createLink(payload: LinkCreatePayload) {
     if (!payload.title || !payload.destinationUrl) {
       throw new ApiError(400, "Title and Destination URL are required.");
     }
@@ -52,7 +46,7 @@ export class LinkService {
     });
   }
 
-  static async updateLink(id: string, payload: any) {
+  static async updateLink(id: string, payload: LinkUpdatePayload) {
     const existing = await prisma.linkItem.findUnique({ where: { id } });
     if (!existing) throw new ApiError(404, "Link not found.");
 

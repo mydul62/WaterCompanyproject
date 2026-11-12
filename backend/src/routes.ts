@@ -4,7 +4,7 @@ import { pageRoutes } from "./modules/pages/page.route";
 import { navigationRoutes } from "./modules/navigation/navigation.route";
 import { linkRoutes } from "./modules/links/link.route";
 import { productRoutes } from "./modules/product/product.route";
-import { categoryRoutes } from "./modules/product/category.route";
+import { categoryRoutes } from "./modules/category/category.route";
 import { mediaRoutes } from "./modules/media/media.route";
 import { settingsRoutes } from "./modules/settings/settings.route";
 import { userRoutes } from "./modules/user/user.route";

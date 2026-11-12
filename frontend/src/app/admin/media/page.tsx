@@ -13,13 +13,13 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import {
-  PRESS_STORIES,
   PressStory,
   normalizePressStory,
 } from "@/data/mediaData";
 import {
   AdminToast,
   AdminPageHeader,
+  AdminErrorBanner,
   AdminSearchToolbar,
   AdminConfirmDeleteModal,
   useAdminToast,
@@ -27,25 +27,30 @@ import {
 import { AdminCardSkeletonItems } from "@/components/common/Skeletons";
 
 export default function AdminMediaPage() {
-  const [stories, setStories] = useState<PressStory[]>(PRESS_STORIES);
+  const [stories, setStories] = useState<PressStory[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const { toast, showToast, clearToast } = useAdminToast();
 
   const loadStories = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await api.mediaStories.getAll(true);
       if (Array.isArray(res.data)) {
         setStories(res.data.map(normalizePressStory));
         setStorageMode("database");
+      } else {
+        setStories([]);
       }
-    } catch {
-      setStories(PRESS_STORIES);
+    } catch (err: any) {
+      setStories([]);
       setStorageMode("fallback");
+      setLoadError(err?.message || "Failed to load press stories from PostgreSQL.");
     } finally {
       setLoading(false);
     }
@@ -117,6 +122,8 @@ export default function AdminMediaPage() {
         loading={loading}
         storageMode={storageMode}
       />
+
+      <AdminErrorBanner error={loadError} onRetry={loadStories} />
 
       <AdminSearchToolbar
         search={search}

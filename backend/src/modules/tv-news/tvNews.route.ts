@@ -1,10 +1,10 @@
-import { createCrudController, createCrudRouter } from "../../utils/contentHelpers";
-import { TvNewsService } from "./tvNews.service";
+import { createCrudRouter } from "../../utils/contentHelpers";
+import { TvNewsController } from "./tvNews.controller";
+import { TvNewsValidation } from "./tvNews.validation";
 
-const controller = createCrudController(TvNewsService, "TV News video");
-
-export const tvNewsRoutes = createCrudRouter(controller, {
+export const tvNewsRoutes = createCrudRouter(TvNewsController, {
   hasSlugRoute: true,
   hasResetRoute: true,
+  createSchema: TvNewsValidation.create,
+  updateSchema: TvNewsValidation.update,
 });
-

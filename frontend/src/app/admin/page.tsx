@@ -23,17 +23,27 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { api } from "@/lib/api";
+import { AdminErrorBanner } from "@/components/admin/AdminCrudShell";
 import { AdminKpiSkeletonGrid } from "@/components/common/Skeletons";
+
+interface DashboardPageSummary {
+  id: string;
+  title: string;
+  slug: string;
+  status: string;
+}
 
 export default function AdminOverviewPage() {
   const [stats, setStats] = useState({
-    products: 12,
-    pages: 8,
-    media: 24,
-    links: 11,
-    rfqs: 4,
+    products: 0,
+    pages: 0,
+    media: 0,
+    links: 0,
+    rfqs: 0,
   });
+  const [pagesList, setPagesList] = useState<DashboardPageSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     loadOverview();
@@ -41,39 +51,55 @@ export default function AdminOverviewPage() {
 
   const loadOverview = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
-      const [prodRes, pageRes, mediaRes, linkRes] = await Promise.allSettled([
-        api.products.getAll(),
+      const [prodRes, pageRes, mediaRes, linkRes, rfqRes] = await Promise.allSettled([
+        api.products.getAllAdmin(),
         api.pages.getAll(),
         api.media.getAll(),
         api.links.getAll(),
+        api.inquiries.getAll(),
       ]);
 
+      const allFailed = [prodRes, pageRes, mediaRes, linkRes, rfqRes].every(
+        (r) => r.status === "rejected"
+      );
+      if (allFailed) {
+        setLoadError("Unable to load overview telemetry from PostgreSQL.");
+      }
+
+      const pagesData =
+        pageRes.status === "fulfilled" && Array.isArray(pageRes.value?.data)
+          ? pageRes.value.data
+          : [];
+      setPagesList(pagesData);
+
       setStats({
-        products: prodRes.status === "fulfilled" && prodRes.value.data ? prodRes.value.data.length : 12,
-        pages: pageRes.status === "fulfilled" && pageRes.value.data ? pageRes.value.data.length : 8,
-        media: mediaRes.status === "fulfilled" && mediaRes.value.data ? mediaRes.value.data.length : 24,
-        links: linkRes.status === "fulfilled" && linkRes.value.data ? linkRes.value.data.length : 11,
-        rfqs: 4,
+        products:
+          prodRes.status === "fulfilled" && Array.isArray(prodRes.value?.data)
+            ? prodRes.value.data.length
+            : 0,
+        pages: pagesData.length,
+        media:
+          mediaRes.status === "fulfilled" && Array.isArray(mediaRes.value?.data)
+            ? mediaRes.value.data.length
+            : 0,
+        links:
+          linkRes.status === "fulfilled" && Array.isArray(linkRes.value?.data)
+            ? linkRes.value.data.length
+            : 0,
+        rfqs:
+          rfqRes.status === "fulfilled" && Array.isArray(rfqRes.value?.data)
+            ? rfqRes.value.data.length
+            : 0,
       });
-    } catch (err) {
-      console.warn("Using overview defaults:", err);
+    } catch (err: any) {
+      setPagesList([]);
+      setLoadError(err?.message || "Unable to load overview telemetry from PostgreSQL.");
     } finally {
       setLoading(false);
     }
   };
-
-  const CORE_PAGES = [
-    { title: "Home Page", slug: "/", id: "page-home", status: "PUBLISHED", blocks: 6 },
-    { title: "Our Story", slug: "/our-story", id: "page-story", status: "PUBLISHED", blocks: 5 },
-    { title: "Our Business & Plants", slug: "/our-business", id: "page-business", status: "PUBLISHED", blocks: 4 },
-    { title: "Sustainability & Green Campus", slug: "/sustainability", id: "page-sustainability", status: "PUBLISHED", blocks: 5 },
-    { title: "Product Catalog", slug: "/products", id: "page-products", status: "PUBLISHED", blocks: 4 },
-    { title: "Certificates & Quality", slug: "/certificates", id: "page-certificates", status: "PUBLISHED", blocks: 4 },
-    { title: "TV News & YouTube Features", slug: "/tv-news", id: "page-tv-news", status: "PUBLISHED", blocks: 2 },
-    { title: "Careers Portal", slug: "/careers", id: "page-careers", status: "PUBLISHED", blocks: 4 },
-    { title: "Brands We Work With", slug: "/brands-we-work-with", id: "page-brands", status: "PUBLISHED", blocks: 3 },
-  ];
 
   return (
     <div className="space-y-8 w-full">
@@ -118,6 +144,8 @@ export default function AdminOverviewPage() {
           </Link>
         </div>
       </div>
+
+      <AdminErrorBanner error={loadError} onRetry={loadOverview} />
 
       {/* KPI Statistic Cards */}
       {loading ? (
@@ -210,7 +238,14 @@ export default function AdminOverviewPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {CORE_PAGES.map((page) => (
+          {pagesList.length === 0 && !loading ? (
+            <div className="col-span-full py-6 text-center text-xs text-slate-500">
+              {loadError
+                ? "Pages list unavailable while PostgreSQL connection is offline."
+                : "No CMS pages found in PostgreSQL yet."}
+            </div>
+          ) : (
+            pagesList.map((page) => (
             <div
               key={page.id}
               className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 hover:border-slate-700 transition-all flex items-center justify-between"
@@ -223,7 +258,7 @@ export default function AdminOverviewPage() {
                     {page.status}
                   </span>
                   <span className="text-[10px] text-slate-500 font-mono">
-                    {page.blocks} blocks
+                    {stats.rfqs} RFQ inquiries
                   </span>
                 </div>
               </div>
@@ -236,7 +271,8 @@ export default function AdminOverviewPage() {
                 Builder
               </Link>
             </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

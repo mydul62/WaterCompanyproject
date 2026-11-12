@@ -11,13 +11,13 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import {
-  CASE_STUDIES_DATA,
   CASE_STUDY_INDUSTRIES,
   CaseStudy,
 } from "@/data/caseStudiesData";
 import {
   AdminToast,
   AdminPageHeader,
+  AdminErrorBanner,
   AdminSearchToolbar,
   AdminConfirmDeleteModal,
   useAdminToast,
@@ -25,10 +25,11 @@ import {
 import { AdminCardSkeletonItems } from "@/components/common/Skeletons";
 
 export default function AdminCaseStudiesPage() {
-  const [cases, setCases] = useState<CaseStudy[]>(CASE_STUDIES_DATA);
+  const [cases, setCases] = useState<CaseStudy[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [activeIndustry, setActiveIndustry] = useState("ALL");
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
@@ -36,15 +37,19 @@ export default function AdminCaseStudiesPage() {
 
   const loadCases = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await api.caseStudies.getAll(true);
       if (Array.isArray(res.data)) {
         setCases(res.data);
         setStorageMode("database");
+      } else {
+        setCases([]);
       }
-    } catch {
-      setCases(CASE_STUDIES_DATA);
+    } catch (err: any) {
+      setCases([]);
       setStorageMode("fallback");
+      setLoadError(err?.message || "Failed to load case studies from PostgreSQL.");
     } finally {
       setLoading(false);
     }
@@ -116,6 +121,8 @@ export default function AdminCaseStudiesPage() {
         loading={loading}
         storageMode={storageMode}
       />
+
+      <AdminErrorBanner error={loadError} onRetry={loadCases} />
 
       <AdminSearchToolbar
         search={search}
@@ -210,7 +217,7 @@ export default function AdminCaseStudiesPage() {
       <AdminConfirmDeleteModal
         isOpen={Boolean(confirmDeleteId)}
         title="Delete Case Study?"
-        description="This removes the client case study from SQLite and /case-studies."
+        description="This removes the client case study from PostgreSQL and /case-studies."
         onCancel={() => setConfirmDeleteId(null)}
         onConfirm={handleDelete}
         loading={saving}

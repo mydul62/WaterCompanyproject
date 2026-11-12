@@ -7,6 +7,7 @@ import {
   DEFAULT_CERTIFICATES,
   DEFAULT_CAREER_JOBS,
   DEFAULT_TV_NEWS_VIDEOS,
+  DEFAULT_SUSTAINABILITY_CONTENT,
 } from "../src/data/cmsDefaults";
 
 const prisma = new PrismaClient();
@@ -78,6 +79,16 @@ async function main() {
       create: item,
     });
   }
+  await prisma.siteSetting.upsert({
+    where: { key: "sustainability_content" },
+    update: {},
+    create: {
+      key: "sustainability_content",
+      value: JSON.stringify(DEFAULT_SUSTAINABILITY_CONTENT),
+      category: "GENERAL",
+      isPublic: true,
+    },
+  });
   console.log("Site settings seeded:", settingsData.length);
 
   // 3. Centralized Link Registry

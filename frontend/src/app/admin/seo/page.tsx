@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import {
   Globe,
   Save,
-  CheckCircle,
   Search,
   ExternalLink,
   RefreshCw,
@@ -14,19 +13,25 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import MediaPickerModal from "@/components/admin/MediaPickerModal";
+import {
+  AdminErrorBanner,
+  AdminToast,
+  useAdminToast,
+} from "@/components/admin/AdminCrudShell";
 import { AdminFormSkeleton } from "@/components/common/Skeletons";
 
 export default function SeoManagementPage() {
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [notification, setNotification] = useState<string | null>(null);
+  const { toast, showToast, clearToast } = useAdminToast();
 
   // Global SEO
-  const [metaTitle, setMetaTitle] = useState("Noor Plastic | Noor Plastic Industries — Pure Water & Plastic Packaging");
-  const [metaDescription, setMetaDescription] = useState("Noor Plastic Industries (Proprietor: Nurul Islam) — Authorized plastic manufacturing, importing & supplying company in Latifpur-B, Kaliakoir-1750, Gazipur (Trade License #242501300583).");
-  const [metaKeywords, setMetaKeywords] = useState("Noor Plastic, Noor Plastic Industries, pure water dispenser bottle, PET jar, plastic manufacturing Bangladesh, Kaliakoir Gazipur");
-  const [canonicalUrl, setCanonicalUrl] = useState("https://www.noorplastic.com");
-  const [ogImageUrl, setOgImageUrl] = useState("/images/factory/factory-1.png");
+  const [metaTitle, setMetaTitle] = useState("");
+  const [metaDescription, setMetaDescription] = useState("");
+  const [metaKeywords, setMetaKeywords] = useState("");
+  const [canonicalUrl, setCanonicalUrl] = useState("");
+  const [ogImageUrl, setOgImageUrl] = useState("");
 
   // Page-specific overrides
   const [pages, setPages] = useState<any[]>([]);
@@ -36,11 +41,6 @@ export default function SeoManagementPage() {
 
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
 
-  const showNotification = (msg: string) => {
-    setNotification(msg);
-    setTimeout(() => setNotification(null), 3500);
-  };
-
   useEffect(() => {
     loadSeoSettings();
     loadPages();
@@ -48,17 +48,17 @@ export default function SeoManagementPage() {
 
   const loadSeoSettings = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await api.settings.getMap();
-      if (res.data) {
-        if (res.data["seo_title"]) setMetaTitle(res.data["seo_title"]);
-        if (res.data["seo_description"]) setMetaDescription(res.data["seo_description"]);
-        if (res.data["seo_keywords"]) setMetaKeywords(res.data["seo_keywords"]);
-        if (res.data["seo_canonical"]) setCanonicalUrl(res.data["seo_canonical"]);
-        if (res.data["seo_og_image"]) setOgImageUrl(res.data["seo_og_image"]);
-      }
-    } catch (err) {
-      console.warn("Using default SEO fallback:", err);
+      const map = res.data || {};
+      setMetaTitle(map["seo_title"] || "");
+      setMetaDescription(map["seo_description"] || "");
+      setMetaKeywords(map["seo_keywords"] || "");
+      setCanonicalUrl(map["seo_canonical"] || "");
+      setOgImageUrl(map["seo_og_image"] || "");
+    } catch (err: any) {
+      setLoadError(err?.message || "Failed to load SEO settings from PostgreSQL.");
     } finally {
       setLoading(false);
     }
@@ -72,9 +72,12 @@ export default function SeoManagementPage() {
         setSelectedPageId(res.data[0].id);
         setPageMetaTitle(res.data[0].metaTitle || res.data[0].title);
         setPageMetaDesc(res.data[0].metaDescription || "");
+      } else {
+        setPages([]);
       }
-    } catch (err) {
-      // ignore
+    } catch (err: any) {
+      setPages([]);
+      setLoadError((prev) => prev || err?.message || "Failed to load CMS pages from PostgreSQL.");
     }
   };
 
@@ -107,9 +110,9 @@ export default function SeoManagementPage() {
           metaDescription: pageMetaDesc,
         });
       }
-      showNotification("SEO metadata updated and synced!");
-    } catch (err) {
-      showNotification("SEO metadata saved locally!");
+      showToast("SEO metadata updated and synced with PostgreSQL!");
+    } catch (err: any) {
+      showToast(err?.message || "Failed to save SEO settings to PostgreSQL.", "error");
     } finally {
       setIsSaving(false);
     }
@@ -117,13 +120,7 @@ export default function SeoManagementPage() {
 
   return (
     <div className="space-y-6">
-      {/* Toast Notification */}
-      {notification && (
-        <div className="fixed top-5 right-5 z-50 bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top">
-          <CheckCircle className="w-4 h-4" />
-          {notification}
-        </div>
-      )}
+      <AdminToast toast={toast} onClose={clearToast} />
 
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
@@ -160,6 +157,8 @@ export default function SeoManagementPage() {
           </button>
         </div>
       </div>
+
+      <AdminErrorBanner error={loadError} onRetry={() => { loadSeoSettings(); loadPages(); }} />
 
       {loading ? (
         <AdminFormSkeleton />

@@ -17,6 +17,7 @@ import {
 import { api } from "@/lib/api";
 import {
   AdminFormHeader,
+  AdminErrorBanner,
   AdminEditLoadingState,
   AdminEditNotFoundState,
   AdminToast,
@@ -25,8 +26,7 @@ import {
 import {
   RFQItem,
   RFQ_STATUSES,
-  getLocalRfqs,
-  saveLocalRfqs,
+  normalizeRfqItem,
   getStatusBadge,
 } from "../_components/rfqStore";
 
@@ -38,6 +38,7 @@ export default function AdminInspectRfqPage() {
 
   const [rfq, setRfq] = useState<RFQItem | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const { toast, showToast, clearToast } = useAdminToast();
@@ -47,44 +48,25 @@ export default function AdminInspectRfqPage() {
 
     async function load() {
       setLoading(true);
+      setLoadError(null);
       setNotFound(false);
 
-      const localItems = getLocalRfqs();
-      let found = localItems.find((item) => item.id === id) || null;
-
-      if (!found) {
-        try {
-          const res = await api.inquiries.getAll();
-          if (Array.isArray(res?.data)) {
-            const match = res.data.find((row: any) => row.id === id);
-            if (match) {
-              found = {
-                id: match.id,
-                company: match.company || match.companyName || "Enterprise Client",
-                contact: match.contact || match.contactName || match.name || "—",
-                email: match.email || "",
-                phone: match.phone || "",
-                category: match.category || match.productCategory || "Custom Packaging",
-                volume: match.volume || match.estimatedVolume || "—",
-                capacity: match.capacity || match.capacitySpec || "—",
-                date: match.date || (match.createdAt ? String(match.createdAt).slice(0, 16).replace("T", " ") : "—"),
-                status: match.status || "New Inquiry",
-                notes: match.notes || match.message || "",
-              };
-            }
-          }
-        } catch {
-          // Use local state only when backend endpoint is unavailable
+      try {
+        const res = await api.inquiries.getAll();
+        if (!active) return;
+        const rows = Array.isArray(res?.data) ? res.data : [];
+        const match = rows.find((row: any) => row.id === id || row.quoteNumber === id);
+        if (match) {
+          setRfq(normalizeRfqItem(match));
+        } else {
+          setNotFound(true);
         }
+      } catch (err: any) {
+        if (!active) return;
+        setLoadError(err?.message || "Unable to fetch quotation details from PostgreSQL.");
+      } finally {
+        if (active) setLoading(false);
       }
-
-      if (!active) return;
-      if (found) {
-        setRfq(found);
-      } else {
-        setNotFound(true);
-      }
-      setLoading(false);
     }
 
     load();
@@ -96,24 +78,15 @@ export default function AdminInspectRfqPage() {
   const handleStatusChange = async (newStatus: RFQItem["status"]) => {
     if (!rfq) return;
     setUpdatingStatus(true);
-
-    const updatedRfq: RFQItem = { ...rfq, status: newStatus };
-    setRfq(updatedRfq);
-
-    const localItems = getLocalRfqs();
-    const updatedList = localItems.some((item) => item.id === rfq.id)
-      ? localItems.map((item) => (item.id === rfq.id ? updatedRfq : item))
-      : [updatedRfq, ...localItems];
-    saveLocalRfqs(updatedList);
-
     try {
       await api.inquiries.updateStatus(rfq.id, newStatus);
-    } catch {
-      // Saved locally when backend is unavailable
+      setRfq({ ...rfq, status: newStatus });
+      showToast(`RFQ status updated to "${newStatus}".`);
+    } catch (err: any) {
+      showToast(err?.message || "Failed to update status in PostgreSQL.", "error");
     } finally {
       setUpdatingStatus(false);
     }
-    showToast(`RFQ status updated to "${newStatus}".`);
   };
 
   return (
@@ -129,6 +102,8 @@ export default function AdminInspectRfqPage() {
             : "Review enterprise contact details, container specifications, and pipeline stage."
         }
       />
+
+      <AdminErrorBanner error={loadError} />
 
       {loading ? (
         <AdminEditLoadingState label="Loading quotation request..." />

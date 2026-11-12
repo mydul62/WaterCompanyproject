@@ -6,7 +6,8 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { api } from "@/lib/api";
-import { BLOG_POSTS, BlogPost } from "@/data/blogData";
+import type { BlogPost } from "@/data/blogData";
+import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import { siteButtonClass, siteFilterTabClass } from "@/components/common/SiteButton";
 import { BlogFeaturedSkeletonCard, BlogCardsSkeletonItems } from "@/components/common/Skeletons";
 import {
@@ -28,22 +29,31 @@ import {
 } from "lucide-react";
 
 export default function BlogPage() {
-  const [posts, setPosts] = useState<BlogPost[]>(BLOG_POSTS);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setLoadError(null);
     api.blogs
       .getPublic()
       .then((res) => {
-        if (active && Array.isArray(res.data) && res.data.length > 0) {
-          setPosts(res.data);
-        }
+        if (!active) return;
+        setPosts(Array.isArray(res.data) ? res.data : []);
       })
-      .catch(() => {
-        // Keep clean fallback BLOG_POSTS
+      .catch((err) => {
+        if (!active) return;
+        setPosts([]);
+        setLoadError(
+          err instanceof Error && err.message
+            ? err.message
+            : "Unable to load articles from server."
+        );
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -51,7 +61,7 @@ export default function BlogPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [reloadKey]);
 
   // Filtered Blog Posts
   const filteredPosts = useMemo(() => {
@@ -59,7 +69,7 @@ export default function BlogPage() {
     return posts.filter((p) => p.category === activeCategory);
   }, [activeCategory, posts]);
 
-  const featuredPost = posts.find((p) => p.featured) || posts[0];
+  const featuredPost = posts.find((p) => p.featured) || posts[0] || null;
 
   return (
     <div className="min-h-screen bg-[#f4f8fb] text-[#0a1f33] font-sans antialiased selection:bg-[#0b6e99] selection:text-white">
@@ -151,6 +161,19 @@ export default function BlogPage() {
               {/* Featured Hero Card */}
               {loading ? (
                 <BlogFeaturedSkeletonCard />
+              ) : loadError ? (
+                <PublicStateMessage
+                  variant="error"
+                  title="Unable to load blog articles"
+                  description={loadError}
+                  onRetry={() => setReloadKey((k) => k + 1)}
+                />
+              ) : !featuredPost ? (
+                <PublicStateMessage
+                  variant="empty"
+                  title="No articles published yet"
+                  description="Check back soon for technical whitepapers and industry insights."
+                />
               ) : (
                 <div
                   className="bg-white rounded-3xl overflow-hidden border border-slate-200/90 shadow-md hover:shadow-2xl transition-all duration-300 grid grid-cols-1 lg:grid-cols-12 cursor-pointer group"
@@ -264,7 +287,17 @@ export default function BlogPage() {
 
               {/* Articles Grid (3 Columns) */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {loading ? <BlogCardsSkeletonItems count={6} /> : filteredPosts.map((post) => (
+                {loading ? (
+                  <BlogCardsSkeletonItems count={6} />
+                ) : loadError || posts.length === 0 ? null : filteredPosts.length === 0 ? (
+                  <PublicStateMessage
+                    variant="empty"
+                    title="No articles in this category"
+                    description="Try selecting another category tab to view published articles."
+                    className="col-span-full"
+                  />
+                ) : (
+                  filteredPosts.map((post) => (
                   <article
                     key={post.id}
                     className="bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between group cursor-pointer"
@@ -325,7 +358,8 @@ export default function BlogPage() {
                       </span>
                     </div>
                   </article>
-                ))}
+                ))
+                )}
               </div>
             </div>
           </section>

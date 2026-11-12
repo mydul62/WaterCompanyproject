@@ -6,7 +6,6 @@ import { Tv, Save, PlayCircle, CheckCircle2, AlertCircle } from "lucide-react";
 import { api } from "@/lib/api";
 import {
   TvNewsVideoItem,
-  DEFAULT_TV_NEWS_VIDEOS,
   TV_NEWS_CATEGORY_OPTIONS,
   extractYouTubeVideoId,
   getYouTubeEmbedUrl,
@@ -16,6 +15,7 @@ import {
 import ImageFieldWithUpload from "@/components/admin/ImageFieldWithUpload";
 import {
   AdminFormHeader,
+  AdminErrorBanner,
   AdminEditLoadingState,
   AdminEditNotFoundState,
   AdminToast,
@@ -71,6 +71,7 @@ export default function TvNewsForm({
   const [form, setForm] = useState<TvNewsFormState>(EMPTY_FORM);
   const [loading, setLoading] = useState(mode === "edit");
   const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
   const { toast, showToast, clearToast } = useAdminToast();
@@ -88,10 +89,6 @@ export default function TvNewsForm({
           }
         } catch {
           if (active) {
-            setForm((prev) => ({
-              ...prev,
-              sortOrder: DEFAULT_TV_NEWS_VIDEOS.length + 1,
-            }));
             setStorageMode("fallback");
           }
         }
@@ -105,6 +102,7 @@ export default function TvNewsForm({
       }
 
       setLoading(true);
+      setLoadError(null);
       try {
         const res = await api.tvNews.getById(videoRecordId);
         if (!active) return;
@@ -114,13 +112,13 @@ export default function TvNewsForm({
         } else {
           setNotFound(true);
         }
-      } catch {
-        const fallback = DEFAULT_TV_NEWS_VIDEOS.find((v) => v.id === videoRecordId);
-        if (fallback && active) {
-          setForm(videoToForm(fallback));
-          setStorageMode("fallback");
-        } else if (active) {
+      } catch (err: any) {
+        if (!active) return;
+        setStorageMode("fallback");
+        if (err?.status === 404 || err?.message?.toLowerCase().includes("not found")) {
           setNotFound(true);
+        } else {
+          setLoadError(err?.message || "Failed to load TV News video record from PostgreSQL.");
         }
       } finally {
         if (active) setLoading(false);
@@ -195,6 +193,8 @@ export default function TvNewsForm({
 
       {loading ? (
         <AdminEditLoadingState label="Loading TV News video details..." />
+      ) : loadError ? (
+        <AdminErrorBanner error={loadError} />
       ) : notFound ? (
         <AdminEditNotFoundState
           title="TV News Video Not Found"

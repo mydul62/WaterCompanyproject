@@ -1,13 +1,8 @@
 import { prisma } from "../../config/prisma";
 import { ApiError } from "../../utils/apiError";
+import { ProductCreatePayload, ProductFilterParams, ProductUpdatePayload } from "./product.interface";
 
-export interface ProductFilterParams {
-  category?: string;
-  material?: string;
-  isFeatured?: boolean | string;
-  search?: string;
-  sort?: string;
-}
+export type { ProductFilterParams };
 
 export class ProductService {
   static async getAll(filters: ProductFilterParams = {}) {
@@ -74,8 +69,10 @@ export class ProductService {
   }
 
   static async getBySlug(slug: string) {
-    const product = await prisma.product.findUnique({
-      where: { slug },
+    const product = await prisma.product.findFirst({
+      where: {
+        OR: [{ slug }, { id: slug }],
+      },
       include: { category: true },
     });
 
@@ -112,7 +109,7 @@ export class ProductService {
     };
   }
 
-  static async create(payload: any) {
+  static async create(payload: ProductCreatePayload) {
     if (!payload.name) {
       throw new ApiError(400, "Product name is required.");
     }
@@ -183,7 +180,7 @@ export class ProductService {
     };
   }
 
-  static async update(id: string, payload: any) {
+  static async update(id: string, payload: ProductUpdatePayload) {
     const existing = await prisma.product.findUnique({ where: { id } });
     if (!existing) throw new ApiError(404, "Product not found.");
 
@@ -256,52 +253,5 @@ export class ProductService {
 
   static async delete(id: string) {
     return prisma.product.delete({ where: { id } });
-  }
-
-  // Categories
-  static async getCategories() {
-    return prisma.category.findMany({
-      orderBy: { order: "asc" },
-      include: {
-        _count: { select: { products: true } },
-      },
-    });
-  }
-
-  static async createCategory(payload: any) {
-    if (!payload.name) throw new ApiError(400, "Category name is required.");
-    const slug =
-      payload.slug?.toLowerCase().trim().replace(/[^a-z0-9-]/g, "-") ||
-      payload.name.toLowerCase().trim().replace(/[^a-z0-9-]/g, "-");
-
-    const existing = await prisma.category.findUnique({ where: { slug } });
-    if (existing) throw new ApiError(409, `Category '${slug}' already exists.`);
-
-    return prisma.category.create({
-      data: {
-        name: payload.name,
-        slug,
-        description: payload.description || null,
-        material: payload.material || "TINPLATE",
-        order: Number(payload.order) || 0,
-        image: payload.image || null,
-        isActive: payload.isActive !== false,
-      },
-    });
-  }
-
-  static async updateCategory(id: string, payload: any) {
-    return prisma.category.update({
-      where: { id },
-      data: payload,
-    });
-  }
-
-  static async deleteCategory(id: string) {
-    const productsCount = await prisma.product.count({ where: { categoryId: id } });
-    if (productsCount > 0) {
-      throw new ApiError(400, `Cannot delete category: ${productsCount} products are assigned to it.`);
-    }
-    return prisma.category.delete({ where: { id } });
   }
 }

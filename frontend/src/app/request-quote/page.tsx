@@ -2,15 +2,17 @@
 
 export const dynamic = "force-dynamic";
 
-import React, { useState, Suspense } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { CATALOG_PRODUCTS, getProductById, CatalogProduct } from "@/data/catalogData";
 import { api } from "@/lib/api";
+import { normalizeApiProduct, type NormalizedProduct } from "@/lib/productMapper";
+import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import { siteButtonClass } from "@/components/common/SiteButton";
+import { AlertTriangle as FormAlertIcon } from "lucide-react";
 import {
   CheckCircle2,
   Clock,
@@ -30,14 +32,12 @@ function RequestQuoteContent() {
   const productQuery = searchParams.get("product") || "";
   const initialType = searchParams.get("type") === "sample" ? "sample" : "quote";
 
-  const selectedProduct = productQuery
-    ? getProductById(productQuery)
-    : CATALOG_PRODUCTS[1]; // default to Liquid Washing Container
-
   const [activeType, setActiveType] = useState<"quote" | "sample">(initialType);
-  const [chosenProductSlug, setChosenProductSlug] = useState<string>(
-    selectedProduct?.slug || "liquid-washing-container"
-  );
+  const [productsList, setProductsList] = useState<NormalizedProduct[]>([]);
+  const [productsLoading, setProductsLoading] = useState(true);
+  const [productsError, setProductsError] = useState<string | null>(null);
+  const [reloadProductsKey, setReloadProductsKey] = useState(0);
+  const [chosenProductSlug, setChosenProductSlug] = useState<string>(productQuery);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -49,39 +49,97 @@ function RequestQuoteContent() {
     country: "Bangladesh",
     state: "",
     quantity: "10,000 - 50,000 units",
-    material: selectedProduct?.genre === "Metal" ? "Electrolytic Tinplate" : "Virgin HDPE",
+    material: "Virgin HDPE",
     closure: "Standard Tamper-Evident Cap",
     comments: "",
     needPhysicalSample: initialType === "sample",
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [submittedQuoteNumber, setSubmittedQuoteNumber] = useState("");
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const currentProduct: CatalogProduct =
-    CATALOG_PRODUCTS.find((p) => p.slug === chosenProductSlug) ||
-    selectedProduct ||
-    CATALOG_PRODUCTS[0];
+  useEffect(() => {
+    let active = true;
+    setProductsLoading(true);
+    setProductsError(null);
+    api.products
+      .getAll()
+      .then((res) => {
+        if (!active) return;
+        const normalized = Array.isArray(res.data)
+          ? res.data.map(normalizeApiProduct)
+          : [];
+        setProductsList(normalized);
+        if (normalized.length > 0) {
+          const matched = productQuery
+            ? normalized.find(
+                (p) => p.slug === productQuery || p.id === productQuery
+              )
+            : null;
+          const initialProduct = matched || normalized[0];
+          setChosenProductSlug((prev) => {
+            if (prev && normalized.some((p) => p.slug === prev)) return prev;
+            return initialProduct.slug;
+          });
+          if (initialProduct?.genre === "Metal") {
+            setFormData((prev) => ({
+              ...prev,
+              material: "Electrolytic Tinplate",
+            }));
+          }
+        }
+      })
+      .catch((err) => {
+        if (!active) return;
+        setProductsList([]);
+        setProductsError(
+          err instanceof Error && err.message
+            ? err.message
+            : "Unable to load product catalog from server."
+        );
+      })
+      .finally(() => {
+        if (active) setProductsLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [productQuery, reloadProductsKey]);
+
+  const currentProduct: NormalizedProduct | null =
+    productsList.find((p) => p.slug === chosenProductSlug || p.id === chosenProductSlug) ||
+    productsList[0] ||
+    null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
     setIsSubmitting(true);
     try {
-      await api.inquiries.submit({
-        companyName: formData.company || `${formData.firstName} ${formData.lastName}`.trim(),
-        contactPerson: `${formData.firstName} ${formData.lastName}`.trim() || formData.company,
-        email: formData.email,
-        phone: formData.phone,
+      const res = await api.inquiries.submit({
+        companyName:
+          formData.company.trim() || `${formData.firstName} ${formData.lastName}`.trim(),
+        contactPerson:
+          `${formData.firstName} ${formData.lastName}`.trim() || formData.company.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
         category: currentProduct?.name || "Engineered Packaging",
         volume: formData.quantity,
         capacity: formData.material,
-        notes: `Product: ${currentProduct?.name} | Closure: ${formData.closure} | Country: ${formData.country} | Physical Sample: ${formData.needPhysicalSample ? "Yes" : "No"} | Notes: ${formData.comments}`,
+        notes: `Product: ${currentProduct?.name || "Custom Engineered Packaging"} | Closure: ${formData.closure} | Country: ${formData.country} | Physical Sample: ${formData.needPhysicalSample ? "Yes" : "No"} | Notes: ${formData.comments}`,
       });
-    } catch (e) {
-      console.warn("Could not submit to backend, proceeding with fallback confirmation:", e);
+      setSubmittedQuoteNumber(res?.data?.quoteNumber || res?.data?.id || "");
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error && err.message
+          ? err.message
+          : "Unable to submit quotation request right now. Please try again or contact our sales team by phone."
+      );
     } finally {
       setIsSubmitting(false);
-      setSubmitted(true);
     }
   };
 
@@ -165,13 +223,17 @@ function RequestQuoteContent() {
                   </h2>
                   <p className="text-slate-600 text-base sm:text-lg">
                     Thank you, <span className="font-bold text-slate-900">{formData.firstName || "valued partner"}</span>. Our commercial sales engineering team is preparing your official formal quotation for{" "}
-                    <span className="font-bold text-[#1f5f8b]">{currentProduct.name}</span>.
+                    <span className="font-bold text-[#1f5f8b]">
+                      {currentProduct?.name || "Custom Packaging Solution"}
+                    </span>.
                   </p>
                 </div>
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-2 text-sm text-slate-700">
                   <div className="flex justify-between">
                     <span className="text-slate-500">Reference ID:</span>
-                    <span className="font-mono font-bold text-slate-900">RFQ-{Date.now().toString().slice(-6)}</span>
+                    <span className="font-mono font-bold text-slate-900">
+                      {submittedQuoteNumber || "Recorded in CRM"}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500">Target Response Time:</span>
@@ -204,72 +266,100 @@ function RequestQuoteContent() {
                 <div className="lg:col-span-5 space-y-8">
                   {/* Active Product Preview Card */}
                   <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm space-y-6">
-                    <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                        Selected Container
-                      </span>
-                      <span className="px-3 py-1 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-800 text-xs font-bold">
-                        {currentProduct.subCategory}
-                      </span>
-                    </div>
-
-                    {/* Product Photo on Studio Pedestal */}
-                    <div className="relative w-full aspect-[4/3] rounded-2xl bg-gradient-to-b from-[#f8fafc] to-[#edf2f7] border border-slate-200/80 flex items-center justify-center p-6 overflow-hidden">
-                      <Image
-                        src={currentProduct.image}
-                        alt={currentProduct.name}
-                        fill
-                        className="object-contain p-4 drop-shadow-[0_12px_16px_rgba(0,0,0,0.12)] hover:scale-105 transition-transform duration-300"
-                        priority
-                      />
-                    </div>
-
-                    {/* Product Metadata */}
-                    <div className="space-y-3">
-                      <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
-                        {currentProduct.name}
-                      </h3>
-                      <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed">
-                        {currentProduct.description}
-                      </p>
-
-                      <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100 text-xs text-slate-700">
-                        <div>
-                          <span className="text-slate-400 block font-medium">Manufacturer:</span>
-                          <span className="font-bold text-[#1f5f8b]">{currentProduct.factory}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-400 block font-medium">Standard Material:</span>
-                          <span className="font-bold text-slate-900">{currentProduct.material || "Virgin HDPE"}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-400 block font-medium">Nominal Volume:</span>
-                          <span className="font-bold text-slate-900">{currentProduct.capacity || "Custom"}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-400 block font-medium">Shape Geometry:</span>
-                          <span className="font-bold text-slate-900">{currentProduct.shape}</span>
-                        </div>
+                    {productsLoading ? (
+                      <div className="space-y-4 animate-pulse">
+                        <div className="h-5 w-36 bg-slate-200 rounded" />
+                        <div className="w-full aspect-[4/3] rounded-2xl bg-slate-100" />
+                        <div className="h-6 w-2/3 bg-slate-200 rounded" />
+                        <div className="h-10 w-full bg-slate-100 rounded-xl" />
                       </div>
-                    </div>
+                    ) : productsError ? (
+                      <PublicStateMessage
+                        variant="error"
+                        title="Product list unavailable"
+                        description={productsError}
+                        onRetry={() => setReloadProductsKey((k) => k + 1)}
+                      />
+                    ) : !currentProduct ? (
+                      <PublicStateMessage
+                        variant="empty"
+                        title="Custom Packaging Inquiry"
+                        description="No standard catalog products are currently published. Describe your packaging requirements in the form to request a custom quote."
+                      />
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                          <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                            Selected Container
+                          </span>
+                          <span className="px-3 py-1 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-800 text-xs font-bold">
+                            {currentProduct.subCategory}
+                          </span>
+                        </div>
 
-                    {/* Switch Product Dropdown */}
-                    <div className="pt-2">
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                        Change Container Model:
-                      </label>
-                      <select
-                        value={chosenProductSlug}
-                        onChange={(e) => setChosenProductSlug(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#1f5f8b] cursor-pointer"
-                      >
-                        {CATALOG_PRODUCTS.map((prod) => (
-                          <option key={prod.id} value={prod.slug}>
-                            {prod.name} ({prod.factory})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                        {/* Product Photo on Studio Pedestal */}
+                        <div className="relative w-full aspect-[4/3] rounded-2xl bg-gradient-to-b from-[#f8fafc] to-[#edf2f7] border border-slate-200/80 flex items-center justify-center p-6 overflow-hidden">
+                          {currentProduct.image ? (
+                            <Image
+                              src={currentProduct.image}
+                              alt={currentProduct.name}
+                              fill
+                              className="object-contain p-4 drop-shadow-[0_12px_16px_rgba(0,0,0,0.12)] hover:scale-105 transition-transform duration-300"
+                              priority
+                            />
+                          ) : (
+                            <PackageCheck className="w-12 h-12 text-slate-300" />
+                          )}
+                        </div>
+
+                        {/* Product Metadata */}
+                        <div className="space-y-3">
+                          <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
+                            {currentProduct.name}
+                          </h3>
+                          <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed">
+                            {currentProduct.description}
+                          </p>
+
+                          <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100 text-xs text-slate-700">
+                            <div>
+                              <span className="text-slate-400 block font-medium">Manufacturer:</span>
+                              <span className="font-bold text-[#1f5f8b]">{currentProduct.factory}</span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 block font-medium">Standard Material:</span>
+                              <span className="font-bold text-slate-900">{currentProduct.material || "Virgin HDPE"}</span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 block font-medium">Nominal Volume:</span>
+                              <span className="font-bold text-slate-900">{currentProduct.capacity || "Custom"}</span>
+                            </div>
+                            <div>
+                              <span className="text-slate-400 block font-medium">Shape Geometry:</span>
+                              <span className="font-bold text-slate-900">{currentProduct.shape}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Switch Product Dropdown */}
+                        <div className="pt-2">
+                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                            Change Container Model:
+                          </label>
+                          <select
+                            value={chosenProductSlug}
+                            onChange={(e) => setChosenProductSlug(e.target.value)}
+                            className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#1f5f8b] cursor-pointer"
+                          >
+                            {productsList.map((prod) => (
+                              <option key={prod.id} value={prod.slug}>
+                                {prod.name} ({prod.factory})
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   {/* 3 Industry Trust Credentials */}
@@ -562,6 +652,16 @@ function RequestQuoteContent() {
                         </span>
                       </label>
                     </div>
+
+                    {submitError && (
+                      <div
+                        role="alert"
+                        className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700"
+                      >
+                        <FormAlertIcon className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                        <span>{submitError}</span>
+                      </div>
+                    )}
 
                     {/* Submit Button */}
                     <div className="pt-2">

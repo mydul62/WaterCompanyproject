@@ -1,5 +1,6 @@
 import { prisma } from "../../config/prisma";
 import { ApiError } from "../../utils/apiError";
+import { NavigationMenuItemInput, UpdateMenuPayload } from "./navigation.interface";
 
 export class NavigationService {
   static async getByLocation(location: string) {
@@ -51,14 +52,14 @@ export class NavigationService {
     });
   }
 
-  static async updateMenu(id: string, payload: { name?: string; isPublished?: boolean }) {
+  static async updateMenu(id: string, payload: UpdateMenuPayload) {
     return prisma.navigationMenu.update({
       where: { id },
       data: payload,
     });
   }
 
-  static async saveMenuItems(menuId: string, items: any[]) {
+  static async saveMenuItems(menuId: string, items: NavigationMenuItemInput[]) {
     const menu = await prisma.navigationMenu.findUnique({ where: { id: menuId } });
     if (!menu) throw new ApiError(404, "Menu not found.");
 

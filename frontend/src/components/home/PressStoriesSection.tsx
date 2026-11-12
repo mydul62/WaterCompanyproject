@@ -4,27 +4,40 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Newspaper, ArrowRight, Calendar, Clock, ZoomIn, X, ExternalLink, Sparkles } from "lucide-react";
-import { PRESS_STORIES, PressStory, normalizePressStory } from "@/data/mediaData";
+import { type PressStory, normalizePressStory } from "@/data/mediaData";
 import { api } from "@/lib/api";
+import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import { siteButtonClass } from "@/components/common/SiteButton";
 import { PressCardsSkeletonItems } from "@/components/common/Skeletons";
 
 export default function PressStoriesSection() {
-  const [stories, setStories] = useState<PressStory[]>(PRESS_STORIES);
+  const [stories, setStories] = useState<PressStory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [lightboxStory, setLightboxStory] = useState<PressStory | null>(null);
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setLoadError(null);
     api.mediaStories
       .getPublic()
       .then((res) => {
-        if (active && Array.isArray(res.data) && res.data.length > 0) {
-          setStories(res.data.map(normalizePressStory));
-        }
+        if (!active) return;
+        const items = Array.isArray(res.data)
+          ? res.data.map(normalizePressStory)
+          : [];
+        setStories(items);
       })
-      .catch(() => {
-        // Keep clean fallback PRESS_STORIES
+      .catch((err) => {
+        if (!active) return;
+        setStories([]);
+        setLoadError(
+          err instanceof Error && err.message
+            ? err.message
+            : "Unable to load press coverage from server."
+        );
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -32,7 +45,7 @@ export default function PressStoriesSection() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [reloadKey]);
 
   const outlets = [
     { name: "প্রথম আলো", en: "Prothom Alo" },
@@ -81,7 +94,25 @@ export default function PressStoriesSection() {
 
         {/* High-End Editorial Press Cards with Liquid Water Wave Hover */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
-          {loading ? <PressCardsSkeletonItems count={4} /> : stories.map((story, idx) => {
+          {loading ? (
+            <PressCardsSkeletonItems count={4} />
+          ) : loadError ? (
+            <PublicStateMessage
+              variant="error"
+              title="Unable to load media coverage"
+              description={loadError}
+              onRetry={() => setReloadKey((k) => k + 1)}
+              className="col-span-full"
+            />
+          ) : stories.length === 0 ? (
+            <PublicStateMessage
+              variant="empty"
+              title="No press coverage published yet"
+              description="Featured news stories and press releases will appear here once published."
+              className="col-span-full"
+            />
+          ) : (
+            stories.map((story, idx) => {
             const delays = ["delay-75", "delay-150", "delay-200", "delay-250"];
             return (
               <article
@@ -168,7 +199,8 @@ export default function PressStoriesSection() {
               </div>
             </article>
           );
-        })}
+        })
+          )}
       </div>
 
         {/* View All Press Link */}

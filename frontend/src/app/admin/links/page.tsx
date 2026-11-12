@@ -14,20 +14,21 @@ import {
   MousePointerClick,
 } from "lucide-react";
 import { api } from "@/lib/api";
-import { LinkRecord, DEFAULT_LINKS } from "./_components/LinkForm";
+import type { LinkRecord } from "./_components/LinkForm";
+import {
+  AdminErrorBanner,
+  AdminToast,
+  useAdminToast,
+} from "@/components/admin/AdminCrudShell";
 import { AdminTableSkeletonRows } from "@/components/common/Skeletons";
 
 export default function CentralizedLinkManagementPage() {
-  const [links, setLinks] = useState<LinkRecord[]>(DEFAULT_LINKS);
+  const [links, setLinks] = useState<LinkRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
-  const [notification, setNotification] = useState<string | null>(null);
-
-  const showNotification = (msg: string) => {
-    setNotification(msg);
-    setTimeout(() => setNotification(null), 3500);
-  };
+  const { toast, showToast, clearToast } = useAdminToast();
 
   useEffect(() => {
     loadLinks();
@@ -35,13 +36,13 @@ export default function CentralizedLinkManagementPage() {
 
   const loadLinks = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await api.links.getAll();
-      if (res.data && res.data.length > 0) {
-        setLinks(res.data);
-      }
-    } catch (err) {
-      console.warn("Using default links fallback:", err);
+      setLinks(Array.isArray(res.data) ? res.data : []);
+    } catch (err: any) {
+      setLinks([]);
+      setLoadError(err?.message || "Unable to load centralized links from PostgreSQL.");
     } finally {
       setLoading(false);
     }
@@ -51,11 +52,10 @@ export default function CentralizedLinkManagementPage() {
     if (!confirm(`Are you sure you want to delete link key "${key}"?`)) return;
     try {
       await api.links.delete(id);
-      setLinks(links.filter((l) => l.id !== id));
-      showNotification(`Link key "${key}" deleted.`);
-    } catch {
-      setLinks(links.filter((l) => l.id !== id));
-      showNotification(`Link key "${key}" deleted.`);
+      setLinks((prev) => prev.filter((l) => l.id !== id));
+      showToast(`Link key "${key}" deleted.`);
+    } catch (err: any) {
+      showToast(err?.message || `Failed to delete link key "${key}".`, "error");
     }
   };
 
@@ -70,12 +70,7 @@ export default function CentralizedLinkManagementPage() {
 
   return (
     <div className="space-y-6">
-      {notification && (
-        <div className="fixed top-5 right-5 z-50 bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top">
-          <CheckCircle className="w-4 h-4" />
-          {notification}
-        </div>
-      )}
+      <AdminToast toast={toast} onClose={clearToast} />
 
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
@@ -111,6 +106,8 @@ export default function CentralizedLinkManagementPage() {
           </Link>
         </div>
       </div>
+
+      <AdminErrorBanner error={loadError} onRetry={loadLinks} />
 
       {/* Search & Category Filter */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">

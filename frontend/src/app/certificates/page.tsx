@@ -7,12 +7,12 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import RFQDrawer from "@/components/rfq/RFQDrawer";
 import { api } from "@/lib/api";
+import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import { siteButtonClass, siteFilterTabClass } from "@/components/common/SiteButton";
 import { CertificatesSkeletonItems } from "@/components/common/Skeletons";
 import {
-  CERTIFICATES_LIST,
   CERTIFICATE_CATEGORIES,
-  CertificateItem,
+  type CertificateItem,
 } from "@/data/certificatesData";
 import {
   Award,
@@ -75,23 +75,32 @@ const QUALITY_STANDARDS_DETAILS = [
 ];
 
 export default function CertificatesPage() {
-  const [certificates, setCertificates] = useState<CertificateItem[]>(CERTIFICATES_LIST);
+  const [certificates, setCertificates] = useState<CertificateItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [selectedCert, setSelectedCert] = useState<CertificateItem | null>(null);
   const [isRFQOpen, setIsRFQOpen] = useState<boolean>(false);
   const [activeCategory, setActiveCategory] = useState<Category>("All Accreditations");
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setLoadError(null);
     api.certificates
       .getPublic()
       .then((res) => {
-        if (active && Array.isArray(res.data) && res.data.length > 0) {
-          setCertificates(res.data);
-        }
+        if (!active) return;
+        setCertificates(Array.isArray(res.data) ? res.data : []);
       })
-      .catch(() => {
-        // Keep clean fallback CERTIFICATES_LIST
+      .catch((err) => {
+        if (!active) return;
+        setCertificates([]);
+        setLoadError(
+          err instanceof Error && err.message
+            ? err.message
+            : "Unable to load quality certificates from server."
+        );
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -99,7 +108,7 @@ export default function CertificatesPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [reloadKey]);
 
   const filteredCerts =
     activeCategory === "All Accreditations"
@@ -297,7 +306,32 @@ export default function CertificatesPage() {
 
               {/* Certificates Executive 2-Column Wide Grid */}
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-10">
-                {loading ? <CertificatesSkeletonItems count={6} /> : filteredCerts.map((cert) => (
+                {loading ? (
+                  <CertificatesSkeletonItems count={6} />
+                ) : loadError ? (
+                  <PublicStateMessage
+                    variant="error"
+                    title="Unable to load certifications"
+                    description={loadError}
+                    onRetry={() => setReloadKey((k) => k + 1)}
+                    className="col-span-full"
+                  />
+                ) : certificates.length === 0 ? (
+                  <PublicStateMessage
+                    variant="empty"
+                    title="No certifications published yet"
+                    description="Quality assurance accreditations and compliance documents will appear here once published."
+                    className="col-span-full"
+                  />
+                ) : filteredCerts.length === 0 ? (
+                  <PublicStateMessage
+                    variant="empty"
+                    title="No matching certificates"
+                    description="No certifications found in this category."
+                    className="col-span-full"
+                  />
+                ) : (
+                  filteredCerts.map((cert) => (
                   <article
                     key={cert.id}
                     className="group bg-white rounded-3xl border border-slate-200/80 hover:border-slate-300 shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_45px_rgba(10,31,51,0.09)] transition-all duration-300 p-6 sm:p-8 flex flex-col md:flex-row gap-6 sm:gap-8 items-start relative overflow-hidden"
@@ -388,7 +422,8 @@ export default function CertificatesPage() {
                       </div>
                     </div>
                   </article>
-                ))}
+                ))
+                )}
               </div>
             </div>
           </section>

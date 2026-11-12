@@ -7,6 +7,7 @@ import { Link2, Save } from "lucide-react";
 import { api } from "@/lib/api";
 import {
   AdminFormHeader,
+  AdminErrorBanner,
   AdminEditLoadingState,
   AdminEditNotFoundState,
   AdminToast,
@@ -144,6 +145,7 @@ export default function LinkForm({
 
   const [loading, setLoading] = useState(mode === "edit");
   const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
   const { toast, showToast, clearToast } = useAdminToast();
@@ -160,6 +162,7 @@ export default function LinkForm({
 
     async function load() {
       setLoading(true);
+      setLoadError(null);
       try {
         const res = await api.links.getById(linkId!);
         if (!active) return;
@@ -175,18 +178,13 @@ export default function LinkForm({
         } else {
           setNotFound(true);
         }
-      } catch {
-        const fallback = DEFAULT_LINKS.find((l) => l.id === linkId || l.key === linkId);
-        if (fallback && active) {
-          setFormKey(fallback.key);
-          setFormLabel(fallback.label);
-          setFormUrl(fallback.url);
-          setFormType(fallback.type);
-          setFormTarget(fallback.target);
-          setFormCategory(fallback.category || "NAVIGATION");
-          setStorageMode("fallback");
-        } else if (active) {
+      } catch (err: any) {
+        if (!active) return;
+        setStorageMode("fallback");
+        if (err?.status === 404 || err?.message?.toLowerCase().includes("not found")) {
           setNotFound(true);
+        } else {
+          setLoadError(err?.message || "Failed to load link record from PostgreSQL.");
         }
       } finally {
         if (active) setLoading(false);
@@ -248,6 +246,8 @@ export default function LinkForm({
 
       {loading ? (
         <AdminEditLoadingState label="Loading link registration..." />
+      ) : loadError ? (
+        <AdminErrorBanner error={loadError} />
       ) : notFound ? (
         <AdminEditNotFoundState
           title="Link Record Not Found"

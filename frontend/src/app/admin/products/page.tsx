@@ -14,22 +14,23 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { api } from "@/lib/api";
-import { ProductItem, DEFAULT_PRODUCTS, normalizeProduct } from "./_components/ProductForm";
+import { ProductItem, normalizeProduct } from "./_components/ProductForm";
+import {
+  AdminErrorBanner,
+  AdminToast,
+  useAdminToast,
+} from "@/components/admin/AdminCrudShell";
 import { AdminTableSkeletonRows } from "@/components/common/Skeletons";
 
 export default function AdminProductsPage() {
-  const [products, setProducts] = useState<ProductItem[]>(DEFAULT_PRODUCTS);
+  const [products, setProducts] = useState<ProductItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
   const [factoryFilter, setFactoryFilter] = useState("ALL");
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [notification, setNotification] = useState<string | null>(null);
-
-  const showNotification = (msg: string) => {
-    setNotification(msg);
-    setTimeout(() => setNotification(null), 3500);
-  };
+  const { toast, showToast, clearToast } = useAdminToast();
 
   useEffect(() => {
     loadProducts();
@@ -37,13 +38,14 @@ export default function AdminProductsPage() {
 
   const loadProducts = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
-      const res = await api.products.getAll();
-      if (res.data && res.data.length > 0) {
-        setProducts(res.data.map(normalizeProduct));
-      }
-    } catch (err) {
-      console.warn("Using default products fallback:", err);
+      const res = await api.products.getAllAdmin();
+      const rows = Array.isArray(res?.data) ? res.data : [];
+      setProducts(rows.map(normalizeProduct));
+    } catch (err: any) {
+      setProducts([]);
+      setLoadError(err?.message || "Unable to load products from PostgreSQL.");
     } finally {
       setLoading(false);
     }
@@ -53,11 +55,10 @@ export default function AdminProductsPage() {
     if (!confirm(`Delete product "${name}" permanently?`)) return;
     try {
       await api.products.delete(id);
-      setProducts(products.filter((p) => p.id !== id));
-      showNotification(`Product "${name}" deleted.`);
-    } catch {
-      setProducts(products.filter((p) => p.id !== id));
-      showNotification(`Product "${name}" deleted.`);
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+      showToast(`Product "${name}" deleted.`);
+    } catch (err: any) {
+      showToast(err?.message || `Failed to delete "${name}" from PostgreSQL.`, "error");
     }
   };
 
@@ -65,11 +66,12 @@ export default function AdminProductsPage() {
     const updated = !p.isActive;
     try {
       await api.products.update(p.id, { isActive: updated });
-      setProducts(products.map((prod) => (prod.id === p.id ? { ...prod, isActive: updated } : prod)));
-      showNotification("Product status updated.");
-    } catch {
-      setProducts(products.map((prod) => (prod.id === p.id ? { ...prod, isActive: updated } : prod)));
-      showNotification("Product status updated.");
+      setProducts((prev) =>
+        prev.map((prod) => (prod.id === p.id ? { ...prod, isActive: updated } : prod))
+      );
+      showToast(updated ? "Product activated." : "Product hidden.");
+    } catch (err: any) {
+      showToast(err?.message || "Failed to update product status in PostgreSQL.", "error");
     }
   };
 
@@ -90,12 +92,7 @@ export default function AdminProductsPage() {
 
   return (
     <div className="space-y-6">
-      {notification && (
-        <div className="fixed top-5 right-5 z-50 bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top">
-          <CheckCircle className="w-4 h-4" />
-          {notification}
-        </div>
-      )}
+      <AdminToast toast={toast} onClose={clearToast} />
 
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
@@ -131,6 +128,8 @@ export default function AdminProductsPage() {
           </Link>
         </div>
       </div>
+
+      <AdminErrorBanner error={loadError} onRetry={loadProducts} />
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
@@ -236,11 +235,10 @@ export default function AdminProductsPage() {
 
                   <td className="py-4 px-4 text-slate-300 text-[11px]">
                     <span
-                      className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
-                        product.factory.includes("Noor")
-                          ? "bg-blue-950/60 text-blue-300 border border-blue-800/40"
-                          : "bg-purple-950/60 text-purple-300 border border-purple-800/40"
-                      }`}
+                      className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${product.factory.includes("Noor")
+                        ? "bg-blue-950/60 text-blue-300 border border-blue-800/40"
+                        : "bg-purple-950/60 text-purple-300 border border-purple-800/40"
+                        }`}
                     >
                       {product.factory}
                     </span>
@@ -249,11 +247,10 @@ export default function AdminProductsPage() {
                   <td className="py-4 px-4 text-center">
                     <button
                       onClick={() => handleToggleActive(product)}
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
-                        product.isActive
-                          ? "bg-emerald-950 border border-emerald-800/60 text-emerald-300 hover:bg-emerald-900"
-                          : "bg-slate-950 border border-slate-800 text-slate-400 hover:bg-slate-800"
-                      }`}
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold transition-all cursor-pointer ${product.isActive
+                        ? "bg-emerald-950 border border-emerald-800/60 text-emerald-300 hover:bg-emerald-900"
+                        : "bg-slate-950 border border-slate-800 text-slate-400 hover:bg-slate-800"
+                        }`}
                     >
                       {product.isActive ? (
                         <>

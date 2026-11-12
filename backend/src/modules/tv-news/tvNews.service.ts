@@ -7,6 +7,7 @@ import {
   toBoolean,
   toInt,
 } from "../../utils/contentHelpers";
+import { TvNewsPayload, TvNewsUpdatePayload } from "./tvNews.interface";
 
 let seededOnce = false;
 
@@ -163,7 +164,7 @@ export class TvNewsServiceImpl implements CrudServiceContract {
     return serializeTvNewsVideo(row);
   }
 
-  async create(payload: any) {
+  async create(payload: TvNewsPayload) {
     if (!payload.title || !String(payload.title).trim()) {
       throw new ApiError(400, "TV News video title is required.");
     }
@@ -187,7 +188,7 @@ export class TvNewsServiceImpl implements CrudServiceContract {
     return serializeTvNewsVideo(created);
   }
 
-  async update(id: string, payload: any) {
+  async update(id: string, payload: TvNewsUpdatePayload) {
     const existing = await prisma.tvNewsVideo.findUnique({ where: { id } });
     if (!existing) throw new ApiError(404, "TV News video not found.");
 

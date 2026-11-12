@@ -7,6 +7,7 @@ import { Layers, Save, Sparkles } from "lucide-react";
 import { api } from "@/lib/api";
 import {
   AdminFormHeader,
+  AdminErrorBanner,
   AdminEditLoadingState,
   AdminEditNotFoundState,
   AdminToast,
@@ -197,6 +198,7 @@ export default function PageForm({
 
   const [loading, setLoading] = useState(mode === "edit");
   const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
   const { toast, showToast, clearToast } = useAdminToast();
@@ -213,6 +215,7 @@ export default function PageForm({
 
     async function load() {
       setLoading(true);
+      setLoadError(null);
       try {
         const res = await api.pages.getById(pageId!);
         if (!active) return;
@@ -227,17 +230,13 @@ export default function PageForm({
         } else {
           setNotFound(true);
         }
-      } catch {
-        const fallback = DEFAULT_PAGES.find((p) => p.id === pageId);
-        if (fallback && active) {
-          setTitle(fallback.title);
-          setSlug(fallback.slug);
-          setStatus(fallback.status);
-          setMetaTitle(fallback.metaTitle || "");
-          setMetaDescription(fallback.metaDescription || "");
-          setStorageMode("fallback");
-        } else if (active) {
+      } catch (err: any) {
+        if (!active) return;
+        setStorageMode("fallback");
+        if (err?.status === 404 || err?.message?.toLowerCase().includes("not found")) {
           setNotFound(true);
+        } else {
+          setLoadError(err?.message || "Failed to load CMS page details from PostgreSQL.");
         }
       } finally {
         if (active) setLoading(false);
@@ -309,6 +308,8 @@ export default function PageForm({
 
       {loading ? (
         <AdminEditLoadingState label="Loading page configuration..." />
+      ) : loadError ? (
+        <AdminErrorBanner error={loadError} />
       ) : notFound ? (
         <AdminEditNotFoundState
           title="Page Not Found"

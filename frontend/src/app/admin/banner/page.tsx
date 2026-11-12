@@ -21,22 +21,20 @@ import {
   HardDrive,
 } from "lucide-react";
 import { api } from "@/lib/api";
+import { AdminErrorBanner } from "@/components/admin/AdminCrudShell";
 import {
   HeroSlide,
-  DEFAULT_HERO_BANNERS,
   normalizeHeroSlide,
   resolveBannerMediaUrl,
-  getLocalBanners,
-  saveLocalBanners,
-  clearLocalBanners,
   emitBannersUpdated,
 } from "@/data/heroBanners";
 import { AdminCardGridSkeleton } from "@/components/common/Skeletons";
 
 export default function AdminBannerPage() {
-  const [slides, setSlides] = useState<HeroSlide[]>(DEFAULT_HERO_BANNERS);
+  const [slides, setSlides] = useState<HeroSlide[]>([]);
   const [storageMode, setStorageMode] = useState<"database" | "local">("database");
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const [notification, setNotification] = useState<{
@@ -55,27 +53,19 @@ export default function AdminBannerPage() {
 
   const loadSlides = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await api.banners.getAll();
-      if (Array.isArray(res?.data)) {
-        const normalized = res.data.map((row, idx) =>
-          normalizeHeroSlide(row, idx)
-        );
-        setSlides(normalized);
-        setStorageMode("database");
-        clearLocalBanners();
-        setLoading(false);
-        return;
-      }
-    } catch {
-      const local = getLocalBanners();
-      if (local) {
-        setSlides(local);
-      } else {
-        saveLocalBanners(DEFAULT_HERO_BANNERS);
-        setSlides(DEFAULT_HERO_BANNERS);
-      }
+      const rows = Array.isArray(res?.data) ? res.data : [];
+      const normalized = rows.map((row, idx) =>
+        normalizeHeroSlide(row, idx)
+      );
+      setSlides(normalized);
+      setStorageMode("database");
+    } catch (err: any) {
+      setSlides([]);
       setStorageMode("local");
+      setLoadError(err?.message || "Unable to load hero banners from PostgreSQL.");
     } finally {
       setLoading(false);
     }
@@ -115,26 +105,12 @@ export default function AdminBannerPage() {
       isActive: slide.isActive,
     };
     try {
-      if (storageMode === "database") {
-        await api.banners.create(payload);
-        await loadSlides();
-        emitBannersUpdated();
-      } else {
-        const nextSlide = normalizeHeroSlide(
-          {
-            ...payload,
-            id: `slide-${Date.now()}`,
-            sortOrder: slides.length + 1,
-          },
-          slides.length
-        );
-        const updated = [...slides, nextSlide];
-        saveLocalBanners(updated);
-        setSlides(updated);
-      }
+      await api.banners.create(payload);
+      await loadSlides();
+      emitBannersUpdated();
       showToast("Banner duplicated successfully.");
     } catch (err: any) {
-      showToast(err?.message || "Could not duplicate banner.", "error");
+      showToast(err?.message || "Could not duplicate banner in PostgreSQL.", "error");
     } finally {
       setSaving(false);
     }
@@ -143,36 +119,14 @@ export default function AdminBannerPage() {
   const handleDelete = async (id: string) => {
     setSaving(true);
     try {
-      if (storageMode === "database") {
-        await api.banners.delete(id);
-        await loadSlides();
-        emitBannersUpdated();
-      } else {
-        const remaining = slides
-          .filter((s) => s.id !== id)
-          .map((s, idx) => ({
-            ...s,
-            sortOrder: idx + 1,
-            num: String(idx + 1).padStart(2, "0"),
-          }));
-        saveLocalBanners(remaining);
-        setSlides(remaining);
-      }
+      await api.banners.delete(id);
+      await loadSlides();
+      emitBannersUpdated();
       setConfirmDeleteId(null);
       showToast("Banner deleted.");
-    } catch {
-      const remaining = slides
-        .filter((s) => s.id !== id)
-        .map((s, idx) => ({
-          ...s,
-          sortOrder: idx + 1,
-          num: String(idx + 1).padStart(2, "0"),
-        }));
-      saveLocalBanners(remaining);
-      setSlides(remaining);
-      setStorageMode("local");
+    } catch (err: any) {
       setConfirmDeleteId(null);
-      showToast("Banner removed locally.");
+      showToast(err?.message || "Failed to delete banner from PostgreSQL.", "error");
     } finally {
       setSaving(false);
     }
@@ -181,25 +135,12 @@ export default function AdminBannerPage() {
   const handleToggleActive = async (slide: HeroSlide) => {
     const nextActive = !slide.isActive;
     try {
-      if (storageMode === "database") {
-        await api.banners.update(slide.id, { isActive: nextActive });
-        await loadSlides();
-        emitBannersUpdated();
-      } else {
-        const updated = slides.map((s) =>
-          s.id === slide.id ? { ...s, isActive: nextActive } : s
-        );
-        saveLocalBanners(updated);
-        setSlides(updated);
-      }
+      await api.banners.update(slide.id, { isActive: nextActive });
+      await loadSlides();
+      emitBannersUpdated();
       showToast(nextActive ? "Banner visible on homepage." : "Banner hidden from homepage.");
-    } catch {
-      const updated = slides.map((s) =>
-        s.id === slide.id ? { ...s, isActive: nextActive } : s
-      );
-      saveLocalBanners(updated);
-      setSlides(updated);
-      setStorageMode("local");
+    } catch (err: any) {
+      showToast(err?.message || "Could not update banner visibility.", "error");
     }
   };
 
@@ -207,6 +148,7 @@ export default function AdminBannerPage() {
     const targetIdx = index + direction;
     if (targetIdx < 0 || targetIdx >= slides.length) return;
 
+    const previous = slides;
     const reordered = [...slides];
     const [moved] = reordered.splice(index, 1);
     reordered.splice(targetIdx, 0, moved);
@@ -218,37 +160,26 @@ export default function AdminBannerPage() {
 
     setSlides(renumbered);
     try {
-      if (storageMode === "database") {
-        await api.banners.reorder(renumbered.map((s) => s.id));
-        emitBannersUpdated();
-      } else {
-        saveLocalBanners(renumbered);
-      }
+      await api.banners.reorder(renumbered.map((s) => s.id));
+      emitBannersUpdated();
       showToast("Banner order updated.");
-    } catch {
-      saveLocalBanners(renumbered);
-      setStorageMode("local");
+    } catch (err: any) {
+      setSlides(previous);
+      showToast(err?.message || "Failed to reorder banners in PostgreSQL.", "error");
     }
   };
 
   const handleResetDefaults = async () => {
     setSaving(true);
     try {
-      if (storageMode === "database") {
-        await api.banners.reset();
-        await loadSlides();
-        emitBannersUpdated();
-      } else {
-        saveLocalBanners(DEFAULT_HERO_BANNERS);
-        setSlides(DEFAULT_HERO_BANNERS);
-      }
+      await api.banners.reset();
+      await loadSlides();
+      emitBannersUpdated();
       setConfirmReset(false);
-      showToast("Restored 4 default Noor Plastic banners.");
-    } catch {
-      saveLocalBanners(DEFAULT_HERO_BANNERS);
-      setSlides(DEFAULT_HERO_BANNERS);
+      showToast("Restored default Noor Plastic banners in PostgreSQL.");
+    } catch (err: any) {
       setConfirmReset(false);
-      showToast("Restored default banners locally.");
+      showToast(err?.message || "Failed to restore default banners.", "error");
     } finally {
       setSaving(false);
     }
@@ -292,16 +223,16 @@ export default function AdminBannerPage() {
                 className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
                   storageMode === "database"
                     ? "bg-emerald-950/60 text-emerald-300 border-emerald-700/50"
-                    : "bg-amber-950/60 text-amber-300 border-amber-700/50"
+                    : "bg-red-950/60 text-red-300 border-red-700/50"
                 }`}
               >
                 {storageMode === "database" ? (
                   <>
-                    <Database className="w-3 h-3" /> SQLite DB Connected
+                    <Database className="w-3 h-3" /> PostgreSQL Synced
                   </>
                 ) : (
                   <>
-                    <HardDrive className="w-3 h-3" /> Local Browser Mode
+                    <HardDrive className="w-3 h-3" /> Database Offline
                   </>
                 )}
               </span>
@@ -372,6 +303,7 @@ export default function AdminBannerPage() {
       </div>
 
       {/* Summary Stats */}
+      <AdminErrorBanner error={loadError} onRetry={loadSlides} />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
           <div>
@@ -398,11 +330,11 @@ export default function AdminBannerPage() {
         </div>
       </div>
 
-      {activeCount === 0 && (
+      {!loading && !loadError && activeCount === 0 && (
         <div className="p-4 rounded-xl bg-amber-950/40 border border-amber-700/50 text-amber-200 text-xs flex items-center gap-2.5">
           <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
           <span>
-            No active banners enabled. While 0 banners are active, the homepage falls back to built-in default slides so visitors never see a blank hero section.
+            No active banners are enabled in PostgreSQL. Enable an existing slide or create a new slide to display the hero carousel on the homepage.
           </span>
         </div>
       )}

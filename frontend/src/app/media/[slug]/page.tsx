@@ -5,8 +5,8 @@ import { notFound } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { siteButtonClass } from "@/components/common/SiteButton";
+import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import {
-  PRESS_STORIES,
   PressStory,
   getStoryBySlug,
   normalizePressStory,
@@ -32,28 +32,68 @@ interface PageProps {
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
-async function fetchLiveStories(): Promise<PressStory[]> {
+async function fetchLiveStories(): Promise<{
+  stories: PressStory[];
+  error: string | null;
+}> {
   try {
     const apiBase =
       process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
     const res = await fetch(`${apiBase}/media/stories`, {
       cache: "no-store",
     });
-    if (res.ok) {
-      const json = await res.json();
-      if (Array.isArray(json?.data) && json.data.length > 0) {
-        return json.data.map(normalizePressStory);
-      }
+    if (!res.ok) {
+      return {
+        stories: [],
+        error: `Media service returned status ${res.status}.`,
+      };
     }
-  } catch {
-    // Fallback to static editorial defaults
+    const json = await res.json();
+    const list = Array.isArray(json?.data)
+      ? json.data.map(normalizePressStory)
+      : [];
+    return { stories: list, error: null };
+  } catch (err) {
+    return {
+      stories: [],
+      error:
+        err instanceof Error && err.message
+          ? err.message
+          : "Unable to connect to backend media server.",
+    };
   }
-  return PRESS_STORIES;
 }
 
 export default async function MediaStoryPage({ params }: PageProps) {
   const { slug } = await params;
-  const allStories = await fetchLiveStories();
+  const { stories: allStories, error } = await fetchLiveStories();
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900 select-none">
+        <Navbar />
+        <main className="flex-1 pt-36 sm:pt-44 pb-24 px-6">
+          <div className="max-w-3xl mx-auto">
+            <PublicStateMessage
+              variant="error"
+              title="Unable to load press story"
+              description={error}
+              action={
+                <Link
+                  href="/media"
+                  className={siteButtonClass({ variant: "primary" })}
+                >
+                  Back to Media Coverage
+                </Link>
+              }
+            />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   const story = getStoryBySlug(slug, allStories);
 
   if (!story) {
@@ -243,7 +283,7 @@ export default async function MediaStoryPage({ params }: PageProps) {
                 <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center justify-between">
                   <span>অন্যান্য জাতীয় সংবাদ</span>
                   <Link href="/media" className="text-xs text-cyan-700 hover:underline">
-                    সব দেখুন ({PRESS_STORIES.length})
+                    সব দেখুন ({allStories.length})
                   </Link>
                 </h3>
 

@@ -8,6 +8,7 @@ import { api } from "@/lib/api";
 import MediaPickerModal from "@/components/admin/MediaPickerModal";
 import {
   AdminFormHeader,
+  AdminErrorBanner,
   AdminEditLoadingState,
   AdminEditNotFoundState,
   AdminToast,
@@ -164,6 +165,7 @@ export default function ProductForm({
 
   const [loading, setLoading] = useState(mode === "edit");
   const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
@@ -185,6 +187,7 @@ export default function ProductForm({
       }
 
       setLoading(true);
+      setLoadError(null);
       try {
         const res = await api.products.getById(productId);
         if (!active) return;
@@ -205,23 +208,13 @@ export default function ProductForm({
         } else {
           setNotFound(true);
         }
-      } catch {
-        const fallback = DEFAULT_PRODUCTS.find((p) => p.id === productId || p.slug === productId);
-        if (fallback && active) {
-          setFormName(fallback.name);
-          setFormSlug(fallback.slug);
-          setFormCategory(fallback.category);
-          setFormFactory(fallback.factory);
-          setFormMaterial(fallback.material);
-          setFormCapacity(fallback.capacityRange);
-          setFormDescription(fallback.description);
-          setFormImage(fallback.image);
-          setFormSku(fallback.sku || "");
-          setFormApplications(fallback.applications.join(", "));
-          setFormIsActive(fallback.isActive);
-          setStorageMode("fallback");
-        } else if (active) {
+      } catch (err: any) {
+        if (!active) return;
+        setStorageMode("fallback");
+        if (err?.status === 404 || err?.message?.toLowerCase().includes("not found")) {
           setNotFound(true);
+        } else {
+          setLoadError(err?.message || "Failed to load product details from PostgreSQL.");
         }
       } finally {
         if (active) setLoading(false);
@@ -295,6 +288,8 @@ export default function ProductForm({
 
       {loading ? (
         <AdminEditLoadingState label="Loading product specifications..." />
+      ) : loadError ? (
+        <AdminErrorBanner error={loadError} />
       ) : notFound ? (
         <AdminEditNotFoundState
           title="Product Not Found"

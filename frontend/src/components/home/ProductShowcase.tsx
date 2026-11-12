@@ -1,10 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Sparkles, ArrowRight } from "lucide-react";
+import { ArrowUpRight, Sparkles, ArrowRight, PackageCheck } from "lucide-react";
 import { siteButtonClass } from "@/components/common/SiteButton";
+import { api } from "@/lib/api";
+import { normalizeApiProduct } from "@/lib/productMapper";
+import { PublicStateMessage } from "@/components/common/PublicStateMessage";
+
+interface ProductCardAccent {
+  badge: string;
+  glow: string;
+  ring: string;
+  button: string;
+  cardBorder: string;
+  cardShadow: string;
+}
 
 interface ProductCardData {
   id: string;
@@ -14,89 +26,90 @@ interface ProductCardData {
   subtitle: string;
   badge: string;
   capacity: string;
-  accent: {
-    badge: string;
-    glow: string;
-    ring: string;
-    button: string;
-    cardBorder: string;
-    cardShadow: string;
-  };
+  accent: ProductCardAccent;
 }
 
-const PRODUCTS: ProductCardData[] = [
+const CARD_ACCENTS: ProductCardAccent[] = [
   {
-    id: "p1",
-    slug: "pharmaceutical-bottle",
-    image: "/cropped/product-card-1.png",
-    title: "White PET Bottle",
-    subtitle: "Blue Gear-Ring Cap",
-    badge: "PET Bottle",
-    capacity: "500ml",
-    accent: {
-      badge: "bg-cyan-500/10 text-cyan-600 border-cyan-400/30",
-      glow: "from-cyan-400/25 to-blue-500/0",
-      ring: "group-hover:border-cyan-400/60",
-      button: "group-hover:bg-cyan-500",
-      cardBorder: "group-hover:border-cyan-400/60",
-      cardShadow: "group-hover:shadow-[0_22px_50px_-10px_rgba(6,182,212,0.28)]",
-    },
+    badge: "bg-cyan-500/10 text-cyan-600 border-cyan-400/30",
+    glow: "from-cyan-400/25 to-blue-500/0",
+    ring: "group-hover:border-cyan-400/60",
+    button: "group-hover:bg-cyan-500",
+    cardBorder: "group-hover:border-cyan-400/60",
+    cardShadow: "group-hover:shadow-[0_22px_50px_-10px_rgba(6,182,212,0.28)]",
   },
   {
-    id: "p2",
-    slug: "liquid-washing-container",
-    image: "/cropped/product-card-2.png",
-    title: "Conical White Tub",
-    subtitle: "Heavy-Duty Seal",
-    badge: "Container",
-    capacity: "2.5 Liters",
-    accent: {
-      badge: "bg-blue-500/10 text-blue-600 border-blue-400/30",
-      glow: "from-blue-500/25 to-indigo-500/0",
-      ring: "group-hover:border-blue-400/60",
-      button: "group-hover:bg-blue-600",
-      cardBorder: "group-hover:border-blue-400/60",
-      cardShadow: "group-hover:shadow-[0_22px_50px_-10px_rgba(37,99,235,0.28)]",
-    },
+    badge: "bg-blue-500/10 text-blue-600 border-blue-400/30",
+    glow: "from-blue-500/25 to-indigo-500/0",
+    ring: "group-hover:border-blue-400/60",
+    button: "group-hover:bg-blue-600",
+    cardBorder: "group-hover:border-blue-400/60",
+    cardShadow: "group-hover:shadow-[0_22px_50px_-10px_rgba(37,99,235,0.28)]",
   },
   {
-    id: "p3",
-    slug: "oral-syringe",
-    image: "/cropped/product-card-3.png",
-    title: "Precision Dropper",
-    subtitle: "Yellow Calibrated Tip",
-    badge: "Pharma Dropper",
-    capacity: "15ml - 30ml",
-    accent: {
-      badge: "bg-amber-500/10 text-amber-600 border-amber-400/30",
-      glow: "from-amber-400/25 to-yellow-500/0",
-      ring: "group-hover:border-amber-400/60",
-      button: "group-hover:bg-amber-500",
-      cardBorder: "group-hover:border-amber-400/60",
-      cardShadow: "group-hover:shadow-[0_22px_50px_-10px_rgba(245,158,11,0.28)]",
-    },
+    badge: "bg-amber-500/10 text-amber-600 border-amber-400/30",
+    glow: "from-amber-400/25 to-yellow-500/0",
+    ring: "group-hover:border-amber-400/60",
+    button: "group-hover:bg-amber-500",
+    cardBorder: "group-hover:border-amber-400/60",
+    cardShadow: "group-hover:shadow-[0_22px_50px_-10px_rgba(245,158,11,0.28)]",
   },
   {
-    id: "p4",
-    slug: "vitamin-container",
-    image: "/cropped/product-card-4.png",
-    title: "Clear Food Container",
-    subtitle: "Airtight Transparent Lid",
-    badge: "Food Packaging",
-    capacity: "1000ml",
-    accent: {
-      badge: "bg-emerald-500/10 text-emerald-600 border-emerald-400/30",
-      glow: "from-emerald-400/25 to-teal-500/0",
-      ring: "group-hover:border-emerald-400/60",
-      button: "group-hover:bg-emerald-500",
-      cardBorder: "group-hover:border-emerald-400/60",
-      cardShadow: "group-hover:shadow-[0_22px_50px_-10px_rgba(16,185,129,0.28)]",
-    },
+    badge: "bg-emerald-500/10 text-emerald-600 border-emerald-400/30",
+    glow: "from-emerald-400/25 to-teal-500/0",
+    ring: "group-hover:border-emerald-400/60",
+    button: "group-hover:bg-emerald-500",
+    cardBorder: "group-hover:border-emerald-400/60",
+    cardShadow: "group-hover:shadow-[0_22px_50px_-10px_rgba(16,185,129,0.28)]",
   },
 ];
 
 export default function ProductShowcase() {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [cards, setCards] = useState<ProductCardData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const loadProducts = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const res = await api.products.getAll();
+      const raw = Array.isArray(res?.data) ? res.data : [];
+      const normalized = raw.map(normalizeApiProduct);
+      const featured = normalized.filter((p) => p.isFeatured);
+      const nonFeatured = normalized.filter((p) => !p.isFeatured);
+      const topFour = [...featured, ...nonFeatured].slice(0, 4);
+
+      setCards(
+        topFour.map((p, idx) => ({
+          id: p.id,
+          slug: p.slug,
+          image: p.image,
+          title: p.name,
+          subtitle: p.material || p.factory,
+          badge: p.subCategory,
+          capacity: p.capacity || "Custom",
+          accent: CARD_ACCENTS[idx % CARD_ACCENTS.length],
+        }))
+      );
+    } catch (err) {
+      setCards([]);
+      setLoadError(
+        err instanceof Error && err.message
+          ? err.message
+          : "Unable to load featured products from server."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
+
+  void hoveredCard;
 
   return (
     <section
@@ -142,80 +155,121 @@ export default function ProductShowcase() {
             4 MINIMAL, SLEEK & ANIMATED LUXURY PRODUCT CARDS
            ──────────────────────────────────────────────────────────── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {PRODUCTS.map((card, idx) => {
-            const delays = ["delay-75", "delay-150", "delay-200", "delay-250"];
-
-            return (
-              <Link
-                key={card.id}
-                href={`/products/${card.slug}`}
-                data-reveal="scale"
-                onMouseEnter={() => setHoveredCard(card.id)}
-                onMouseLeave={() => setHoveredCard(null)}
-                className={`group relative block rounded-[32px] bg-white/90 backdrop-blur-xl border border-slate-200/70 p-6 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2.5 cursor-pointer overflow-hidden transform-gpu ${card.accent.cardBorder} ${card.accent.cardShadow} ${delays[idx % delays.length]}`}
-                style={{
-                  boxShadow: "0 10px 30px rgba(15, 23, 42, 0.04)",
-                }}
+          {loading ? (
+            Array.from({ length: 4 }).map((_, idx) => (
+              <div
+                key={`showcase-skeleton-${idx}`}
+                className="rounded-[32px] bg-white/90 border border-slate-200/70 p-6 animate-pulse space-y-4"
               >
-                {/* 1. Animated Liquid Shimmer Beam Across Card on Hover */}
-                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] transition-transform bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none z-20" />
-
-                {/* 2. Top Minimal Bar: Category Capsule & Capacity */}
-                <div className="flex items-center justify-between mb-4 relative z-10">
-                  <span
-                    className={`inline-flex items-center px-3.5 py-1 rounded-full text-xs sm:text-sm font-bold border backdrop-blur-md transition-colors ${card.accent.badge}`}
-                  >
-                    {card.badge}
-                  </span>
-                  <span className="text-xs sm:text-sm font-mono font-bold text-slate-400 group-hover:text-slate-700 transition-colors">
-                    {card.capacity}
-                  </span>
+                <div className="flex items-center justify-between">
+                  <div className="h-6 w-24 rounded-full bg-slate-200" />
+                  <div className="h-4 w-16 rounded bg-slate-200" />
                 </div>
+                <div className="w-full h-64 sm:h-72 rounded-2xl bg-slate-100" />
+                <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <div className="space-y-2 flex-1">
+                    <div className="h-5 w-3/4 rounded bg-slate-200" />
+                    <div className="h-3.5 w-1/2 rounded bg-slate-100" />
+                  </div>
+                  <div className="w-11 h-11 rounded-full bg-slate-200 shrink-0" />
+                </div>
+              </div>
+            ))
+          ) : loadError ? (
+            <PublicStateMessage
+              variant="error"
+              title="Unable to load featured products"
+              description={loadError}
+              onRetry={loadProducts}
+              className="col-span-full"
+            />
+          ) : cards.length === 0 ? (
+            <PublicStateMessage
+              variant="empty"
+              title="No featured products published yet"
+              description="Featured industrial containers will appear here once added in the catalog."
+              className="col-span-full"
+            />
+          ) : (
+            cards.map((card, idx) => {
+              const delays = ["delay-75", "delay-150", "delay-200", "delay-250"];
 
-                {/* 3. Floating Product Image Stage with Breathing Radial Glow */}
-                <div className="relative w-full h-64 sm:h-72 rounded-2xl overflow-hidden flex items-center justify-center my-2">
-                  {/* Atmospheric Color Glow that Blooms on Hover */}
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-b ${card.accent.glow} opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] scale-95 group-hover:scale-105 rounded-full blur-2xl pointer-events-none`}
-                  />
+              return (
+                <Link
+                  key={card.id}
+                  href={`/products/${card.slug}`}
+                  data-reveal="scale"
+                  onMouseEnter={() => setHoveredCard(card.id)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                  className={`group relative block rounded-[32px] bg-white/90 backdrop-blur-xl border border-slate-200/70 p-6 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2.5 cursor-pointer overflow-hidden transform-gpu ${card.accent.cardBorder} ${card.accent.cardShadow} ${delays[idx % delays.length]}`}
+                  style={{
+                    boxShadow: "0 10px 30px rgba(15, 23, 42, 0.04)",
+                  }}
+                >
+                  {/* 1. Animated Liquid Shimmer Beam Across Card on Hover */}
+                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] transition-transform bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none z-20" />
 
-                  {/* Concentric Floating Ring Beneath Product */}
-                  <div className="absolute bottom-6 w-36 h-6 rounded-[100%] bg-slate-900/[0.04] group-hover:scale-120 group-hover:opacity-70 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] blur-[2px] pointer-events-none" />
+                  {/* 2. Top Minimal Bar: Category Capsule & Capacity */}
+                  <div className="flex items-center justify-between mb-4 relative z-10">
+                    <span
+                      className={`inline-flex items-center px-3.5 py-1 rounded-full text-xs sm:text-sm font-bold border backdrop-blur-md transition-colors ${card.accent.badge}`}
+                    >
+                      {card.badge}
+                    </span>
+                    <span className="text-xs sm:text-sm font-mono font-bold text-slate-400 group-hover:text-slate-700 transition-colors">
+                      {card.capacity}
+                    </span>
+                  </div>
 
-                  {/* The Product Image - Floats with Smooth Spring Physics */}
-                  <div className="relative w-full h-full p-3 flex items-center justify-center z-10">
-                    <Image
-                      src={card.image}
-                      alt={card.title}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      className="object-contain p-4 transform-gpu transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 drop-shadow-md"
-                      priority={idx === 0}
+                  {/* 3. Floating Product Image Stage with Breathing Radial Glow */}
+                  <div className="relative w-full h-64 sm:h-72 rounded-2xl overflow-hidden flex items-center justify-center my-2">
+                    {/* Atmospheric Color Glow that Blooms on Hover */}
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-b ${card.accent.glow} opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] scale-95 group-hover:scale-105 rounded-full blur-2xl pointer-events-none`}
                     />
-                  </div>
-                </div>
 
-                {/* 4. Bottom Info: Clean Title & Animated Circle Arrow Button */}
-                <div className="pt-4 mt-2 border-t border-slate-100 flex items-center justify-between gap-3 relative z-10">
-                  <div className="space-y-0.5">
-                    <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight group-hover:text-cyan-700 transition-colors">
-                      {card.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-400 font-medium">
-                      {card.subtitle}
-                    </p>
+                    {/* Concentric Floating Ring Beneath Product */}
+                    <div className="absolute bottom-6 w-36 h-6 rounded-[100%] bg-slate-900/[0.04] group-hover:scale-120 group-hover:opacity-70 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] blur-[2px] pointer-events-none" />
+
+                    {/* The Product Image - Floats with Smooth Spring Physics */}
+                    <div className="relative w-full h-full p-3 flex items-center justify-center z-10">
+                      {card.image ? (
+                        <Image
+                          src={card.image}
+                          alt={card.title}
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                          className="object-contain p-4 transform-gpu transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 drop-shadow-md"
+                          priority={idx === 0}
+                        />
+                      ) : (
+                        <PackageCheck className="w-14 h-14 text-slate-300" />
+                      )}
+                    </div>
                   </div>
 
-                  {/* Minimal Animated Circle Arrow Button */}
-                  <div
-                    className={`w-11 h-11 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 shadow-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:text-white group-hover:rotate-45 group-hover:scale-105 ${card.accent.button}`}
-                  >
-                    <ArrowUpRight className="w-5 h-5 transition-transform" />
+                  {/* 4. Bottom Info: Clean Title & Animated Circle Arrow Button */}
+                  <div className="pt-4 mt-2 border-t border-slate-100 flex items-center justify-between gap-3 relative z-10">
+                    <div className="space-y-0.5 min-w-0">
+                      <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight group-hover:text-cyan-700 transition-colors line-clamp-1">
+                        {card.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-slate-400 font-medium line-clamp-1">
+                        {card.subtitle}
+                      </p>
+                    </div>
+
+                    {/* Minimal Animated Circle Arrow Button */}
+                    <div
+                      className={`w-11 h-11 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 shadow-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:text-white group-hover:rotate-45 group-hover:scale-105 ${card.accent.button}`}
+                    >
+                      <ArrowUpRight className="w-5 h-5 transition-transform" />
+                    </div>
                   </div>
-                </div>
-              </Link>
-            );
-          })}
+                </Link>
+              );
+            })
+          )}
         </div>
 
         {/* View Full Catalog CTA */}
@@ -224,7 +278,7 @@ export default function ProductShowcase() {
             href="/products"
             className={siteButtonClass({ variant: "primary", size: "lg", className: "group max-w-full" })}
           >
-            <span>View Full Products Catalog (300+ Items)</span>
+            <span>Explore Full Products Catalog</span>
             <ArrowRight className="w-5 h-5 shrink-0 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>

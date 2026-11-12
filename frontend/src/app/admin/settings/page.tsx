@@ -8,7 +8,6 @@ import {
   Mail,
   ShieldCheck,
   Save,
-  CheckCircle,
   Database,
   Server,
   ImageIcon,
@@ -16,35 +15,36 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import MediaPickerModal from "@/components/admin/MediaPickerModal";
+import {
+  AdminErrorBanner,
+  AdminToast,
+  useAdminToast,
+} from "@/components/admin/AdminCrudShell";
 import { AdminFormSkeleton } from "@/components/common/Skeletons";
 
 export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [notification, setNotification] = useState<string | null>(null);
+  const { toast, showToast, clearToast } = useAdminToast();
 
   // Settings State
-  const [siteName, setSiteName] = useState("Noor Plastic Industries");
-  const [siteTagline, setSiteTagline] = useState("Plastic Manufacturing, Import & Pure Water Packaging");
-  const [logoDark, setLogoDark] = useState("/images/logo/logo-dark.png");
-  const [logoLight, setLogoLight] = useState("/images/logo/logo-light.png");
-  const [faviconUrl, setFaviconUrl] = useState("/favicon.ico");
-  const [businessHours, setBusinessHours] = useState("Sat - Thu: 08:00 AM - 08:00 PM");
-  const [factoryGazipur, setFactoryGazipur] = useState("Holding #5, Ward #02, Latifpur-B, Kaliakoir-1750, Gazipur, Dhaka");
-  const [factoryTongi, setFactoryTongi] = useState("Ward #02, Kaliakoir Pourashava, Gazipur, Dhaka");
-  const [phoneSales, setPhoneSales] = useState("+880 1711-987275");
-  const [phoneProcurement, setPhoneProcurement] = useState("+880 1711-987275");
-  const [emailSales, setEmailSales] = useState("info@noorplastic.com");
-  const [emailProcurement, setEmailProcurement] = useState("sales@noorplastic.com");
+  const [siteName, setSiteName] = useState("");
+  const [siteTagline, setSiteTagline] = useState("");
+  const [logoDark, setLogoDark] = useState("");
+  const [logoLight, setLogoLight] = useState("");
+  const [faviconUrl, setFaviconUrl] = useState("");
+  const [businessHours, setBusinessHours] = useState("");
+  const [factoryGazipur, setFactoryGazipur] = useState("");
+  const [factoryTongi, setFactoryTongi] = useState("");
+  const [phoneSales, setPhoneSales] = useState("");
+  const [phoneProcurement, setPhoneProcurement] = useState("");
+  const [emailSales, setEmailSales] = useState("");
+  const [emailProcurement, setEmailProcurement] = useState("");
 
   // Media Picker Modal
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
   const [activeMediaTarget, setActiveMediaTarget] = useState<"logoDark" | "logoLight" | "favicon">("logoDark");
-
-  const showNotification = (msg: string) => {
-    setNotification(msg);
-    setTimeout(() => setNotification(null), 3500);
-  };
 
   useEffect(() => {
     loadSettings();
@@ -52,24 +52,24 @@ export default function AdminSettingsPage() {
 
   const loadSettings = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await api.settings.getMap();
-      if (res.data) {
-        if (res.data["site_name"]) setSiteName(res.data["site_name"]);
-        if (res.data["site_tagline"]) setSiteTagline(res.data["site_tagline"]);
-        if (res.data["logo_dark"]) setLogoDark(res.data["logo_dark"]);
-        if (res.data["logo_light"]) setLogoLight(res.data["logo_light"]);
-        if (res.data["favicon"]) setFaviconUrl(res.data["favicon"]);
-        if (res.data["business_hours"]) setBusinessHours(res.data["business_hours"]);
-        if (res.data["factory_gazipur"]) setFactoryGazipur(res.data["factory_gazipur"]);
-        if (res.data["factory_tongi"]) setFactoryTongi(res.data["factory_tongi"]);
-        if (res.data["phone_sales"]) setPhoneSales(res.data["phone_sales"]);
-        if (res.data["phone_procurement"]) setPhoneProcurement(res.data["phone_procurement"]);
-        if (res.data["email_sales"]) setEmailSales(res.data["email_sales"]);
-        if (res.data["email_procurement"]) setEmailProcurement(res.data["email_procurement"]);
-      }
-    } catch (err) {
-      console.warn("Using default settings fallback:", err);
+      const map = res.data || {};
+      setSiteName(map["site_name"] || "");
+      setSiteTagline(map["site_tagline"] || "");
+      setLogoDark(map["logo_dark"] || "");
+      setLogoLight(map["logo_light"] || "");
+      setFaviconUrl(map["favicon"] || "");
+      setBusinessHours(map["business_hours"] || "");
+      setFactoryGazipur(map["factory_gazipur"] || "");
+      setFactoryTongi(map["factory_tongi"] || "");
+      setPhoneSales(map["phone_sales"] || "");
+      setPhoneProcurement(map["phone_procurement"] || "");
+      setEmailSales(map["email_sales"] || "");
+      setEmailProcurement(map["email_procurement"] || "");
+    } catch (err: any) {
+      setLoadError(err?.message || "Failed to load facility settings from PostgreSQL.");
     } finally {
       setLoading(false);
     }
@@ -96,9 +96,9 @@ export default function AdminSettingsPage() {
 
     try {
       await api.settings.updateBatch(batch);
-      showNotification("Website settings successfully synchronized with database!");
-    } catch (err) {
-      showNotification("Settings updated locally!");
+      showToast("Website settings successfully synchronized with PostgreSQL!");
+    } catch (err: any) {
+      showToast(err?.message || "Failed to save settings to PostgreSQL.", "error");
     } finally {
       setIsSaving(false);
     }
@@ -113,18 +113,12 @@ export default function AdminSettingsPage() {
     if (activeMediaTarget === "logoDark") setLogoDark(asset.url);
     else if (activeMediaTarget === "logoLight") setLogoLight(asset.url);
     else setFaviconUrl(asset.url);
-    showNotification("Branding asset updated");
+    showToast("Branding asset selected (click Save Settings to persist)");
   };
 
   return (
     <div className="space-y-6">
-      {/* Toast Notification */}
-      {notification && (
-        <div className="fixed top-5 right-5 z-50 bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top">
-          <CheckCircle className="w-4 h-4" />
-          {notification}
-        </div>
-      )}
+      <AdminToast toast={toast} onClose={clearToast} />
 
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
@@ -161,6 +155,8 @@ export default function AdminSettingsPage() {
           </button>
         </div>
       </div>
+
+      <AdminErrorBanner error={loadError} onRetry={loadSettings} />
 
       {/* Settings Grid */}
       {loading ? (
@@ -334,11 +330,11 @@ export default function AdminSettingsPage() {
             <div className="space-y-2 text-[11px] font-mono">
               <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800/80">
                 <span className="text-slate-400">Database Engine:</span>
-                <span className="text-emerald-400 font-bold">SQLite 3 (Prisma ORM)</span>
+                <span className="text-emerald-400 font-bold">PostgreSQL (Prisma ORM)</span>
               </div>
               <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800/80">
-                <span className="text-slate-400">Database File:</span>
-                <span className="text-cyan-400 font-bold">backend/prisma/dev.db</span>
+                <span className="text-slate-400">Database Target:</span>
+                <span className="text-cyan-400 font-bold">noor_plastic_db</span>
               </div>
               <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800/80">
                 <span className="text-slate-400">REST API Gateway:</span>

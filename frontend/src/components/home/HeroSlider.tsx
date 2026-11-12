@@ -5,15 +5,13 @@ import Link from "next/link";
 import { Play, X, Droplets } from "lucide-react";
 import { siteButtonClass } from "@/components/common/SiteButton";
 import { HeroSliderSkeleton } from "@/components/common/Skeletons";
+import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import { api } from "@/lib/api";
 import {
   HeroSlide,
-  DEFAULT_HERO_BANNERS,
-  LOCAL_BANNER_STORAGE_KEY,
   BANNERS_UPDATED_EVENT,
   normalizeHeroSlide,
   resolveBannerMediaUrl,
-  getLocalBanners,
 } from "@/data/heroBanners";
 
 const DEFAULT_HERO_YOUTUBE_EMBED =
@@ -88,28 +86,30 @@ const AMBIENT_BUBBLES = [
 ];
 
 export default function HeroSlider() {
-  const [slides, setSlides] = useState<HeroSlide[]>(DEFAULT_HERO_BANNERS);
+  const [slides, setSlides] = useState<HeroSlide[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [globalVideoUrl, setGlobalVideoUrl] = useState("");
 
   const loadBanners = useCallback(async () => {
+    setLoadError(null);
     try {
       const res = await api.banners.getPublic();
-      if (Array.isArray(res?.data)) {
-        const active = res.data
-          .map((item, idx) => normalizeHeroSlide(item, idx))
-          .filter((s) => s.isActive);
-        setSlides(active.length > 0 ? active : DEFAULT_HERO_BANNERS);
-        return;
-      }
-    } catch {
-      const local = getLocalBanners();
-      if (local) {
-        const active = local.filter((s) => s.isActive);
-        setSlides(active.length > 0 ? active : DEFAULT_HERO_BANNERS);
-      }
+      const active = Array.isArray(res?.data)
+        ? res.data
+            .map((item, idx) => normalizeHeroSlide(item, idx))
+            .filter((s) => s.isActive)
+        : [];
+      setSlides(active);
+    } catch (err) {
+      setSlides([]);
+      setLoadError(
+        err instanceof Error && err.message
+          ? err.message
+          : "Unable to load hero banners from server."
+      );
     } finally {
       setLoading(false);
     }
@@ -130,17 +130,10 @@ export default function HeroSlider() {
     const handleBannerSync = () => {
       loadBanners();
     };
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === LOCAL_BANNER_STORAGE_KEY) {
-        loadBanners();
-      }
-    };
 
     window.addEventListener(BANNERS_UPDATED_EVENT, handleBannerSync);
-    window.addEventListener("storage", handleStorage);
     return () => {
       window.removeEventListener(BANNERS_UPDATED_EVENT, handleBannerSync);
-      window.removeEventListener("storage", handleStorage);
     };
   }, [loadBanners]);
 
@@ -168,18 +161,26 @@ export default function HeroSlider() {
   }, [activeIndex, isVideoOpen, slides.length]);
 
   const safeIndex = activeIndex < slides.length ? activeIndex : 0;
-  const currentSlide = slides[safeIndex] || DEFAULT_HERO_BANNERS[0];
+  const currentSlide = slides[safeIndex] || null;
 
-  const bgImg = resolveBannerMediaUrl(
-    currentSlide.backgroundImage || "/images/hero/hero-bubbles-bg.jpg"
-  );
-  const platformImg = resolveBannerMediaUrl(
-    currentSlide.platformImage || "/images/hero/hero-splash-platform.jpg"
-  );
-  const fgImg = resolveBannerMediaUrl(currentSlide.foregroundImage);
-  const secondaryImg = resolveBannerMediaUrl(
-    currentSlide.secondaryImage || "/images/hero/bottle-horizontal.png"
-  );
+  const bgImg = currentSlide
+    ? resolveBannerMediaUrl(
+        currentSlide.backgroundImage || "/images/hero/hero-bubbles-bg.jpg"
+      )
+    : "";
+  const platformImg = currentSlide
+    ? resolveBannerMediaUrl(
+        currentSlide.platformImage || "/images/hero/hero-splash-platform.jpg"
+      )
+    : "";
+  const fgImg = currentSlide
+    ? resolveBannerMediaUrl(currentSlide.foregroundImage)
+    : "";
+  const secondaryImg = currentSlide
+    ? resolveBannerMediaUrl(
+        currentSlide.secondaryImage || "/images/hero/bottle-horizontal.png"
+      )
+    : "";
 
   return (
     <section
@@ -193,11 +194,13 @@ export default function HeroSlider() {
       )}
       {/* Stage 0 (0.0s): Full-Bleed Underwater Bubbles Background + Oceanic Depth */}
       <div className="hero-anim-bg absolute inset-0 z-0 pointer-events-none">
-        <img
-          src={bgImg}
-          alt="Underwater blue ripples and rising bubbles"
-          className="w-full h-full object-cover object-center"
-        />
+        {bgImg && (
+          <img
+            src={bgImg}
+            alt="Underwater blue ripples and rising bubbles"
+            className="w-full h-full object-cover object-center"
+          />
+        )}
         {/* Gentle left vignette so white typography remains sharp at all widths */}
         <div
           aria-hidden="true"
@@ -224,9 +227,11 @@ export default function HeroSlider() {
         </div>
       </div>
 
-      {/* Far-Left Vertical Slide Strip (Desktop & Tablet) */}
-      <aside
-        aria-label="Hero slides navigation"
+      {currentSlide ? (
+        <>
+          {/* Far-Left Vertical Slide Strip (Desktop & Tablet) */}
+          <aside
+            aria-label="Hero slides navigation"
         className="hidden md:flex flex-col items-center justify-center gap-8 absolute left-0 top-0 bottom-0 w-[74px] lg:w-[82px] xl:w-[92px] bg-[#2163B5]/35 backdrop-blur-[2px] border-r border-white/10 z-30 pt-24"
       >
         {slides.map((slide, idx) => {
@@ -351,32 +356,38 @@ export default function HeroSlider() {
           {currentSlide.visualLayout === "trio" ||
           currentSlide.visualLayout === "custom" ? (
             /* Trio or Custom Single Showcase Image Rising from Bottom */
-            <div className="hero-anim-bottle-vertical absolute inset-x-0 mx-auto bottom-[6%] h-[112%] sm:h-[114%] lg:h-[118%] w-[88%] z-30 flex items-end justify-center">
-              <img
-                src={fgImg}
-                alt={currentSlide.lines.filter(Boolean).join(" ")}
-                className="max-h-full w-auto max-w-full object-contain rounded-2xl drop-shadow-[0_18px_28px_rgba(3,38,94,0.34)]"
-              />
-            </div>
+            fgImg ? (
+              <div className="hero-anim-bottle-vertical absolute inset-x-0 mx-auto bottom-[6%] h-[112%] sm:h-[114%] lg:h-[118%] w-[88%] z-30 flex items-end justify-center">
+                <img
+                  src={fgImg}
+                  alt={currentSlide.lines.filter(Boolean).join(" ")}
+                  className="max-h-full w-auto max-w-full object-contain rounded-2xl drop-shadow-[0_18px_28px_rgba(3,38,94,0.34)]"
+                />
+              </div>
+            ) : null
           ) : (
             <>
               {/* Stage 6 (2.05s): Horizontal Lying 5-Gallon Bottle Behind Standing Jug */}
-              <div className="hero-anim-bottle-horizontal absolute right-[1%] bottom-[12%] w-[57%] z-20">
-                <img
-                  src={secondaryImg}
-                  alt="5-Gallon horizontal water dispenser bottle"
-                  className="w-full h-auto object-contain drop-shadow-[0_14px_22px_rgba(4,48,108,0.28)]"
-                />
-              </div>
+              {secondaryImg && (
+                <div className="hero-anim-bottle-horizontal absolute right-[1%] bottom-[12%] w-[57%] z-20">
+                  <img
+                    src={secondaryImg}
+                    alt="5-Gallon horizontal water dispenser bottle"
+                    className="w-full h-auto object-contain drop-shadow-[0_14px_22px_rgba(4,48,108,0.28)]"
+                  />
+                </div>
+              )}
 
               {/* Stage 5 (1.85s): Standing Vertical 5-Gallon Bottle Rising from Bottom */}
-              <div className="hero-anim-bottle-vertical absolute left-[12%] sm:left-[13%] bottom-[6.5%] h-[116%] lg:h-[122%] z-30 flex items-end">
-                <img
-                  src={fgImg}
-                  alt="5-Gallon 100% Pure Water bottle"
-                  className="h-full w-auto object-contain drop-shadow-[0_18px_28px_rgba(3,38,94,0.34)]"
-                />
-              </div>
+              {fgImg && (
+                <div className="hero-anim-bottle-vertical absolute left-[12%] sm:left-[13%] bottom-[6.5%] h-[116%] lg:h-[122%] z-30 flex items-end">
+                  <img
+                    src={fgImg}
+                    alt="5-Gallon 100% Pure Water bottle"
+                    className="h-full w-auto object-contain drop-shadow-[0_18px_28px_rgba(3,38,94,0.34)]"
+                  />
+                </div>
+              )}
             </>
           )}
 
@@ -416,9 +427,41 @@ export default function HeroSlider() {
           )}
         </div>
       </div>
+        </>
+      ) : !loading ? (
+        <div className="relative z-20 w-full min-h-[100svh] lg:h-full flex items-center justify-center px-4 sm:px-8 pt-24 pb-12">
+          <div className="max-w-xl w-full">
+            <PublicStateMessage
+              tone="dark"
+              variant={loadError ? "error" : "empty"}
+              title={
+                loadError
+                  ? "Hero showcase temporarily unavailable"
+                  : "Noor Plastic Industries"
+              }
+              description={
+                loadError ||
+                "No active hero slides are currently published. Explore our industrial packaging catalog below."
+              }
+              onRetry={loadError ? loadBanners : undefined}
+              action={
+                !loadError ? (
+                  <Link
+                    href="/products"
+                    className={siteButtonClass({ variant: "light" })}
+                  >
+                    Explore Products
+                  </Link>
+                ) : undefined
+              }
+            />
+          </div>
+        </div>
+      ) : null}
 
       {/* Video / Production-to-Delivery Modal */}
       {isVideoOpen &&
+        currentSlide &&
         (() => {
           const media = resolveHeroVideoSource(
             currentSlide.videoUrl || globalVideoUrl

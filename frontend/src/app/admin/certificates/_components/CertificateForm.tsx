@@ -6,13 +6,13 @@ import { useRouter } from "next/navigation";
 import { Award, Save } from "lucide-react";
 import { api } from "@/lib/api";
 import {
-  CERTIFICATES_LIST,
   CERTIFICATE_CATEGORY_OPTIONS,
   CertificateItem,
 } from "@/data/certificatesData";
 import ImageFieldWithUpload from "@/components/admin/ImageFieldWithUpload";
 import {
   AdminFormHeader,
+  AdminErrorBanner,
   AdminEditLoadingState,
   AdminEditNotFoundState,
   AdminToast,
@@ -70,6 +70,7 @@ export default function CertificateForm({
   const [form, setForm] = useState<CertificateFormState>(EMPTY_CERT_FORM);
   const [loading, setLoading] = useState(mode === "edit");
   const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
   const { toast, showToast, clearToast } = useAdminToast();
@@ -87,7 +88,6 @@ export default function CertificateForm({
           }
         } catch {
           if (active) {
-            setForm((prev) => ({ ...prev, sortOrder: CERTIFICATES_LIST.length + 1 }));
             setStorageMode("fallback");
           }
         }
@@ -101,6 +101,7 @@ export default function CertificateForm({
       }
 
       setLoading(true);
+      setLoadError(null);
       try {
         const res = await api.certificates.getById(certificateId);
         if (!active) return;
@@ -110,13 +111,13 @@ export default function CertificateForm({
         } else {
           setNotFound(true);
         }
-      } catch {
-        const fallback = CERTIFICATES_LIST.find((c) => c.id === certificateId);
-        if (fallback && active) {
-          setForm(certToForm(fallback));
-          setStorageMode("fallback");
-        } else if (active) {
+      } catch (err: any) {
+        if (!active) return;
+        setStorageMode("fallback");
+        if (err?.status === 404 || err?.message?.toLowerCase().includes("not found")) {
           setNotFound(true);
+        } else {
+          setLoadError(err?.message || "Failed to load certificate details from PostgreSQL.");
         }
       } finally {
         if (active) setLoading(false);
@@ -177,6 +178,8 @@ export default function CertificateForm({
 
       {loading ? (
         <AdminEditLoadingState label="Loading certificate details..." />
+      ) : loadError ? (
+        <AdminErrorBanner error={loadError} />
       ) : notFound ? (
         <AdminEditNotFoundState
           title="Certificate Not Found"

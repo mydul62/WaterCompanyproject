@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { CareerService } from "./career.service";
+import { CareerJobService, CareerService } from "./career.service";
 import { sendResponse } from "../../utils/response";
+import { createCrudController } from "../../utils/contentHelpers";
+
+export const CareerJobController = createCrudController(CareerJobService, "Job opening");
 
 export class CareerController {
   static async getAll(_req: Request, res: Response, next: NextFunction) {

@@ -1,27 +1,11 @@
 import { prisma } from "../../config/prisma";
 import { ApiError } from "../../utils/apiError";
+import { CreateRFQPayload, RFQFilterQuery, RFQItem } from "./rfq.interface";
 
-export interface RFQItem {
-  id: string;
-  companyName: string;
-  contactPerson: string;
-  email: string;
-  phone: string;
-  category: string;
-  volume: string;
-  capacity?: string;
-  status: string;
-  notes?: string;
-  createdAt: string;
-}
+export type { RFQItem, RFQFilterQuery, CreateRFQPayload };
 
 export class RFQService {
-  static async getAll(query: {
-    status?: string;
-    search?: string;
-    page?: number;
-    limit?: number;
-  } = {}) {
+  static async getAll(query: RFQFilterQuery = {}) {
     const where: any = {};
 
     if (query.status && query.status !== "all" && query.status !== "ALL") {
@@ -102,7 +86,7 @@ export class RFQService {
     };
   }
 
-  static async create(payload: Partial<RFQItem> & { name?: string; message?: string; subject?: string }) {
+  static async create(payload: CreateRFQPayload) {
     const company = payload.companyName || payload.name || "Enterprise Inquirer";
     const contact = payload.contactPerson || payload.name || company;
     const email = payload.email;
@@ -112,7 +96,7 @@ export class RFQService {
       throw new ApiError(400, "Email address is required.");
     }
 
-    const quoteNumber = `RFQ-2026-XCL-${Math.floor(1000 + Math.random() * 9000)}`;
+    const quoteNumber = `RFQ-2026-NPI-${Math.floor(1000 + Math.random() * 9000)}`;
 
     const created = await prisma.quoteRequest.create({
       data: {
@@ -125,7 +109,7 @@ export class RFQService {
         volume: payload.volume || "Standard Volume",
         capacity: payload.capacity || "Standard",
         notes: payload.notes || payload.message || "",
-        status: "PENDING",
+        status: "New Inquiry",
       },
     });
 

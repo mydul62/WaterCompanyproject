@@ -5,7 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { CATALOG_PRODUCTS, CatalogProduct } from "@/data/catalogData";
+import { normalizeApiProduct } from "@/lib/productMapper";
+import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import { X, Search, ChevronDown, ArrowRight, Sparkles, Layers } from "lucide-react";
 import { api } from "@/lib/api";
 import { ProductsCatalogSkeletonItems } from "@/components/common/Skeletons";
@@ -15,7 +16,7 @@ interface ProductItem {
   n: string; // name
   d: string; // description
   f: string; // factory
-  m: string; // material line: Plastic | Metal
+  m: "Plastic" | "Metal"; // material line: Plastic | Metal
   c: string; // category
   s: string; // svg icon key
   img?: string; // real photo if available
@@ -23,265 +24,97 @@ interface ProductItem {
   spec?: string;
 }
 
-const FACTORIES = ["Noor Plastic Industries"];
-const PLASTIC_CATS = [
-  "Food",
-  "Home Care",
-  "Personal Care",
-  "Seal and Closure",
-  "Pharmaceutical",
-  "Lubricant",
-  "Chemical",
-  "Paint",
-  "Agro Vet",
-];
-const METAL_CATS = ["Group Products", "Paint", "Chemical"];
-
-// Seed items from user template combined with catalog data
-const ALL_PRODUCTS: ProductItem[] = [
-  {
-    id: "tp1",
-    n: "Pharmaceutical Bottle",
-    d: "100 ml HDPE pharmaceuticals bottle made with food grade virgin material.",
-    f: "Noor Plastic Industries",
-    m: "Plastic",
-    c: "Pharmaceutical",
-    s: "bottle",
-    img: "/images/catalog/cat-prod-1.png",
-    slug: "pharmaceutical-bottle",
-    spec: "100 ml nominal capacity, child-resistant cap option, USP compliant.",
-  },
-  {
-    id: "tp2",
-    n: "Liquid Washing Container",
-    d: "HDPE washing powder container for home care usage.",
-    f: "Noor Plastic Industries",
-    m: "Plastic",
-    c: "Home Care",
-    s: "detergent",
-    img: "/images/catalog/cat-prod-2.png",
-    slug: "liquid-washing-container",
-    spec: "Ergonomic molded handle with anti-leak pour spout, 1000ml.",
-  },
-  {
-    id: "tp3",
-    n: "Vitamin Container",
-    d: "26 gm container (Menacal-D) with cap for pharmaceutical uses. Used for Radiant Pharma.",
-    f: "Noor Plastic Industries",
-    m: "Plastic",
-    c: "Pharmaceutical",
-    s: "jar",
-    img: "/images/catalog/cat-prod-3.png",
-    slug: "vitamin-container",
-    spec: "Induction heat sealable foil barrier, tamper-evident cap.",
-  },
-  {
-    id: "tp4",
-    n: "Paint Pail",
-    d: "Round pail with metal handle for decorative and industrial paints.",
-    f: "Noor Plastic Industries",
-    m: "Plastic",
-    c: "Paint",
-    s: "pail",
-    img: "/images/catalog/prod-7.png",
-    slug: "paint-pail",
-    spec: "Reinforced rim, heavy-gauge wire bail handle with roller grip.",
-  },
-  {
-    id: "tp5",
-    n: "Bitumen Paint Can",
-    d: "Heavy-gauge tin can for bituminous paint with tight-seal lid.",
-    f: "Noor Plastic Industries",
-    m: "Metal",
-    c: "Paint",
-    s: "can",
-    img: "/Infoimages/Screenshot 2026-11-04 130154.png",
-    slug: "bitumen-paint-can",
-    spec: "Three-piece welded tinplate with rust-inhibitive internal varnish.",
-  },
-  {
-    id: "tp6",
-    n: "Lubricant Container",
-    d: "Leak-proof lubricant bottle with tamper-evident closure.",
-    f: "Noor Plastic Industries",
-    m: "Plastic",
-    c: "Lubricant",
-    s: "bottle",
-    img: "/images/catalog/cat-prod-8.png",
-    slug: "lubricant-container",
-    spec: "Multi-layer barrier against oil migration, translucent view stripe.",
-  },
-  // Additional Real Catalog Items
-  {
-    id: "p5",
-    n: "Oral Syringe & Dropper",
-    d: "High precision measured dosing syringe and dropper for pediatric medications.",
-    f: "Noor Plastic Industries",
-    m: "Plastic",
-    c: "Pharmaceutical",
-    s: "bottle",
-    img: "/cropped/product-card-3.png",
-    slug: "oral-syringe",
-    spec: "Indelible graduation markings, medical grade polypropylene.",
-  },
-  {
-    id: "p6",
-    n: "Agro Vet Bottle",
-    d: "500 ML White color HDPE Agro Vet Bottle with Inner Seal and Cap.",
-    f: "Noor Plastic Industries",
-    m: "Plastic",
-    c: "Agro Vet",
-    s: "bottle",
-    img: "/cropped/product-card-1.png",
-    slug: "agro-bottle",
-    spec: "Fluorinated barrier against aggressive agrochemical solvents.",
-  },
-  {
-    id: "p7",
-    n: "Chemical Reagent Bottle",
-    d: "500 ML Chemical Bottle used for Samuda Chemical Industries.",
-    f: "Noor Plastic Industries",
-    m: "Plastic",
-    c: "Chemical",
-    s: "bottle",
-    img: "/images/catalog/cat-prod-7.png",
-    slug: "chemical-bottle",
-    spec: "HDPE heavy wall construction with chemical-grade safety cap.",
-  },
-  {
-    id: "p8",
-    n: "Double Handle Jerry Can",
-    d: "4.8 Ltr Double Handle HDPE Jerry Can for bulk fluids and heavy chemicals.",
-    f: "Noor Plastic Industries",
-    m: "Plastic",
-    c: "Chemical",
-    s: "detergent",
-    img: "/images/catalog/cat-prod-8.png",
-    slug: "double-handle-can",
-    spec: "Dual handles for stable two-handed pour and secure pallet stacking.",
-  },
-  {
-    id: "p9",
-    n: "1 Ltr Calibrated Bottle",
-    d: "1 Ltr industrial chemical bottle with graduated measurement markings.",
-    f: "Noor Plastic Industries",
-    m: "Plastic",
-    c: "Chemical",
-    s: "bottle",
-    img: "/images/catalog/cat-prod-9.png",
-    slug: "1-ltr-chemical-bottle",
-    spec: "UN certified for packaging group II and III hazardous liquids.",
-  },
-  {
-    id: "p10",
-    n: "Personal Care Body Wash Bottle",
-    d: "Crystal-clear PET body-wash bottle with ergonomic dispenser finish.",
-    f: "Noor Plastic Industries",
-    m: "Plastic",
-    c: "Personal Care",
-    s: "bottle",
-    img: "/images/catalog/prod-4.png",
-    slug: "body-wash-bottle",
-    spec: "Recyclable PET resin with high gloss finish and custom colors.",
-  },
-  {
-    id: "p11",
-    n: "Industrial Metal Paint Can",
-    d: "Welded electrolytic tinplate metal can for decorative paint & industrial coatings.",
-    f: "Noor Plastic Industries",
-    m: "Metal",
-    c: "Paint",
-    s: "can",
-    img: "/Infoimages/Screenshot 2026-11-04 130154.png",
-    slug: "3-piece-industrial-paint-can",
-    spec: "Friction-fit lid prevents skinning, compatible with water & solvent paints.",
-  },
-  {
-    id: "p12",
-    n: "High-Pressure Aerosol Spray Can",
-    d: "Tested up to 18 bar burst pressure with specialized interior protective lacquer.",
-    f: "Noor Plastic Industries",
-    m: "Metal",
-    c: "Group Products",
-    s: "can",
-    img: "/Infoimages/Screenshot 2026-11-04 130154.png",
-    slug: "aerosol-spray-can",
-    spec: "DOT-2Q specification, seamless neck curling for standard valve crimp.",
-  },
-  {
-    id: "p13",
-    n: "Food Grade Conical Cup / Tub",
-    d: "Injection-molded white food tub suitable for dairy, yogurt, and butter.",
-    f: "Noor Plastic Industries",
-    m: "Plastic",
-    c: "Food",
-    s: "jar",
-    img: "/cropped/product-card-2.png",
-    slug: "food-conical-cup",
-    spec: "Freezer-grade polypropylene with IML (In-Mold Labeling) compatibility.",
-  },
-  {
-    id: "p14",
-    n: "Tamper-Evident Food Container",
-    d: "Rectangular translucent food box with snap-tight hermetic seal lid.",
-    f: "Noor Plastic Industries",
-    m: "Plastic",
-    c: "Food",
-    s: "jar",
-    img: "/cropped/product-card-4.png",
-    slug: "tamper-evident-container",
-    spec: "BPA-free food contact certified, microwave & dishwasher safe.",
-  },
-];
-
 export default function ProductsPage() {
-  const [productsList, setProductsList] = useState<ProductItem[]>(ALL_PRODUCTS);
+  const [productsList, setProductsList] = useState<ProductItem[]>([]);
+  const [categoriesData, setCategoriesData] = useState<
+    { name: string; genre: "Plastic" | "Metal" }[]
+  >([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [query, setQuery] = useState("");
   const [selectedFac, setSelectedFac] = useState<string[]>([]);
   const [selectedCat, setSelectedCat] = useState<string[]>([]);
 
   useEffect(() => {
     let active = true;
-    api.products
-      .getAll()
-      .then((res) => {
-        if (active && res?.data && res.data.length > 0) {
-          const backendItems: ProductItem[] = res.data.map((p: any) => ({
+    setLoading(true);
+    setLoadError(null);
+    Promise.all([
+      api.products.getAll(),
+      api.categories.getAll().catch(() => ({ data: [] })),
+    ])
+      .then(([prodRes, catRes]) => {
+        if (!active) return;
+        const rawProds = Array.isArray(prodRes?.data) ? prodRes.data : [];
+        const backendItems: ProductItem[] = rawProds.map((raw: any) => {
+          const p = normalizeApiProduct(raw);
+          return {
             id: p.id,
             n: p.name,
-            d: p.description || "",
-            f: p.factory || "Noor Plastic Industries",
-            m:
-              p.material?.toLowerCase().includes("tin") ||
-                p.material?.toLowerCase().includes("steel")
-                ? "Metal"
-                : "Plastic",
-            c:
-              typeof p.category === "object" && p.category !== null
-                ? p.category.name
-                : p.categoryLabel ||
-                (typeof p.category === "string" ? p.category : "Paint"),
-            s:
-              p.material?.toLowerCase().includes("tin") ||
-                p.material?.toLowerCase().includes("steel")
-                ? "can"
-                : "bottle",
-            img: p.imageUrl || p.image || "/images/catalog/cat-prod-1.png",
+            d: p.description,
+            f: p.factory,
+            m: p.genre,
+            c: p.subCategory,
+            s: p.genre === "Metal" ? "can" : "bottle",
+            img: p.image || undefined,
             slug: p.slug,
-            spec: p.capacityRange || "",
-          }));
-          setProductsList(backendItems);
-        }
+            spec: p.capacity,
+          };
+        });
+        setProductsList(backendItems);
+
+        const rawCats = Array.isArray(catRes?.data) ? catRes.data : [];
+        setCategoriesData(
+          rawCats
+            .filter((cat: any) => cat?.name)
+            .map((cat: any) => {
+              const mat = `${cat.material || ""} ${cat.slug || ""} ${cat.name || ""}`.toLowerCase();
+              const genre: "Plastic" | "Metal" = /(tin|tinplate|metal|aerosol|alum|steel|can\b)/.test(mat)
+                ? "Metal"
+                : "Plastic";
+              return { name: String(cat.name), genre };
+            })
+        );
       })
-      .catch(() => { })
+      .catch((err) => {
+        if (!active) return;
+        setProductsList([]);
+        setLoadError(
+          err instanceof Error && err.message
+            ? err.message
+            : "Unable to load product catalog from server."
+        );
+      })
       .finally(() => {
         if (active) setLoading(false);
       });
     return () => {
       active = false;
     };
-  }, []);
+  }, [reloadKey]);
+
+  const factories = useMemo(() => {
+    const set = new Set(productsList.map((p) => p.f).filter(Boolean));
+    return set.size > 0 ? Array.from(set) : ["Noor Plastic Industries"];
+  }, [productsList]);
+
+  const { plasticCats, metalCats } = useMemo(() => {
+    const plasticSet = new Set<string>();
+    const metalSet = new Set<string>();
+    categoriesData.forEach((c) => {
+      if (c.genre === "Metal") metalSet.add(c.name);
+      else plasticSet.add(c.name);
+    });
+    productsList.forEach((p) => {
+      if (p.m === "Metal") metalSet.add(p.c);
+      else plasticSet.add(p.c);
+    });
+    return {
+      plasticCats: Array.from(plasticSet),
+      metalCats: Array.from(metalSet),
+    };
+  }, [categoriesData, productsList]);
 
   // Accordion toggle states
   const [factoryOpen, setFactoryOpen] = useState(true);
@@ -322,20 +155,20 @@ export default function ProductsPage() {
     const facCounts: Record<string, number> = {};
     const catCounts: Record<string, number> = {};
 
-    FACTORIES.forEach((f) => {
+    factories.forEach((f) => {
       facCounts[f] = productsList.filter((p) => p.f === f).length;
     });
 
-    PLASTIC_CATS.forEach((c) => {
+    plasticCats.forEach((c) => {
       catCounts[c] = productsList.filter((p) => p.m === "Plastic" && p.c === c).length;
     });
 
-    METAL_CATS.forEach((c) => {
+    metalCats.forEach((c) => {
       catCounts[c] = productsList.filter((p) => p.m === "Metal" && p.c === c).length;
     });
 
     return { facCounts, catCounts };
-  }, [productsList]);
+  }, [productsList, factories, plasticCats, metalCats]);
 
   // Filtered products list
   const filteredProducts = useMemo(() => {
@@ -1062,7 +895,7 @@ export default function ProductsPage() {
                 </svg>
               </button>
               <div className="prd-gb">
-                {FACTORIES.map((fac) => (
+                {factories.map((fac) => (
                   <label key={fac} className="prd-opt">
                     <input
                       type="checkbox"
@@ -1095,31 +928,39 @@ export default function ProductsPage() {
                 </svg>
               </button>
               <div className="prd-gb">
-                <div className="prd-sub">Plastic</div>
-                {PLASTIC_CATS.map((cat) => (
-                  <label key={`plastic-${cat}`} className="prd-opt">
-                    <input
-                      type="checkbox"
-                      checked={selectedCat.includes(cat)}
-                      onChange={() => toggleCat(cat)}
-                    />
-                    <span>{cat}</span>
-                    <span className="prd-n">{counts.catCounts[cat] || 0}</span>
-                  </label>
-                ))}
+                {plasticCats.length > 0 && (
+                  <>
+                    <div className="prd-sub">Plastic</div>
+                    {plasticCats.map((cat) => (
+                      <label key={`plastic-${cat}`} className="prd-opt">
+                        <input
+                          type="checkbox"
+                          checked={selectedCat.includes(cat)}
+                          onChange={() => toggleCat(cat)}
+                        />
+                        <span>{cat}</span>
+                        <span className="prd-n">{counts.catCounts[cat] || 0}</span>
+                      </label>
+                    ))}
+                  </>
+                )}
 
-                <div className="prd-sub">Metal</div>
-                {METAL_CATS.map((cat) => (
-                  <label key={`metal-${cat}`} className="prd-opt">
-                    <input
-                      type="checkbox"
-                      checked={selectedCat.includes(cat)}
-                      onChange={() => toggleCat(cat)}
-                    />
-                    <span>{cat}</span>
-                    <span className="prd-n">{counts.catCounts[cat] || 0}</span>
-                  </label>
-                ))}
+                {metalCats.length > 0 && (
+                  <>
+                    <div className="prd-sub">Metal</div>
+                    {metalCats.map((cat) => (
+                      <label key={`metal-${cat}`} className="prd-opt">
+                        <input
+                          type="checkbox"
+                          checked={selectedCat.includes(cat)}
+                          onChange={() => toggleCat(cat)}
+                        />
+                        <span>{cat}</span>
+                        <span className="prd-n">{counts.catCounts[cat] || 0}</span>
+                      </label>
+                    ))}
+                  </>
+                )}
               </div>
             </div>
           </aside>
@@ -1174,6 +1015,21 @@ export default function ProductsPage() {
             <div className="prd-grid">
               {loading ? (
                 <ProductsCatalogSkeletonItems count={6} />
+              ) : loadError ? (
+                <PublicStateMessage
+                  variant="error"
+                  title="Unable to load product catalog"
+                  description={loadError}
+                  onRetry={() => setReloadKey((k) => k + 1)}
+                  className="col-span-full"
+                />
+              ) : productsList.length === 0 ? (
+                <PublicStateMessage
+                  variant="empty"
+                  title="No products published yet"
+                  description="Industrial packaging products added via the Admin Panel will appear here."
+                  className="col-span-full"
+                />
               ) : filteredProducts.length > 0 ? (
                 filteredProducts.map((p, idx) => (
                   <Link

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction, Router } from "express";
 import { sendResponse } from "./response";
 import { authenticate, authenticateIfAllQuery, authorize } from "../middlewares/auth.middleware";
+import { validateRequest, ValidationSchemas } from "../middlewares/validate.middleware";
 
 /** Generate a URL-safe ASCII slug with fallback for non-Latin titles (e.g. Bangla). */
 export function slugify(input: string, fallbackPrefix = "item"): string {
@@ -203,27 +204,37 @@ export function createCrudController<T>(
 /** Build a standard Express REST router for an ordered CMS collection. */
 export function createCrudRouter(
   controller: ReturnType<typeof createCrudController>,
-  options: { hasSlugRoute?: boolean; hasResetRoute?: boolean; publicRead?: boolean } = {}
+  options: {
+    hasSlugRoute?: boolean;
+    hasResetRoute?: boolean;
+    publicRead?: boolean;
+    createSchema?: ValidationSchemas;
+    updateSchema?: ValidationSchemas;
+    querySchema?: ValidationSchemas;
+  } = {}
 ): Router {
   const router = Router();
   const cmsWriteGuard = [authenticate, authorize("SUPER_ADMIN", "ADMIN", "EDITOR")];
+  const queryGuard = options.querySchema ? [validateRequest(options.querySchema)] : [];
+  const createGuard = options.createSchema ? [validateRequest(options.createSchema)] : [];
+  const updateGuard = options.updateSchema ? [validateRequest(options.updateSchema)] : [];
 
   if (options.publicRead === false) {
-    router.get("/", ...cmsWriteGuard, controller.getAll);
+    router.get("/", ...cmsWriteGuard, ...queryGuard, controller.getAll);
   } else {
-    router.get("/", authenticateIfAllQuery, controller.getAll);
+    router.get("/", authenticateIfAllQuery, ...queryGuard, controller.getAll);
   }
 
   if (options.hasSlugRoute) {
     router.get("/slug/:slug", controller.getBySlug);
   }
   router.get("/:id", controller.getById);
-  router.post("/", ...cmsWriteGuard, controller.create);
+  router.post("/", ...cmsWriteGuard, ...createGuard, controller.create);
   if (options.hasResetRoute) {
     router.post("/reset", ...cmsWriteGuard, controller.resetDefaults);
   }
-  router.put("/:id", ...cmsWriteGuard, controller.update);
-  router.patch("/:id", ...cmsWriteGuard, controller.update);
+  router.put("/:id", ...cmsWriteGuard, ...updateGuard, controller.update);
+  router.patch("/:id", ...cmsWriteGuard, ...updateGuard, controller.update);
   router.delete("/:id", ...cmsWriteGuard, controller.delete);
   return router;
 }

@@ -2,6 +2,7 @@ import { prisma } from "../../config/prisma";
 import bcrypt from "bcryptjs";
 import { ApiError } from "../../utils/apiError";
 import { Role } from "../../middlewares/auth.middleware";
+import { UserActorContext, UserCreatePayload, UserUpdatePayload } from "./user.interface";
 
 const ALLOWED_ROLES: Role[] = ["SUPER_ADMIN", "ADMIN", "EDITOR", "SALES_MANAGER"];
 
@@ -21,7 +22,7 @@ export class UserService {
     });
   }
 
-  static async create(payload: any, actorRole?: Role) {
+  static async create(payload: UserCreatePayload, actorRole?: Role) {
     if (!payload.email || !payload.password || !payload.name) {
       throw new ApiError(400, "Name, email, and password are required.");
     }
@@ -66,7 +67,7 @@ export class UserService {
     });
   }
 
-  static async update(id: string, payload: any, actor?: { userId: string; role: Role }) {
+  static async update(id: string, payload: UserUpdatePayload, actor?: UserActorContext) {
     const existing = await prisma.user.findUnique({ where: { id } });
     if (!existing) throw new ApiError(404, "User not found.");
 
@@ -116,7 +117,7 @@ export class UserService {
     });
   }
 
-  static async delete(id: string, actor?: { userId: string; role: Role }) {
+  static async delete(id: string, actor?: UserActorContext) {
     if (actor && actor.userId === id) {
       throw new ApiError(400, "You cannot delete your own active account.");
     }

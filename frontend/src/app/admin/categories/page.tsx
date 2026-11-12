@@ -12,19 +12,20 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { api } from "@/lib/api";
-import { CategoryItem, DEFAULT_CATEGORIES } from "./_components/CategoryForm";
+import type { CategoryItem } from "./_components/CategoryForm";
+import {
+  AdminErrorBanner,
+  AdminToast,
+  useAdminToast,
+} from "@/components/admin/AdminCrudShell";
 import { AdminCardSkeletonItems } from "@/components/common/Skeletons";
 
 export default function AdminCategoriesPage() {
-  const [categories, setCategories] = useState<CategoryItem[]>(DEFAULT_CATEGORIES);
+  const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [notification, setNotification] = useState<string | null>(null);
-
-  const showNotification = (msg: string) => {
-    setNotification(msg);
-    setTimeout(() => setNotification(null), 3500);
-  };
+  const { toast, showToast, clearToast } = useAdminToast();
 
   useEffect(() => {
     loadCategories();
@@ -32,13 +33,13 @@ export default function AdminCategoriesPage() {
 
   const loadCategories = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await api.categories.getAll();
-      if (res.data && res.data.length > 0) {
-        setCategories(res.data);
-      }
-    } catch (err) {
-      console.warn("Using default categories fallback:", err);
+      setCategories(Array.isArray(res.data) ? res.data : []);
+    } catch (err: any) {
+      setCategories([]);
+      setLoadError(err?.message || "Unable to load categories from PostgreSQL.");
     } finally {
       setLoading(false);
     }
@@ -48,11 +49,10 @@ export default function AdminCategoriesPage() {
     if (!confirm(`Are you sure you want to delete category "${name}"?`)) return;
     try {
       await api.categories.delete(id);
-      setCategories(categories.filter((c) => c.id !== id));
-      showNotification(`Category "${name}" deleted.`);
-    } catch {
-      setCategories(categories.filter((c) => c.id !== id));
-      showNotification(`Category "${name}" deleted.`);
+      setCategories((prev) => prev.filter((c) => c.id !== id));
+      showToast(`Category "${name}" deleted.`);
+    } catch (err: any) {
+      showToast(err?.message || `Failed to delete category "${name}".`, "error");
     }
   };
 
@@ -64,12 +64,7 @@ export default function AdminCategoriesPage() {
 
   return (
     <div className="space-y-6">
-      {notification && (
-        <div className="fixed top-5 right-5 z-50 bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top">
-          <CheckCircle className="w-4 h-4" />
-          {notification}
-        </div>
-      )}
+      <AdminToast toast={toast} onClose={clearToast} />
 
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
@@ -107,6 +102,7 @@ export default function AdminCategoriesPage() {
       </div>
 
       {/* Search */}
+      <AdminErrorBanner error={loadError} onRetry={loadCategories} />
       <div className="relative max-w-md">
         <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
         <input

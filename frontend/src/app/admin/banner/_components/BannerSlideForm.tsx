@@ -15,18 +15,15 @@ import { api } from "@/lib/api";
 import {
   HeroSlide,
   HeroVisualLayout,
-  DEFAULT_HERO_BANNERS,
   HERO_PRESET_IMAGES,
   normalizeHeroSlide,
   resolveBannerMediaUrl,
-  getLocalBanners,
-  saveLocalBanners,
-  clearLocalBanners,
   emitBannersUpdated,
 } from "@/data/heroBanners";
 import MediaPickerModal from "@/components/admin/MediaPickerModal";
 import {
   AdminFormHeader,
+  AdminErrorBanner,
   AdminEditLoadingState,
   AdminEditNotFoundState,
   AdminToast,
@@ -155,13 +152,13 @@ export default function BannerSlideForm({
   bannerId?: string;
 }) {
   const router = useRouter();
-  const [slides, setSlides] = useState<HeroSlide[]>(DEFAULT_HERO_BANNERS);
   const [editingSlide, setEditingSlide] = useState<HeroSlide | null>(null);
   const [form, setForm] = useState<BannerFormState>(
     mode === "create" ? CREATE_INITIAL_FORM : EMPTY_FORM
   );
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
   const [loading, setLoading] = useState(mode === "edit");
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -184,64 +181,46 @@ export default function BannerSlideForm({
         setLoading(true);
         setNotFound(false);
       }
+      setLoadError(null);
 
       try {
         const res = await api.banners.getAll();
         if (!active) return;
-        if (Array.isArray(res?.data)) {
-          const normalized = res.data.map((row, idx) =>
-            normalizeHeroSlide(row, idx)
-          );
-          setSlides(normalized);
-          setStorageMode("database");
-          clearLocalBanners();
+        const rows = Array.isArray(res?.data) ? res.data : [];
+        const normalized = rows.map((row, idx) =>
+          normalizeHeroSlide(row, idx)
+        );
+        setStorageMode("database");
 
-          if (mode === "edit" && bannerId) {
-            let match = normalized.find((s) => s.id === bannerId) || null;
-            if (!match) {
-              try {
-                const single = await api.banners.getById(bannerId);
-                if (single?.data) {
-                  match = normalizeHeroSlide(single.data, normalized.length);
-                }
-              } catch {
-                // Handled by notFound state below
+        if (mode === "edit" && bannerId) {
+          let match = normalized.find((s) => s.id === bannerId) || null;
+          if (!match) {
+            try {
+              const single = await api.banners.getById(bannerId);
+              if (single?.data) {
+                match = normalizeHeroSlide(single.data, normalized.length);
               }
-            }
-            if (!active) return;
-            if (match) {
-              setEditingSlide(match);
-              setForm(slideToForm(match));
-            } else {
-              setNotFound(true);
+            } catch {
+              // Handled by notFound state below
             }
           }
-          setLoading(false);
-          return;
+          if (!active) return;
+          if (match) {
+            setEditingSlide(match);
+            setForm(slideToForm(match));
+          } else {
+            setNotFound(true);
+          }
         }
-      } catch {
-        // Fallback to browser local storage when backend API is unavailable
+      } catch (err: any) {
+        if (!active) return;
+        setStorageMode("fallback");
+        setLoadError(
+          err?.message || "Unable to connect to PostgreSQL to load banner slide."
+        );
+      } finally {
+        if (active) setLoading(false);
       }
-
-      if (!active) return;
-      const local = getLocalBanners();
-      const fallbackSlides = local ?? DEFAULT_HERO_BANNERS;
-      if (!local) {
-        saveLocalBanners(DEFAULT_HERO_BANNERS);
-      }
-      setSlides(fallbackSlides);
-      setStorageMode("fallback");
-
-      if (mode === "edit" && bannerId) {
-        const match = fallbackSlides.find((s) => s.id === bannerId) || null;
-        if (match) {
-          setEditingSlide(match);
-          setForm(slideToForm(match));
-        } else {
-          setNotFound(true);
-        }
-      }
-      setLoading(false);
     }
 
     load();
@@ -288,35 +267,18 @@ export default function BannerSlideForm({
 
     try {
       if (mode === "edit" && bannerId) {
-        try {
-          await api.banners.update(bannerId, payload);
-          emitBannersUpdated();
-        } catch {
-          const baseSlides = getLocalBanners() ?? slides;
-          const updated = baseSlides.map((s, idx) =>
-            s.id === bannerId ? normalizeHeroSlide({ ...s, ...payload }, idx) : s
-          );
-          saveLocalBanners(updated);
-        }
+        await api.banners.update(bannerId, payload);
       } else {
-        try {
-          await api.banners.create(payload);
-          emitBannersUpdated();
-        } catch {
-          const baseSlides = getLocalBanners() ?? slides;
-          const created = normalizeHeroSlide(
-            {
-              ...payload,
-              id: `slide-${Date.now()}`,
-              sortOrder: baseSlides.length + 1,
-            },
-            baseSlides.length
-          );
-          saveLocalBanners([...baseSlides, created]);
-        }
+        await api.banners.create(payload);
       }
+      emitBannersUpdated();
       router.push("/admin/banner");
       router.refresh();
+    } catch (err: any) {
+      showToast(
+        err?.message || "Failed to save banner slide to PostgreSQL.",
+        "error"
+      );
     } finally {
       setSaving(false);
     }
@@ -342,16 +304,12 @@ export default function BannerSlideForm({
       if (res?.data?.url) {
         setForm((prev) => ({ ...prev, [field]: res.data.url }));
         showToast("Uploaded image to server Media Library!");
-        return;
       }
-    } catch {
-      try {
-        const dataUrl = await fileToCompressedDataUrl(file);
-        setForm((prev) => ({ ...prev, [field]: dataUrl }));
-        showToast("Image attached from computer.");
-      } catch (err: any) {
-        showToast(err?.message || "Failed to load image.", "error");
-      }
+    } catch (err: any) {
+      showToast(
+        err?.message || "Failed to upload image to Media Library.",
+        "error"
+      );
     } finally {
       setUploadingField(null);
     }
@@ -379,6 +337,8 @@ export default function BannerSlideForm({
         subtitle="Configure headline, CTA link, circular offer badge, visual layout, and inspect the live desktop composition."
         storageMode={storageMode}
       />
+
+      <AdminErrorBanner error={loadError} />
 
       {loading ? (
         <AdminEditLoadingState label="Loading banner slide..." />
@@ -846,7 +806,7 @@ export default function BannerSlideForm({
                 {/* Left rail indicator */}
                 <div className="absolute left-0 top-0 bottom-0 w-7 bg-[#2163B5]/40 border-r border-white/10 flex flex-col items-center justify-center gap-2 text-[9px] font-bold text-white/80 z-20">
                   <span className="text-[#062346] font-black bg-white/70 px-1 rounded">
-                    {editingSlide?.num || String(slides.length + 1).padStart(2, "0")}
+                    {editingSlide?.num || "NEW"}
                   </span>
                 </div>
 

@@ -11,6 +11,15 @@ import {
 } from "../../utils/contentHelpers";
 import fs from "fs";
 import path from "path";
+import {
+  PressStoryPayload,
+  PressStoryUpdatePayload,
+  RegisterUploadedAssetOptions,
+  UpdateMediaAssetPayload,
+  UploadedFilePayload,
+} from "./media.interface";
+
+export type { UploadedFilePayload, RegisterUploadedAssetOptions };
 
 const KNOWN_MEDIA_CATEGORIES = new Set([
   "GENERAL",
@@ -171,22 +180,6 @@ function normalizeStoryPayload(payload: any, existing?: any) {
   };
 }
 
-export interface UploadedFilePayload {
-  filename: string;
-  originalname: string;
-  mimetype: string;
-  size: number;
-  path?: string;
-}
-
-export interface RegisterUploadedAssetOptions {
-  altText?: string;
-  category?: string;
-  url?: string;
-  width?: number | null;
-  height?: number | null;
-}
-
 export class MediaService {
   // ══════════════════════════════════════════════════════════════
   // MEDIA LIBRARY ASSET MANAGEMENT
@@ -255,7 +248,7 @@ export class MediaService {
     return serializeMediaAsset(created);
   }
 
-  static async updateAsset(id: string, payload: { altText?: string; caption?: string; category?: string }) {
+  static async updateAsset(id: string, payload: UpdateMediaAssetPayload) {
     const data: { altText?: string; caption?: string; folder?: string } = {};
     if (payload.altText !== undefined) data.altText = payload.altText;
     if (payload.caption !== undefined) data.caption = payload.caption;
@@ -327,7 +320,7 @@ export class MediaService {
     return serializeStory(story);
   }
 
-  static async createStory(payload: any) {
+  static async createStory(payload: PressStoryPayload) {
     if (!payload.title || !(payload.newspaper || payload.outlet)) {
       throw new ApiError(400, "Title and Newspaper/Outlet are required.");
     }
@@ -348,7 +341,7 @@ export class MediaService {
     return serializeStory(created);
   }
 
-  static async updateStory(id: string, payload: any) {
+  static async updateStory(id: string, payload: PressStoryUpdatePayload) {
     const existing = await prisma.pressStory.findUnique({ where: { id } });
     if (!existing) throw new ApiError(404, "Press story not found.");
 

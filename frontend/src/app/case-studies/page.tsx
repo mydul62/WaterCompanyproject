@@ -6,7 +6,8 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { api } from "@/lib/api";
-import { CASE_STUDIES_DATA, CaseStudy } from "@/data/caseStudiesData";
+import type { CaseStudy } from "@/data/caseStudiesData";
+import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import { siteButtonClass, siteFilterTabClass } from "@/components/common/SiteButton";
 import { CaseStudiesSkeletonItems } from "@/components/common/Skeletons";
 import {
@@ -27,22 +28,31 @@ import {
 } from "lucide-react";
 
 export default function CaseStudiesPage() {
-  const [cases, setCases] = useState<CaseStudy[]>(CASE_STUDIES_DATA);
+  const [cases, setCases] = useState<CaseStudy[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
   const [selectedCase, setSelectedCase] = useState<CaseStudy | null>(null);
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setLoadError(null);
     api.caseStudies
       .getPublic()
       .then((res) => {
-        if (active && Array.isArray(res.data) && res.data.length > 0) {
-          setCases(res.data);
-        }
+        if (!active) return;
+        setCases(Array.isArray(res.data) ? res.data : []);
       })
-      .catch(() => {
-        // Keep clean fallback CASE_STUDIES_DATA
+      .catch((err) => {
+        if (!active) return;
+        setCases([]);
+        setLoadError(
+          err instanceof Error && err.message
+            ? err.message
+            : "Unable to load case studies from server."
+        );
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -50,7 +60,7 @@ export default function CaseStudiesPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [reloadKey]);
 
   // Filtered Case Studies
   const filteredCases = useMemo(() => {
@@ -204,7 +214,32 @@ export default function CaseStudiesPage() {
 
               {/* 6 Cards Grid (2 cols on tablet, 3 cols on desktop) */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {loading ? <CaseStudiesSkeletonItems count={6} /> : filteredCases.map((study) => (
+                {loading ? (
+                  <CaseStudiesSkeletonItems count={6} />
+                ) : loadError ? (
+                  <PublicStateMessage
+                    variant="error"
+                    title="Unable to load case studies"
+                    description={loadError}
+                    onRetry={() => setReloadKey((k) => k + 1)}
+                    className="col-span-full"
+                  />
+                ) : cases.length === 0 ? (
+                  <PublicStateMessage
+                    variant="empty"
+                    title="No case studies published yet"
+                    description="Client engineering case studies will appear here once published."
+                    className="col-span-full"
+                  />
+                ) : filteredCases.length === 0 ? (
+                  <PublicStateMessage
+                    variant="empty"
+                    title="No matching case studies"
+                    description="Try selecting another industry category filter above."
+                    className="col-span-full"
+                  />
+                ) : (
+                  filteredCases.map((study) => (
                   <div
                     key={study.id}
                     className="bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between group"
@@ -272,7 +307,8 @@ export default function CaseStudiesPage() {
                       </button>
                     </div>
                   </div>
-                ))}
+                ))
+                )}
               </div>
             </div>
           </section>

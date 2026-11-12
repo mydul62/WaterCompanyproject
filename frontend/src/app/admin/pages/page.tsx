@@ -15,20 +15,21 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { api } from "@/lib/api";
-import { PageRecord, DEFAULT_PAGES } from "./_components/PageForm";
+import type { PageRecord } from "./_components/PageForm";
+import {
+  AdminErrorBanner,
+  AdminToast,
+  useAdminToast,
+} from "@/components/admin/AdminCrudShell";
 import { AdminTableSkeletonRows } from "@/components/common/Skeletons";
 
 export default function PageManagementPage() {
-  const [pages, setPages] = useState<PageRecord[]>(DEFAULT_PAGES);
+  const [pages, setPages] = useState<PageRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
-  const [notification, setNotification] = useState<string | null>(null);
-
-  const showNotification = (msg: string) => {
-    setNotification(msg);
-    setTimeout(() => setNotification(null), 3500);
-  };
+  const { toast, showToast, clearToast } = useAdminToast();
 
   useEffect(() => {
     loadPages();
@@ -36,13 +37,13 @@ export default function PageManagementPage() {
 
   const loadPages = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await api.pages.getAll();
-      if (res.data && res.data.length > 0) {
-        setPages(res.data);
-      }
-    } catch (err) {
-      console.warn("Using seeded pages fallback:", err);
+      setPages(Array.isArray(res.data) ? res.data : []);
+    } catch (err: any) {
+      setPages([]);
+      setLoadError(err?.message || "Unable to load CMS pages from PostgreSQL.");
     } finally {
       setLoading(false);
     }
@@ -53,11 +54,10 @@ export default function PageManagementPage() {
 
     try {
       await api.pages.delete(id);
-      setPages(pages.filter((p) => p.id !== id));
-      showNotification(`Page "${title}" deleted.`);
-    } catch {
-      setPages(pages.filter((p) => p.id !== id));
-      showNotification(`Page "${title}" deleted.`);
+      setPages((prev) => prev.filter((p) => p.id !== id));
+      showToast(`Page "${title}" deleted.`);
+    } catch (err: any) {
+      showToast(err?.message || `Failed to delete page "${title}".`, "error");
     }
   };
 
@@ -71,12 +71,7 @@ export default function PageManagementPage() {
 
   return (
     <div className="space-y-6">
-      {notification && (
-        <div className="fixed top-5 right-5 z-50 bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top">
-          <CheckCircle className="w-4 h-4" />
-          {notification}
-        </div>
-      )}
+      <AdminToast toast={toast} onClose={clearToast} />
 
       {/* Top Banner & Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
@@ -117,6 +112,7 @@ export default function PageManagementPage() {
       </div>
 
       {/* Search & Filter Bar */}
+      <AdminErrorBanner error={loadError} onRetry={loadPages} />
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />

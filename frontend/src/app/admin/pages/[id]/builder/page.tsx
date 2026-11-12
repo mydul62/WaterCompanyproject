@@ -304,15 +304,15 @@ export default function ElementorVisualEditor({
   // Notifications
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
-  const [notification, setNotification] = useState<string | null>(null);
+  const [notification, setNotification] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
   // Iframe & Active Element References
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const activeDomElementRef = useRef<HTMLElement | null>(null);
 
-  const showNotification = (msg: string) => {
-    setNotification(msg);
-    setTimeout(() => setNotification(null), 3500);
+  const showNotification = (text: string, type: "success" | "error" = "success") => {
+    setNotification({ text, type });
+    setTimeout(() => setNotification(null), 4000);
   };
 
   // 1. Initial Page Matching & Setup
@@ -335,16 +335,7 @@ export default function ElementorVisualEditor({
     try {
       let combined: Record<string, any> = {};
 
-      if (typeof window !== "undefined") {
-        const cached = localStorage.getItem("waterweb_visual_overrides");
-        if (cached) {
-          try {
-            combined = JSON.parse(cached);
-          } catch (e) {}
-        }
-      }
-
-      // Fetch page from database by slug or ID
+      // Fetch page from PostgreSQL database by slug or ID
       const targetSlug = activePage.slug === "/" ? "home" : activePage.slug.replace(/^\//, "");
       const pageRes = await api.pages.getBySlug(targetSlug).catch(() =>
         api.pages.getById(pageParamId).catch(() => null)
@@ -373,8 +364,8 @@ export default function ElementorVisualEditor({
 
       const linkRes = await api.links.getAll();
       if (linkRes.data) setRegisteredLinks(linkRes.data);
-    } catch (err) {
-      // ignore
+    } catch (err: any) {
+      showNotification(err?.message || "Unable to load page data from PostgreSQL.", "error");
     }
   };
 
@@ -843,10 +834,6 @@ export default function ElementorVisualEditor({
       setHistoryStack(newStack);
       setHistoryIndex(newStack.length - 1);
 
-      if (typeof window !== "undefined") {
-        localStorage.setItem("waterweb_visual_overrides", JSON.stringify(newOverrides));
-      }
-
       return newOverrides;
     });
 
@@ -953,10 +940,6 @@ export default function ElementorVisualEditor({
   const handleSaveDraft = async () => {
     setIsSaving(true);
     try {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("waterweb_visual_overrides", JSON.stringify(overrides));
-      }
-
       const targetSlug = activePage.slug === "/" ? "home" : activePage.slug.replace(/^\//, "");
       await api.pages.saveDraft(targetSlug, {
         draftContent: overrides,
@@ -968,9 +951,9 @@ export default function ElementorVisualEditor({
         });
       });
 
-      showNotification("Draft saved to backend database!");
-    } catch (err) {
-      showNotification("Draft state saved locally!");
+      showNotification("Draft saved to PostgreSQL database!");
+    } catch (err: any) {
+      showNotification(err?.message || "Failed to save draft to PostgreSQL.", "error");
     } finally {
       setIsSaving(false);
     }
@@ -980,22 +963,6 @@ export default function ElementorVisualEditor({
   const handlePublish = async () => {
     setIsPublishing(true);
     try {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("waterweb_visual_overrides", JSON.stringify(overrides));
-        localStorage.setItem("waterweb_live_published_overrides", JSON.stringify(overrides));
-
-        window.dispatchEvent(
-          new CustomEvent("cms-page-published", {
-            detail: { pageKey: currentPageKey, overrides },
-          })
-        );
-        try {
-          const bc = new BroadcastChannel("waterweb_cms_sync");
-          bc.postMessage({ type: "PAGE_PUBLISHED", pageKey: currentPageKey, overrides });
-          bc.close();
-        } catch (e) {}
-      }
-
       const targetSlug = activePage.slug === "/" ? "home" : activePage.slug.replace(/^\//, "");
       await api.pages.publish(targetSlug, {
         notes: `Published edits for ${activePage.title}`,
@@ -1010,9 +977,23 @@ export default function ElementorVisualEditor({
       });
 
       await api.pages.saveRevision(targetSlug, `Published edits for ${activePage.title}`).catch(() => {});
-      showNotification("Published live! Changes are visible on the public website.");
-    } catch (err) {
-      showNotification("Page published! (Synced to database)");
+
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("cms-page-published", {
+            detail: { pageKey: currentPageKey, overrides },
+          })
+        );
+        try {
+          const bc = new BroadcastChannel("waterweb_cms_sync");
+          bc.postMessage({ type: "PAGE_PUBLISHED", pageKey: currentPageKey, overrides });
+          bc.close();
+        } catch (e) {}
+      }
+
+      showNotification("Published live! Changes are persisted in PostgreSQL.");
+    } catch (err: any) {
+      showNotification(err?.message || "Failed to publish page to PostgreSQL.", "error");
     } finally {
       setIsPublishing(false);
     }
@@ -1038,9 +1019,13 @@ export default function ElementorVisualEditor({
     <div className="h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans select-none">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-16 right-6 z-[10000] bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top">
+        <div
+          className={`fixed top-16 right-6 z-[10000] text-white px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top ${
+            notification.type === "error" ? "bg-red-600" : "bg-blue-600"
+          }`}
+        >
           <CheckCircle className="w-4 h-4" />
-          {notification}
+          {notification.text}
         </div>
       )}
 

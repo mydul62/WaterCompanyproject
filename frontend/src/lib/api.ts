@@ -312,6 +312,9 @@ class ApiClient {
       const qs = query.toString();
       return this.request<any[]>(`/products${qs ? `?${qs}` : ""}`);
     },
+    getAllAdmin: async () => {
+      return this.request<any[]>("/products/admin");
+    },
     getById: async (id: string) => {
       return this.request<any>(`/products/${id}`);
     },

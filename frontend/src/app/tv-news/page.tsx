@@ -4,10 +4,10 @@ import React, { useState, useEffect, useMemo } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { api } from "@/lib/api";
+import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import {
   TvNewsVideoItem,
   TV_NEWS_HERO_IMAGE,
-  DEFAULT_TV_NEWS_VIDEOS,
   normalizeTvNewsVideo,
   getYouTubeEmbedUrl,
   getYouTubeThumbnailUrl,
@@ -29,8 +29,10 @@ import {
 const PAGE_SIZE_OPTIONS = [9, 10, 12, 18, 24] as const;
 
 export default function TvNewsPage() {
-  const [videos, setVideos] = useState<TvNewsVideoItem[]>(DEFAULT_TV_NEWS_VIDEOS);
+  const [videos, setVideos] = useState<TvNewsVideoItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [heroTitle, setHeroTitle] = useState("TV News");
   const [heroSubtitle, setHeroSubtitle] = useState(
     "Noor Plastic Industries • Broadcast Coverage & Factory Features"
@@ -47,20 +49,26 @@ export default function TvNewsPage() {
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setLoadError(null);
 
     Promise.allSettled([api.tvNews.getPublic(), api.settings.getMap()])
       .then(([videosRes, settingsRes]) => {
         if (!active) return;
 
-        if (
-          videosRes.status === "fulfilled" &&
-          Array.isArray(videosRes.value?.data) &&
-          videosRes.value.data.length > 0
-        ) {
+        if (videosRes.status === "fulfilled") {
+          const rows = Array.isArray(videosRes.value?.data)
+            ? videosRes.value.data
+            : [];
           setVideos(
-            videosRes.value.data.map((row: any, idx: number) =>
-              normalizeTvNewsVideo(row, idx)
-            )
+            rows.map((row: any, idx: number) => normalizeTvNewsVideo(row, idx))
+          );
+        } else {
+          setVideos([]);
+          setLoadError(
+            videosRes.reason instanceof Error && videosRes.reason.message
+              ? videosRes.reason.message
+              : "Unable to load TV news videos from server."
           );
         }
 
@@ -78,7 +86,7 @@ export default function TvNewsPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [reloadKey]);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -250,6 +258,19 @@ export default function TvNewsPage() {
                   </div>
                 ))}
               </div>
+            ) : loadError ? (
+              <PublicStateMessage
+                variant="error"
+                title="Unable to load TV news videos"
+                description={loadError}
+                onRetry={() => setReloadKey((k) => k + 1)}
+              />
+            ) : videos.length === 0 ? (
+              <PublicStateMessage
+                variant="empty"
+                title="No TV news coverage published yet"
+                description="Broadcast videos added from the Admin Panel will appear here."
+              />
             ) : paginatedVideos.length === 0 ? (
               <div className="py-16 text-center space-y-3 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
                 <Tv className="w-10 h-10 text-slate-400 mx-auto" />

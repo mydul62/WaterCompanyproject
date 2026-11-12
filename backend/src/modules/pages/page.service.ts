@@ -1,15 +1,15 @@
 import { prisma } from "../../config/prisma";
 import { ApiError } from "../../utils/apiError";
+import {
+  CreatePagePayload,
+  PublishPageOptions,
+  ReorderSectionItem,
+  SaveDraftPayload,
+  SectionPayload,
+  UpdatePagePayload,
+} from "./page.interface";
 
-export interface SectionPayload {
-  id?: string;
-  sectionType: string;
-  name: string;
-  order: number;
-  isVisible: boolean;
-  settings: string | object;
-  content: string | object;
-}
+export type { SectionPayload };
 
 export class PageService {
   static async findPage(idOrSlug: string) {
@@ -114,12 +114,7 @@ export class PageService {
     return page;
   }
 
-  static async createPage(payload: {
-    title: string;
-    slug: string;
-    description?: string;
-    template?: string;
-  }) {
+  static async createPage(payload: CreatePagePayload) {
     if (!payload.title || !payload.slug) {
       throw new ApiError(400, "Page title and slug are required.");
     }
@@ -162,7 +157,7 @@ export class PageService {
     return this.getEditorData(newPage.id);
   }
 
-  static async updatePage(idOrSlug: string, payload: any) {
+  static async updatePage(idOrSlug: string, payload: UpdatePagePayload) {
     const existing = await this.findPage(idOrSlug);
     if (!existing) throw new ApiError(404, "Page not found.");
 
@@ -218,7 +213,7 @@ export class PageService {
     return this.getEditorData(existing.id);
   }
 
-  static async saveDraft(idOrSlug: string, payload: any) {
+  static async saveDraft(idOrSlug: string, payload: SaveDraftPayload) {
     const existing = await this.findPage(idOrSlug);
     if (!existing) throw new ApiError(404, "Page not found.");
 
@@ -318,7 +313,7 @@ export class PageService {
     return this.getEditorData(pageId);
   }
 
-  static async reorderSections(idOrSlug: string, sectionOrders: { id: string; sortOrder: number }[]) {
+  static async reorderSections(idOrSlug: string, sectionOrders: ReorderSectionItem[]) {
     const existing = await this.findPage(idOrSlug);
     if (!existing) throw new ApiError(404, "Page not found.");
     const pageId = existing.id;
@@ -334,7 +329,7 @@ export class PageService {
     return this.getEditorData(pageId);
   }
 
-  static async publishPage(idOrSlug: string, options?: { notes?: string; author?: string; publishedContent?: any; draftContent?: any }) {
+  static async publishPage(idOrSlug: string, options?: PublishPageOptions) {
     const existing = await this.findPage(idOrSlug);
     if (!existing) throw new ApiError(404, "Page not found.");
     const id = existing.id;

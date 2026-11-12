@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { PageController } from "./page.controller";
+import { PageValidation } from "./page.validation";
 import { authenticate, authorize } from "../../middlewares/auth.middleware";
+import { validateRequest } from "../../middlewares/validate.middleware";
 
 const router = Router();
 const requireCmsEditor = [authenticate, authorize("SUPER_ADMIN", "ADMIN", "EDITOR")];
@@ -10,16 +12,16 @@ router.get("/slug/:slug", PageController.getBySlug);
 
 // Admin CMS endpoints
 router.get("/", ...requireCmsEditor, PageController.getAll);
-router.post("/", ...requireCmsEditor, PageController.create);
+router.post("/", ...requireCmsEditor, validateRequest(PageValidation.create), PageController.create);
 router.get("/:id", ...requireCmsEditor, PageController.getById);
 router.get("/:id/editor", ...requireCmsEditor, PageController.getEditorData);
-router.put("/:id", ...requireCmsEditor, PageController.update);
-router.post("/:id/draft", ...requireCmsEditor, PageController.saveDraft);
-router.post("/:id/publish", ...requireCmsEditor, PageController.publish);
-router.put("/:id/sections", ...requireCmsEditor, PageController.saveSections);
-router.put("/:id/reorder", ...requireCmsEditor, PageController.reorderSections);
+router.put("/:id", ...requireCmsEditor, validateRequest(PageValidation.update), PageController.update);
+router.post("/:id/draft", ...requireCmsEditor, validateRequest(PageValidation.saveDraft), PageController.saveDraft);
+router.post("/:id/publish", ...requireCmsEditor, validateRequest(PageValidation.publish), PageController.publish);
+router.put("/:id/sections", ...requireCmsEditor, validateRequest(PageValidation.saveSections), PageController.saveSections);
+router.put("/:id/reorder", ...requireCmsEditor, validateRequest(PageValidation.reorderSections), PageController.reorderSections);
 router.get("/:id/revisions", ...requireCmsEditor, PageController.getRevisions);
-router.post("/:id/revisions", ...requireCmsEditor, PageController.createRevision);
+router.post("/:id/revisions", ...requireCmsEditor, validateRequest(PageValidation.createRevision), PageController.createRevision);
 router.post("/:id/revisions/:revId/restore", ...requireCmsEditor, PageController.restoreRevision);
 router.delete("/:id", ...requireCmsEditor, PageController.delete);
 

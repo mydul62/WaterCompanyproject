@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import {
   PanelBottom,
   Save,
-  CheckCircle,
   MapPin,
   Phone,
   Mail,
@@ -14,32 +13,33 @@ import {
   Copy,
 } from "lucide-react";
 import { api } from "@/lib/api";
+import {
+  AdminErrorBanner,
+  AdminToast,
+  useAdminToast,
+} from "@/components/admin/AdminCrudShell";
 import { AdminFormSkeleton } from "@/components/common/Skeletons";
 
 export default function FooterManagementPage() {
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [notification, setNotification] = useState<string | null>(null);
+  const { toast, showToast, clearToast } = useAdminToast();
 
   // Footer Fields
-  const [companyName, setCompanyName] = useState("Noor Plastic Industries");
-  const [plantGazipur, setPlantGazipur] = useState("Holding #5, Ward #02, Latifpur-B, Kaliakoir-1750, Gazipur, Dhaka, Bangladesh");
-  const [plantTongi, setPlantTongi] = useState("Ward #02, Kaliakoir Pourashava, Gazipur, Dhaka, Bangladesh");
-  const [phoneForeign, setPhoneForeign] = useState("+880 1711-987275");
-  const [phoneDomestic, setPhoneDomestic] = useState("+880 1711-987275");
-  const [emailSales, setEmailSales] = useState("info@noorplastic.com");
-  const [emailProcurement, setEmailProcurement] = useState("sales@noorplastic.com");
-  const [linkedinUrl, setLinkedinUrl] = useState("https://www.linkedin.com/company/noor-plastic-industries");
-  const [youtubeUrl, setYoutubeUrl] = useState("https://www.youtube.com/@noorplastic");
-  const [facebookUrl, setFacebookUrl] = useState("https://www.facebook.com/noorplastic");
-  const [copyrightText, setCopyrightText] = useState("Copyright © 2026 Noor Plastic Industries. All rights reserved.");
-  const [developerName, setDeveloperName] = useState("BrainForce");
-  const [developerUrl, setDeveloperUrl] = useState("https://brainforge26.tech/");
-
-  const showNotification = (msg: string) => {
-    setNotification(msg);
-    setTimeout(() => setNotification(null), 3500);
-  };
+  const [companyName, setCompanyName] = useState("");
+  const [plantGazipur, setPlantGazipur] = useState("");
+  const [plantTongi, setPlantTongi] = useState("");
+  const [phoneForeign, setPhoneForeign] = useState("");
+  const [phoneDomestic, setPhoneDomestic] = useState("");
+  const [emailSales, setEmailSales] = useState("");
+  const [emailProcurement, setEmailProcurement] = useState("");
+  const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [facebookUrl, setFacebookUrl] = useState("");
+  const [copyrightText, setCopyrightText] = useState("");
+  const [developerName, setDeveloperName] = useState("");
+  const [developerUrl, setDeveloperUrl] = useState("");
 
   useEffect(() => {
     loadSettings();
@@ -47,26 +47,25 @@ export default function FooterManagementPage() {
 
   const loadSettings = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await api.settings.getMap();
-      if (res.data) {
-        if (res.data["site_name"]) setCompanyName(res.data["site_name"]);
-        if (res.data["factory_gazipur"]) setPlantGazipur(res.data["factory_gazipur"]);
-        if (res.data["factory_tongi"]) setPlantTongi(res.data["factory_tongi"]);
-        if (res.data["phone_sales"]) setPhoneForeign(res.data["phone_sales"]);
-        if (res.data["email_sales"]) setEmailSales(res.data["email_sales"]);
-        if (res.data["email_procurement"]) setEmailProcurement(res.data["email_procurement"]);
-        if (res.data["social_linkedin"]) setLinkedinUrl(res.data["social_linkedin"]);
-        if (res.data["social_youtube"]) setYoutubeUrl(res.data["social_youtube"]);
-        if (res.data["social_facebook"]) setFacebookUrl(res.data["social_facebook"]);
-        if (res.data["footer_copyright"] || res.data["copyright_text"]) {
-          setCopyrightText(res.data["footer_copyright"] || res.data["copyright_text"]);
-        }
-        if (res.data["developer_name"]) setDeveloperName(res.data["developer_name"]);
-        if (res.data["developer_url"]) setDeveloperUrl(res.data["developer_url"]);
-      }
-    } catch (err) {
-      console.warn("Using default settings fallback:", err);
+      const map = res.data || {};
+      setCompanyName(map["site_name"] || "");
+      setPlantGazipur(map["factory_gazipur"] || "");
+      setPlantTongi(map["factory_tongi"] || "");
+      setPhoneForeign(map["phone_sales"] || "");
+      setPhoneDomestic(map["phone_domestic"] || "");
+      setEmailSales(map["email_sales"] || "");
+      setEmailProcurement(map["email_procurement"] || "");
+      setLinkedinUrl(map["social_linkedin"] || "");
+      setYoutubeUrl(map["social_youtube"] || "");
+      setFacebookUrl(map["social_facebook"] || "");
+      setCopyrightText(map["footer_copyright"] || map["copyright_text"] || "");
+      setDeveloperName(map["developer_name"] || "");
+      setDeveloperUrl(map["developer_url"] || "");
+    } catch (err: any) {
+      setLoadError(err?.message || "Failed to load footer settings from PostgreSQL.");
     } finally {
       setLoading(false);
     }
@@ -95,9 +94,9 @@ export default function FooterManagementPage() {
 
     try {
       await api.settings.updateBatch(batch);
-      showNotification("Footer settings synchronized with database!");
-    } catch (err) {
-      showNotification("Footer settings saved locally!");
+      showToast("Footer settings synchronized with PostgreSQL!");
+    } catch (err: any) {
+      showToast(err?.message || "Failed to save footer settings to PostgreSQL.", "error");
     } finally {
       setIsSaving(false);
     }
@@ -105,13 +104,7 @@ export default function FooterManagementPage() {
 
   return (
     <div className="space-y-6">
-      {/* Toast Notification */}
-      {notification && (
-        <div className="fixed top-5 right-5 z-50 bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top">
-          <CheckCircle className="w-4 h-4" />
-          {notification}
-        </div>
-      )}
+      <AdminToast toast={toast} onClose={clearToast} />
 
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
@@ -148,6 +141,8 @@ export default function FooterManagementPage() {
           </button>
         </div>
       </div>
+
+      <AdminErrorBanner error={loadError} onRetry={loadSettings} />
 
       {/* Form Grid */}
       {loading ? (

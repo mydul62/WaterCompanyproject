@@ -8,6 +8,7 @@ import { api } from "@/lib/api";
 import { normalizeRegisteredLink, type RegisteredLinkItem } from "@/lib/linkRegistry";
 import {
   AdminFormHeader,
+  AdminErrorBanner,
   AdminEditLoadingState,
   AdminEditNotFoundState,
   AdminToast,
@@ -138,6 +139,7 @@ export default function NavigationItemForm({
 
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
   const { toast, showToast, clearToast } = useAdminToast();
@@ -147,7 +149,9 @@ export default function NavigationItemForm({
 
     async function init() {
       setLoading(true);
-      let loadedTree: NavItem[] = getFallbackMenuTree(menuCode);
+      setLoadError(null);
+      let loadedTree: NavItem[] = [];
+      let treeFailed = false;
 
       try {
         const [treeRes, linksRes] = await Promise.allSettled([
@@ -157,24 +161,32 @@ export default function NavigationItemForm({
 
         if (!active) return;
 
-        if (treeRes.status === "fulfilled" && Array.isArray(treeRes.value?.data) && treeRes.value.data.length > 0) {
-          loadedTree = treeRes.value.data;
+        if (treeRes.status === "fulfilled") {
+          loadedTree = Array.isArray(treeRes.value?.data) ? treeRes.value.data : [];
           setStorageMode("database");
         } else {
+          treeFailed = true;
           setStorageMode("fallback");
+          setLoadError(
+            (treeRes.reason as Error)?.message || "Failed to load navigation menu from PostgreSQL."
+          );
         }
 
         if (linksRes.status === "fulfilled" && Array.isArray(linksRes.value?.data)) {
           setRegisteredLinks(linksRes.value.data);
         }
-      } catch {
-        if (active) setStorageMode("fallback");
+      } catch (err: any) {
+        if (active) {
+          treeFailed = true;
+          setStorageMode("fallback");
+          setLoadError(err?.message || "Failed to load navigation menu from PostgreSQL.");
+        }
       }
 
       if (!active) return;
       setNavItems(loadedTree);
 
-      if (mode === "edit") {
+      if (mode === "edit" && !treeFailed) {
         if (!itemId) {
           setNotFound(true);
           setLoading(false);
@@ -300,6 +312,8 @@ export default function NavigationItemForm({
 
       {loading ? (
         <AdminEditLoadingState label="Loading navigation menu tree..." />
+      ) : loadError ? (
+        <AdminErrorBanner error={loadError} />
       ) : notFound ? (
         <AdminEditNotFoundState
           title="Navigation Item Not Found"

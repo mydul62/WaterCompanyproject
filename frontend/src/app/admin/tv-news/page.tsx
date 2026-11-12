@@ -17,7 +17,6 @@ import {
 import { api } from "@/lib/api";
 import {
   TvNewsVideoItem,
-  DEFAULT_TV_NEWS_VIDEOS,
   TV_NEWS_HERO_IMAGE,
   normalizeTvNewsVideo,
   getYouTubeThumbnailUrl,
@@ -26,6 +25,7 @@ import ImageFieldWithUpload from "@/components/admin/ImageFieldWithUpload";
 import {
   AdminToast,
   AdminPageHeader,
+  AdminErrorBanner,
   AdminSearchToolbar,
   AdminConfirmDeleteModal,
   useAdminToast,
@@ -33,10 +33,11 @@ import {
 import { AdminCardSkeletonItems } from "@/components/common/Skeletons";
 
 export default function AdminTvNewsPage() {
-  const [videos, setVideos] = useState<TvNewsVideoItem[]>(DEFAULT_TV_NEWS_VIDEOS);
+  const [videos, setVideos] = useState<TvNewsVideoItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
@@ -53,6 +54,7 @@ export default function AdminTvNewsPage() {
 
   const loadVideos = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const [videosRes, settingsRes] = await Promise.allSettled([
         api.tvNews.getAll(true),
@@ -70,8 +72,13 @@ export default function AdminTvNewsPage() {
         );
         setStorageMode("database");
       } else {
-        setVideos(DEFAULT_TV_NEWS_VIDEOS);
+        setVideos([]);
         setStorageMode("fallback");
+        const reasonMsg =
+          videosRes.status === "rejected"
+            ? (videosRes.reason as Error)?.message
+            : undefined;
+        setLoadError(reasonMsg || "Failed to load TV News videos from PostgreSQL.");
       }
 
       if (settingsRes.status === "fulfilled" && settingsRes.value?.data) {
@@ -80,9 +87,10 @@ export default function AdminTvNewsPage() {
         if (map.tv_news_hero_subtitle) setHeroSubtitle(map.tv_news_hero_subtitle);
         if (map.tv_news_hero_image) setHeroImage(map.tv_news_hero_image);
       }
-    } catch {
-      setVideos(DEFAULT_TV_NEWS_VIDEOS);
+    } catch (err: any) {
+      setVideos([]);
       setStorageMode("fallback");
+      setLoadError(err?.message || "Failed to load TV News videos from PostgreSQL.");
     } finally {
       setLoading(false);
     }
@@ -178,6 +186,8 @@ export default function AdminTvNewsPage() {
         loading={loading}
         storageMode={storageMode}
       />
+
+      <AdminErrorBanner error={loadError} onRetry={loadVideos} />
 
       {/* Collapsible Hero Banner Config & Live Page Link */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">

@@ -5,10 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Newspaper, Save } from "lucide-react";
 import { api } from "@/lib/api";
-import { PRESS_STORIES, normalizePressStory } from "@/data/mediaData";
+import { normalizePressStory } from "@/data/mediaData";
 import ImageFieldWithUpload from "@/components/admin/ImageFieldWithUpload";
 import {
   AdminFormHeader,
+  AdminErrorBanner,
   AdminEditLoadingState,
   AdminEditNotFoundState,
   AdminToast,
@@ -76,6 +77,7 @@ export default function MediaStoryForm({ mode, storyId }: MediaStoryFormProps) {
   const [form, setForm] = useState<StoryFormState>(EMPTY_FORM);
   const [loading, setLoading] = useState(mode === "edit");
   const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
   const { toast, showToast, clearToast } = useAdminToast();
@@ -93,7 +95,6 @@ export default function MediaStoryForm({ mode, storyId }: MediaStoryFormProps) {
           }
         } catch {
           if (active) {
-            setForm((prev) => ({ ...prev, sortOrder: PRESS_STORIES.length + 1 }));
             setStorageMode("fallback");
           }
         }
@@ -107,6 +108,7 @@ export default function MediaStoryForm({ mode, storyId }: MediaStoryFormProps) {
       }
 
       setLoading(true);
+      setLoadError(null);
       try {
         const res = await api.mediaStories.getById(storyId);
         if (!active) return;
@@ -136,33 +138,13 @@ export default function MediaStoryForm({ mode, storyId }: MediaStoryFormProps) {
         } else {
           setNotFound(true);
         }
-      } catch {
-        const fallback = PRESS_STORIES.find((s) => s.id === storyId || s.slug === storyId);
-        if (fallback && active) {
-          const story = normalizePressStory(fallback);
-          setForm({
-            title: story.title,
-            banglaTitle: story.englishTitle || story.banglaTitle || "",
-            outlet: story.outlet,
-            outletColor: story.outletColor || "#0284c7",
-            dateLabel: story.date || story.dateLabel || "",
-            category: story.category || "উদ্যোক্তা ও বাণিজ্য",
-            readTime: story.readTime || "৩ মিনিট পাঠ",
-            clippingUrl: story.image || story.clippingUrl || "/cropped/news-card-1.png",
-            summary: story.summary || "",
-            fullArticleText: arrayToLines(story.fullArticle),
-            keyHighlightsText: arrayToLines(story.keyHighlights),
-            highlightQuote: story.quote?.text || "",
-            quoteAuthor: story.quote?.author || "",
-            quoteRole: story.quote?.role || "",
-            originalSourceUrl: story.originalSourceUrl || "",
-            tag: story.tag || "Industrial Milestone",
-            sortOrder: story.sortOrder ?? 0,
-            isActive: story.isActive ?? true,
-          });
-          setStorageMode("fallback");
-        } else if (active) {
+      } catch (err: any) {
+        if (!active) return;
+        setStorageMode("fallback");
+        if (err?.status === 404 || err?.message?.toLowerCase().includes("not found")) {
           setNotFound(true);
+        } else {
+          setLoadError(err?.message || "Failed to load press coverage record from PostgreSQL.");
         }
       } finally {
         if (active) setLoading(false);
@@ -232,6 +214,8 @@ export default function MediaStoryForm({ mode, storyId }: MediaStoryFormProps) {
 
       {loading ? (
         <AdminEditLoadingState label="Loading press coverage details..." />
+      ) : loadError ? (
+        <AdminErrorBanner error={loadError} />
       ) : notFound ? (
         <AdminEditNotFoundState
           title="Press Story Not Found"

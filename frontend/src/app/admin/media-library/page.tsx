@@ -20,6 +20,11 @@ import {
 import { api } from "@/lib/api";
 import { AdminMediaSkeletonItems } from "@/components/common/Skeletons";
 import {
+  AdminErrorBanner,
+  AdminToast,
+  useAdminToast,
+} from "@/components/admin/AdminCrudShell";
+import {
   MEDIA_CATEGORIES,
   NormalizedMediaAsset,
   filterMediaAssets,
@@ -28,84 +33,10 @@ import {
 
 type MediaAsset = NormalizedMediaAsset;
 
-const DEFAULT_ASSETS: MediaAsset[] = [
-  {
-    id: "media-1",
-    title: "factory-main-complex.png",
-    url: "/images/factory/factory-1.png",
-    altText: "Gazipur High-Speed Automated Production Facility",
-    category: "FACTORY",
-    size: 2450000,
-    width: 1920,
-    height: 1080,
-    mimeType: "image/png",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "media-2",
-    title: "kaliakoir-noor-plastic-plant.png",
-    url: "/images/factory/factory-2.png",
-    altText: "Kaliakoir Plastic Injection & Blow Molding Plant",
-    category: "FACTORY",
-    size: 1890000,
-    width: 1920,
-    height: 1080,
-    mimeType: "image/png",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "media-3",
-    title: "20l-conical-drum.png",
-    url: "/images/catalog/cat-prod-1.png",
-    altText: "UN Certified 20L Conical Steel Drum",
-    category: "PRODUCTS",
-    size: 940000,
-    width: 800,
-    height: 800,
-    mimeType: "image/png",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "media-4",
-    title: "hdpe-pharma-bottle.png",
-    url: "/images/catalog/cat-prod-2.png",
-    altText: "100ml Food-Grade Virgin HDPE Bottle",
-    category: "PRODUCTS",
-    size: 780000,
-    width: 800,
-    height: 800,
-    mimeType: "image/png",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "media-5",
-    title: "paint-tin-can.png",
-    url: "/images/catalog/cat-prod-3.png",
-    altText: "4L Decorative Paint Tin Can with Handle",
-    category: "PRODUCTS",
-    size: 890000,
-    width: 800,
-    height: 800,
-    mimeType: "image/png",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "media-6",
-    title: "leed-platinum-award.png",
-    url: "/images/awards/leed-green.png",
-    altText: "USGBC LEED Platinum Green Building Certificate",
-    category: "CERTIFICATES",
-    size: 650000,
-    width: 600,
-    height: 850,
-    mimeType: "image/png",
-    createdAt: new Date().toISOString(),
-  },
-];
-
 export default function MediaLibraryPage() {
-  const [assets, setAssets] = useState<MediaAsset[]>(DEFAULT_ASSETS);
+  const [assets, setAssets] = useState<MediaAsset[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedAsset, setSelectedAsset] = useState<MediaAsset | null>(null);
@@ -114,13 +45,8 @@ export default function MediaLibraryPage() {
   const [dragActive, setDragActive] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadCategory, setUploadCategory] = useState("GENERAL");
-  const [notification, setNotification] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const { toast, showToast, clearToast } = useAdminToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const showNotification = (text: string, type: "success" | "error" = "success") => {
-    setNotification({ text, type });
-    setTimeout(() => setNotification(null), 4000);
-  };
 
   useEffect(() => {
     loadAssets();
@@ -128,13 +54,14 @@ export default function MediaLibraryPage() {
 
   const loadAssets = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await api.media.getAll();
-      if (Array.isArray(res.data) && res.data.length > 0) {
-        setAssets(res.data.map((item: any) => normalizeMediaAsset(item)));
-      }
-    } catch (err) {
-      console.warn("Using default assets fallback:", err);
+      const rows = Array.isArray(res.data) ? res.data : [];
+      setAssets(rows.map((item: any) => normalizeMediaAsset(item)));
+    } catch (err: any) {
+      setAssets([]);
+      setLoadError(err?.message || "Failed to load media library assets from PostgreSQL.");
     } finally {
       setLoading(false);
     }
@@ -159,10 +86,10 @@ export default function MediaLibraryPage() {
         }
       }
       if (uploadedCount > 0) {
-        showNotification(`Successfully uploaded ${uploadedCount} file(s)!`);
+        showToast(`Successfully uploaded ${uploadedCount} file(s)!`);
       }
     } catch (err: any) {
-      showNotification(
+      showToast(
         err?.message || "Upload failed. Ensure the backend server is running.",
         "error"
       );
@@ -178,36 +105,24 @@ export default function MediaLibraryPage() {
     if (!confirm(`Are you sure you want to delete asset "${title}"?`)) return;
     try {
       await api.media.delete(id);
-      setAssets(assets.filter((a) => a.id !== id));
+      setAssets((prev) => prev.filter((a) => a.id !== id));
       if (selectedAsset?.id === id) setSelectedAsset(null);
-      showNotification(`Asset "${title}" deleted.`);
-    } catch (err) {
-      setAssets(assets.filter((a) => a.id !== id));
-      if (selectedAsset?.id === id) setSelectedAsset(null);
-      showNotification(`Asset removed from view.`);
+      showToast(`Asset "${title}" deleted.`);
+    } catch (err: any) {
+      showToast(err?.message || `Failed to delete asset "${title}" from PostgreSQL.`, "error");
     }
   };
 
   const handleCopyUrl = (url: string) => {
     navigator.clipboard.writeText(url);
-    showNotification("URL copied to clipboard!");
+    showToast("URL copied to clipboard!");
   };
 
   const filteredAssets = filterMediaAssets(assets, searchQuery, selectedCategory);
 
   return (
     <div className="space-y-6">
-      {/* Toast Notification */}
-      {notification && (
-        <div
-          className={`fixed top-5 right-5 z-50 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top ${
-            notification.type === "error" ? "bg-red-600" : "bg-blue-600"
-          }`}
-        >
-          <Check className="w-4 h-4 stroke-[3]" />
-          {notification.text}
-        </div>
-      )}
+      <AdminToast toast={toast} onClose={clearToast} />
 
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
@@ -243,6 +158,8 @@ export default function MediaLibraryPage() {
           </button>
         </div>
       </div>
+
+      <AdminErrorBanner error={loadError} onRetry={loadAssets} />
 
       {/* Imaple Drag-and-Drop Zone */}
       <input
@@ -322,7 +239,16 @@ export default function MediaLibraryPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
         {/* Media Grid */}
         <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {loading ? <AdminMediaSkeletonItems count={8} /> : filteredAssets.map((asset) => {
+          {loading ? (
+            <AdminMediaSkeletonItems count={8} />
+          ) : filteredAssets.length === 0 ? (
+            <div className="col-span-full py-12 text-center rounded-2xl border border-slate-800 bg-slate-900/50 text-xs text-slate-400">
+              {loadError
+                ? "Unable to display media assets while database connection is unavailable."
+                : "No media assets match your filter in PostgreSQL."}
+            </div>
+          ) : (
+            filteredAssets.map((asset) => {
             const isSelected = selectedAsset?.id === asset.id;
             return (
               <div
@@ -362,7 +288,8 @@ export default function MediaLibraryPage() {
                 </div>
               </div>
             );
-          })}
+            })
+          )}
         </div>
 
         {/* Selected Asset Inspector Sidebar */}

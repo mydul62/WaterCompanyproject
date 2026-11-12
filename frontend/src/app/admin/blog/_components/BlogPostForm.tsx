@@ -5,10 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BookOpen, Plus, Trash2, Save } from "lucide-react";
 import { api } from "@/lib/api";
-import { BLOG_POSTS, BLOG_CATEGORIES, BlogPost } from "@/data/blogData";
+import { BLOG_CATEGORIES, BlogPost } from "@/data/blogData";
 import ImageFieldWithUpload from "@/components/admin/ImageFieldWithUpload";
 import {
   AdminFormHeader,
+  AdminErrorBanner,
   AdminEditLoadingState,
   AdminEditNotFoundState,
   AdminToast,
@@ -100,6 +101,7 @@ export default function BlogPostForm({ mode, postId }: { mode: "create" | "edit"
   const [form, setForm] = useState<BlogFormState>(EMPTY_BLOG_FORM);
   const [loading, setLoading] = useState(mode === "edit");
   const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
   const { toast, showToast, clearToast } = useAdminToast();
@@ -117,7 +119,6 @@ export default function BlogPostForm({ mode, postId }: { mode: "create" | "edit"
           }
         } catch {
           if (active) {
-            setForm((prev) => ({ ...prev, sortOrder: BLOG_POSTS.length + 1 }));
             setStorageMode("fallback");
           }
         }
@@ -131,6 +132,7 @@ export default function BlogPostForm({ mode, postId }: { mode: "create" | "edit"
       }
 
       setLoading(true);
+      setLoadError(null);
       try {
         const res = await api.blogs.getById(postId);
         if (!active) return;
@@ -140,13 +142,13 @@ export default function BlogPostForm({ mode, postId }: { mode: "create" | "edit"
         } else {
           setNotFound(true);
         }
-      } catch {
-        const fallback = BLOG_POSTS.find((p) => p.id === postId || p.slug === postId);
-        if (fallback && active) {
-          setForm(postToForm(fallback));
-          setStorageMode("fallback");
-        } else if (active) {
+      } catch (err: any) {
+        if (!active) return;
+        setStorageMode("fallback");
+        if (err?.status === 404 || err?.message?.toLowerCase().includes("not found")) {
           setNotFound(true);
+        } else {
+          setLoadError(err?.message || "Failed to load blog article from PostgreSQL.");
         }
       } finally {
         if (active) setLoading(false);
@@ -231,6 +233,8 @@ export default function BlogPostForm({ mode, postId }: { mode: "create" | "edit"
 
       {loading ? (
         <AdminEditLoadingState label="Loading blog article..." />
+      ) : loadError ? (
+        <AdminErrorBanner error={loadError} />
       ) : notFound ? (
         <AdminEditNotFoundState
           title="Blog Article Not Found"

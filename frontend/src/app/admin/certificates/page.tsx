@@ -12,13 +12,13 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import {
-  CERTIFICATES_LIST,
   CERTIFICATE_CATEGORY_OPTIONS,
   CertificateItem,
 } from "@/data/certificatesData";
 import {
   AdminToast,
   AdminPageHeader,
+  AdminErrorBanner,
   AdminSearchToolbar,
   AdminConfirmDeleteModal,
   useAdminToast,
@@ -26,10 +26,11 @@ import {
 import { AdminCardSkeletonItems } from "@/components/common/Skeletons";
 
 export default function AdminCertificatesPage() {
-  const [certs, setCerts] = useState<CertificateItem[]>(CERTIFICATES_LIST);
+  const [certs, setCerts] = useState<CertificateItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("ALL");
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
@@ -37,15 +38,19 @@ export default function AdminCertificatesPage() {
 
   const loadCerts = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await api.certificates.getAll(true);
       if (Array.isArray(res.data)) {
         setCerts(res.data);
         setStorageMode("database");
+      } else {
+        setCerts([]);
       }
-    } catch {
-      setCerts(CERTIFICATES_LIST);
+    } catch (err: any) {
+      setCerts([]);
       setStorageMode("fallback");
+      setLoadError(err?.message || "Failed to load certificates from PostgreSQL.");
     } finally {
       setLoading(false);
     }
@@ -117,6 +122,8 @@ export default function AdminCertificatesPage() {
         loading={loading}
         storageMode={storageMode}
       />
+
+      <AdminErrorBanner error={loadError} onRetry={loadCerts} />
 
       <AdminSearchToolbar
         search={search}
@@ -208,7 +215,7 @@ export default function AdminCertificatesPage() {
       <AdminConfirmDeleteModal
         isOpen={Boolean(confirmDeleteId)}
         title="Delete Certificate?"
-        description="This removes the certificate from SQLite and /certificates."
+        description="This removes the certificate from PostgreSQL and /certificates."
         onCancel={() => setConfirmDeleteId(null)}
         onConfirm={handleDelete}
         loading={saving}

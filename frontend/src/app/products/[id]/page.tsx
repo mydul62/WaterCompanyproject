@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState, use } from "react";
+import React, { useState, useEffect, useCallback, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { getProductById, CATALOG_PRODUCTS } from "@/data/catalogData";
-import { Share2, Check } from "lucide-react";
+import { api } from "@/lib/api";
+import { normalizeApiProduct, type NormalizedProduct } from "@/lib/productMapper";
+import { PublicStateMessage } from "@/components/common/PublicStateMessage";
+import { Share2, Check, PackageCheck } from "lucide-react";
 import { siteButtonClass } from "@/components/common/SiteButton";
 
 interface ProductDetailsPageProps {
@@ -17,19 +19,48 @@ interface ProductDetailsPageProps {
 
 export default function ProductDetailsPage({ params }: ProductDetailsPageProps) {
   const resolvedParams = use(params);
-  const product = getProductById(resolvedParams.id) || CATALOG_PRODUCTS[0];
-
-  const [activeImage, setActiveImage] = useState(product.image);
+  const [product, setProduct] = useState<NormalizedProduct | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [notFoundError, setNotFoundError] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [activeImage, setActiveImage] = useState<string>("");
   const [copied, setCopied] = useState(false);
 
-  // Fallback thumbnails if gallery is shorter than 3
-  const thumbnails =
-    product.gallery && product.gallery.length >= 3
-      ? product.gallery.slice(0, 3)
-      : [product.image, "/images/catalog/cat-prod-2.png", "/images/catalog/cat-prod-1.png"];
+  const loadProduct = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
+    setNotFoundError(false);
+    try {
+      const res = await api.products.getBySlug(resolvedParams.id);
+      if (!res?.data) {
+        setProduct(null);
+        setNotFoundError(true);
+        return;
+      }
+      const mapped = normalizeApiProduct(res.data);
+      setProduct(mapped);
+      setActiveImage(mapped.gallery[0] || mapped.image || "");
+    } catch (err: any) {
+      const msg = String(err?.message || "");
+      setProduct(null);
+      if (/404|not found/i.test(msg)) {
+        setNotFoundError(true);
+      } else {
+        setLoadError(msg || "Unable to load product details from server.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [resolvedParams.id]);
+
+  useEffect(() => {
+    loadProduct();
+  }, [loadProduct]);
+
+  const thumbnails = product?.gallery?.length ? product.gallery : [];
 
   const handleShare = async () => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && product) {
       const shareUrl = window.location.href;
       if (navigator.share) {
         try {
@@ -94,7 +125,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
               Product Details
             </h1>
             <p className="text-lg sm:text-2xl font-semibold text-white/95 mt-1.5 drop-shadow-sm">
-              {product.name}
+              {loading ? "Loading specifications..." : product?.name || "Industrial Container"}
             </p>
           </div>
         </div>
@@ -109,12 +140,47 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
             Find Our Product
           </Link>
           <span className="mx-2 text-slate-400">/</span>
-          <span className="text-slate-900 font-bold">{product.name}</span>
+          <span className="text-slate-900 font-bold">
+            {loading ? "Loading..." : product?.name || "Product"}
+          </span>
         </div>
 
         {/* Product Details Section strictly constrained to fluid grand canvas */}
         <section className="w-full pb-20 pt-2">
           <div className="w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8">
+            {loading ? (
+              <div className="animate-pulse space-y-8">
+                <div className="h-10 w-72 bg-slate-200 rounded-xl" />
+                <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
+                  <div className="w-full lg:w-[48%] aspect-[4/3] rounded-2xl bg-slate-100" />
+                  <div className="w-full lg:w-[52%] space-y-5">
+                    <div className="h-6 w-40 bg-slate-200 rounded" />
+                    <div className="h-20 w-full bg-slate-100 rounded-xl" />
+                    <div className="h-6 w-40 bg-slate-200 rounded" />
+                    <div className="h-28 w-full bg-slate-100 rounded-xl" />
+                  </div>
+                </div>
+              </div>
+            ) : loadError ? (
+              <PublicStateMessage
+                variant="error"
+                title="Unable to load product details"
+                description={loadError}
+                onRetry={loadProduct}
+              />
+            ) : notFoundError || !product ? (
+              <PublicStateMessage
+                variant="empty"
+                title="Product not found"
+                description="This product is no longer available or has been unpublished from the catalog."
+                action={
+                  <Link href="/products" className={siteButtonClass({ variant: "primary" })}>
+                    Back to Product Catalog
+                  </Link>
+                }
+              />
+            ) : (
+              <>
             {/* Main Product Heading in Soft Slate Blue */}
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#5a8ea7] tracking-tight mb-8 sm:mb-10">
               {product.name}
@@ -122,20 +188,25 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
 
             {/* Two-Column Layout matching Screenshot be6f6ac5 */}
             <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
-              {/* Left Column: Big Product Image + 3 Thumbnails */}
+              {/* Left Column: Big Product Image + Gallery Thumbnails */}
               <div className="w-full lg:w-[48%] space-y-4">
                 {/* Main Large Image Card */}
                 <div className="relative aspect-[4/3] w-full rounded-2xl bg-gradient-to-b from-[#f8fafc] to-[#edf2f7] border border-slate-200/90 shadow-sm overflow-hidden p-6 flex items-center justify-center">
-                  <Image
-                    src={activeImage}
-                    alt={product.name}
-                    fill
-                    className="object-contain p-6 transition-all duration-300"
-                    priority
-                  />
+                  {activeImage ? (
+                    <Image
+                      src={activeImage}
+                      alt={product.name}
+                      fill
+                      className="object-contain p-6 transition-all duration-300"
+                      priority
+                    />
+                  ) : (
+                    <PackageCheck className="w-16 h-16 text-slate-300" />
+                  )}
                 </div>
 
-                {/* 3 Thumbnails Row matching Screenshot be6f6ac5 */}
+                {/* Thumbnails Row */}
+                {thumbnails.length > 1 && (
                 <div className="flex items-center gap-3.5 sm:gap-4">
                   {thumbnails.map((thumb, idx) => {
                     const isSelected = activeImage === thumb;
@@ -160,6 +231,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
                     );
                   })}
                 </div>
+                )}
               </div>
 
               {/* Right Column: Description, Specification, Usage & Action Buttons */}
@@ -250,6 +322,8 @@ export default function ProductDetailsPage({ params }: ProductDetailsPageProps) 
                 </div>
               </div>
             </div>
+              </>
+            )}
           </div>
         </section>
       </main>

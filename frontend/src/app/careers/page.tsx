@@ -9,7 +9,9 @@ import RFQDrawer from "@/components/rfq/RFQDrawer";
 import { api } from "@/lib/api";
 import { siteButtonClass, siteFilterTabClass } from "@/components/common/SiteButton";
 import { CareersListSkeleton } from "@/components/common/Skeletons";
-import { JOB_OPENINGS, JobOpening } from "@/data/careersData";
+import type { JobOpening } from "@/data/careersData";
+import { PublicStateMessage } from "@/components/common/PublicStateMessage";
+import { AlertTriangle as FormAlertIcon } from "lucide-react";
 import {
   Briefcase,
   MapPin,
@@ -62,26 +64,37 @@ const CULTURE_PILLARS = [
 ];
 
 export default function CareerPage() {
-  const [jobs, setJobs] = useState<JobOpening[]>(JOB_OPENINGS);
+  const [jobs, setJobs] = useState<JobOpening[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [selectedDept, setSelectedDept] = useState<string>("all");
-  const [expandedJobId, setExpandedJobId] = useState<string | null>(JOB_OPENINGS[0]?.id || null);
+  const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setLoadError(null);
     api.careerJobs
       .getPublic()
       .then((res) => {
-        if (active && Array.isArray(res.data) && res.data.length > 0) {
-          setJobs(res.data);
-          setExpandedJobId((prev) =>
-            res.data.some((j: JobOpening) => j.id === prev) ? prev : res.data[0].id
-          );
-        }
+        if (!active) return;
+        const items: JobOpening[] = Array.isArray(res.data) ? res.data : [];
+        setJobs(items);
+        setExpandedJobId((prev) =>
+          items.some((j) => j.id === prev) ? prev : items[0]?.id ?? null
+        );
       })
-      .catch(() => {
-        // Keep clean fallback JOB_OPENINGS
+      .catch((err) => {
+        if (!active) return;
+        setJobs([]);
+        setExpandedJobId(null);
+        setLoadError(
+          err instanceof Error && err.message
+            ? err.message
+            : "Unable to load career opportunities from server."
+        );
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -89,13 +102,14 @@ export default function CareerPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [reloadKey]);
 
   // Application Modal State
   const [activeApplyJob, setActiveApplyJob] = useState<JobOpening | null>(null);
   const [isGeneralApplyOpen, setIsGeneralApplyOpen] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Form Fields
   const [formData, setFormData] = useState({
@@ -171,34 +185,16 @@ export default function CareerPage() {
     };
 
     try {
-      // 1. Submit to backend API
-      try {
-        await api.careers.create(payload);
-      } catch (err) {
-        console.warn("Backend API sync skipped; saved locally:", err);
-      }
-
-      // 2. Save application to localStorage so it instantly appears in /admin/careers
-      if (typeof window !== "undefined") {
-        const existing = JSON.parse(localStorage.getItem("xcl_career_applications") || "[]");
-        const newApp = {
-          id: `APP-2026-${Math.floor(100 + Math.random() * 900)}`,
-          name: formData.name,
-          position: targetPosition,
-          experience: `${formData.experience} (${formData.currentCompany || "Experienced"})`,
-          email: formData.email,
-          phone: formData.phone,
-          date: new Date().toISOString().slice(0, 10),
-          status: "New",
-          facility: formData.facility,
-        };
-        localStorage.setItem("xcl_career_applications", JSON.stringify([newApp, ...existing]));
-      }
-
+      setSubmitError(null);
+      await api.careers.create(payload);
       setSubmitSuccess(true);
     } catch (err) {
       console.error(err);
-      alert("Submission error. Please try again or email sales@noorplastic.com directly.");
+      setSubmitError(
+        err instanceof Error && err.message
+          ? err.message
+          : "Submission failed. Please try again or email sales@noorplastic.com directly."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -413,6 +409,19 @@ export default function CareerPage() {
               <div className="space-y-6">
                 {loading ? (
                   <CareersListSkeleton count={4} />
+                ) : loadError ? (
+                  <PublicStateMessage
+                    variant="error"
+                    title="Unable to load job openings"
+                    description={loadError}
+                    onRetry={() => setReloadKey((k) => k + 1)}
+                  />
+                ) : jobs.length === 0 ? (
+                  <PublicStateMessage
+                    variant="empty"
+                    title="No open positions right now"
+                    description="Check back soon for new openings or submit your resume directly to our talent pool below."
+                  />
                 ) : filteredJobs.length === 0 ? (
                   <div className="p-12 text-center rounded-2xl bg-white border border-slate-200 text-slate-500">
                     <p className="font-semibold text-base">No open positions matched your search criteria.</p>
@@ -827,6 +836,15 @@ export default function CareerPage() {
                     />
                   </div>
 
+                  {submitError && (
+                    <div
+                      role="alert"
+                      className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700"
+                    >
+                      <FormAlertIcon className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                      <span>{submitError}</span>
+                    </div>
+                  )}
                   <div className="pt-2 flex items-center justify-end gap-3">
                     <button
                       type="button"

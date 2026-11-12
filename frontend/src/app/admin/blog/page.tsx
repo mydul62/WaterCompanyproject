@@ -11,10 +11,11 @@ import {
   Star,
 } from "lucide-react";
 import { api } from "@/lib/api";
-import { BLOG_POSTS, BLOG_CATEGORIES, BlogPost } from "@/data/blogData";
+import { BLOG_CATEGORIES, BlogPost } from "@/data/blogData";
 import {
   AdminToast,
   AdminPageHeader,
+  AdminErrorBanner,
   AdminSearchToolbar,
   AdminConfirmDeleteModal,
   useAdminToast,
@@ -22,10 +23,11 @@ import {
 import { AdminCardSkeletonItems } from "@/components/common/Skeletons";
 
 export default function AdminBlogPage() {
-  const [posts, setPosts] = useState<BlogPost[]>(BLOG_POSTS);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("ALL");
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
@@ -33,15 +35,19 @@ export default function AdminBlogPage() {
 
   const loadPosts = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await api.blogs.getAll(true);
       if (Array.isArray(res.data)) {
         setPosts(res.data);
         setStorageMode("database");
+      } else {
+        setPosts([]);
       }
-    } catch {
-      setPosts(BLOG_POSTS);
+    } catch (err: any) {
+      setPosts([]);
       setStorageMode("fallback");
+      setLoadError(err?.message || "Failed to load blog posts from PostgreSQL.");
     } finally {
       setLoading(false);
     }
@@ -113,6 +119,8 @@ export default function AdminBlogPage() {
         loading={loading}
         storageMode={storageMode}
       />
+
+      <AdminErrorBanner error={loadError} onRetry={loadPosts} />
 
       <AdminSearchToolbar
         search={search}
@@ -214,7 +222,7 @@ export default function AdminBlogPage() {
       <AdminConfirmDeleteModal
         isOpen={Boolean(confirmDeleteId)}
         title="Delete Blog Article?"
-        description="This removes the blog insight permanently from SQLite and /blog."
+        description="This removes the blog insight permanently from PostgreSQL and /blog."
         onCancel={() => setConfirmDeleteId(null)}
         onConfirm={handleDelete}
         loading={saving}

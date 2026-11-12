@@ -6,10 +6,9 @@ import Footer from "@/components/layout/Footer";
 import UsgbcLeedSeal from "@/components/sustainability/UsgbcLeedSeal";
 import SustainabilityDetailModal from "@/components/sustainability/SustainabilityDetailModal";
 import { api } from "@/lib/api";
+import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import {
-  cloneDefaultSustainabilityContent,
   parseSustainabilityContent,
-  SUSTAINABILITY_LOCAL_CACHE_KEY,
   SUSTAINABILITY_SETTING_KEY,
   SUSTAINABILITY_UPDATED_EVENT,
   SustainabilityHighlight,
@@ -80,12 +79,10 @@ function HighlightCard({
 }
 
 export default function SustainabilityPage() {
-  const [content, setContent] = useState<SustainabilityPageContent>(() =>
-    cloneDefaultSustainabilityContent()
-  );
-  const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>(() =>
-    buildDefaultExpandedMap(cloneDefaultSustainabilityContent().highlights)
-  );
+  const [content, setContent] = useState<SustainabilityPageContent | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
 
   const [selectedPractice, setSelectedPractice] = useState<EnvironmentalPractice | null>(null);
   const [expandedPillarId, setExpandedPillarId] = useState<string | null>(null);
@@ -99,70 +96,56 @@ export default function SustainabilityPage() {
   }, []);
 
   const fetchSustainabilitySettings = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
     try {
       const res = await api.settings.getMap();
       const raw = res?.data?.[SUSTAINABILITY_SETTING_KEY];
-      if (raw) {
-        const parsed = parseSustainabilityContent(raw);
-        applyContent(parsed);
-        try {
-          localStorage.setItem(SUSTAINABILITY_LOCAL_CACHE_KEY, JSON.stringify(parsed));
-        } catch {
-          // ignore storage quota errors
-        }
+      if (!raw) {
+        setContent(null);
+        setLoadError("Sustainability content has not been configured in the database yet.");
+        return;
       }
-    } catch {
-      // Keep default or localStorage fallback gracefully if API is unavailable
+      const parsed = parseSustainabilityContent(raw);
+      applyContent(parsed);
+    } catch (err) {
+      setContent(null);
+      setLoadError(
+        err instanceof Error && err.message
+          ? err.message
+          : "Unable to load sustainability information from server."
+      );
+    } finally {
+      setLoading(false);
     }
   }, [applyContent]);
 
   useEffect(() => {
-    try {
-      const cached = localStorage.getItem(SUSTAINABILITY_LOCAL_CACHE_KEY);
-      if (cached) {
-        applyContent(parseSustainabilityContent(cached));
-      }
-    } catch {
-      // ignore localStorage read errors
-    }
-
     fetchSustainabilitySettings();
 
     const handleUpdated = () => {
-      try {
-        const cached = localStorage.getItem(SUSTAINABILITY_LOCAL_CACHE_KEY);
-        if (cached) applyContent(parseSustainabilityContent(cached));
-      } catch {
-        // ignore
-      }
       fetchSustainabilitySettings();
     };
 
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === SUSTAINABILITY_LOCAL_CACHE_KEY && e.newValue) {
-        applyContent(parseSustainabilityContent(e.newValue));
-      }
-    };
-
     window.addEventListener(SUSTAINABILITY_UPDATED_EVENT, handleUpdated);
-    window.addEventListener("storage", handleStorage);
     return () => {
       window.removeEventListener(SUSTAINABILITY_UPDATED_EVENT, handleUpdated);
-      window.removeEventListener("storage", handleStorage);
     };
-  }, [applyContent, fetchSustainabilitySettings]);
+  }, [fetchSustainabilitySettings]);
 
   const leafTextStyle: React.CSSProperties = useMemo(
     () => ({
       backgroundColor: "#14532d",
-      backgroundImage: `url("${content.intro.leafTextureImage}")`,
+      backgroundImage: content?.intro?.leafTextureImage
+        ? `url("${content.intro.leafTextureImage}")`
+        : undefined,
       backgroundSize: "cover",
       backgroundPosition: "center",
       WebkitBackgroundClip: "text",
       backgroundClip: "text",
       color: "transparent",
     }),
-    [content.intro.leafTextureImage]
+    [content?.intro?.leafTextureImage]
   );
 
   const toggleHighlightCard = (id: string) => {
@@ -178,6 +161,29 @@ export default function SustainabilityPage() {
       <Navbar />
 
       <main className="flex-1">
+        {loading ? (
+          <div className="w-full min-h-[75vh] bg-[#15281e] animate-pulse flex items-center justify-center px-6 pt-28 pb-16">
+            <div className="max-w-xl w-full space-y-4 text-center">
+              <div className="h-12 w-2/3 mx-auto rounded-xl bg-white/15" />
+              <div className="h-4 w-1/2 mx-auto rounded bg-white/10" />
+            </div>
+          </div>
+        ) : loadError || !content ? (
+          <div className="bg-[#0f2218] min-h-[70vh] flex items-center justify-center px-6 pt-32 pb-20">
+            <div className="max-w-xl w-full">
+              <PublicStateMessage
+                tone="dark"
+                variant="error"
+                title="Unable to load sustainability page"
+                description={
+                  loadError || "Sustainability data could not be loaded from PostgreSQL."
+                }
+                onRetry={fetchSustainabilitySettings}
+              />
+            </div>
+          </div>
+        ) : (
+          <>
         {/* 1. Full-Height Architectural Hero Banner */}
         <section
           id="hero"
@@ -441,17 +447,21 @@ export default function SustainabilityPage() {
             </div>
           </div>
         </section>
+          </>
+        )}
       </main>
 
       <Footer />
 
-      <SustainabilityDetailModal
-        practice={selectedPractice}
-        practices={content.practices}
-        backgroundImage={content.hero.image}
-        onSelectPractice={setSelectedPractice}
-        onClose={() => setSelectedPractice(null)}
-      />
+      {content && (
+        <SustainabilityDetailModal
+          practice={selectedPractice}
+          practices={content.practices}
+          backgroundImage={content.hero.image}
+          onSelectPractice={setSelectedPractice}
+          onClose={() => setSelectedPractice(null)}
+        />
+      )}
     </div>
   );
 }

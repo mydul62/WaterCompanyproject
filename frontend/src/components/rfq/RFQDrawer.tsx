@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import {
+  AlertTriangle,
   Building2,
   CheckCircle2,
   FileText,
@@ -37,6 +38,7 @@ export default function RFQDrawer({
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [rfqNumber, setRfqNumber] = useState("");
   const [formData, setFormData] = useState({
     companyName: "",
@@ -111,16 +113,19 @@ export default function RFQDrawer({
     e.preventDefault();
     if (isSubmitting) return;
     setIsSubmitting(true);
+    setSubmitError(null);
 
-    const fallbackNumber = `RFQ-2026-NPI-${Math.floor(1000 + Math.random() * 9000)}`;
     try {
       const res = await api.inquiries.submit(formData);
-      setRfqNumber(res?.data?.id || fallbackNumber);
-    } catch {
-      setRfqNumber(fallbackNumber);
+      setRfqNumber(res?.data?.id || "Submitted");
+      setSubmitted(true);
+    } catch (err: any) {
+      setSubmitError(
+        err?.message ||
+          "Unable to submit quotation request right now. Please retry or contact us directly at +880 1711-987275."
+      );
     } finally {
       setIsSubmitting(false);
-      setSubmitted(true);
     }
   };
 
@@ -475,6 +480,16 @@ export default function RFQDrawer({
                     />
                   </div>
                 </div>
+
+                {submitError && (
+                  <div
+                    role="alert"
+                    className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs font-medium flex items-start gap-2.5"
+                  >
+                    <AlertTriangle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                    <span>{submitError}</span>
+                  </div>
+                )}
 
                 <button
                   type="submit"

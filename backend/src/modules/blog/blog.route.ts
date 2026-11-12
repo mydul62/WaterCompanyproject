@@ -1,10 +1,10 @@
-import { createCrudController, createCrudRouter } from "../../utils/contentHelpers";
-import { BlogService } from "./blog.service";
+import { createCrudRouter } from "../../utils/contentHelpers";
+import { BlogController } from "./blog.controller";
+import { BlogValidation } from "./blog.validation";
 
-const controller = createCrudController(BlogService, "Blog post");
-
-export const blogRoutes = createCrudRouter(controller, {
+export const blogRoutes = createCrudRouter(BlogController, {
   hasSlugRoute: true,
   hasResetRoute: true,
+  createSchema: BlogValidation.create,
+  updateSchema: BlogValidation.update,
 });
-

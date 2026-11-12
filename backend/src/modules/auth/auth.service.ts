@@ -3,9 +3,10 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ENV } from "../../config/env";
 import { ApiError } from "../../utils/apiError";
+import { AuthLoginResponse } from "./auth.interface";
 
 export class AuthService {
-  static async login(email: string, passwordPlain: string) {
+  static async login(email: string, passwordPlain: string): Promise<AuthLoginResponse> {
     if (!email || !passwordPlain) {
       throw new ApiError(400, "Email and password are required.");
     }

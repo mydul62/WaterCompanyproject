@@ -22,6 +22,7 @@ import { api } from "@/lib/api";
 import MediaPickerModal from "@/components/admin/MediaPickerModal";
 import { AdminFormSkeleton } from "@/components/common/Skeletons";
 import {
+  AdminErrorBanner,
   AdminToast,
   useAdminToast,
   linesToArray,
@@ -33,7 +34,6 @@ import {
   EnvironmentalPractice,
   SustainabilityPillar,
   SUSTAINABILITY_SETTING_KEY,
-  SUSTAINABILITY_LOCAL_CACHE_KEY,
   SUSTAINABILITY_UPDATED_EVENT,
   cloneDefaultSustainabilityContent,
   parseSustainabilityContent,
@@ -112,11 +112,13 @@ export default function AdminSustainabilityPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "local">("database");
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [mediaTarget, setMediaTarget] = useState<MediaTarget | null>(null);
   const { toast, showToast, clearToast } = useAdminToast();
 
   const loadContent = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const res = await api.settings.getMap();
       const raw = res?.data?.[SUSTAINABILITY_SETTING_KEY];
@@ -125,18 +127,11 @@ export default function AdminSustainabilityPage() {
         : cloneDefaultSustainabilityContent();
       setContent(loaded);
       setStorageMode("database");
-    } catch {
-      try {
-        const cached = localStorage.getItem(SUSTAINABILITY_LOCAL_CACHE_KEY);
-        if (cached) {
-          setContent(parseSustainabilityContent(cached));
-        } else {
-          setContent(cloneDefaultSustainabilityContent());
-        }
-      } catch {
-        setContent(cloneDefaultSustainabilityContent());
-      }
+    } catch (err: any) {
       setStorageMode("local");
+      setLoadError(
+        err?.message || "Unable to connect to PostgreSQL to load Sustainability CMS data."
+      );
     } finally {
       setLoading(false);
     }
@@ -153,23 +148,17 @@ export default function AdminSustainabilityPage() {
     setIsSaving(true);
     const serialized = JSON.stringify(nextContent);
     try {
-      localStorage.setItem(SUSTAINABILITY_LOCAL_CACHE_KEY, serialized);
-    } catch {
-      // ignore storage quota errors
-    }
-
-    try {
       await api.settings.updateBatch([
         { key: SUSTAINABILITY_SETTING_KEY, value: serialized },
       ]);
       setStorageMode("database");
+      setLoadError(null);
       window.dispatchEvent(new Event(SUSTAINABILITY_UPDATED_EVENT));
       showToast(successMessage, "success");
-    } catch {
+    } catch (err: any) {
       setStorageMode("local");
-      window.dispatchEvent(new Event(SUSTAINABILITY_UPDATED_EVENT));
       showToast(
-        "Saved to local browser cache (backend unreachable — check API connection).",
+        err?.message || "Failed to save to PostgreSQL — check backend connection.",
         "error"
       );
     } finally {
@@ -397,16 +386,16 @@ export default function AdminSustainabilityPage() {
                 className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                   storageMode === "database"
                     ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
-                    : "bg-amber-500/15 text-amber-300 border border-amber-500/30"
+                    : "bg-red-500/15 text-red-300 border border-red-500/30"
                 }`}
               >
                 {storageMode === "database" ? (
                   <>
-                    <Database className="w-3 h-3" /> SQLite Synced
+                    <Database className="w-3 h-3" /> PostgreSQL Synced
                   </>
                 ) : (
                   <>
-                    <HardDrive className="w-3 h-3" /> Local Fallback
+                    <HardDrive className="w-3 h-3" /> Database Offline
                   </>
                 )}
               </span>
@@ -414,6 +403,7 @@ export default function AdminSustainabilityPage() {
             <p className="text-xs text-slate-400 mt-0.5">
               Edit the full-height LEED Platinum hero, intro narrative, dark stone highlight metrics, environmental practices, foliage banner &amp; vision pillars.
             </p>
+            <AdminErrorBanner error={loadError} onRetry={loadContent} />
           </div>
         </div>
 

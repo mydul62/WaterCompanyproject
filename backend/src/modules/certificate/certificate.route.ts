@@ -1,10 +1,10 @@
-import { createCrudController, createCrudRouter } from "../../utils/contentHelpers";
-import { CertificateService } from "./certificate.service";
+import { createCrudRouter } from "../../utils/contentHelpers";
+import { CertificateController } from "./certificate.controller";
+import { CertificateValidation } from "./certificate.validation";
 
-const controller = createCrudController(CertificateService, "Certificate");
-
-export const certificateRoutes = createCrudRouter(controller, {
+export const certificateRoutes = createCrudRouter(CertificateController, {
   hasSlugRoute: true,
   hasResetRoute: true,
+  createSchema: CertificateValidation.create,
+  updateSchema: CertificateValidation.update,
 });
-

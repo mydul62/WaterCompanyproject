@@ -1,33 +1,53 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   FileText,
   Search,
   Calendar,
   Download,
+  RefreshCw,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import {
   RFQItem,
-  INITIAL_RFQS,
-  getLocalRfqs,
-  saveLocalRfqs,
+  normalizeRfqItem,
   getStatusBadge,
 } from "./_components/rfqStore";
+import {
+  AdminErrorBanner,
+  AdminToast,
+  useAdminToast,
+} from "@/components/admin/AdminCrudShell";
 import { AdminTableSkeletonRows } from "@/components/common/Skeletons";
 
 export default function AdminInquiriesPage() {
-  const [rfqs, setRfqs] = useState<RFQItem[]>(INITIAL_RFQS);
+  const [rfqs, setRfqs] = useState<RFQItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const { toast, showToast, clearToast } = useAdminToast();
+
+  const loadRfqs = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const res = await api.inquiries.getAll();
+      const rows = Array.isArray(res?.data) ? res.data : [];
+      setRfqs(rows.map(normalizeRfqItem));
+    } catch (err: any) {
+      setRfqs([]);
+      setLoadError(err?.message || "Unable to load RFQ inquiries from PostgreSQL.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    setRfqs(getLocalRfqs());
-    setLoading(false);
-  }, []);
+    loadRfqs();
+  }, [loadRfqs]);
 
   const filteredRfqs = useMemo(() => {
     return rfqs.filter((item) => {
@@ -44,20 +64,21 @@ export default function AdminInquiriesPage() {
   }, [rfqs, search, statusFilter]);
 
   const handleUpdateStatus = async (id: string, newStatus: RFQItem["status"]) => {
-    const updated = rfqs.map((r) =>
-      r.id === id ? { ...r, status: newStatus } : r
-    );
-    setRfqs(updated);
-    saveLocalRfqs(updated);
     try {
       await api.inquiries.updateStatus(id, newStatus);
-    } catch {
-      // Saved locally when backend is unavailable
+      setRfqs((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
+      );
+      showToast(`Status updated to "${newStatus}".`);
+    } catch (err: any) {
+      showToast(err?.message || "Failed to update inquiry status in database.", "error");
     }
   };
 
   return (
     <div className="space-y-8 w-full">
+      <AdminToast toast={toast} onClose={clearToast} />
+
       {/* Page Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -66,12 +87,22 @@ export default function AdminInquiriesPage() {
             Request for Quotation (RFQ) Pipeline
           </h1>
           <p className="text-slate-400 text-xs mt-1">
-            Corporate enterprise leads, sample dispatches, and custom manufacturing quotation workflows.
+            Corporate enterprise leads, sample dispatches, and custom manufacturing quotation workflows stored in PostgreSQL.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <button
+            type="button"
+            onClick={loadRfqs}
+            disabled={loading}
+            className="px-3.5 py-2.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 font-semibold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-cyan-400" : ""}`} />
+            Refresh
+          </button>
+          <button
+            type="button"
             onClick={() => {
               const headers = "Quote ID,Company,Contact,Email,Phone,Category,Volume,Date,Status\n";
               const rows = rfqs.map(r => `"${r.id}","${r.company}","${r.contact}","${r.email}","${r.phone}","${r.category}","${r.volume}","${r.date}","${r.status}"`).join("\n");
@@ -82,13 +113,15 @@ export default function AdminInquiriesPage() {
               a.download = `XCL-RFQ-Export-${new Date().toISOString().slice(0, 10)}.csv`;
               a.click();
             }}
-            className="px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 font-semibold text-xs flex items-center gap-2 transition-colors active:scale-95"
+            className="px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 font-semibold text-xs flex items-center gap-2 transition-colors active:scale-95 cursor-pointer"
           >
             <Download className="w-3.5 h-3.5 text-cyan-400" />
             Export to CSV
           </button>
         </div>
       </div>
+
+      <AdminErrorBanner error={loadError} onRetry={loadRfqs} />
 
       {/* KPI Tickers */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
@@ -165,7 +198,18 @@ export default function AdminInquiriesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 font-medium">
-              {loading ? <AdminTableSkeletonRows rows={4} columns={6} /> : filteredRfqs.map((rfq) => (
+              {loading ? (
+                <AdminTableSkeletonRows rows={4} columns={6} />
+              ) : filteredRfqs.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-12 px-4 text-center text-slate-500">
+                    {rfqs.length === 0
+                      ? "No quotation inquiries have been submitted yet."
+                      : "No inquiries match your current search or status filter."}
+                  </td>
+                </tr>
+              ) : (
+                filteredRfqs.map((rfq) => (
                 <tr key={rfq.id} className="hover:bg-slate-800/40 transition-colors">
                   <td className="py-3.5 px-4">
                     <span className="font-mono font-bold text-cyan-400 block">{rfq.id}</span>
@@ -211,7 +255,8 @@ export default function AdminInquiriesPage() {
                     </Link>
                   </td>
                 </tr>
-              ))}
+                ))
+              )}
             </tbody>
           </table>
         </div>

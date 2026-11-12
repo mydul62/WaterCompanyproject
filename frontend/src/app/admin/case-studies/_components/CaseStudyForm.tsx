@@ -6,13 +6,13 @@ import { useRouter } from "next/navigation";
 import { FolderKanban, Plus, X, Save } from "lucide-react";
 import { api } from "@/lib/api";
 import {
-  CASE_STUDIES_DATA,
   CASE_STUDY_INDUSTRIES,
   CaseStudy,
 } from "@/data/caseStudiesData";
 import ImageFieldWithUpload from "@/components/admin/ImageFieldWithUpload";
 import {
   AdminFormHeader,
+  AdminErrorBanner,
   AdminEditLoadingState,
   AdminEditNotFoundState,
   AdminToast,
@@ -91,6 +91,7 @@ export default function CaseStudyForm({
   const [form, setForm] = useState<CaseFormState>(EMPTY_CASE_FORM);
   const [loading, setLoading] = useState(mode === "edit");
   const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [storageMode, setStorageMode] = useState<"database" | "fallback">("database");
   const { toast, showToast, clearToast } = useAdminToast();
@@ -108,7 +109,6 @@ export default function CaseStudyForm({
           }
         } catch {
           if (active) {
-            setForm((prev) => ({ ...prev, sortOrder: CASE_STUDIES_DATA.length + 1 }));
             setStorageMode("fallback");
           }
         }
@@ -122,6 +122,7 @@ export default function CaseStudyForm({
       }
 
       setLoading(true);
+      setLoadError(null);
       try {
         const res = await api.caseStudies.getById(caseStudyId);
         if (!active) return;
@@ -131,13 +132,13 @@ export default function CaseStudyForm({
         } else {
           setNotFound(true);
         }
-      } catch {
-        const fallback = CASE_STUDIES_DATA.find((c) => c.id === caseStudyId || c.slug === caseStudyId);
-        if (fallback && active) {
-          setForm(caseToForm(fallback));
-          setStorageMode("fallback");
-        } else if (active) {
+      } catch (err: any) {
+        if (!active) return;
+        setStorageMode("fallback");
+        if (err?.status === 404 || err?.message?.toLowerCase().includes("not found")) {
           setNotFound(true);
+        } else {
+          setLoadError(err?.message || "Failed to load case study from PostgreSQL.");
         }
       } finally {
         if (active) setLoading(false);
@@ -206,6 +207,8 @@ export default function CaseStudyForm({
 
       {loading ? (
         <AdminEditLoadingState label="Loading case study details..." />
+      ) : loadError ? (
+        <AdminErrorBanner error={loadError} />
       ) : notFound ? (
         <AdminEditNotFoundState
           title="Case Study Not Found"
