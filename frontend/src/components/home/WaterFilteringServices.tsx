@@ -98,11 +98,10 @@ export default function WaterFilteringServices() {
           box-shadow: 0 10px 35px rgba(30, 70, 140, 0.08);
           z-index: 3;
           box-sizing: border-box;
-          transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease;
+          transition: box-shadow 0.4s ease, border-color 0.4s ease;
           cursor: pointer;
         }
         .wfs-card:hover {
-          transform: translateY(-8px) scale(1.03);
           box-shadow: 0 20px 48px rgba(30, 70, 140, 0.16);
         }
         .wfs-tl {

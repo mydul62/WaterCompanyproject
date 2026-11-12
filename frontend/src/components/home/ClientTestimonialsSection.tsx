@@ -119,7 +119,7 @@ export default function ClientTestimonialsSection() {
           {TESTIMONIAL_SETS[activeSet].map((t) => (
             <div
               key={t.id}
-              className="bg-white rounded-3xl p-8 sm:p-10 shadow-[0_15px_45px_rgba(0,34,102,0.06)] border border-slate-100 flex flex-col sm:flex-row items-start gap-6 sm:gap-8 transition-all duration-300 hover:shadow-[0_20px_55px_rgba(0,194,232,0.14)] hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-4 duration-300"
+              className="bg-white rounded-3xl p-8 sm:p-10 shadow-[0_15px_45px_rgba(0,34,102,0.06)] border border-slate-100 flex flex-col sm:flex-row items-start gap-6 sm:gap-8 transition-[box-shadow,border-color] duration-500 ease-out hover:border-cyan-200/80 hover:shadow-[0_20px_55px_rgba(0,194,232,0.14)] animate-in fade-in slide-in-from-bottom-4 duration-300"
             >
               {/* Circular Avatar from Screenshot 27e76023 */}
               <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden shrink-0 border-2 border-white shadow-md">

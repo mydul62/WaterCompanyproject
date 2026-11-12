@@ -621,7 +621,7 @@ export default function ProductsPage() {
           flex-direction: column;
           text-decoration: none;
           color: inherit;
-          transition: transform .7s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow .7s ease, border-color .6s ease;
+          transition: box-shadow .7s ease, border-color .6s ease;
           animation: prd-in .4s both;
           cursor: pointer;
         }
@@ -649,7 +649,6 @@ export default function ProductsPage() {
           transition: transform 2.4s cubic-bezier(0.25, 0.1, 0.25, 1), border-radius 2.2s ease;
         }
         .prd-card:hover {
-          transform: translateY(-5px);
           box-shadow: 0 22px 50px -12px rgba(6, 182, 212, 0.26);
           border-color: rgba(6, 182, 212, 0.68);
         }

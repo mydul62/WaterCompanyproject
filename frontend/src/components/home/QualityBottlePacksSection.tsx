@@ -67,7 +67,7 @@ export default function QualityBottlePacksSection() {
           {PACKS.map((pack, idx) => (
             <div
               key={pack.id}
-              className="bg-white rounded-3xl p-8 sm:p-10 shadow-[0_15px_45px_rgba(0,34,102,0.06)] border border-slate-100 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_25px_60px_rgba(0,194,232,0.16)] group"
+              className="bg-white rounded-3xl p-8 sm:p-10 shadow-[0_15px_45px_rgba(0,34,102,0.06)] border border-slate-100 flex flex-col items-center text-center transition-[box-shadow,border-color] duration-500 ease-out hover:border-cyan-200/80 hover:shadow-[0_25px_60px_rgba(0,194,232,0.16)] group"
             >
               {/* Product Pack Artwork Cropped from Screenshot 39c7284a */}
               <div className="relative w-full max-w-[260px] aspect-[4/3] mb-6 overflow-hidden rounded-2xl flex items-center justify-center">

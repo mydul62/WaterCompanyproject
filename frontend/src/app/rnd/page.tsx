@@ -299,7 +299,7 @@ export default function RndPage() {
                 data-reveal="up"
                 className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-10 text-left"
               >
-                <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-lg hover:-translate-y-1 transition-all">
+                <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-cyan-200/80 hover:shadow-lg transition-[box-shadow,border-color] duration-500">
                   <div className="w-12 h-12 rounded-xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-600 mb-4">
                     <Cpu className="w-6 h-6" />
                   </div>
@@ -311,7 +311,7 @@ export default function RndPage() {
                   </p>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-lg hover:-translate-y-1 transition-all">
+                <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-cyan-200/80 hover:shadow-lg transition-[box-shadow,border-color] duration-500">
                   <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-4">
                     <ShieldCheck className="w-6 h-6" />
                   </div>
@@ -323,7 +323,7 @@ export default function RndPage() {
                   </p>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-lg hover:-translate-y-1 transition-all">
+                <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:border-cyan-200/80 hover:shadow-lg transition-[box-shadow,border-color] duration-500">
                   <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 mb-4">
                     <Recycle className="w-6 h-6" />
                   </div>

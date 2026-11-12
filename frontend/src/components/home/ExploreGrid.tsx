@@ -188,10 +188,13 @@ export default function ExploreGrid() {
         {/* Balanced 7-Card Editorial Bento Grid (Zero Orphan Slots Across Viewports) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-5 lg:gap-6 items-stretch">
           {/* 01 — Flagship Card: Find Our Products */}
+          <div
+            data-reveal="scale"
+            className="sm:col-span-2 lg:col-span-6 lg:row-span-2"
+          >
           <Link
             href="/products"
-            data-reveal="scale"
-            className="group relative sm:col-span-2 lg:col-span-6 lg:row-span-2 rounded-3xl bg-gradient-to-br from-[#061d34] via-[#0a3154] to-[#0e4e73] text-white p-7 sm:p-9 lg:p-10 shadow-[0_20px_50px_rgba(6,29,52,0.22)] hover:shadow-[0_28px_65px_rgba(0,168,198,0.28)] border border-white/15 hover:border-cyan-300/40 hover:-translate-y-1 transition-all duration-500 flex flex-col justify-between overflow-hidden min-h-[320px] lg:min-h-[420px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            className="group relative h-full rounded-3xl bg-gradient-to-br from-[#061d34] via-[#0a3154] to-[#0e4e73] text-white p-7 sm:p-9 lg:p-10 shadow-[0_20px_50px_rgba(6,29,52,0.22)] hover:shadow-[0_28px_65px_rgba(0,168,198,0.28)] border border-white/15 hover:border-cyan-300/40 transition-[box-shadow,border-color] duration-500 flex flex-col justify-between overflow-hidden min-h-[320px] lg:min-h-[420px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
             {/* Ambient Concentric Rings & Light Sheen */}
             <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full border border-cyan-400/15 group-hover:scale-110 transition-transform duration-700 pointer-events-none" />
@@ -254,17 +257,21 @@ export default function ExploreGrid() {
               </span>
             </div>
           </Link>
+          </div>
 
           {/* 02–05 — Top-Right 2x2 Quadrant Cards */}
           {COMPACT_EXPLORE_CARDS.map((item, idx) => {
             const Icon = item.icon;
             const delays = ["delay-75", "delay-100", "delay-150", "delay-200"];
             return (
-              <Link
+              <div
                 key={item.title}
-                href={item.href}
                 data-reveal="scale"
-                className={`water-fill-card group relative lg:col-span-3 p-6 sm:p-7 rounded-3xl bg-gradient-to-br ${item.tintClass} backdrop-blur-xl border border-slate-200/80 shadow-[0_8px_30px_rgba(15,23,42,0.04)] flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${delays[idx % delays.length]}`}
+                className={`lg:col-span-3 ${delays[idx % delays.length]}`}
+              >
+              <Link
+                href={item.href}
+                className={`water-fill-card group relative h-full p-6 sm:p-7 rounded-3xl bg-gradient-to-br ${item.tintClass} backdrop-blur-xl border border-slate-200/80 shadow-[0_8px_30px_rgba(15,23,42,0.04)] flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500`}
               >
                 <div className="space-y-4">
                   {/* Top Icon + Number Row */}
@@ -309,6 +316,7 @@ export default function ExploreGrid() {
                   />
                 </div>
               </Link>
+              </div>
             );
           })}
 
@@ -316,11 +324,14 @@ export default function ExploreGrid() {
           {WIDE_EXPLORE_CARDS.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <Link
+              <div
                 key={item.title}
-                href={item.href}
                 data-reveal="scale"
-                className={`water-fill-card group relative lg:col-span-6 p-6 sm:p-7 lg:p-8 rounded-3xl bg-white/95 backdrop-blur-xl border border-slate-200/80 shadow-[0_8px_30px_rgba(15,23,42,0.04)] flex flex-col justify-between gap-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${idx === 1 ? "delay-100" : ""}`}
+                className={`lg:col-span-6 ${idx === 1 ? "delay-100" : ""}`}
+              >
+              <Link
+                href={item.href}
+                className="water-fill-card group relative h-full p-6 sm:p-7 lg:p-8 rounded-3xl bg-white/95 backdrop-blur-xl border border-slate-200/80 shadow-[0_8px_30px_rgba(15,23,42,0.04)] flex flex-col justify-between gap-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3.5">
@@ -379,6 +390,7 @@ export default function ExploreGrid() {
                   />
                 </div>
               </Link>
+              </div>
             );
           })}
         </div>

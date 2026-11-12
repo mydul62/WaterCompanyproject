@@ -240,7 +240,7 @@ export default function CaseStudiesPage() {
                   filteredCases.map((study) => (
                     <div
                       key={study.id}
-                      className="bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between group"
+                      className="bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-sm transition-[box-shadow,border-color] duration-500 ease-out hover:border-cyan-300/60 hover:shadow-xl flex flex-col justify-between group"
                     >
                       <div>
                         {/* Cover Image Frame */}

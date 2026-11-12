@@ -5940,6 +5940,11 @@
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
+  .transition-\[box-shadow\,border-color\] {
+    transition-property: box-shadow,border-color;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
   .transition-\[grid-template-rows\,opacity\] {
     transition-property: grid-template-rows,opacity;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
@@ -5952,11 +5957,6 @@
   }
   .transition-\[transform\,background-color\,color\] {
     transition-property: transform,background-color,color;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-  }
-  .transition-\[transform\,box-shadow\,border-color\] {
-    transition-property: transform,box-shadow,border-color;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
@@ -6438,14 +6438,6 @@
       --tw-translate-y: calc(var(--spacing) * -0.5);
       translate: var(--tw-translate-x) var(--tw-translate-y);
     }
-    .hover\:-translate-y-1:hover {
-      --tw-translate-y: calc(var(--spacing) * -1);
-      translate: var(--tw-translate-x) var(--tw-translate-y);
-    }
-    .hover\:-translate-y-2:hover {
-      --tw-translate-y: calc(var(--spacing) * -2);
-      translate: var(--tw-translate-x) var(--tw-translate-y);
-    }
     .hover\:scale-105:hover {
       --tw-scale-x: 105%;
       --tw-scale-y: 105%;
@@ -6500,6 +6492,14 @@
         border-color: color-mix(in oklab, var(--color-blue-500) 60%, transparent);
       }
     }
+    .hover\:border-cyan-200\/80:hover {
+      border-color: color-mix(in srgb, oklch(91.7% 0.08 205.041) 80%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:border-cyan-200\/80:hover {
+        border-color: color-mix(in oklab, var(--color-cyan-200) 80%, transparent);
+      }
+    }
     .hover\:border-cyan-300:hover {
       border-color: var(--color-cyan-300);
     }
@@ -6509,6 +6509,14 @@
     @supports (color: color-mix(in lab, red, red)) {
       .hover\:border-cyan-300\/40:hover {
         border-color: color-mix(in oklab, var(--color-cyan-300) 40%, transparent);
+      }
+    }
+    .hover\:border-cyan-300\/60:hover {
+      border-color: color-mix(in srgb, oklch(86.5% 0.127 207.078) 60%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:border-cyan-300\/60:hover {
+        border-color: color-mix(in oklab, var(--color-cyan-300) 60%, transparent);
       }
     }
     .hover\:border-cyan-400:hover {
@@ -8996,7 +9004,7 @@ header ul li a span,
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s ease, box-shadow 0.5s ease;
+  transition: border-color 0.5s ease, box-shadow 0.5s ease;
 }
 
 /* Clean Translucent Liquid Water Surge from Bottom-Left Corner */
@@ -9029,7 +9037,6 @@ header ul li a span,
 .water-fill-card:hover {
   border-color: rgba(6, 182, 212, 0.68) !important;
   box-shadow: 0 22px 50px -12px rgba(6, 182, 212, 0.26) !important;
-  transform: translateY(-5px);
 }
 
 .water-fill-card > * {
@@ -10073,7 +10080,6 @@ header ul li a span,
 }
 
 .explore-card:hover {
-  transform: translateY(-8px);
   box-shadow: 0 28px 56px rgba(10, 60, 120, 0.18);
 }
 
@@ -10177,7 +10183,6 @@ header ul li a span,
 }
 
 .explore-card.rv.in:hover {
-  transform: translateY(-8px);
   transition-delay: 0s;
 }
 

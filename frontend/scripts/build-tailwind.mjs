@@ -396,7 +396,7 @@ header ul li a span,
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s ease, box-shadow 0.5s ease;
+  transition: border-color 0.5s ease, box-shadow 0.5s ease;
 }
 
 /* Clean Translucent Liquid Water Surge from Bottom-Left Corner */
@@ -429,7 +429,6 @@ header ul li a span,
 .water-fill-card:hover {
   border-color: rgba(6, 182, 212, 0.68) !important;
   box-shadow: 0 22px 50px -12px rgba(6, 182, 212, 0.26) !important;
-  transform: translateY(-5px);
 }
 
 .water-fill-card > * {
@@ -1473,7 +1472,6 @@ header ul li a span,
 }
 
 .explore-card:hover {
-  transform: translateY(-8px);
   box-shadow: 0 28px 56px rgba(10, 60, 120, 0.18);
 }
 
@@ -1577,7 +1575,6 @@ header ul li a span,
 }
 
 .explore-card.rv.in:hover {
-  transform: translateY(-8px);
   transition-delay: 0s;
 }
 

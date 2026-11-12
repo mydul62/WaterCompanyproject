@@ -203,7 +203,7 @@ export default function ProductShowcase() {
                 >
                   <Link
                     href={`/products/${card.slug}`}
-                    className={`group relative block rounded-[32px] bg-white/90 backdrop-blur-xl border border-slate-200/70 p-6 transition-[transform,box-shadow,border-color] duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)] hover:-translate-y-2 cursor-pointer overflow-hidden transform-gpu ${card.accent.cardBorder} ${card.accent.cardShadow}`}
+                    className={`group relative block rounded-[32px] bg-white/90 backdrop-blur-xl border border-slate-200/70 p-6 transition-[box-shadow,border-color] duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)] cursor-pointer overflow-hidden ${card.accent.cardBorder} ${card.accent.cardShadow}`}
                     style={{
                       boxShadow: "0 10px 30px rgba(15, 23, 42, 0.04)",
                     }}
