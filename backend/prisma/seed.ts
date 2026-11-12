@@ -1,3 +1,4 @@
+import "../src/config/env";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import {
@@ -13,6 +14,20 @@ import {
 const prisma = new PrismaClient();
 
 async function main() {
+  if (process.argv.includes("--if-empty")) {
+    const [userCount, settingCount, productCount] = await Promise.all([
+      prisma.user.count(),
+      prisma.siteSetting.count(),
+      prisma.product.count(),
+    ]);
+    if (userCount > 0 || settingCount > 0 || productCount > 0) {
+      console.log(
+        `Database already initialized (users=${userCount}, settings=${settingCount}, products=${productCount}); skipping seed.`
+      );
+      return;
+    }
+  }
+
   console.log("Seeding Noor Plastic Industries database...");
 
   // 1. Super Admin User (only seed initial password if user does not exist or reset forced)
