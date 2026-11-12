@@ -1,4 +1,5 @@
 import { prisma } from "../../config/prisma";
+import { getUploadsDir } from "../../config/env";
 import { ApiError } from "../../utils/apiError";
 import { DEFAULT_PRESS_STORIES } from "../../data/cmsDefaults";
 import {
@@ -10,6 +11,48 @@ import {
 } from "../../utils/contentHelpers";
 import fs from "fs";
 import path from "path";
+
+const KNOWN_MEDIA_CATEGORIES = new Set([
+  "GENERAL",
+  "PRODUCTS",
+  "HERO",
+  "FACTORY",
+  "STORY",
+  "CERTIFICATES",
+  "CLIENT_LOGOS",
+]);
+
+function inferAssetCategory(row: {
+  folder?: string | null;
+  filename?: string | null;
+  url?: string | null;
+  altText?: string | null;
+}): string {
+  const rawFolder = (row.folder || "").trim().toUpperCase();
+  if (KNOWN_MEDIA_CATEGORIES.has(rawFolder)) return rawFolder;
+  if (rawFolder === "TOOL-ROOM") return "FACTORY";
+
+  const haystack = `${row.filename || ""} ${row.url || ""} ${row.altText || ""}`.toLowerCase();
+  if (haystack.includes("logo") || haystack.includes("berger") || haystack.includes("brand")) {
+    return haystack.includes("hero") ? "HERO" : "CLIENT_LOGOS";
+  }
+  if (haystack.includes("hero") || haystack.includes("banner") || haystack.includes("slider")) return "HERO";
+  if (haystack.includes("certificate") || haystack.includes("award") || haystack.includes("leed")) return "CERTIFICATES";
+  if (haystack.includes("product") || haystack.includes("bottle") || haystack.includes("pail") || haystack.includes("drum")) return "PRODUCTS";
+  if (haystack.includes("factory") || haystack.includes("plant") || haystack.includes("office") || haystack.includes("building") || haystack.includes("tool-room")) return "FACTORY";
+  if (haystack.includes("story") || haystack.includes("news") || haystack.includes("press")) return "STORY";
+  return "GENERAL";
+}
+
+function serializeMediaAsset(row: any) {
+  const title = row.originalName || row.filename || row.altText || "Media Asset";
+  const category = inferAssetCategory(row);
+  return {
+    ...row,
+    title,
+    category,
+  };
+}
 
 let storiesSeededOnce = false;
 
@@ -136,17 +179,26 @@ export interface UploadedFilePayload {
   path?: string;
 }
 
+export interface RegisterUploadedAssetOptions {
+  altText?: string;
+  category?: string;
+  url?: string;
+  width?: number | null;
+  height?: number | null;
+}
+
 export class MediaService {
   // ══════════════════════════════════════════════════════════════
-  // IMAPLE MEDIA LIBRARY ASSET MANAGEMENT
+  // MEDIA LIBRARY ASSET MANAGEMENT
   // ══════════════════════════════════════════════════════════════
-  static async getAllAssets(search?: string, mimeCategory?: string) {
+  static async getAllAssets(search?: string, mimeCategory?: string, category?: string) {
     const where: any = {};
     if (search) {
       where.OR = [
         { filename: { contains: search } },
         { originalName: { contains: search } },
         { altText: { contains: search } },
+        { url: { contains: search } },
       ];
     }
 
@@ -162,34 +214,63 @@ export class MediaService {
       }
     }
 
-    return prisma.mediaAsset.findMany({
+    const rows = await prisma.mediaAsset.findMany({
       where,
       orderBy: { createdAt: "desc" },
     });
+
+    const serialized = rows.map(serializeMediaAsset);
+    const normalizedCat = category?.trim().toUpperCase();
+    if (normalizedCat && normalizedCat !== "ALL") {
+      return serialized.filter((asset) => asset.category === normalizedCat);
+    }
+    return serialized;
   }
 
-  static async registerUploadedAsset(file: UploadedFilePayload, altText?: string) {
-    // Generate public URL
-    const relativeUrl = `/uploads/${file.filename}`;
+  static async registerUploadedAsset(
+    file: UploadedFilePayload,
+    options?: string | RegisterUploadedAssetOptions
+  ) {
+    const opts: RegisterUploadedAssetOptions =
+      typeof options === "string" ? { altText: options } : options || {};
+    const resolvedUrl = opts.url || `/uploads/${file.filename}`;
+    const rawCategory = (opts.category || "GENERAL").trim().toUpperCase();
+    const folderCategory = KNOWN_MEDIA_CATEGORIES.has(rawCategory) ? rawCategory : "GENERAL";
+    const fallbackAlt = file.originalname.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
 
-    return prisma.mediaAsset.create({
+    const created = await prisma.mediaAsset.create({
       data: {
         filename: file.filename,
         originalName: file.originalname,
         mimeType: file.mimetype,
         size: file.size,
-        url: relativeUrl,
-        altText: altText || file.originalname.split(".")[0],
-        folder: "uploads",
+        url: resolvedUrl,
+        altText: opts.altText?.trim() || fallbackAlt,
+        folder: folderCategory,
+        width: opts.width ?? null,
+        height: opts.height ?? null,
       },
     });
+
+    return serializeMediaAsset(created);
   }
 
-  static async updateAsset(id: string, payload: { altText?: string; caption?: string }) {
-    return prisma.mediaAsset.update({
+  static async updateAsset(id: string, payload: { altText?: string; caption?: string; category?: string }) {
+    const data: { altText?: string; caption?: string; folder?: string } = {};
+    if (payload.altText !== undefined) data.altText = payload.altText;
+    if (payload.caption !== undefined) data.caption = payload.caption;
+    if (payload.category !== undefined) {
+      const normalizedCat = payload.category.trim().toUpperCase();
+      if (KNOWN_MEDIA_CATEGORIES.has(normalizedCat)) {
+        data.folder = normalizedCat;
+      }
+    }
+
+    const updated = await prisma.mediaAsset.update({
       where: { id },
-      data: payload,
+      data,
     });
+    return serializeMediaAsset(updated);
   }
 
   static async deleteAsset(id: string) {
@@ -198,7 +279,7 @@ export class MediaService {
 
     // Delete local file if it resides in /uploads
     if (asset.url.startsWith("/uploads/")) {
-      const diskPath = path.join(process.cwd(), "public", asset.url);
+      const diskPath = path.join(getUploadsDir(), path.basename(asset.url));
       if (fs.existsSync(diskPath)) {
         try {
           fs.unlinkSync(diskPath);

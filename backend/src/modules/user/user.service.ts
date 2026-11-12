@@ -1,6 +1,9 @@
 import { prisma } from "../../config/prisma";
 import bcrypt from "bcryptjs";
 import { ApiError } from "../../utils/apiError";
+import { Role } from "../../middlewares/auth.middleware";
+
+const ALLOWED_ROLES: Role[] = ["SUPER_ADMIN", "ADMIN", "EDITOR", "SALES_MANAGER"];
 
 export class UserService {
   static async getAll() {
@@ -18,9 +21,22 @@ export class UserService {
     });
   }
 
-  static async create(payload: any) {
+  static async create(payload: any, actorRole?: Role) {
     if (!payload.email || !payload.password || !payload.name) {
       throw new ApiError(400, "Name, email, and password are required.");
+    }
+
+    if (String(payload.password).length < 8) {
+      throw new ApiError(400, "Password must be at least 8 characters long.");
+    }
+
+    const requestedRole = (payload.role || "EDITOR") as Role;
+    if (!ALLOWED_ROLES.includes(requestedRole)) {
+      throw new ApiError(400, "Invalid user role specified.");
+    }
+
+    if (requestedRole === "SUPER_ADMIN" && actorRole !== "SUPER_ADMIN") {
+      throw new ApiError(403, "Only a Super Administrator can create a SUPER_ADMIN account.");
     }
 
     const existing = await prisma.user.findUnique({
@@ -36,7 +52,7 @@ export class UserService {
         email: payload.email.toLowerCase().trim(),
         name: payload.name,
         password: passwordHash,
-        role: payload.role || "ADMIN",
+        role: requestedRole,
         avatar: payload.avatar || null,
       },
       select: {
@@ -50,9 +66,28 @@ export class UserService {
     });
   }
 
-  static async update(id: string, payload: any) {
+  static async update(id: string, payload: any, actor?: { userId: string; role: Role }) {
     const existing = await prisma.user.findUnique({ where: { id } });
     if (!existing) throw new ApiError(404, "User not found.");
+
+    if (existing.role === "SUPER_ADMIN" && actor && actor.role !== "SUPER_ADMIN") {
+      throw new ApiError(403, "Only a Super Administrator can modify a SUPER_ADMIN account.");
+    }
+
+    if (payload.role !== undefined) {
+      if (!ALLOWED_ROLES.includes(payload.role)) {
+        throw new ApiError(400, "Invalid user role specified.");
+      }
+      if (payload.role === "SUPER_ADMIN" && actor && actor.role !== "SUPER_ADMIN") {
+        throw new ApiError(403, "Only a Super Administrator can assign the SUPER_ADMIN role.");
+      }
+      if (existing.role === "SUPER_ADMIN" && payload.role !== "SUPER_ADMIN") {
+        const superAdminCount = await prisma.user.count({ where: { role: "SUPER_ADMIN" } });
+        if (superAdminCount <= 1) {
+          throw new ApiError(400, "Cannot demote the only Super Administrator account.");
+        }
+      }
+    }
 
     const data: any = {
       name: payload.name ?? existing.name,
@@ -61,6 +96,9 @@ export class UserService {
     };
 
     if (payload.password) {
+      if (String(payload.password).length < 8) {
+        throw new ApiError(400, "Password must be at least 8 characters long.");
+      }
       data.password = await bcrypt.hash(payload.password, 10);
     }
 
@@ -78,11 +116,22 @@ export class UserService {
     });
   }
 
-  static async delete(id: string) {
-    const superAdminCount = await prisma.user.count({ where: { role: "SUPER_ADMIN" } });
-    const target = await prisma.user.findUnique({ where: { id } });
+  static async delete(id: string, actor?: { userId: string; role: Role }) {
+    if (actor && actor.userId === id) {
+      throw new ApiError(400, "You cannot delete your own active account.");
+    }
 
-    if (target?.role === "SUPER_ADMIN" && superAdminCount <= 1) {
+    const target = await prisma.user.findUnique({ where: { id } });
+    if (!target) {
+      throw new ApiError(404, "User not found.");
+    }
+
+    if (target.role === "SUPER_ADMIN" && actor && actor.role !== "SUPER_ADMIN") {
+      throw new ApiError(403, "Only a Super Administrator can delete a SUPER_ADMIN account.");
+    }
+
+    const superAdminCount = await prisma.user.count({ where: { role: "SUPER_ADMIN" } });
+    if (target.role === "SUPER_ADMIN" && superAdminCount <= 1) {
       throw new ApiError(400, "Cannot delete the only Super Administrator account.");
     }
 

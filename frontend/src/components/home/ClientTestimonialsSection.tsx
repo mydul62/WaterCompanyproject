@@ -133,6 +133,7 @@ export default function ClientTestimonialsSection() {
                     src="/acuasafe/section-testimonials.png"
                     alt={t.name}
                     fill
+                    sizes="280px"
                     className="object-cover"
                   />
                 </div>

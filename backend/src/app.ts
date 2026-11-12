@@ -1,31 +1,31 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import path from "path";
 import { appRouter } from "./routes";
 import { errorHandler } from "./middlewares/error.middleware";
-import { ENV } from "./config/env";
+import { ENV, getUploadsDir } from "./config/env";
 
 export const app: Application = express();
 
 // Security and parsing middlewares
+const configuredOrigins = [
+  ENV.FRONTEND_URL,
+  ...ENV.CORS_ORIGINS.split(",").map((s) => s.trim()).filter(Boolean),
+  ...(ENV.NODE_ENV !== "production" ? ["http://localhost:3000", "http://localhost:3001"] : []),
+].filter(Boolean);
+
 app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
-      const allowedOrigins = [
-        ENV.FRONTEND_URL,
-        "http://localhost:3000",
-        "http://localhost:3001",
-      ];
       if (
-        allowedOrigins.includes(origin) ||
+        configuredOrigins.includes(origin) ||
         origin.endsWith(".vercel.app") ||
         origin.endsWith(".onrender.com")
       ) {
         return callback(null, true);
       }
-      return callback(null, true); // Allow client requests
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   })
@@ -36,7 +36,7 @@ app.use(express.json({ limit: "15mb" }));
 app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 
 // Static uploads directory fallback
-app.use("/uploads", express.static(path.join(process.cwd(), "public", "uploads")));
+app.use("/uploads", express.static(getUploadsDir()));
 
 // Root Info Endpoint
 app.get("/", (_req: Request, res: Response) => {

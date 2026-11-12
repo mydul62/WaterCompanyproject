@@ -19,7 +19,7 @@ export class UserController {
 
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = await UserService.create(req.body);
+      const user = await UserService.create(req.body, req.user?.role);
       return sendResponse(res, {
         statusCode: 201,
         success: true,
@@ -33,7 +33,11 @@ export class UserController {
 
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = await UserService.update(req.params.id, req.body);
+      const user = await UserService.update(
+        req.params.id,
+        req.body,
+        req.user ? { userId: req.user.userId, role: req.user.role } : undefined
+      );
       return sendResponse(res, {
         statusCode: 200,
         success: true,
@@ -47,7 +51,10 @@ export class UserController {
 
   static async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      await UserService.delete(req.params.id);
+      await UserService.delete(
+        req.params.id,
+        req.user ? { userId: req.user.userId, role: req.user.role } : undefined
+      );
       return sendResponse(res, {
         statusCode: 200,
         success: true,

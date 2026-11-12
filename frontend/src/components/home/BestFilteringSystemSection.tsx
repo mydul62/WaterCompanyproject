@@ -73,6 +73,7 @@ export default function BestFilteringSystemSection() {
                   src="/acuasafe/mineral-bottle-splash.jpg"
                   alt="Pure Mineral Water Bottle Splash"
                   fill
+                  sizes="(max-width: 1024px) 100vw, 500px"
                   className="object-cover object-center"
                   priority
                 />

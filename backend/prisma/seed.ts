@@ -14,11 +14,12 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("Seeding Noor Plastic Industries database...");
 
-  // 1. Super Admin User
-  const passwordHash = await bcrypt.hash("admin123456", 10);
+  // 1. Super Admin User (only seed initial password if user does not exist or reset forced)
+  const seedPassword = process.env.SEED_ADMIN_PASSWORD || "admin123456";
+  const passwordHash = await bcrypt.hash(seedPassword, 10);
   const admin = await prisma.user.upsert({
     where: { email: "admin@noorplastic.com" },
-    update: { password: passwordHash },
+    update: process.env.FORCE_RESET_ADMIN_PASSWORD === "true" ? { password: passwordHash } : {},
     create: {
       email: "admin@noorplastic.com",
       name: "System Administrator",
@@ -27,7 +28,7 @@ async function main() {
       avatar: "",
     },
   });
-  console.log("Admin user seeded:", admin.email);
+  console.log("Admin user ensured:", admin.email);
 
   // 2. Global Site Settings
   const settingsData = [

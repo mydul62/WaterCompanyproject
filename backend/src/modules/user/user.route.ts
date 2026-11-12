@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { UserController } from "./user.controller";
+import { authenticate, authorize } from "../../middlewares/auth.middleware";
 
 const router = Router();
+
+router.use(authenticate, authorize("SUPER_ADMIN", "ADMIN"));
 
 router.get("/", UserController.getAll);
 router.post("/", UserController.create);

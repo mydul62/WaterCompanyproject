@@ -109,6 +109,7 @@ export default function PressStoriesSection() {
                     src={story.image}
                     alt={story.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     unoptimized={Boolean(story.image?.startsWith("/uploads/") || story.image?.startsWith("http"))}
                     className="object-contain p-2 transform-gpu group-hover:scale-106 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] drop-shadow-sm"
                   />
@@ -220,6 +221,7 @@ export default function PressStoriesSection() {
                 src={lightboxStory.image}
                 alt={lightboxStory.title}
                 fill
+                sizes="(max-width: 1024px) 100vw, 900px"
                 className="object-contain p-4"
               />
             </div>

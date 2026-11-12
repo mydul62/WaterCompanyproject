@@ -81,6 +81,7 @@ export default function QualityBottlePacksSection() {
                     src="/acuasafe/section-bottle-packs.png"
                     alt={pack.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, 840px"
                     className="object-contain"
                   />
                 </div>

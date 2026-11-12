@@ -341,6 +341,7 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
                 src="/acuasafe/mineral-bottle-splash.jpg"
                 alt="Noor Plastic Purified Water Containers"
                 fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-90"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent flex items-end p-5">

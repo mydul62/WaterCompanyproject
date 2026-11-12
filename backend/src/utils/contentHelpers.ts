@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction, Router } from "express";
 import { sendResponse } from "./response";
+import { authenticate, authenticateIfAllQuery, authorize } from "../middlewares/auth.middleware";
 
 /** Generate a URL-safe ASCII slug with fallback for non-Latin titles (e.g. Bangla). */
 export function slugify(input: string, fallbackPrefix = "item"): string {
@@ -202,21 +203,28 @@ export function createCrudController<T>(
 /** Build a standard Express REST router for an ordered CMS collection. */
 export function createCrudRouter(
   controller: ReturnType<typeof createCrudController>,
-  options: { hasSlugRoute?: boolean; hasResetRoute?: boolean } = {}
+  options: { hasSlugRoute?: boolean; hasResetRoute?: boolean; publicRead?: boolean } = {}
 ): Router {
   const router = Router();
-  router.get("/", controller.getAll);
+  const cmsWriteGuard = [authenticate, authorize("SUPER_ADMIN", "ADMIN", "EDITOR")];
+
+  if (options.publicRead === false) {
+    router.get("/", ...cmsWriteGuard, controller.getAll);
+  } else {
+    router.get("/", authenticateIfAllQuery, controller.getAll);
+  }
+
   if (options.hasSlugRoute) {
     router.get("/slug/:slug", controller.getBySlug);
   }
   router.get("/:id", controller.getById);
-  router.post("/", controller.create);
+  router.post("/", ...cmsWriteGuard, controller.create);
   if (options.hasResetRoute) {
-    router.post("/reset", controller.resetDefaults);
+    router.post("/reset", ...cmsWriteGuard, controller.resetDefaults);
   }
-  router.put("/:id", controller.update);
-  router.patch("/:id", controller.update);
-  router.delete("/:id", controller.delete);
+  router.put("/:id", ...cmsWriteGuard, controller.update);
+  router.patch("/:id", ...cmsWriteGuard, controller.update);
+  router.delete("/:id", ...cmsWriteGuard, controller.delete);
   return router;
 }
 

@@ -52,6 +52,7 @@ export default function FacilityShowcase() {
             src="/cropped/factory-building.png"
             alt="Noor Plastic Industries Factory Campus in Kaliakoir, Gazipur"
             fill
+            sizes="(max-width: 768px) 100vw, 55vw"
             className="object-cover object-right"
             priority
           />

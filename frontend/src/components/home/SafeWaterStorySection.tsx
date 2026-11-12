@@ -26,6 +26,7 @@ export default function SafeWaterStorySection() {
                     src="/acuasafe/section-safe-water.jpg"
                     alt="Acuasafe Icy Crystal Pure Bottled Water with Mint & Splash"
                     fill
+                    sizes="(max-width: 1024px) 100vw, 1060px"
                     className="object-cover object-left"
                     priority
                   />

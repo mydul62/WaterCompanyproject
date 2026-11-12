@@ -130,6 +130,7 @@ export default function ProductShowcase() {
                 src="/cropped/category-icons-exact.png"
                 alt="Plastic and Tin Container Categories (Tin Can, Cylinder Bottle, Jerry Can, Industrial Pail, Rectangular Tub)"
                 fill
+                sizes="(max-width: 640px) 100vw, 680px"
                 className="object-contain"
                 priority
               />
@@ -187,6 +188,7 @@ export default function ProductShowcase() {
                       src={card.image}
                       alt={card.title}
                       fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       className="object-contain p-4 transform-gpu transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 drop-shadow-md"
                       priority={idx === 0}
                     />

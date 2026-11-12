@@ -19,19 +19,14 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { AdminMediaSkeletonItems } from "@/components/common/Skeletons";
+import {
+  MEDIA_CATEGORIES,
+  NormalizedMediaAsset,
+  filterMediaAssets,
+  normalizeMediaAsset,
+} from "@/lib/media";
 
-interface MediaAsset {
-  id: string;
-  title: string;
-  url: string;
-  altText?: string;
-  category?: string;
-  size?: number;
-  width?: number;
-  height?: number;
-  mimeType?: string;
-  createdAt: string;
-}
+type MediaAsset = NormalizedMediaAsset;
 
 const DEFAULT_ASSETS: MediaAsset[] = [
   {
@@ -115,19 +110,17 @@ export default function MediaLibraryPage() {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedAsset, setSelectedAsset] = useState<MediaAsset | null>(null);
 
-  // Imaple Uploader State
+  // Image Uploader State
   const [dragActive, setDragActive] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadCategory, setUploadCategory] = useState("GENERAL");
-  const [notification, setNotification] = useState<string | null>(null);
+  const [notification, setNotification] = useState<{ text: string; type: "success" | "error" } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const showNotification = (msg: string) => {
-    setNotification(msg);
-    setTimeout(() => setNotification(null), 3500);
+  const showNotification = (text: string, type: "success" | "error" = "success") => {
+    setNotification({ text, type });
+    setTimeout(() => setNotification(null), 4000);
   };
-
-  const CATEGORIES = ["ALL", "GENERAL", "PRODUCTS", "HERO", "FACTORY", "STORY", "CERTIFICATES", "CLIENT_LOGOS"];
 
   useEffect(() => {
     loadAssets();
@@ -137,8 +130,8 @@ export default function MediaLibraryPage() {
     setLoading(true);
     try {
       const res = await api.media.getAll();
-      if (res.data && res.data.length > 0) {
-        setAssets(res.data);
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        setAssets(res.data.map((item: any) => normalizeMediaAsset(item)));
       }
     } catch (err) {
       console.warn("Using default assets fallback:", err);
@@ -152,6 +145,7 @@ export default function MediaLibraryPage() {
     setIsUploading(true);
 
     try {
+      let uploadedCount = 0;
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const res = await api.media.upload(file, {
@@ -160,29 +154,23 @@ export default function MediaLibraryPage() {
         });
 
         if (res.data) {
-          setAssets((prev) => [res.data, ...prev]);
+          setAssets((prev) => [normalizeMediaAsset(res.data), ...prev]);
+          uploadedCount += 1;
         }
       }
-      showNotification(`Successfully uploaded ${files.length} file(s) via Imaple!`);
-    } catch (err: any) {
-      // Local addition fallback
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const mock: MediaAsset = {
-          id: `media-${Date.now()}-${i}`,
-          title: file.name,
-          url: URL.createObjectURL(file),
-          altText: file.name.replace(/\.[^/.]+$/, ""),
-          category: uploadCategory,
-          size: file.size,
-          mimeType: file.type,
-          createdAt: new Date().toISOString(),
-        };
-        setAssets((prev) => [mock, ...prev]);
+      if (uploadedCount > 0) {
+        showNotification(`Successfully uploaded ${uploadedCount} file(s)!`);
       }
-      showNotification(`Uploaded ${files.length} file(s) via Imaple Uploader!`);
+    } catch (err: any) {
+      showNotification(
+        err?.message || "Upload failed. Ensure the backend server is running.",
+        "error"
+      );
     } finally {
       setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
@@ -196,7 +184,7 @@ export default function MediaLibraryPage() {
     } catch (err) {
       setAssets(assets.filter((a) => a.id !== id));
       if (selectedAsset?.id === id) setSelectedAsset(null);
-      showNotification(`Asset deleted.`);
+      showNotification(`Asset removed from view.`);
     }
   };
 
@@ -205,23 +193,19 @@ export default function MediaLibraryPage() {
     showNotification("URL copied to clipboard!");
   };
 
-  const filteredAssets = assets.filter((asset) => {
-    const matchesSearch =
-      asset.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (asset.altText && asset.altText.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      asset.url.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "ALL" || asset.category?.toUpperCase() === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredAssets = filterMediaAssets(assets, searchQuery, selectedCategory);
 
   return (
     <div className="space-y-6">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-5 right-5 z-50 bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top">
+        <div
+          className={`fixed top-5 right-5 z-50 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top ${
+            notification.type === "error" ? "bg-red-600" : "bg-blue-600"
+          }`}
+        >
           <Check className="w-4 h-4 stroke-[3]" />
-          {notification}
+          {notification.text}
         </div>
       )}
 
@@ -233,7 +217,7 @@ export default function MediaLibraryPage() {
           </div>
           <div>
             <h1 className="text-xl font-black text-white tracking-tight">
-              Media Asset Library & Imaple Uploader
+              Media Asset Library & Image Uploader
             </h1>
             <p className="text-xs text-slate-400">
               Central media repository. Upload once and reuse across visual pages, catalog products, and site settings.
@@ -296,7 +280,7 @@ export default function MediaLibraryPage() {
         </div>
         <div>
           <h3 className="text-sm font-bold text-white">
-            {isUploading ? "Uploading via Imaple..." : "Drag & Drop Media Files to Imaple Uploader"}
+            {isUploading ? "Uploading image..." : "Drag & Drop Media Files to Image Uploader"}
           </h3>
           <p className="text-xs text-slate-400 mt-1">
             Supports high-resolution JPG, PNG, WEBP, and SVG with automatic database indexing
@@ -318,7 +302,7 @@ export default function MediaLibraryPage() {
         </div>
 
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-          {CATEGORIES.map((cat) => (
+          {MEDIA_CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}

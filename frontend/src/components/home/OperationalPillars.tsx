@@ -17,6 +17,7 @@ export default function OperationalPillars() {
             src="/cropped/harbor-supply.png"
             alt="Harbor and Supply Chain Logistics Infrastructure"
             fill
+            sizes="(max-width: 1024px) 100vw, 56vw"
             className="object-cover object-left"
             priority
           />
@@ -46,6 +47,7 @@ export default function OperationalPillars() {
                 src="/cropped/triangle-icons.png"
                 alt="Supply Chain Operational Icons"
                 fill
+                sizes="(max-width: 640px) 100vw, 560px"
                 className="object-contain object-left"
                 priority
               />

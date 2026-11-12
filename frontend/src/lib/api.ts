@@ -1,6 +1,15 @@
 // Centralized API Client for Noor Plastic Industries Platform
 // Connects frontend to Express + Prisma Backend REST API
 
+import {
+  clearAuthSession,
+  getStoredToken,
+  notifyAuthExpired,
+  setAuthSession,
+  ADMIN_USER_KEY,
+  AuthSessionUser,
+} from "./auth";
+
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
@@ -24,7 +33,7 @@ class ApiClient {
     };
 
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("waterweb_admin_token");
+      const token = getStoredToken();
       if (token) {
         headers["Authorization"] = `Bearer ${token}`;
       }
@@ -104,12 +113,21 @@ class ApiClient {
           ...options,
           method,
           headers,
+          credentials: "include",
           signal: controller.signal,
         });
 
         const json = await response.json().catch(() => null);
 
         if (!response.ok) {
+          if (
+            response.status === 401 &&
+            cleanEndpoint !== "/auth/login" &&
+            cleanEndpoint !== "/auth/logout"
+          ) {
+            ApiClient.getCache.clear();
+            notifyAuthExpired("expired");
+          }
           throw new Error(
             json?.message || `HTTP ${response.status}: ${response.statusText}`
           );
@@ -150,28 +168,40 @@ class ApiClient {
   // Auth Endpoints
   auth = {
     login: async (email: string, password: string) => {
-      const res = await this.request<{ user: any; token: string }>("/auth/login", {
+      ApiClient.getCache.clear();
+      const res = await this.request<{ user: AuthSessionUser; token: string }>("/auth/login", {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
       if (res.data?.token && typeof window !== "undefined") {
-        localStorage.setItem("waterweb_admin_token", res.data.token);
-        localStorage.setItem("waterweb_admin_user", JSON.stringify(res.data.user));
+        setAuthSession(res.data.token, res.data.user);
       }
       return res;
     },
     me: async () => {
-      return this.request<{ user: any }>("/auth/me");
+      const res = await this.request<any>("/auth/me", { cache: "no-store" });
+      const user: AuthSessionUser | undefined = res.data?.user || res.data;
+      if (user && typeof window !== "undefined") {
+        localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(user));
+      }
+      return { ...res, data: user as AuthSessionUser };
+    },
+    changePassword: async (currentPassword: string, newPassword: string) => {
+      return this.request<null>("/auth/change-password", {
+        method: "POST",
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
     },
     logout: async () => {
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("waterweb_admin_token");
-        localStorage.removeItem("waterweb_admin_user");
+      try {
+        return await this.request("/auth/logout", { method: "POST" }).catch(() => ({
+          success: true,
+          data: null,
+        }));
+      } finally {
+        ApiClient.getCache.clear();
+        clearAuthSession();
       }
-      return this.request("/auth/logout", { method: "POST" }).catch(() => ({
-        success: true,
-        data: null,
-      }));
     },
   };
 

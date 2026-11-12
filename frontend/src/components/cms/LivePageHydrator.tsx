@@ -111,7 +111,22 @@ export default function LivePageHydrator() {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || !pathname) return;
+
+    // Never hydrate or query CMS page overrides on Admin/API/internal routes or
+    // routes that are not registered CMS pages (prevents 404s like /pages/slug/admin/...).
+    if (
+      pathname.startsWith("/admin") ||
+      pathname.startsWith("/api") ||
+      pathname.startsWith("/_next") ||
+      pathname.startsWith("/products/") ||
+      pathname.startsWith("/media/")
+    ) {
+      return;
+    }
+
+    const mappedSlug = ROUTE_TO_SLUG[pathname];
+    if (!mappedSlug) return;
 
     // Skip inside builder canvas itself while actively editing
     // The builder manages its own iframe preview
@@ -121,7 +136,7 @@ export default function LivePageHydrator() {
     if (isEditorActive) return;
 
     const pageKey = ROUTE_TO_PAGE_KEY[pathname] || pathname.replace(/^\//, "");
-    const slug = ROUTE_TO_SLUG[pathname] || pathname.replace(/^\//, "") || "home";
+    const slug = mappedSlug;
 
     // 1. Instant Cache Hydration: Apply locally cached published overrides immediately
     const hydrateFromStorage = () => {

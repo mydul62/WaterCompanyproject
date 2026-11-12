@@ -1030,7 +1030,7 @@ export default function ElementorVisualEditor({
         src: asset.url,
         alt: asset.altText || selectedElement.alt,
       });
-      showNotification("Image updated via Imaple Uploader");
+      showNotification("Image updated via Image Uploader");
     }
   };
 

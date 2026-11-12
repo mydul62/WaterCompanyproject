@@ -12,19 +12,19 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { api } from "@/lib/api";
-import { UserRecord, DEFAULT_USERS } from "./_components/UserForm";
+import { UserRecord } from "./_components/UserForm";
 import { AdminTableSkeletonRows } from "@/components/common/Skeletons";
 
 export default function UserRoleManagementPage() {
-  const [users, setUsers] = useState<UserRecord[]>(DEFAULT_USERS);
+  const [users, setUsers] = useState<UserRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("ALL");
-  const [notification, setNotification] = useState<string | null>(null);
+  const [notification, setNotification] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
-  const showNotification = (msg: string) => {
-    setNotification(msg);
-    setTimeout(() => setNotification(null), 3500);
+  const showNotification = (text: string, type: "success" | "error" = "success") => {
+    setNotification({ text, type });
+    setTimeout(() => setNotification(null), 4000);
   };
 
   useEffect(() => {
@@ -35,11 +35,10 @@ export default function UserRoleManagementPage() {
     setLoading(true);
     try {
       const res = await api.users.getAll();
-      if (res.data && res.data.length > 0) {
-        setUsers(res.data);
-      }
-    } catch (err) {
-      console.warn("Using default users fallback:", err);
+      setUsers(Array.isArray(res.data) ? res.data : []);
+    } catch (err: any) {
+      setUsers([]);
+      showNotification(err?.message || "Failed to load user directory.", "error");
     } finally {
       setLoading(false);
     }
@@ -49,11 +48,10 @@ export default function UserRoleManagementPage() {
     if (!confirm(`Are you sure you want to delete user "${name}"?`)) return;
     try {
       await api.users.delete(id);
-      setUsers(users.filter((u) => u.id !== id));
+      setUsers((prev) => prev.filter((u) => u.id !== id));
       showNotification(`User "${name}" deleted.`);
-    } catch {
-      setUsers(users.filter((u) => u.id !== id));
-      showNotification(`User "${name}" deleted.`);
+    } catch (err: any) {
+      showNotification(err?.message || `Failed to delete user "${name}".`, "error");
     }
   };
 
@@ -61,11 +59,10 @@ export default function UserRoleManagementPage() {
     const updated = !u.isActive;
     try {
       await api.users.update(u.id, { isActive: updated });
-      setUsers(users.map((user) => (user.id === u.id ? { ...user, isActive: updated } : user)));
+      setUsers((prev) => prev.map((user) => (user.id === u.id ? { ...user, isActive: updated } : user)));
       showNotification("User status updated.");
-    } catch {
-      setUsers(users.map((user) => (user.id === u.id ? { ...user, isActive: updated } : user)));
-      showNotification("User status updated.");
+    } catch (err: any) {
+      showNotification(err?.message || "Failed to update user status.", "error");
     }
   };
 
@@ -80,9 +77,13 @@ export default function UserRoleManagementPage() {
   return (
     <div className="space-y-6">
       {notification && (
-        <div className="fixed top-5 right-5 z-50 bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top">
+        <div
+          className={`fixed top-5 right-5 z-50 px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 text-xs font-bold animate-in slide-in-from-top text-white ${
+            notification.type === "error" ? "bg-red-600" : "bg-blue-600"
+          }`}
+        >
           <CheckCircle className="w-4 h-4" />
-          {notification}
+          {notification.text}
         </div>
       )}
 
