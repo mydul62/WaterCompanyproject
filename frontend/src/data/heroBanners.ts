@@ -1,3 +1,5 @@
+import { API_ORIGIN } from "@/lib/api";
+
 export type HeroVisualLayout = "duo" | "trio" | "custom";
 
 export interface HeroSlide {
@@ -220,10 +222,7 @@ export function resolveBannerMediaUrl(url?: string): string {
   const clean = String(url || "").trim();
   if (!clean) return "/images/hero/bottle-vertical.png";
   if (clean.startsWith("/uploads/")) {
-    const apiBase =
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
-    const origin = apiBase.replace(/\/api\/v1\/?$/, "");
-    return `${origin}${clean}`;
+    return `${API_ORIGIN}${clean}`;
   }
   return clean;
 }

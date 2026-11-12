@@ -13,7 +13,7 @@ import {
   ImageIcon,
   RefreshCw,
 } from "lucide-react";
-import { api } from "@/lib/api";
+import { API_BASE_URL, api } from "@/lib/api";
 import MediaPickerModal from "@/components/admin/MediaPickerModal";
 import {
   AdminErrorBanner,
@@ -338,7 +338,7 @@ export default function AdminSettingsPage() {
               </div>
               <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800/80">
                 <span className="text-slate-400">REST API Gateway:</span>
-                <span className="text-cyan-400 font-bold">http://localhost:5000/api/v1</span>
+                <span className="text-cyan-400 font-bold break-all">{API_BASE_URL}</span>
               </div>
               <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800/80">
                 <span className="text-slate-400">LEED Platinum Compliance:</span>

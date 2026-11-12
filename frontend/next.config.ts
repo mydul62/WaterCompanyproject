@@ -1,5 +1,26 @@
 import type { NextConfig } from "next";
 
+const apiOrigin = (
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"
+)
+  .replace(/\/+$/, "")
+  .replace(/\/api\/v1\/?$/, "");
+
+function buildApiImagePattern() {
+  try {
+    const parsed = new URL(apiOrigin);
+    return {
+      protocol: parsed.protocol.replace(":", "") as "http" | "https",
+      hostname: parsed.hostname,
+      ...(parsed.port ? { port: parsed.port } : {}),
+    };
+  } catch {
+    return null;
+  }
+}
+
+const dynamicApiImagePattern = buildApiImagePattern();
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
@@ -23,16 +44,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "www.xclusivecanltd.com",
       },
+      ...(dynamicApiImagePattern ? [dynamicApiImagePattern] : []),
     ],
   },
   async rewrites() {
-    const apiBase = (
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"
-    ).replace(/\/api\/v1\/?$/, "");
     return [
       {
         source: "/uploads/:path*",
-        destination: `${apiBase}/uploads/:path*`,
+        destination: `${apiOrigin}/uploads/:path*`,
       },
     ];
   },

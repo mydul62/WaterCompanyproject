@@ -6,6 +6,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { siteButtonClass } from "@/components/common/SiteButton";
 import { PublicStateMessage } from "@/components/common/PublicStateMessage";
+import { API_BASE_URL } from "@/lib/api";
 import {
   PressStory,
   getStoryBySlug,
@@ -37,9 +38,7 @@ async function fetchLiveStories(): Promise<{
   error: string | null;
 }> {
   try {
-    const apiBase =
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
-    const res = await fetch(`${apiBase}/media/stories`, {
+    const res = await fetch(`${API_BASE_URL}/media/stories`, {
       cache: "no-store",
     });
     if (!res.ok) {
