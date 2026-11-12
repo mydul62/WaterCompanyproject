@@ -7,6 +7,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import RFQDrawer from "@/components/rfq/RFQDrawer";
 import { api } from "@/lib/api";
+import { smoothScrollToElement } from "@/lib/smoothScroll";
 import { siteButtonClass, siteFilterTabClass } from "@/components/common/SiteButton";
 import { CareersListSkeleton } from "@/components/common/Skeletons";
 import type { JobOpening } from "@/data/careersData";
@@ -152,8 +153,8 @@ export default function CareerPage() {
       facility: job.facility.includes("Gazipur")
         ? "Gazipur Facility"
         : job.facility.includes("Kaliakoir")
-        ? "Kaliakoir Plant"
-        : "Corporate HQ",
+          ? "Kaliakoir Plant"
+          : "Corporate HQ",
     }));
     setSubmitSuccess(false);
   };
@@ -292,10 +293,7 @@ export default function CareerPage() {
 
             <button
               type="button"
-              onClick={() => {
-                const el = document.getElementById("content");
-                if (el) el.scrollIntoView({ behavior: "smooth" });
-              }}
+              onClick={() => smoothScrollToElement("content")}
               className="flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
             >
               <span className="text-[11px] uppercase tracking-widest font-semibold group-hover:tracking-[0.25em] transition-all">
@@ -433,11 +431,10 @@ export default function CareerPage() {
                     return (
                       <article
                         key={job.id}
-                        className={`rounded-2xl bg-white border transition-all duration-300 overflow-hidden ${
-                          isExpanded
-                            ? "border-slate-800 shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
-                            : "border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300"
-                        }`}
+                        className={`rounded-2xl bg-white border transition-all duration-300 overflow-hidden ${isExpanded
+                          ? "border-slate-800 shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+                          : "border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300"
+                          }`}
                       >
                         {/* Header Row */}
                         <div className="p-6 sm:p-8">

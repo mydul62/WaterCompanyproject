@@ -74,8 +74,16 @@ export default function B2BBanner({ onOpenRFQ }: B2BBannerProps) {
   return (
     <section id="overview" className="relative w-full bg-[#f8fafc] py-20 sm:py-28 overflow-hidden select-none">
       {/* Ambient Radial Glass Glow Orbs */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-cyan-400/8 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-[500px] h-[500px] bg-blue-500/8 rounded-full blur-[120px] pointer-events-none" />
+      <div
+        aria-hidden="true"
+        className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[880px] h-[880px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(34,211,238,0.10) 0%, transparent 70%)" }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute bottom-10 right-10 w-[580px] h-[580px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%)" }}
+      />
 
       <div className="relative z-10 w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8">
         {/* Top Floating Glass CTA Banner: Packaging Solutions Always Made Right */}

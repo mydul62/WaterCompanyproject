@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { smoothScrollToElement } from "@/lib/smoothScroll";
 import {
   ChevronLeft,
   ChevronRight,
@@ -323,10 +324,7 @@ export default function ToolRoomPage() {
           {/* Animated Scroll Down Indicator */}
           <button
             type="button"
-            onClick={() => {
-              const el = document.getElementById("tool-dynamic");
-              if (el) el.scrollIntoView({ behavior: "smooth" });
-            }}
+            onClick={() => smoothScrollToElement("tool-dynamic")}
             className="relative z-10 pb-8 sm:pb-12 flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
           >
             <span className="text-[11px] uppercase tracking-widest font-semibold group-hover:tracking-[0.25em] transition-all">

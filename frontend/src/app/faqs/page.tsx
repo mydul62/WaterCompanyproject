@@ -6,6 +6,7 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { siteButtonClass, siteFilterTabClass } from "@/components/common/SiteButton";
+import { smoothScrollToElement } from "@/lib/smoothScroll";
 import {
   HelpCircle,
   Search,
@@ -206,10 +207,7 @@ export default function FaqsPage() {
           {/* Animated Scroll Down Indicator */}
           <button
             type="button"
-            onClick={() => {
-              const el = document.getElementById("faq-content");
-              if (el) el.scrollIntoView({ behavior: "smooth" });
-            }}
+            onClick={() => smoothScrollToElement("faq-content")}
             className="relative z-10 pb-8 sm:pb-12 flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
           >
             <span className="text-[11px] uppercase tracking-widest font-semibold group-hover:tracking-[0.25em] transition-all">

@@ -7,6 +7,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import RFQDrawer from "@/components/rfq/RFQDrawer";
 import { api } from "@/lib/api";
+import { smoothScrollToElement } from "@/lib/smoothScroll";
 import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import { siteButtonClass, siteFilterTabClass } from "@/components/common/SiteButton";
 import { CertificatesSkeletonItems } from "@/components/common/Skeletons";
@@ -180,10 +181,7 @@ export default function CertificatesPage() {
           {/* Animated Scroll Down Indicator */}
           <button
             type="button"
-            onClick={() => {
-              const el = document.getElementById("content");
-              if (el) el.scrollIntoView({ behavior: "smooth" });
-            }}
+            onClick={() => smoothScrollToElement("content")}
             className="relative z-10 pb-8 sm:pb-12 flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
           >
             <span className="text-[11px] uppercase tracking-widest font-semibold group-hover:tracking-[0.25em] transition-all">

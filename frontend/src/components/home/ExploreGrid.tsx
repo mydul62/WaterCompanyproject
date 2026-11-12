@@ -147,8 +147,16 @@ export default function ExploreGrid() {
       className="relative w-full bg-gradient-to-b from-[#f8fafc] via-[#f2f8fc] to-[#f8fafc] py-20 sm:py-28 overflow-hidden select-none"
     >
       {/* Subtle Ambient Coastal Backdrop Glows */}
-      <div className="absolute -top-10 right-1/4 w-[520px] h-[520px] bg-sky-400/10 rounded-full blur-[130px] pointer-events-none" />
-      <div className="absolute bottom-0 left-10 w-[560px] h-[560px] bg-cyan-400/10 rounded-full blur-[140px] pointer-events-none" />
+      <div
+        aria-hidden="true"
+        className="absolute -top-10 right-1/4 w-[620px] h-[620px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%)" }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute bottom-0 left-10 w-[660px] h-[660px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(34,211,238,0.12) 0%, transparent 70%)" }}
+      />
 
       <div className="w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8 relative z-10">
         {/* Section Heading */}

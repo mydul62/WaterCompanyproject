@@ -6,6 +6,7 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { api } from "@/lib/api";
+import { smoothScrollToElement } from "@/lib/smoothScroll";
 import type { CaseStudy } from "@/data/caseStudiesData";
 import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import { siteButtonClass, siteFilterTabClass } from "@/components/common/SiteButton";
@@ -118,10 +119,7 @@ export default function CaseStudiesPage() {
           {/* Animated Scroll Down Indicator */}
           <button
             type="button"
-            onClick={() => {
-              const el = document.getElementById("case-content");
-              if (el) el.scrollIntoView({ behavior: "smooth" });
-            }}
+            onClick={() => smoothScrollToElement("case-content")}
             className="relative z-10 pb-8 sm:pb-12 flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
           >
             <span className="text-[11px] uppercase tracking-widest font-semibold group-hover:tracking-[0.25em] transition-all">
@@ -240,74 +238,74 @@ export default function CaseStudiesPage() {
                   />
                 ) : (
                   filteredCases.map((study) => (
-                  <div
-                    key={study.id}
-                    className="bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between group"
-                  >
-                    <div>
-                      {/* Cover Image Frame */}
-                      <div className="relative w-full aspect-[16/10] overflow-hidden bg-slate-900">
-                        <Image
-                          src={study.coverImage}
-                          alt={study.title}
-                          fill
-                          unoptimized={Boolean(study.coverImage?.startsWith("/uploads/") || study.coverImage?.startsWith("http"))}
-                          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                          className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    <div
+                      key={study.id}
+                      className="bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col justify-between group"
+                    >
+                      <div>
+                        {/* Cover Image Frame */}
+                        <div className="relative w-full aspect-[16/10] overflow-hidden bg-slate-900">
+                          <Image
+                            src={study.coverImage}
+                            alt={study.title}
+                            fill
+                            unoptimized={Boolean(study.coverImage?.startsWith("/uploads/") || study.coverImage?.startsWith("http"))}
+                            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-                        {/* Industry Pill */}
-                        <span className="absolute top-3.5 left-3.5 px-3 py-1 rounded-full bg-[#0b6e99]/90 backdrop-blur-md text-white text-xs font-semibold tracking-wide shadow-md">
-                          {study.industry}
-                        </span>
-
-                        {/* Client Name at bottom of photo */}
-                        <div className="absolute bottom-3.5 left-3.5 right-3.5">
-                          <span className="text-xs font-bold text-cyan-300 uppercase tracking-wider block">
-                            Client Partnership
+                          {/* Industry Pill */}
+                          <span className="absolute top-3.5 left-3.5 px-3 py-1 rounded-full bg-[#0b6e99]/90 backdrop-blur-md text-white text-xs font-semibold tracking-wide shadow-md">
+                            {study.industry}
                           </span>
-                          <h4 className="text-white font-bold text-base drop-shadow-sm line-clamp-1">
-                            {study.client}
-                          </h4>
+
+                          {/* Client Name at bottom of photo */}
+                          <div className="absolute bottom-3.5 left-3.5 right-3.5">
+                            <span className="text-xs font-bold text-cyan-300 uppercase tracking-wider block">
+                              Client Partnership
+                            </span>
+                            <h4 className="text-white font-bold text-base drop-shadow-sm line-clamp-1">
+                              {study.client}
+                            </h4>
+                          </div>
+                        </div>
+
+                        {/* Card Content Body */}
+                        <div className="p-6 space-y-4">
+                          <h3 className="text-lg font-bold text-[#0a1f33] leading-snug group-hover:text-[#0b6e99] transition-colors">
+                            {study.title}
+                          </h3>
+
+                          <p className="text-xs sm:text-sm text-[#4a5f73] line-clamp-2 leading-relaxed">
+                            {study.subtitle}
+                          </p>
+
+                          {/* Stats Pills Bar */}
+                          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 text-center">
+                            {study.stats.map((s, idx) => (
+                              <div key={idx} className="bg-slate-50 p-2 rounded-xl">
+                                <div className="text-xs sm:text-sm font-bold text-[#0b6e99]">{s.value}</div>
+                                <div className="text-[10px] text-slate-500 font-medium truncate">{s.label}</div>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
 
-                      {/* Card Content Body */}
-                      <div className="p-6 space-y-4">
-                        <h3 className="text-lg font-bold text-[#0a1f33] leading-snug group-hover:text-[#0b6e99] transition-colors">
-                          {study.title}
-                        </h3>
-
-                        <p className="text-xs sm:text-sm text-[#4a5f73] line-clamp-2 leading-relaxed">
-                          {study.subtitle}
-                        </p>
-
-                        {/* Stats Pills Bar */}
-                        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-100 text-center">
-                          {study.stats.map((s, idx) => (
-                            <div key={idx} className="bg-slate-50 p-2 rounded-xl">
-                              <div className="text-xs sm:text-sm font-bold text-[#0b6e99]">{s.value}</div>
-                              <div className="text-[10px] text-slate-500 font-medium truncate">{s.label}</div>
-                            </div>
-                          ))}
-                        </div>
+                      {/* Card Footer Button */}
+                      <div className="p-6 pt-0">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedCase(study)}
+                          className={siteButtonClass({ variant: "primary", size: "sm", fullWidth: true })}
+                        >
+                          <span>Read Case Study</span>
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
-
-                    {/* Card Footer Button */}
-                    <div className="p-6 pt-0">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedCase(study)}
-                        className={siteButtonClass({ variant: "primary", size: "sm", fullWidth: true })}
-                      >
-                        <span>Read Case Study</span>
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))
+                  ))
                 )}
               </div>
             </div>

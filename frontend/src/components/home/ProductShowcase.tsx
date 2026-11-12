@@ -116,8 +116,12 @@ export default function ProductShowcase() {
       id="products"
       className="relative w-full bg-[#f8fafc] py-20 sm:py-28 overflow-hidden select-none"
     >
-      {/* Ambient Moving Atmospheric Glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[750px] h-[750px] bg-gradient-to-tr from-cyan-400/10 via-blue-500/5 to-transparent rounded-full blur-[140px] pointer-events-none" />
+      {/* Ambient Atmospheric Glow */}
+      <div
+        aria-hidden="true"
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[850px] h-[850px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(34,211,238,0.10) 0%, rgba(59,130,246,0.05) 40%, transparent 72%)" }}
+      />
 
       <div className="w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8 relative z-10">
         {/* Section Header */}

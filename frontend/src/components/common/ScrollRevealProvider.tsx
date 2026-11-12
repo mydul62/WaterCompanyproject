@@ -69,8 +69,10 @@ export default function ScrollRevealProvider({ children }: { children: React.Rea
     const timerSettled = window.setTimeout(scanAndObserve, 600);
 
     if ("MutationObserver" in window && document.body) {
-      mutationObserver = new MutationObserver(() => {
-        scheduleScan();
+      mutationObserver = new MutationObserver((mutations) => {
+        if (mutations.some((m) => m.addedNodes.length > 0)) {
+          scheduleScan();
+        }
       });
       mutationObserver.observe(document.body, {
         childList: true,
@@ -78,7 +80,6 @@ export default function ScrollRevealProvider({ children }: { children: React.Rea
       });
     }
 
-    window.addEventListener("scroll", scheduleScan, { passive: true });
     window.addEventListener("resize", scheduleScan, { passive: true });
 
     return () => {
@@ -87,7 +88,6 @@ export default function ScrollRevealProvider({ children }: { children: React.Rea
       if (rafId) window.cancelAnimationFrame(rafId);
       observer?.disconnect();
       mutationObserver?.disconnect();
-      window.removeEventListener("scroll", scheduleScan);
       window.removeEventListener("resize", scheduleScan);
     };
   }, [pathname]);

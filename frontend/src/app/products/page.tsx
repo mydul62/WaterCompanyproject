@@ -9,6 +9,7 @@ import { normalizeApiProduct } from "@/lib/productMapper";
 import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import { X, Search, ChevronDown, ArrowRight, Sparkles, Layers } from "lucide-react";
 import { api } from "@/lib/api";
+import { smoothScrollToElement } from "@/lib/smoothScroll";
 import { ProductsCatalogSkeletonItems } from "@/components/common/Skeletons";
 
 interface ProductItem {
@@ -842,10 +843,7 @@ export default function ProductsPage() {
         {/* Animated Scroll Down Indicator */}
         <button
           type="button"
-          onClick={() => {
-            const el = document.getElementById("product-content");
-            if (el) el.scrollIntoView({ behavior: "smooth" });
-          }}
+          onClick={() => smoothScrollToElement("product-content")}
           className="relative z-10 pb-8 sm:pb-12 flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
         >
           <span className="text-[11px] uppercase tracking-widest font-semibold group-hover:tracking-[0.25em] transition-all">

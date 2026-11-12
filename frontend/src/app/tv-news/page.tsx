@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { api } from "@/lib/api";
+import { smoothScrollToElement } from "@/lib/smoothScroll";
 import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import {
   TvNewsVideoItem,
@@ -134,7 +135,7 @@ export default function TvNewsPage() {
   const goToPage = (page: number) => {
     const clamped = Math.max(1, Math.min(totalPages, page));
     setCurrentPage(clamped);
-    document.getElementById("tv-news-grid")?.scrollIntoView({ behavior: "smooth" });
+    smoothScrollToElement("tv-news-grid");
   };
 
   const handleJumpSubmit = (e: React.FormEvent) => {
@@ -198,11 +199,7 @@ export default function TvNewsPage() {
 
           <button
             type="button"
-            onClick={() => {
-              document
-                .getElementById("tv-news-grid")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
+            onClick={() => smoothScrollToElement("tv-news-grid")}
             aria-label="Scroll to TV News videos"
             className="relative z-10 pb-8 flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
           >

@@ -41,9 +41,17 @@ export default function FacilityShowcase() {
       id="about"
       className="relative w-full bg-gradient-to-b from-white via-[#fbfdff] to-[#f4f8fb] overflow-hidden py-16 sm:py-24 min-h-[560px] lg:min-h-[640px] flex items-center select-none"
     >
-      {/* Ambient Radial Glow Orbs */}
-      <div className="absolute top-1/4 -left-20 w-[500px] h-[500px] bg-cyan-400/8 rounded-full blur-[130px] pointer-events-none" />
-      <div className="absolute bottom-10 right-1/4 w-[450px] h-[450px] bg-emerald-400/8 rounded-full blur-[140px] pointer-events-none" />
+      {/* Ambient Radial Glow Orbs (pure radial gradient for zero-lag compositing) */}
+      <div
+        aria-hidden="true"
+        className="absolute top-1/4 -left-20 w-[620px] h-[620px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(34,211,238,0.11) 0%, transparent 70%)" }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute bottom-10 right-1/4 w-[560px] h-[560px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(52,211,153,0.10) 0%, transparent 70%)" }}
+      />
 
       {/* Right Side: High-res factory campus backdrop touching the right screen edge */}
       <div className="absolute inset-y-0 right-0 w-full md:w-[58%] lg:w-[54%] xl:w-[52%] h-full pointer-events-none opacity-40 md:opacity-100 transition-opacity z-0">

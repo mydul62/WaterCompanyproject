@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import UsgbcLeedSeal from "@/components/sustainability/UsgbcLeedSeal";
 import SustainabilityDetailModal from "@/components/sustainability/SustainabilityDetailModal";
 import { api } from "@/lib/api";
+import { smoothScrollToElement } from "@/lib/smoothScroll";
 import { PublicStateMessage } from "@/components/common/PublicStateMessage";
 import {
   parseSustainabilityContent,
@@ -213,11 +214,7 @@ export default function SustainabilityPage() {
 
           <button
             type="button"
-            onClick={() => {
-              document
-                .getElementById("sustainability-intro")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
+            onClick={() => smoothScrollToElement("sustainability-intro")}
             aria-label="Scroll to sustainability overview"
             className="relative z-10 pb-8 flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
           >

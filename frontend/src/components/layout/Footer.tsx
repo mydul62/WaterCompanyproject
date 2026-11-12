@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, ChevronUp, Mail, MapPin, Phone } from "lucide-react";
 import { api } from "@/lib/api";
+import { smoothScrollToTop } from "@/lib/smoothScroll";
 
 const EXPLORE_LINKS = [
   { label: "Home", href: "/" },
@@ -42,7 +43,7 @@ export default function Footer() {
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    smoothScrollToTop();
   };
 
   const brandName = settings["header_brand_name"] || "Noor Plastic";
@@ -80,8 +81,16 @@ export default function Footer() {
     >
       {/* Top Ocean Accent Hairline & Subtle Radial Ambient Glow */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
-      <div className="absolute -top-24 right-1/4 w-[460px] h-[460px] rounded-full bg-cyan-500/8 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 left-10 w-[380px] h-[380px] rounded-full bg-blue-600/10 blur-[120px] pointer-events-none" />
+      <div
+        aria-hidden="true"
+        className="absolute -top-24 right-1/4 w-[520px] h-[520px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(6,182,212,0.11) 0%, transparent 70%)" }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute bottom-0 left-10 w-[440px] h-[440px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(37,99,235,0.13) 0%, transparent 70%)" }}
+      />
 
       {/* Main Footer Grid */}
       <div className="relative z-10 w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 py-14 sm:py-16">

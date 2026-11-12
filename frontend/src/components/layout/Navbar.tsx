@@ -205,7 +205,8 @@ export default function Navbar() {
 
   useEffect(() => {
     const onScroll = () => {
-      setIsScrolled(window.scrollY > 28);
+      const next = window.scrollY > 28;
+      setIsScrolled((prev) => (prev === next ? prev : next));
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -298,11 +299,17 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 w-full pointer-events-none">
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 w-full pointer-events-none transition-transform duration-300 ease-out transform-gpu ${
+          isScrolled ? "-translate-y-11" : "translate-y-0"
+        }`}
+      >
         {/* Tier 1: Slim Dark-Blue Top Utility Bar */}
         <div
-          className={`w-full bg-[#0E489C] text-white transition-all duration-300 pointer-events-auto overflow-hidden ${
-            isScrolled ? "max-h-0 opacity-0" : "max-h-14 opacity-100 border-b border-white/10"
+          className={`w-full h-11 bg-[#0E489C] text-white transition-opacity duration-200 overflow-hidden ${
+            isScrolled
+              ? "opacity-0 pointer-events-none"
+              : "opacity-100 pointer-events-auto border-b border-white/10"
           }`}
         >
           <div className="w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12">
@@ -341,10 +348,10 @@ export default function Navbar() {
         <div className="w-[98%] max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-12 pointer-events-auto">
           <div className="relative">
             <div
-              className={`bg-white flex items-center justify-between px-4 sm:px-7 lg:px-10 transition-all duration-300 ${
+              className={`bg-white flex items-center justify-between px-4 sm:px-7 lg:px-10 h-[76px] lg:h-[82px] rounded-b-[14px] transition-shadow duration-300 ${
                 isScrolled
-                  ? "h-[72px] lg:h-[74px] rounded-b-[14px] shadow-[0_14px_35px_rgba(4,34,82,0.18)] border-x border-b border-slate-100"
-                  : "h-[76px] lg:h-[88px] rounded-b-[14px] shadow-[0_10px_28px_rgba(4,32,78,0.18)]"
+                  ? "shadow-[0_14px_35px_rgba(4,34,82,0.18)] border-x border-b border-slate-100"
+                  : "shadow-[0_10px_28px_rgba(4,32,78,0.18)]"
               }`}
             >
               {/* Brand Logo on Left */}
@@ -524,12 +531,12 @@ export default function Navbar() {
             </div>
 
             {/* Subtle Dark-Blue Under-Lip beneath Centered White Container (Reference Detail) */}
-            {!isScrolled && (
-              <div
-                aria-hidden="true"
-                className="mx-5 sm:mx-8 h-[6px] bg-[#084D98] rounded-b-[10px] opacity-90 shadow-md"
-              />
-            )}
+            <div
+              aria-hidden="true"
+              className={`mx-5 sm:mx-8 h-[6px] bg-[#084D98] rounded-b-[10px] shadow-md transition-opacity duration-200 pointer-events-none ${
+                isScrolled ? "opacity-0" : "opacity-90"
+              }`}
+            />
           </div>
         </div>
       </header>

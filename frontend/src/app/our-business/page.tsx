@@ -7,6 +7,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import RFQDrawer from "@/components/rfq/RFQDrawer";
 import { siteButtonClass } from "@/components/common/SiteButton";
+import { smoothScrollToElement } from "@/lib/smoothScroll";
 import {
   ShieldCheck,
   Award,
@@ -154,6 +155,10 @@ export default function OurBusinessPage() {
               </button>
               <a
                 href="#curtain-reveal"
+                onClick={(e) => {
+                  e.preventDefault();
+                  smoothScrollToElement("curtain-reveal");
+                }}
                 className={siteButtonClass({ variant: "ghost" })}
               >
                 <span>Explore Capabilities</span>
@@ -185,10 +190,7 @@ export default function OurBusinessPage() {
 
             <button
               type="button"
-              onClick={() => {
-                const el = document.getElementById("curtain-reveal");
-                if (el) el.scrollIntoView({ behavior: "smooth" });
-              }}
+              onClick={() => smoothScrollToElement("curtain-reveal")}
               className="flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
             >
               <span className="text-[11px] uppercase tracking-widest font-semibold group-hover:tracking-[0.25em] transition-all">
@@ -209,8 +211,16 @@ export default function OurBusinessPage() {
           className="relative bg-white overflow-hidden"
         >
           {/* Subtle Ambient Radial Glow Orbs */}
-          <div className="absolute top-40 -left-20 w-[500px] h-[500px] bg-cyan-400/6 rounded-full blur-[140px] pointer-events-none" />
-          <div className="absolute top-[800px] -right-20 w-[500px] h-[500px] bg-emerald-400/6 rounded-full blur-[140px] pointer-events-none" />
+          <div
+            aria-hidden="true"
+            className="absolute top-40 -left-20 w-[620px] h-[620px] rounded-full pointer-events-none"
+            style={{ background: "radial-gradient(circle, rgba(34,211,238,0.09) 0%, transparent 70%)" }}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute top-[800px] -right-20 w-[620px] h-[620px] rounded-full pointer-events-none"
+            style={{ background: "radial-gradient(circle, rgba(52,211,153,0.09) 0%, transparent 70%)" }}
+          />
 
           {/* ══════════════════════════════════════════════════════════════
               SECTION 1: Who We Are & Eco-Industrial Campus

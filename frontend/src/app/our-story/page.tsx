@@ -6,6 +6,7 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { ArrowUp, History, Sparkles } from "lucide-react";
+import { smoothScrollToElement, smoothScrollToTop } from "@/lib/smoothScroll";
 
 interface Milestone {
   year: string;
@@ -129,26 +130,33 @@ const MILESTONES: Milestone[] = [
 
 export default function OurStoryPage() {
   const [activeYear, setActiveYear] = useState<string>("1992");
-  const [scrollProgress, setScrollProgress] = useState<number>(0);
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
   const [isTimelineVisible, setIsTimelineVisible] = useState<boolean>(false);
   const milestoneRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+  const progressCircleRef = useRef<SVGCircleElement | null>(null);
+  const circleCircumference = 2 * Math.PI * 21;
 
   useEffect(() => {
-    const handleScroll = () => {
+    let rafId = 0;
+
+    const updateOnScroll = () => {
+      rafId = 0;
       const scrollY = window.scrollY;
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = totalHeight > 0 ? (scrollY / totalHeight) * 100 : 0;
-      setScrollProgress(progress);
-      setShowScrollTop(scrollY > 400);
+      const progress = totalHeight > 0 ? Math.min(100, Math.max(0, (scrollY / totalHeight) * 100)) : 0;
 
-      // Show left timeline navigator only once scrolled past the hero
-      const heroThreshold = window.innerHeight * 0.45;
-      setIsTimelineVisible(scrollY >= heroThreshold);
+      if (progressCircleRef.current) {
+        progressCircleRef.current.style.strokeDashoffset = String(
+          circleCircumference * (1 - progress / 100)
+        );
+      }
 
-      // Detect active milestone among the sticky stacking cards:
-      // A card is active when its top is docked near top (<= 100px)
-      // and the next card hasn't reached the top yet (> 100px)
+      const nextShowTop = scrollY > 400;
+      setShowScrollTop((prev) => (prev === nextShowTop ? prev : nextShowTop));
+
+      const nextTimelineVisible = scrollY >= window.innerHeight * 0.45;
+      setIsTimelineVisible((prev) => (prev === nextTimelineVisible ? prev : nextTimelineVisible));
+
       for (let i = 0; i < MILESTONES.length; i++) {
         const item = MILESTONES[i];
         const el = milestoneRefs.current[item.year];
@@ -160,28 +168,34 @@ export default function OurStoryPage() {
           const nextRect = nextEl ? nextEl.getBoundingClientRect() : null;
 
           if (rect.top <= 100 && (!nextRect || nextRect.top > 100)) {
-            setActiveYear(item.year);
+            setActiveYear((prev) => (prev === item.year ? prev : item.year));
             break;
           }
         }
       }
     };
 
+    const handleScroll = () => {
+      if (!rafId) {
+        rafId = window.requestAnimationFrame(updateOnScroll);
+      }
+    };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    updateOnScroll();
+    return () => {
+      if (rafId) window.cancelAnimationFrame(rafId);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [circleCircumference]);
 
   const scrollToYear = (year: string) => {
     setActiveYear(year);
-    const el = milestoneRefs.current[year];
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
+    smoothScrollToElement(milestoneRefs.current[year] || null);
   };
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    smoothScrollToTop();
   };
 
   return (
@@ -265,10 +279,7 @@ export default function OurStoryPage() {
           {/* Animated Scroll Down Indicator */}
           <button
             type="button"
-            onClick={() => {
-              const el = document.getElementById("milestone-1992");
-              if (el) el.scrollIntoView({ behavior: "smooth" });
-            }}
+            onClick={() => smoothScrollToElement("milestone-1992")}
             className="relative z-10 pb-8 sm:pb-12 flex flex-col items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer group"
           >
             <span className="text-[11px] uppercase tracking-widest font-semibold group-hover:tracking-[0.25em] transition-all">
@@ -352,16 +363,16 @@ export default function OurStoryPage() {
               fill="transparent"
             />
             <circle
+              ref={progressCircleRef}
               cx="24"
               cy="24"
               r="21"
               stroke="#0284c7"
               strokeWidth="2.5"
               fill="transparent"
-              strokeDasharray={2 * Math.PI * 21}
-              strokeDashoffset={2 * Math.PI * 21 * (1 - scrollProgress / 100)}
+              strokeDasharray={circleCircumference}
+              strokeDashoffset={circleCircumference}
               strokeLinecap="round"
-              className="transition-all duration-150"
             />
           </svg>
           <ArrowUp className="w-5 h-5 text-slate-800 group-hover:-translate-y-0.5 transition-transform" />
