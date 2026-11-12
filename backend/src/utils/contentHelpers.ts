@@ -43,7 +43,7 @@ export function parseJsonValue<T>(raw: unknown, fallback: T): T {
   }
 }
 
-/** Serialize an array/object payload into a JSON string for SQLite storage. */
+/** Serialize an array/object payload into a JSON string for database storage. */
 export function serializeJsonValue(value: unknown, fallback: unknown = []): string {
   if (typeof value === "string") {
     try {
