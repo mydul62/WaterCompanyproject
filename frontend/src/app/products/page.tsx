@@ -199,7 +199,7 @@ export default function ProductsPage() {
             src={prod.img}
             alt={prod.n}
             fill
-            className="object-contain p-4 drop-shadow-[0_12px_14px_rgba(15,30,46,0.18)] transition-transform duration-350 group-hover:scale-108"
+            className="object-contain p-4 drop-shadow-[0_12px_14px_rgba(15,30,46,0.18)] transform-gpu transition-transform duration-[900ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.05]"
             sizes="(max-width: 768px) 100vw, 300px"
           />
         </div>
@@ -209,7 +209,7 @@ export default function ProductsPage() {
     switch (prod.s) {
       case "detergent":
         return (
-          <svg viewBox="0 0 80 120" className="w-[46%] h-auto drop-shadow-[0_14px_14px_rgba(15,30,46,0.18)] transition-transform duration-350">
+          <svg viewBox="0 0 80 120" className="w-[46%] h-auto drop-shadow-[0_14px_14px_rgba(15,30,46,0.18)]">
             <rect x="24" y="2" width="22" height="12" rx="3" fill="#dfe7ee" />
             <path d="M22 14h26l6 10c10 6 14 14 14 28v52c0 8-5 14-13 14H15c-8 0-13-6-13-14V52c0-14 4-22 14-28z" fill="#fff" stroke="#cbd6df" />
             <ellipse cx="52" cy="50" rx="10" ry="14" fill="#e3ebf1" stroke="#cbd6df" />
@@ -217,7 +217,7 @@ export default function ProductsPage() {
         );
       case "jar":
         return (
-          <svg viewBox="0 0 80 100" className="w-[46%] h-auto drop-shadow-[0_14px_14px_rgba(15,30,46,0.18)] transition-transform duration-350">
+          <svg viewBox="0 0 80 100" className="w-[46%] h-auto drop-shadow-[0_14px_14px_rgba(15,30,46,0.18)]">
             <rect x="8" y="4" width="64" height="16" rx="5" fill="#dfe7ee" />
             <rect x="10" y="18" width="60" height="78" rx="10" fill="#fff" stroke="#cbd6df" />
             <rect x="18" y="40" width="44" height="30" rx="4" fill="#e8f2f9" />
@@ -225,7 +225,7 @@ export default function ProductsPage() {
         );
       case "pail":
         return (
-          <svg viewBox="0 0 100 100" className="w-[46%] h-auto drop-shadow-[0_14px_14px_rgba(15,30,46,0.18)] transition-transform duration-350">
+          <svg viewBox="0 0 100 100" className="w-[46%] h-auto drop-shadow-[0_14px_14px_rgba(15,30,46,0.18)]">
             <path d="M18 30c8-30 56-30 64 0" fill="none" stroke="#9fb0bf" strokeWidth="3" />
             <rect x="10" y="26" width="80" height="10" rx="4" fill="#dfe7ee" />
             <path d="M14 36h72l-6 56c-.5 4-3 6-7 6H27c-4 0-6.5-2-7-6z" fill="#fff" stroke="#cbd6df" />
@@ -234,7 +234,7 @@ export default function ProductsPage() {
         );
       case "can":
         return (
-          <svg viewBox="0 0 100 100" className="w-[46%] h-auto drop-shadow-[0_14px_14px_rgba(15,30,46,0.18)] transition-transform duration-350">
+          <svg viewBox="0 0 100 100" className="w-[46%] h-auto drop-shadow-[0_14px_14px_rgba(15,30,46,0.18)]">
             <ellipse cx="50" cy="18" rx="38" ry="9" fill="#cfd8e0" />
             <path d="M12 18v66c0 5 17 10 38 10s38-5 38-10V18c0 5-17 10-38 10S12 23 12 18z" fill="#aab7c3" />
             <rect x="12" y="44" width="76" height="30" fill="#1f5f8b" opacity=".85" />
@@ -244,7 +244,7 @@ export default function ProductsPage() {
       case "bottle":
       default:
         return (
-          <svg viewBox="0 0 60 120" className="w-[46%] h-auto drop-shadow-[0_14px_14px_rgba(15,30,46,0.18)] transition-transform duration-350">
+          <svg viewBox="0 0 60 120" className="w-[46%] h-auto drop-shadow-[0_14px_14px_rgba(15,30,46,0.18)]">
             <rect x="22" y="2" width="16" height="14" rx="3" fill="#dfe7ee" />
             <path d="M20 16h20v10c10 6 12 14 12 26v56c0 6-4 10-10 10H18c-6 0-10-4-10-10V52c0-12 2-20 12-26z" fill="#fff" stroke="#cbd6df" />
             <rect x="14" y="58" width="32" height="34" rx="4" fill="#e8f2f9" />
@@ -621,7 +621,7 @@ export default function ProductsPage() {
           flex-direction: column;
           text-decoration: none;
           color: inherit;
-          transition: transform .35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .35s ease, border-color .35s ease;
+          transition: transform .7s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow .7s ease, border-color .6s ease;
           animation: prd-in .4s both;
           cursor: pointer;
         }
@@ -676,10 +676,10 @@ export default function ProductsPage() {
           width: 46%;
           height: auto;
           filter: drop-shadow(0 14px 14px rgba(15,30,46,.18));
-          transition: transform .35s ease;
+          transition: transform .9s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
         .prd-card:hover .prd-thumb svg {
-          transform: scale(1.08) rotate(-3deg);
+          transform: scale(1.05) rotate(-2deg);
         }
         .prd-tag {
           position: absolute;

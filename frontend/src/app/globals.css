@@ -5945,6 +5945,26 @@
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
+  .transition-\[opacity\,transform\] {
+    transition-property: opacity,transform;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .transition-\[transform\,background-color\,color\] {
+    transition-property: transform,background-color,color;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .transition-\[transform\,box-shadow\,border-color\] {
+    transition-property: transform,box-shadow,border-color;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .transition-\[transform\,opacity\] {
+    transition-property: transform,opacity;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
   .transition-all {
     transition-property: all;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
@@ -5997,10 +6017,6 @@
     --tw-duration: 300ms;
     transition-duration: 300ms;
   }
-  .duration-350 {
-    --tw-duration: 350ms;
-    transition-duration: 350ms;
-  }
   .duration-500 {
     --tw-duration: 500ms;
     transition-duration: 500ms;
@@ -6021,6 +6037,18 @@
     --tw-duration: 650ms;
     transition-duration: 650ms;
   }
+  .duration-\[900ms\] {
+    --tw-duration: 900ms;
+    transition-duration: 900ms;
+  }
+  .duration-\[950ms\] {
+    --tw-duration: 950ms;
+    transition-duration: 950ms;
+  }
+  .duration-\[1200ms\] {
+    --tw-duration: 1200ms;
+    transition-duration: 1200ms;
+  }
   .ease-\[cubic-bezier\(0\.16\,1\,0\.3\,1\)\] {
     --tw-ease: cubic-bezier(0.16,1,0.3,1);
     transition-timing-function: cubic-bezier(0.16,1,0.3,1);
@@ -6028,6 +6056,10 @@
   .ease-\[cubic-bezier\(0\.22\,1\,0\.36\,1\)\] {
     --tw-ease: cubic-bezier(0.22,1,0.36,1);
     transition-timing-function: cubic-bezier(0.22,1,0.36,1);
+  }
+  .ease-\[cubic-bezier\(0\.25\,0\.1\,0\.25\,1\)\] {
+    --tw-ease: cubic-bezier(0.25,0.1,0.25,1);
+    transition-timing-function: cubic-bezier(0.25,0.1,0.25,1);
   }
   .ease-in-out {
     --tw-ease: var(--ease-in-out);
@@ -6086,28 +6118,16 @@
       --tw-scale-z: 105%;
       scale: var(--tw-scale-x) var(--tw-scale-y);
     }
-    .group-hover\:scale-106:is(:where(.group):hover *) {
-      --tw-scale-x: 106%;
-      --tw-scale-y: 106%;
-      --tw-scale-z: 106%;
-      scale: var(--tw-scale-x) var(--tw-scale-y);
-    }
-    .group-hover\:scale-108:is(:where(.group):hover *) {
-      --tw-scale-x: 108%;
-      --tw-scale-y: 108%;
-      --tw-scale-z: 108%;
-      scale: var(--tw-scale-x) var(--tw-scale-y);
-    }
     .group-hover\:scale-110:is(:where(.group):hover *) {
       --tw-scale-x: 110%;
       --tw-scale-y: 110%;
       --tw-scale-z: 110%;
       scale: var(--tw-scale-x) var(--tw-scale-y);
     }
-    .group-hover\:scale-120:is(:where(.group):hover *) {
-      --tw-scale-x: 120%;
-      --tw-scale-y: 120%;
-      --tw-scale-z: 120%;
+    .group-hover\:scale-115:is(:where(.group):hover *) {
+      --tw-scale-x: 115%;
+      --tw-scale-y: 115%;
+      --tw-scale-z: 115%;
       scale: var(--tw-scale-x) var(--tw-scale-y);
     }
     .group-hover\:scale-125:is(:where(.group):hover *) {
@@ -6118,6 +6138,15 @@
     }
     .group-hover\:scale-\[1\.03\]:is(:where(.group):hover *) {
       scale: 1.03;
+    }
+    .group-hover\:scale-\[1\.04\]:is(:where(.group):hover *) {
+      scale: 1.04;
+    }
+    .group-hover\:scale-\[1\.05\]:is(:where(.group):hover *) {
+      scale: 1.05;
+    }
+    .group-hover\:scale-\[1\.06\]:is(:where(.group):hover *) {
+      scale: 1.06;
     }
     .group-hover\:rotate-45:is(:where(.group):hover *) {
       rotate: 45deg;
@@ -6415,10 +6444,6 @@
     }
     .hover\:-translate-y-2:hover {
       --tw-translate-y: calc(var(--spacing) * -2);
-      translate: var(--tw-translate-x) var(--tw-translate-y);
-    }
-    .hover\:-translate-y-2\.5:hover {
-      --tw-translate-y: calc(var(--spacing) * -2.5);
       translate: var(--tw-translate-x) var(--tw-translate-y);
     }
     .hover\:scale-105:hover {

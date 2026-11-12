@@ -150,7 +150,7 @@ export default function PressStoriesSection() {
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     unoptimized={Boolean(story.image?.startsWith("/uploads/") || story.image?.startsWith("http"))}
-                    className="object-contain p-2 transform-gpu group-hover:scale-106 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] drop-shadow-sm"
+                    className="object-contain p-2 transform-gpu group-hover:scale-[1.04] transition-transform duration-[950ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] drop-shadow-sm"
                   />
 
                   {/* Zoom Lightbox Trigger Overlay */}
